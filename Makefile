@@ -1,6 +1,6 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c
 BASE_FILES				:= main.c util.c
 
 FILE_NAMES				:= \

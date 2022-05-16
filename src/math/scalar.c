@@ -15,11 +15,17 @@ FLOAT
 FLOAT
 	vec_mag(t_vec a)
 {
-	return (sqrt(0
-			+ a.v[X] * a.v[X]
-			+ a.v[Y] * a.v[Y]
-			+ a.v[Z] * a.v[Z]
-			+ a.v[W] * a.v[W]));
+	return (sqrt(vec_mag2(a)));
+}
+
+FLOAT
+	vec_mag2(t_vec a)
+{
+	return (0
+		+ a.v[X] * a.v[X]
+		+ a.v[Y] * a.v[Y]
+		+ a.v[Z] * a.v[Z]
+		+ a.v[W] * a.v[W]);
 }
 
 t_vec

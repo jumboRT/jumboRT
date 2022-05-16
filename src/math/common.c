@@ -34,8 +34,8 @@ t_vec
 	col(t_mat m, size_t i)
 {
 	return (vec(
-			m.rows[0].v[i],
-			m.rows[1].v[i],
-			m.rows[2].v[i],
-			m.rows[3].v[i]));
+			row(m, 0).v[i],
+			row(m, 1).v[i],
+			row(m, 2).v[i],
+			row(m, 3).v[i]));
 }

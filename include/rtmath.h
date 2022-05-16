@@ -13,13 +13,11 @@ typedef struct s_mat	t_mat;
 # define Z 2
 # define W 3
 
-struct s_vec
-{
+struct s_vec {
 	FLOAT	v[4];
 };
 
-struct s_mat
-{
+struct s_mat {
 	t_vec	rows[4];
 };
 
@@ -33,6 +31,7 @@ t_mat	transpose(t_mat m);
 
 FLOAT	vec_dot(t_vec a, t_vec b);
 FLOAT	vec_mag(t_vec a);
+FLOAT	vec_mag2(t_vec a);
 t_vec	vec_scale(t_vec a, FLOAT b);
 
 t_vec	vec_cross(t_vec a, t_vec b);
@@ -41,6 +40,7 @@ t_vec	vec_sub(t_vec a, t_vec b);
 t_vec	vec_neg(t_vec a);
 t_vec	vec_norm(t_vec a);
 
+t_vec	vec_hnorm(t_vec a);
 t_vec	vec_mul(t_vec a, t_mat b);
 t_mat	mat_mul(t_mat a, t_mat b);
 

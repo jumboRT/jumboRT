@@ -27,12 +27,12 @@ void
 	dbg_mat(t_mat a)
 {
 	ft_fprintf(STDERR_FILENO, "mat(");
-	dbg_vec(a.rows[0]);
+	dbg_vec(row(a, 0));
 	ft_fprintf(STDERR_FILENO, "\n    ");
-	dbg_vec(a.rows[1]);
+	dbg_vec(row(a, 1));
 	ft_fprintf(STDERR_FILENO, "\n    ");
-	dbg_vec(a.rows[2]);
+	dbg_vec(row(a, 2));
 	ft_fprintf(STDERR_FILENO, "\n    ");
-	dbg_vec(a.rows[3]);
+	dbg_vec(row(a, 3));
 	ft_fprintf(STDERR_FILENO, ")\n");
 }

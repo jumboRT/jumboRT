@@ -5,6 +5,5 @@
 int
 	main(void)
 {
-	dbg_mat(diagonal(1.0));
 	return (EXIT_SUCCESS);
 }
