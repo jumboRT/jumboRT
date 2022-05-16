@@ -2,25 +2,37 @@
 # define GFX_H
 
 # include "rtmath.h"
+# include "mt.h"
 
 typedef struct s_win	t_win;
-typedef	struct s_img	t_img;
+typedef struct s_img	t_img;
+typedef unsigned int	t_color;
+typedef int				(*t_loop_proc)(void *ctx);
 
-typedef	unsigned int	t_color;
+# define COLOR_RED		0x00ff0000
+# define COLOR_BLUE		0x000000ff
+# define COLOR_GREEN	0x0000ff00
 
 struct s_win {
-	void	*win;
+	void	*handle;
 	void	*mlx;
+	void	*img;
+	char	*data;
+	int		bpp;
 };
 
 struct s_img {
 	t_color	*data;
 	int		width;
 	int		height;
+	t_mutex	mtx;
 };
 
-int	win_create(t_win *win, int width, int height);
-int	win_destroy(t_win *win);
+void	*mlx(void);
+int		win_create(t_win *win, t_loop_proc proc, int width, int height);
+int		win_destroy(t_win *win);
+void	win_start(t_win *win);
+void	win_put(t_win *win, t_img *img);
 
 void	win_render(t_win *win, t_img *img);
 

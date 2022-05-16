@@ -5,6 +5,14 @@
 		"math.h": "c",
 		"rtmath.h": "c",
 		"stdio.h": "c",
-		"ft_printf.h": "c"
+		"ft_printf.h": "c",
+		"ios": "c",
+		"array": "c",
+		"string": "c",
+		"string_view": "c",
+		"vector": "c",
+		"atomic": "cpp",
+		"util.h": "c",
+		"mt.h": "c"
 	}
 }

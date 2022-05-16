@@ -1,10 +1,14 @@
 NAME					:= miniRT
 
 MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c
+GFX_FILES				:= win.c img.c draw.c
 BASE_FILES				:= main.c util.c
+MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
 
 FILE_NAMES				:= \
 	$(patsubst %,math/%,$(MATH_FILES)) \
+	$(patsubst %,gfx/%,$(GFX_FILES)) \
+	$(patsubst %,mt/%,$(MT_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
@@ -21,8 +25,10 @@ LIBFT_DIR				:= $(LIB_DIR)/libft
 LIBFT_LIB				:= $(LIBFT_DIR)/libft.a
 FT_PRINTF_DIR			:= $(LIB_DIR)/ft_printf
 FT_PRINTF_LIB			:= $(FT_PRINTF_DIR)/libftprintf.a
+MLX_DIR					:= $(LIB_DIR)/minilibx_macos
+MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
-INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR)
+INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
 CFLAGS          		+=
 LFLAGS          		+=
@@ -92,9 +98,9 @@ ifndef verbose
 	SILENT		:= @
 endif
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB)
+$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
-	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(LFLAGS)
+	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) -framework OpenGL -framework AppKit $(LFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(SILENT)mkdir -p $(@D)
@@ -106,6 +112,9 @@ $(LIBFT_LIB):
 
 $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR)
+
+$(MLX_LIB):
+	$(SILENT)${MAKE} -C $(MLX_DIR)
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
