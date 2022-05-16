@@ -1,41 +1,21 @@
-#include "math.h"
+#include "rtmath.h"
 
-t_vec
-	vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w)
+t_mat
+	diagonal(FLOAT v)
 {
-	t_vec	result;
-
-	result.v[X] = x;
-	result.v[Y] = y;
-	result.v[Z] = z;
-	result.v[W] = w;
-	return (result);
+	return (mat(
+			vec(v, 0, 0, 0),
+			vec(0, v, 0, 0),
+			vec(0, 0, v, 0),
+			vec(0, 0, 0, v)));
 }
 
 t_mat
-	mat(t_vec a, t_vec b, t_vec c, t_vec d)
+	transpose(t_mat m)
 {
-	t_mat	result;
-
-	result.rows[0] = a;
-	result.rows[1] = b;
-	result.rows[2] = c;
-	result.rows[3] = d;
-	return (result);
-}
-
-t_vec
-	row(t_mat m, size_t i)
-{
-	return (m.rows[i]);
-}
-
-t_vec
-	col(t_mat m, size_t i)
-{
-	return (vec(
-			m.rows[0].cols[i],
-			m.rows[1].cols[i],
-			m.rows[2].cols[i],
-			m.rows[3].cols[i]));
+	return (mat(
+			col(m, 0),
+			col(m, 1),
+			col(m, 2),
+			col(m, 3)));
 }

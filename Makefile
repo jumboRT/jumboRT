@@ -1,8 +1,10 @@
-NAME					:= minishell
+NAME					:= miniRT
 
-BASE_FILES				:=
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c
+BASE_FILES				:= main.c util.c
 
 FILE_NAMES				:= \
+	$(patsubst %,math/%,$(MATH_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
@@ -55,7 +57,7 @@ OBJECT_COLOR			:= $(RED)
 CLEAN_COLOR				:= $(PURPLE)
 
 ifndef config
-	config = distr
+	config = debug
 endif
 
 ifndef san
@@ -82,7 +84,7 @@ else
 $(error "invalid config $(config"))
 endif
 
-all: $(NAME) crash
+all: $(NAME)
 
 SILENT			:=
 
@@ -103,13 +105,11 @@ $(LIBFT_LIB):
 	$(SILENT)${MAKE} -C $(LIBFT_DIR) bonus
 
 $(FT_PRINTF_LIB):
-	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) bonus
+	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR)
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
 	$(SILENT)rm -rf build
-	$(SILENT)${MAKE} -C $(LIBFT_DIR) fclean
-	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) fclean
 
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n

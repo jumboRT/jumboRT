@@ -28,7 +28,7 @@ t_mat	mat(t_vec a, t_vec b, t_vec c, t_vec d);
 t_vec	row(t_mat m, size_t i);
 t_vec	col(t_mat m, size_t i);
 
-t_mat	diagonal(FLOAT diag);
+t_mat	diagonal(FLOAT v);
 t_mat	transpose(t_mat m);
 
 FLOAT	vec_dot(t_vec a, t_vec b);
@@ -44,5 +44,7 @@ t_vec	vec_norm(t_vec a);
 t_vec	vec_mul(t_vec a, t_mat b);
 t_mat	mat_mul(t_mat a, t_mat b);
 
+void	dbg_vec(t_vec a);
+void	dbg_mat(t_mat a);
 
 #endif
