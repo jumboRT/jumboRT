@@ -14,12 +14,11 @@ void
 	(void) cnd;
 }
 
-int
+void
 	cond_wait(t_cond *cnd, t_mutex *mtx)
 {
 	(void) cnd;
 	(void) mtx;
-	return (1);
 }
 
 void

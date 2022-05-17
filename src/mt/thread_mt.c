@@ -1,4 +1,5 @@
 #include "mt.h"
+#include "util.h"
 
 #ifdef RT_MT
 

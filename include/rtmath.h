@@ -1,17 +1,18 @@
-#ifndef MATH_H
-# define MATH_H
+#ifndef RTMATH_H
+# define RTMATH_H
 
 # include <stddef.h>
 
 # define FLOAT float
 
-typedef struct s_vec	t_vec;
-typedef struct s_mat	t_mat;
-
 # define X 0
 # define Y 1
 # define Z 2
 # define W 3
+
+typedef struct s_vec	t_vec;
+typedef struct s_mat	t_mat;
+typedef struct s_ray	t_ray;
 
 struct s_vec {
 	FLOAT	v[4];
@@ -19,6 +20,11 @@ struct s_vec {
 
 struct s_mat {
 	t_vec	rows[4];
+};
+
+struct s_ray {
+	t_vec	pos;
+	t_vec	dir;
 };
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w);

@@ -1,30 +1,33 @@
 #include <libft.h>
 
-static double
+#include "rtmath.h"
+#include <stdlib.h>
+
+static FLOAT
 	rt_magnitude(const char **str)
 {
-	double	magnitude;
+	FLOAT	magnitude;
 
 	magnitude = 0.0;
 	while (ft_isdigit(*(*str)))
 	{
-		magnitude = magnitude * 10 + ((double) (int) *(*str) - '0');
+		magnitude = magnitude * 10 + ((FLOAT) (int) *(*str) - '0');
 		*str += 1;
 	}
 	return (magnitude);
 }
 
-static double
+static FLOAT
 	rt_mantissa(const char **str)
 {
-	double	mantissa;
-	double	exp;
+	FLOAT	mantissa;
+	FLOAT	exp;
 
 	mantissa = 0.0;
 	exp = 10.0;
 	while (ft_isdigit(*(*str)))
 	{
-		mantissa = mantissa + (((double) (int) *(*str) - '0') / exp);
+		mantissa = mantissa + (((FLOAT) (int) *(*str) - '0') / exp);
 		*str += 1;
 		exp *= 10.0;
 	}
@@ -32,11 +35,11 @@ static double
 }
 
 int
-	rt_atof(const char *str, double *dst)
+	rt_atof(const char *str, FLOAT *dst)
 {
-	double	magnitude;
-	double	mantissa;
-	double	sign;
+	FLOAT	magnitude;
+	FLOAT	mantissa;
+	FLOAT	sign;
 
 	sign = 1.0;
 	magnitude = 0.0;
@@ -53,20 +56,20 @@ int
 		mantissa = rt_mantissa(&str);
 	}
 	*dst = (magnitude + mantissa) * sign;
-	return (*str == '\0');
+	return (!isinf(*dst));
 }
 
 /*
 int
 	main(int argc, char **argv)
 {
-	double	result;
+	FLOAT	result;
 	int		valid;
 
 	if (argc != 2)
 		return 1;
 	valid = rt_atof(argv[1], &result);
-	fprintf(stdout, "'%s' valid?:%d double:'%.10f'\n", argv[1], valid, result);
+	fprintf(stdout, "'%s' valid?:%d FLOAT:'%.10f'\n", argv[1], valid, result);
 	return 0;
 }
 */

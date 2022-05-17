@@ -28,7 +28,7 @@ void	mutex_unlock(t_mutex *mtx);
 
 void	cond_init(t_cond *cnd);
 void	cond_destroy(t_cond *cnd);
-int		cond_wait(t_cond *cnd, t_mutex *mtx);
+void	cond_wait(t_cond *cnd, t_mutex *mtx);
 void	cond_broadcast(t_cond *cnd);
 
 #endif

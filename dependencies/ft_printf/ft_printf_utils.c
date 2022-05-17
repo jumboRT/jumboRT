@@ -46,6 +46,11 @@ int
 		}
 		return (size);
 	}
+	else if (sink->type == sink_type_astr)
+	{
+		/* TODO */
+		return (size);
+	}
 	return (-1);
 }
 

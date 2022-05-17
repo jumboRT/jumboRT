@@ -1,4 +1,5 @@
 #include "rtmath.h"
+#include "util.h"
 
 t_vec
 	vec_hnorm(t_vec a)

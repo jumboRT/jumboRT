@@ -50,9 +50,12 @@ void
 void
 	img_putf(t_img *img, int x, int y, t_vec color)
 {
-	(void) img;
-	(void) x;
-	(void) y;
-	(void) color;
+	t_color	col;
+
+	col = 0;
+	col |= ((t_color)(color.v[X] * 255) & 0xFF) << 0;
+	col |= ((t_color)(color.v[Y] * 255) & 0xFF) << 8;
+	col |= ((t_color)(color.v[Z] * 255) & 0xFF) << 16;
+	img_puti(img, x, y, col);
 }
 

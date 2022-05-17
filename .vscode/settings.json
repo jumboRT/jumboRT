@@ -16,7 +16,15 @@
 		"mt.h": "c",
 		"string.h": "c",
 		"__locale": "cpp",
-		"locale": "cpp"
+		"locale": "cpp",
+		"scene.h": "c",
+		"__hash_table": "c",
+		"__string": "c",
+		"gfx.h": "c",
+		"rt.h": "c",
+		"stdlib.h": "c",
+		"unistd.h": "c",
+		"ratio": "c"
 	},
 	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }

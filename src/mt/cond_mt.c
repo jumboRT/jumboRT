@@ -1,4 +1,5 @@
 #include "mt.h"
+#include "util.h"
 
 #ifdef RT_MT
 
@@ -20,14 +21,13 @@ void
 	rt_assert(!ret, "cond destroy failed");
 }
 
-int
+void
 	cond_wait(t_cond *cnd, t_mutex *mtx)
 {
 	int	ret;
 
 	ret = pthread_cond_wait(cnd, mtx);
 	rt_assert(!ret, "cond wait failed");
-	return (0);
 }
 
 void

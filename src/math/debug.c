@@ -2,10 +2,16 @@
 
 #include <ft_printf.h>
 #include <unistd.h>
+#include <math.h>
 
 static void
 	dbg_float(FLOAT a)
 {
+	if (a < 0)
+		ft_fprintf(STDERR_FILENO, "-");
+	else
+		ft_fprintf(STDERR_FILENO, " ");
+	a = fabs(a);
 	ft_fprintf(STDERR_FILENO, "%d.%03d", (int) a, (int)(a * 1000) % 1000);
 }
 

@@ -2,18 +2,22 @@ NAME					:= miniRT
 
 MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c
 GFX_FILES				:= win.c img.c draw.c
-BASE_FILES				:= main.c util.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
+SCENE_FILES				:= sphere.c
+BASE_FILES				:= main.c util.c
+PARSER_FILES			:= common.c light.c parser.c
 
 FILE_NAMES				:= \
 	$(patsubst %,math/%,$(MATH_FILES)) \
 	$(patsubst %,gfx/%,$(GFX_FILES)) \
 	$(patsubst %,mt/%,$(MT_FILES)) \
+	$(patsubst %,scene/%,$(SCENE_FILES)) \
+	$(patsubst %,parser/%,$(PARSER_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -pedantic
+CFLAGS					:= -Wall -Wextra -pedantic -DRT_MT
 LFLAGS					:= -Wall -Wextra
 
 SRC_DIR					:= src
@@ -119,6 +123,8 @@ $(MLX_LIB):
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
 	$(SILENT)rm -rf build
+	$(SILENT)make -C $(LIBFT_DIR) clean
+	$(SILENT)make -C $(FT_PRINTF_DIR) clean
 
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n

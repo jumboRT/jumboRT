@@ -18,7 +18,8 @@
 enum e_sink_type
 {
 	sink_type_str,
-	sink_type_fd
+	sink_type_fd,
+	sink_type_astr
 };
 
 typedef struct s_flags		t_flags;
@@ -60,5 +61,7 @@ int	ft_fprintf(int fd, const char *fmt, ...);
 int	ft_vfprintf(int fd, const char *fmt, va_list *vlist);
 int	ft_sprintf(char *buffer, const char *fmt, ...);
 int	ft_vsprintf(char *buffer, const char *fmt, va_list *vlist);
+int	ft_asprintf(char **buffer, const char *fmt, ...);
+int	ft_vasprintf(char **buffer, const char *fmt, va_list *vlist);
 
 #endif
