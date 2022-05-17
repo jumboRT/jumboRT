@@ -8,21 +8,19 @@
 typedef struct s_entity_vt			t_entity_vt;
 typedef struct s_entity				t_entity;
 typedef struct s_object				t_object;
-typedef	struct s_ambient_lighting	t_ambient_lighting;
-typedef	struct s_camera				t_camera;
-typedef	struct s_light				t_light;
-typedef	struct s_sphere				t_sphere;
-typedef	struct s_plane				t_plane;
-typedef	struct s_cylinder			t_cylinder;
-typedef	struct s_cone				t_cone;
-typedef	struct s_hyperboloid		t_hyperboloid;
-typedef	struct s_paraboloid			t_paraboloid;
-typedef union u_any_entity			t_any_entity;
+typedef struct s_ambient_lighting	t_ambient_lighting;
+typedef struct s_camera				t_camera;
+typedef struct s_light				t_light;
+typedef struct s_sphere				t_sphere;
+typedef struct s_plane				t_plane;
+typedef struct s_cylinder			t_cylinder;
+typedef struct s_cone				t_cone;
+typedef struct s_hyperboloid		t_hyperboloid;
+typedef struct s_paraboloid			t_paraboloid;
 
-typedef	struct s_material_vt		t_material_vt;
-typedef	struct s_material			t_material;
-typedef	struct s_basic_material		t_basic_material;
-typedef union u_any_material		t_any_material;
+typedef struct s_material_vt		t_material_vt;
+typedef struct s_material			t_material;
+typedef struct s_basic_material		t_basic_material;
 
 typedef struct s_hit				t_hit;
 typedef struct s_props				t_props;
@@ -48,11 +46,6 @@ struct s_basic_material {
 	t_vec		color;
 };
 
-union u_any_material {
-	t_material			material;
-	t_basic_material	basic_material;
-};
-
 struct s_hit {
 	t_vec	pos;
 	t_vec	normal;
@@ -70,7 +63,7 @@ struct s_entity {
 struct s_object {
 	t_entity		base;	
 	t_vec			pos;
-	t_any_material	mat;
+	t_material		*mat;
 };
 
 struct s_ambient_lighting {
@@ -124,21 +117,8 @@ struct s_paraboloid {
 	t_object	base;
 };
 
-union u_any_entity {
-	t_entity			entity;
-	t_ambient_lighting	ambient_lighting;
-	t_camera			camera;
-	t_light				light;
-	t_sphere			sphere;
-	t_plane				plane;
-	t_cylinder			cylinder;
-	t_cone				cone;
-	t_hyperboloid		hyperboloid;
-	t_paraboloid		paraboloid;
-};
-
 struct s_scene {
-	t_any_entity		*entities;
+	t_entity			**entities;
 	size_t				count;
 	t_camera			*camera;
 	t_ambient_lighting	*ambient_lighting;
