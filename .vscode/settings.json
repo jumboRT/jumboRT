@@ -13,6 +13,10 @@
 		"vector": "c",
 		"atomic": "cpp",
 		"util.h": "c",
-		"mt.h": "c"
-	}
+		"mt.h": "c",
+		"string.h": "c",
+		"__locale": "cpp",
+		"locale": "cpp"
+	},
+	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }

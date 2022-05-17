@@ -40,7 +40,7 @@ void
 	if (ptr)
 	{
 		ft_memcpy(ret, ptr, size);
-		free(ptr);
+		rt_free(ptr);
 	}
 	return (ret);
 }
