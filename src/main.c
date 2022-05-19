@@ -16,47 +16,6 @@ static int
 	return (0);
 }
 
-static int
-	trace_hit(t_scene *scene, t_ray ray, t_hit *hit)
-{
-	size_t		i;
-	t_entity	*ent;
-	t_hit		tmp;
-	int			did_hit;
-
-	i = 0;
-	did_hit = 0;
-	while (i < scene->count)
-	{
-		ent = scene->entities[i];
-		if (ent->vt != NULL && ent->vt->hit(ent, ray, &tmp))
-		{
-			if (!did_hit)
-			{
-				*hit = tmp;
-				did_hit = 1;
-			}
-			else if (tmp.t < hit->t)
-				*hit = tmp;
-		}
-		i += 1;
-	}
-	return (did_hit);
-}
-
-/* TODO: fix the hacky projection */
-t_vec
-	trace_pixel(t_rt_state *state, int x, int y)
-{
-	t_ray	ray;
-	t_hit	hit;
-
-	ray = projection_ray(state, x, y);
-	if (trace_hit(&state->scene, ray, &hit))
-		return (vec_scale(vec_add(hit.normal, vec(1.0, 1.0, 1.0, 0)), 0.5));
-	return (vec(0, 0, 0, 0));
-}
-
 static void
 	setup_events(t_rt_state *state)
 {

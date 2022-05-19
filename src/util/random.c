@@ -1,6 +1,9 @@
+#include "rtmath.h"
 #include "util.h"
 
+#include <math.h>
 #include <stddef.h>
+#include <limits.h>
 
 unsigned long
 	rt_random(void)
@@ -11,6 +14,18 @@ unsigned long
 	state ^= state >> 25;
 	state ^= state << 27;
 	return (state * 0x2545F4914F6CDD1DULL);
+}
+
+FLOAT
+	rt_random_float(void)
+{
+	return (rt_random() / (FLOAT) ULONG_MAX);
+}
+
+FLOAT
+	rt_random_float_range(FLOAT min, FLOAT max)
+{
+	return (min + (max - min) * (rt_random_float()));
 }
 
 void
@@ -35,4 +50,17 @@ void
 		dst[j] = tmp;
 		i += 1;
 	}
+}
+
+
+t_vec
+	rt_random_unit_vector(t_vec normal)
+{
+	t_vec	vec;
+
+	vec.v[W] = 0.0;
+	vec.v[X] = rt_random_float();
+	vec.v[Y] = rt_random_float();
+	vec.v[Z] = rt_random_float();
+	return (vec);
 }

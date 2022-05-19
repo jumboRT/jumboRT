@@ -11,7 +11,7 @@ void
 	while (i < end - begin)
 	{
 		j = state->order[begin + i];
-		dst[i] = trace_pixel(state,
+		dst[i] = trace(state,
 				j % state->img.width, j / state->img.width);
 		i += 1;
 	}

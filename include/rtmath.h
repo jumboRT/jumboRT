@@ -49,6 +49,7 @@ t_vec	vec_norm(t_vec a);
 
 t_vec	vec_hnorm(t_vec a);
 t_vec	vec_mul(t_vec a, t_mat b);
+t_vec	vec_colormul(t_vec a, t_vec b);
 t_mat	mat_mul(t_mat a, t_mat b);
 
 void	dbg_vec(t_vec a);

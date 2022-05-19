@@ -10,7 +10,9 @@ const t_entity_vt
 
 	return (&vt);
 }
+
 /* http://lousodrome.net/blog/light/2020/07/03/intersection-of-a-ray-and-a-plane/ */
+/* http://wscg.zcu.cz/wscg2002/Papers_2002/A83.pdf */
 int
 	plane_hit(t_entity *ent, t_ray ray, t_hit *hit)
 {
@@ -28,5 +30,6 @@ int
 		return (0);
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	hit->normal = plane->dir;
+	hit->color = plane->color;
 	return (1);
 }

@@ -20,6 +20,7 @@ typedef struct s_scene			t_scene;
 struct s_hit {
 	t_vec	pos;
 	t_vec	normal;
+	t_vec	color;
 	FLOAT	t;
 };
 

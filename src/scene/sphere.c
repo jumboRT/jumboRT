@@ -37,5 +37,6 @@ int
 	hit->t = root;
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	hit->normal = vec_scale(vec_sub(hit->pos, sphere->pos), 2 / sphere->diameter);
+	hit->color = sphere->color;
 	return (1);
 }

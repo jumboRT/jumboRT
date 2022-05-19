@@ -15,6 +15,20 @@
 #  define RT_RENDER_CHUNK_SIZE 16
 # endif
 
+# ifndef RT_SAMPLES
+#  define RT_SAMPLES 16
+# endif
+
+# ifndef RT_MAX_DEPTH
+#  define RT_MAX_DEPTH 8
+# endif
+
+# ifndef RT_RAY_LENGTH
+#  define RT_RAY_LENGTH 1000000.0
+# endif
+
+# define RT_PI 3.14159
+
 # include "rtmath.h"
 # include "mt.h"
 # include "gfx.h"
@@ -37,8 +51,8 @@ struct s_rt_state {
 	long		version;
 };
 
-t_vec	trace_pixel(t_rt_state *state, int x, int y);
-t_ray	projection_ray(t_rt_state *state, int x, int y);
+t_vec	trace(t_rt_state *state, int x, int y);
+t_ray	projection_ray(t_rt_state *state, FLOAT x, FLOAT y);
 
 void	thread_reset(t_rt_state *state);
 void	thread_start(t_rt_state *state);

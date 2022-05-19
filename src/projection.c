@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 t_ray
-	projection_ray(t_rt_state *state, int x, int y)
+	projection_ray(t_rt_state *state, FLOAT x, FLOAT y)
 {
 	t_camera	*camera;
 	FLOAT		yaw;
@@ -15,10 +15,10 @@ t_ray
 	yaw = atan2(camera->dir.v[Y], camera->dir.v[X]);
 	pitch = atan2(camera->dir.v[Z], camera->dir.v[X]
 			* sin(yaw) + camera->dir.v[Y] * cos(yaw));
-	yaw += ((FLOAT) x / state->img.width - 0.5)
-		* camera->fov / 180 * 3.14159;
-	pitch += -((FLOAT) y / state->img.height - 0.5)
-		* camera->fov / 180 * 3.14159
+	yaw += (x / state->img.width - 0.5)
+		* camera->fov / 180 * RT_PI;
+	pitch += -(y / state->img.height - 0.5)
+		* camera->fov / 180 * RT_PI
 		/ state->img.width * state->img.height;
 	ray.pos = camera->pos;
 	ray.dir = vec(cos(pitch) * cos(yaw), cos(pitch) * sin(yaw), sin(pitch), 0);

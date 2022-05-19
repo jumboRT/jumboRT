@@ -53,9 +53,8 @@ void
 	t_color	col;
 
 	col = 0;
-	col |= ((t_color)(color.v[X] * 255) & 0xFF) << 0;
+	col |= ((t_color)(color.v[X] * 255) & 0xFF) << 16;
 	col |= ((t_color)(color.v[Y] * 255) & 0xFF) << 8;
-	col |= ((t_color)(color.v[Z] * 255) & 0xFF) << 16;
+	col |= ((t_color)(color.v[Z] * 255) & 0xFF) << 0;
 	img_puti(img, x, y, col);
 }
-

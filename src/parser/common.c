@@ -83,7 +83,7 @@ static const char
 	}
 	*dst = 0.0;
 	if (val > 0)
-		*dst = (255.0 / (FLOAT) val);
+		*dst = (val / 255.0);
 	return (line);
 }
 
