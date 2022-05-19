@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 char
@@ -27,7 +27,7 @@ char
 		idx = len;
 	if (idx + max >= len)
 		max = len - idx;
-	res = sh_safe_malloc(max + 1);
+	res = rt_malloc(max + 1);
 	if (res == NULL)
 		return (NULL);
 	ft_memcpy(res, str + idx, max);

@@ -1,43 +1,31 @@
 #include "parser.h"
 
 #include "util.h"
+#include <libft.h>
 
 t_entity
-	*rt_ambient_light(const char *line, char **error)
+	*rt_ambient_light(const char **line, char **error)
 {
-	FLOAT				ratio;
-	t_vec				color;
-	t_ambient_lighting	*light;
+	t_ambient_light	light;
 
-	if (!rt_float(line, error, &ratio))
+	*line = rt_float(*line, error, &light.ratio);
+	*line = rt_color(*line, error, &light.color);
+	if (*line == NULL)
 		return (NULL);
-	if (!rt_color(line, error, &ratio))
-		return (NULL);
-	if (!rt_end(line, error))
-		return (NULL);
-	light = rt_malloc(sizeof(*light));
-	light->ratio = ratio;
-	light->color = color;
-	return (light);
+	light.base.vt = ambient_light_vt();
+	return (rt_memdup(&light, sizeof(light)));
 }
 
 t_entity
-	*rt_light(const char *line, char **error)
+	*rt_light(const char **line, char **error)
 {
-	t_vec	pos;
-	t_vec	color;
-	FLOAT	brightness;
-	t_light	*light;
+	t_light	light;
 
-	if (!rt_pos(line, error, &pos))
+	*line = rt_pos(*line, error, &light.pos);
+	*line = rt_float(*line, error, &light.brightness);
+	*line = rt_color(*line, error, &light.color);
+	if (line == NULL)
 		return (NULL);
-	if (!rt_float(line, error, &brightness))
-		return (NULL);
-	if (!rt_color(line, error, &color))
-		return (NULL);
-	light = rt_malloc(sizeof(*light));
-	light->pos = pos;
-	light->color = color;
-	light->brightness = brightness;
-	return ((t_entity *) light);
+	light.base.vt = light_vt();
+	return (rt_memdup(&light, sizeof(light)));
 }

@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-#include "../../include/memory.h"
+#include "../../include/util.h"
 
 char
 	*ft_strndup(const char *s1, size_t n)
@@ -29,7 +29,7 @@ char
 		cpy++;
 		n--;
 	}
-	dup = sh_safe_malloc(len + 1);
+	dup = rt_malloc(len + 1);
 	if (dup == NULL)
 		return (NULL);
 	ft_memcpy(dup, s1, len);

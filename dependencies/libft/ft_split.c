@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 static size_t
@@ -54,7 +54,7 @@ char
 	if (FT_SAFE >= 1 && str == NULL)
 		return (NULL);
 	count1 = split(str, ch, NULL);
-	res = sh_safe_malloc(sizeof(*res) * (count1 + 1));
+	res = rt_malloc(sizeof(*res) * (count1 + 1));
 	if (res == NULL)
 		return (NULL);
 	count2 = split(str, ch, res);

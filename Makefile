@@ -1,13 +1,15 @@
 NAME					:= miniRT
 
 MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c
-GFX_FILES				:= win.c img.c draw.c
+GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
-SCENE_FILES				:= sphere.c
-BASE_FILES				:= main.c util.c
-PARSER_FILES			:= common.c light.c parser.c
+SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c
+BASE_FILES				:= main.c events.c threads.c render_util.c
+PARSER_FILES			:= common.c light.c parser.c camera.c object.c
+UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
 
 FILE_NAMES				:= \
+	$(patsubst %,util/%,$(UTIL_FILES)) \
 	$(patsubst %,math/%,$(MATH_FILES)) \
 	$(patsubst %,gfx/%,$(GFX_FILES)) \
 	$(patsubst %,mt/%,$(MT_FILES)) \
@@ -88,8 +90,8 @@ else ifeq ($(config), release)
 	CFLAGS		+= -g3 -O2
 	LFLAGS		+=
 else ifeq ($(config), distr)
-	CFLAGS		+= -Werror -g0 -Ofast -flto
-	LFLAGS		+= -Werror -g0 -Ofast -flto
+	CFLAGS		+= -g0 -Ofast -flto
+	LFLAGS		+= -g0 -Ofast -flto
 else
 $(error "invalid config $(config"))
 endif
@@ -123,8 +125,8 @@ $(MLX_LIB):
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
 	$(SILENT)rm -rf build
-	$(SILENT)make -C $(LIBFT_DIR) clean
-	$(SILENT)make -C $(FT_PRINTF_DIR) clean
+	$(SILENT)${MAKE} -C $(LIBFT_DIR) fclean
+	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) fclean
 
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n

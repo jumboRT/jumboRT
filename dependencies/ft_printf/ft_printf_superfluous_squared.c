@@ -12,6 +12,8 @@
 
 #include "ft_printf.h"
 
+void	*rt_malloc(size_t size);
+
 int
 	ft_asprintf(char **buffer, const char *fmt, ...)
 {
@@ -21,7 +23,10 @@ int
 
 	va_start(args, fmt);
 	sink.type = sink_type_astr;
-	sink.str = NULL;
+	sink.str = rt_malloc(1);
+	*sink.str = '\0';
+	sink.size = 0;
+	sink.capacity = 0;
 	size = ft_printf_vxprintf(&sink, fmt, &args);
 	va_end(args);
 	*buffer = sink.str;
@@ -35,7 +40,10 @@ int
 	int		size;
 
 	sink.type = sink_type_astr;
-	sink.str = NULL;
+	sink.str = rt_malloc(1);
+	*sink.str = '\0';
+	sink.size = 0;
+	sink.capacity = 0;
 	size = ft_printf_vxprintf(&sink, fmt, vlist);
 	*buffer = sink.str;
 	return (size);

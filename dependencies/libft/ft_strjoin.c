@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 char
@@ -25,7 +25,7 @@ char
 		return (NULL);
 	len1 = ft_strlen(str1);
 	len2 = ft_strlen(str2);
-	res = sh_safe_malloc(len1 + len2 + 1);
+	res = rt_malloc(len1 + len2 + 1);
 	if (res == NULL)
 		return (NULL);
 	ft_memcpy(res, str1, len1);

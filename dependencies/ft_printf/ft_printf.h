@@ -42,6 +42,8 @@ struct s_sink
 {
 	t_sink_type	type;
 	char		*str;
+	size_t		size;
+	size_t		capacity;
 	int			fd;
 };
 

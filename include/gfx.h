@@ -15,6 +15,8 @@ typedef int				(*t_loop_proc)(void *ctx);
 # define COLOR_BLUE		0x000000ff
 # define COLOR_GREEN	0x0000ff00
 
+# define RT_WIN_EVENT_CLOSE	17
+
 struct s_img {
 	t_color	*data;
 	int		width;
@@ -35,6 +37,9 @@ int		win_create(t_win *win, t_loop_proc proc, int width, int height);
 int		win_destroy(t_win *win);
 void	win_start(t_win *win);
 void	win_put(t_win *win, t_img *img);
+void	win_mouse_hook(t_win *win, int (*proc)(void*), void *ctx);
+void	win_key_hook(t_win *win, int (*proc)(void*), void *ctx);
+void	win_event_hook(t_win *win, int event, int (*proc)(void*), void *ctx);
 
 void	win_render(t_win *win, t_img *img);
 

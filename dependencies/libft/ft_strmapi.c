@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 char
@@ -22,7 +22,7 @@ char
 
 	if (FT_SAFE >= 1 && str == NULL)
 		return (NULL);
-	res = sh_safe_malloc(ft_strlen(str) + 1);
+	res = rt_malloc(ft_strlen(str) + 1);
 	if (res == NULL)
 		return (NULL);
 	i = 0;

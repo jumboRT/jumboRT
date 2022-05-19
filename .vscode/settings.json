@@ -24,7 +24,15 @@
 		"rt.h": "c",
 		"stdlib.h": "c",
 		"unistd.h": "c",
-		"ratio": "c"
+		"ratio": "c",
+		"libft.h": "c",
+		"stddef.h": "c",
+		"parser.h": "c",
+		"__split_buffer": "c",
+		"bitset": "c",
+		"initializer_list": "c",
+		"unordered_map": "c",
+		"utility": "c"
 	},
 	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }

@@ -2,6 +2,7 @@
 
 #include "rtmath.h"
 #include <stdlib.h>
+#include <math.h>
 
 static FLOAT
 	rt_magnitude(const char **str)

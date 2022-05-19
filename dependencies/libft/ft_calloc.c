@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 void
@@ -19,7 +19,7 @@ void
 {
 	void	*ptr;
 
-	ptr = sh_safe_malloc(count * size);
+	ptr = rt_malloc(count * size);
 	if (ptr == NULL)
 		return (NULL);
 	ft_bzero(ptr, count * size);

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "../../include/memory.h"
+#include "../../include/util.h"
 #include <stdlib.h>
 
 t_list
@@ -19,7 +19,7 @@ t_list
 {
 	t_list	*lst;
 
-	lst = sh_safe_malloc(sizeof(*lst));
+	lst = rt_malloc(sizeof(*lst));
 	if (lst == NULL)
 		return (NULL);
 	lst->content = content;

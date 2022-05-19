@@ -13,6 +13,9 @@
 #include "ft_printf.h"
 #include <unistd.h>
 
+void	*rt_realloc(void *ptr, size_t old_size, size_t new_size);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+
 int
 	ft_printf_strlen(const char *str)
 {
@@ -24,31 +27,40 @@ int
 	return (i);
 }
 
+void
+	ft_printf_reserve(t_sink *sink, size_t size)
+{
+	if (size > sink->capacity)
+	{
+		if (size > sink->size * 2)
+			sink->capacity = size;
+		else
+			sink->capacity = sink->size * 2;
+		sink->str = rt_realloc(sink->str, sink->size + 1, sink->capacity + 1);
+	}
+}
+
 int
 	ft_printf_write(t_sink *sink, const char *str, int size)
 {
-	int	i;
-
 	if (sink->type == sink_type_fd)
 		return (write(sink->fd, str, size));
 	else if (sink->type == sink_type_str)
 	{
 		if (sink->str != NULL)
 		{
-			i = 0;
-			while (i < size)
-			{
-				*sink->str = str[i];
-				sink->str += 1;
-				i += 1;
-			}
+			ft_memcpy(sink->str, str, size);
+			sink->str += size;
 			*sink->str = '\0';
 		}
 		return (size);
 	}
 	else if (sink->type == sink_type_astr)
 	{
-		/* TODO */
+		ft_printf_reserve(sink, sink->size + size);
+		ft_memcpy(sink->str + sink->size, str, size);
+		sink->size += size;
+		sink->str[sink->size] = '\0';
 		return (size);
 	}
 	return (-1);
