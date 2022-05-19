@@ -57,6 +57,8 @@ const char
 			(int) rt_wordlen(beg), beg);
 		return (NULL);
 	}
+	if (*line == '-' || *line == '+')
+		line += 1;
 	line = rt_skip(line, ft_isdigit);
 	if (*line == '.')
 		line += 1;
@@ -99,7 +101,7 @@ const char
 	line = rt_color_part(line, error, &dst->v[Z]);
 	if (line == NULL)
 		return (NULL);
-	return (rt_skip(line, ft_isspace));
+	return (line);
 }
 
 const char

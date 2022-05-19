@@ -12,7 +12,7 @@
 # endif
 
 # ifndef RT_RENDER_CHUNK_SIZE
-#  define RT_RENDER_CHUNK_SIZE 1
+#  define RT_RENDER_CHUNK_SIZE 16
 # endif
 
 # include "rtmath.h"
@@ -38,13 +38,16 @@ struct s_rt_state {
 };
 
 t_vec	trace_pixel(t_rt_state *state, int x, int y);
+t_ray	projection_ray(t_rt_state *state, int x, int y);
 
+void	thread_reset(t_rt_state *state);
 void	thread_start(t_rt_state *state);
 void	thread_stop(t_rt_state *state);
 
 void	render_range(t_rt_state *state, t_vec *dst, size_t begin, size_t end);
 void	render_draw(t_rt_state *state, t_vec *dst, size_t begin, size_t end);
 
-int	rt_exit(void *ctx);
+int		rt_exit(void *ctx);
+int		rt_key_down(int key, void *ctx);
 
 #endif

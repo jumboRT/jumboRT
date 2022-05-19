@@ -19,7 +19,7 @@ void
 	size_t	i;
 	size_t	j;
 	size_t	tmp;
-	
+
 	i = 0;
 	while (i < n)
 	{

@@ -3,6 +3,7 @@
 #include <libft.h>
 #include <mlx.h>
 
+/* TODO: fix undefined behaviour in pointer cast */
 void
 	win_put(t_win *win, t_img *img)
 {

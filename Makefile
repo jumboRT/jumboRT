@@ -1,10 +1,10 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c
 GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
 SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c
-BASE_FILES				:= main.c events.c threads.c render_util.c
+BASE_FILES				:= main.c events.c threads.c render_util.c projection.c
 PARSER_FILES			:= common.c light.c parser.c camera.c object.c
 UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
 
@@ -77,7 +77,7 @@ ifndef san
 endif 
 
 ifeq ($(config), debug)
-	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -O0 -DSH_BACKTRACE
+	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -Og -DSH_BACKTRACE
 	LFLAGS		+= -DSH_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined

@@ -15,7 +15,7 @@ void
 }
 
 void
-	win_event_hook(t_win *win, int event, int (*proc)(void*), void *ctx)
+	win_event_hook(t_win *win, int event, int (*proc)(), void *ctx)
 {
 	mlx_hook(win->handle, event, 0, proc, ctx);
 }

@@ -5,17 +5,17 @@
 # include "rtmath.h"
 # include <stddef.h>
 
-typedef struct s_entity_vt			t_entity_vt;
-typedef struct s_entity				t_entity;
+typedef struct s_entity_vt		t_entity_vt;
+typedef struct s_entity			t_entity;
 typedef struct s_ambient_light	t_ambient_light;
-typedef struct s_camera				t_camera;
-typedef struct s_light				t_light;
-typedef struct s_sphere				t_sphere;
-typedef struct s_plane				t_plane;
-typedef struct s_cylinder			t_cylinder;
+typedef struct s_camera			t_camera;
+typedef struct s_light			t_light;
+typedef struct s_sphere			t_sphere;
+typedef struct s_plane			t_plane;
+typedef struct s_cylinder		t_cylinder;
 
-typedef struct s_hit				t_hit;
-typedef struct s_scene				t_scene;
+typedef struct s_hit			t_hit;
+typedef struct s_scene			t_scene;
 
 struct s_hit {
 	t_vec	pos;
@@ -89,5 +89,7 @@ const t_entity_vt	*sphere_vt(void);
 const t_entity_vt	*plane_vt(void);
 const t_entity_vt	*cylinder_vt(void);
 int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit);
+int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit);
+int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit);
 
 #endif

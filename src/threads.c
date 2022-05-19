@@ -36,11 +36,30 @@ static void
 		thread_render(state);
 		if (RT_ONESHOT)
 			state->running = 0;
-		else
+		else if (state->running)
 			cond_wait(&state->cnd, &state->mtx);
 	}
 	mutex_unlock(&state->mtx);
 	return (NULL);
+}
+
+void
+	thread_reset(t_rt_state *state)
+{
+	size_t	i;
+
+	mutex_lock(&state->mtx);
+	state->idx = 0;
+	state->version += 1;
+	i = 0;
+	while (i < state->size)
+	{
+		img_putf(&state->img,
+			i % state->img.width, i / state->img.width, vec(0, 0, 0, 0));
+		i += 1;
+	}
+	cond_broadcast(&state->cnd);
+	mutex_unlock(&state->mtx);
 }
 
 void

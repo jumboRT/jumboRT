@@ -22,6 +22,7 @@ struct s_mat {
 	t_vec	rows[4];
 };
 
+/* TODO rename pos to org (origin) */
 struct s_ray {
 	t_vec	pos;
 	t_vec	dir;
@@ -52,5 +53,7 @@ t_mat	mat_mul(t_mat a, t_mat b);
 
 void	dbg_vec(t_vec a);
 void	dbg_mat(t_mat a);
+
+int		float_eq(FLOAT a, FLOAT b, FLOAT error);
 
 #endif

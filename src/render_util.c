@@ -12,7 +12,7 @@ void
 	{
 		j = state->order[begin + i];
 		dst[i] = trace_pixel(state,
-			j % state->img.width, j / state->img.width);
+				j % state->img.width, j / state->img.width);
 		i += 1;
 	}
 }

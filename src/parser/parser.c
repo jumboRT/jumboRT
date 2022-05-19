@@ -39,8 +39,8 @@ void
 	rt_scene_add(t_scene *scene, t_entity *entity)
 {
 	scene->entities = rt_realloc(scene->entities,
-		(scene->count + 0) * sizeof(*scene->entities),
-		(scene->count + 1) * sizeof(*scene->entities));
+			(scene->count + 0) * sizeof(*scene->entities),
+			(scene->count + 1) * sizeof(*scene->entities));
 	scene->entities[scene->count++] = entity;
 }
 
