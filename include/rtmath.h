@@ -10,6 +10,9 @@
 # define Z 2
 # define W 3
 
+# define RT_PI 3.14159
+# define RT_2PI (RT_PI * 2)
+
 typedef struct s_vec	t_vec;
 typedef struct s_mat	t_mat;
 typedef struct s_ray	t_ray;
@@ -46,6 +49,7 @@ t_vec	vec_add(t_vec a, t_vec b);
 t_vec	vec_sub(t_vec a, t_vec b);
 t_vec	vec_neg(t_vec a);
 t_vec	vec_norm(t_vec a);
+t_vec   vec_rotate(t_vec axis, t_vec v, FLOAT angle);
 
 t_vec	vec_hnorm(t_vec a);
 t_vec	vec_mul(t_vec a, t_mat b);

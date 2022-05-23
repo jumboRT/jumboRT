@@ -17,5 +17,8 @@ void
 void
 	win_event_hook(t_win *win, int event, int (*proc)(), void *ctx)
 {
-	mlx_hook(win->handle, event, 0, proc, ctx);
+    if (event == RT_WIN_EVENT_KEY_DOWN)
+    	mlx_hook(win->handle, event, RT_WIN_EVENT_KEY_MASK, proc, ctx);
+    else
+        mlx_hook(win->handle, event, 0, proc, ctx);
 }

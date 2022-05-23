@@ -8,6 +8,14 @@ BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c
 PARSER_FILES			:= common.c light.c parser.c camera.c object.c
 UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
 
+ifndef platform
+	ifeq ($(shell uname -s),Linux)
+		platform = linux
+	else
+		platform = macos
+	endif
+endif
+
 FILE_NAMES				:= \
 	$(patsubst %,util/%,$(UTIL_FILES)) \
 	$(patsubst %,math/%,$(MATH_FILES)) \
@@ -19,7 +27,7 @@ FILE_NAMES				:= \
 
 CC						:= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -pedantic -DRT_MT
+CFLAGS					:= -Wall -Wextra -pedantic 
 LFLAGS					:= -Wall -Wextra
 
 SRC_DIR					:= src
@@ -31,7 +39,11 @@ LIBFT_DIR				:= $(LIB_DIR)/libft
 LIBFT_LIB				:= $(LIBFT_DIR)/libft.a
 FT_PRINTF_DIR			:= $(LIB_DIR)/ft_printf
 FT_PRINTF_LIB			:= $(FT_PRINTF_DIR)/libftprintf.a
-MLX_DIR					:= $(LIB_DIR)/minilibx_macos
+ifeq ($(platform), macos)
+	MLX_DIR				:= $(LIB_DIR)/minilibx_macos
+else
+	MLX_DIR				:= $(LIB_DIR)/minilibx_linux
+endif
 MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
@@ -76,8 +88,12 @@ ifndef san
 	san := address
 endif 
 
+ifdef thread
+	CFLAGS		+= -DRT_MT
+endif
+
 ifeq ($(config), debug)
-	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -Og -DSH_BACKTRACE
+	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -O0 -DSH_BACKTRACE
 	LFLAGS		+= -DSH_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
@@ -104,9 +120,16 @@ ifndef verbose
 	SILENT		:= @
 endif
 
+ifeq ($(platform), macos)
+	FRAMEWORKS	:= -framework OpenGL -framework AppKit
+else
+	FRAMEWORKS	:= -lX11 -lXext
+	CFLAGS		+= -DRT_LINUX
+endif
+
 $(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
-	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) -framework OpenGL -framework AppKit $(LFLAGS)
+	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(SILENT)mkdir -p $(@D)

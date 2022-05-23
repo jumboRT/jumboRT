@@ -27,8 +27,6 @@
 #  define RT_RAY_LENGTH 1000000.0
 # endif
 
-# define RT_PI 3.14159
-
 # include "rtmath.h"
 # include "mt.h"
 # include "gfx.h"

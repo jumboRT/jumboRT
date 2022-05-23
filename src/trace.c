@@ -43,7 +43,7 @@ static t_vec
 	if (trace_hit(scene, ray, &hit))
 	{
 		new_ray.pos = hit.pos;
-		new_ray.dir = vec_norm(vec_add(hit.normal, rt_random_unit_vector(hit.normal)));
+		new_ray.dir = rt_random_hvec(hit.normal);
 		p = 1.0 / (2 * RT_PI);
 		cos_theta = vec_dot(new_ray.dir, hit.normal);
 		BRDF = vec(0.5, 0.5, 0.5, 1.0);

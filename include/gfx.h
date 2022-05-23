@@ -15,8 +15,16 @@ typedef int				(*t_loop_proc)(void *ctx);
 # define COLOR_BLUE		0x000000ff
 # define COLOR_GREEN	0x0000ff00
 
-# define RT_WIN_EVENT_KEY_DOWN 2
-# define RT_WIN_EVENT_CLOSE	17
+# ifdef RT_LINUX
+#  include <X11/Xlib.h>
+#  define RT_WIN_EVENT_KEY_DOWN KeyPress
+#  define RT_WIN_EVENT_KEY_MASK KeyPressMask
+#  define RT_WIN_EVENT_CLOSE 17
+# else
+#  define RT_WIN_EVENT_KEY_DOWN 2
+#  define RT_WIN_EVENT_KEY_MASK 0
+#  define RT_WIN_EVENT_CLOSE 17
+# endif
 
 struct s_img {
 	t_color	*data;
