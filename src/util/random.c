@@ -75,7 +75,7 @@ t_vec
     bef = out;
     out = vec_rotate(axis, out, acos(dir.v[Z]));
     if (out.v[X] != out.v[X] || out.v[Y] != out.v[Y] || out.v[Z] != out.v[Z]) {
-        fprintf(stderr, "dir: %f %f %f before: %f %f %f after: %f %f %f\n", dir.v[X], dir.v[Y], f, bef.v[X], bef.v[Y], bef.v[Z], out.v[X], out.v[Y], out.v[Z]);
+        fprintf(stderr, "dir: %f %f %f theta0:%f theta1:%f before: %f %f %f after: %f %f %f\n", dir.v[X], dir.v[Y], dir.v[Z], theta0, theta1, bef.v[X], bef.v[Y], bef.v[Z], out.v[X], out.v[Y], out.v[Z]);
     }
     return (out);
 }
