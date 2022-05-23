@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <limits.h>
 
+/* TODO: not thread safe but used from multiple threads */
 unsigned long
 	rt_random(void)
 {
@@ -51,7 +52,6 @@ void
 		i += 1;
 	}
 }
-
 
 t_vec
 	rt_random_unit_vector(t_vec normal)

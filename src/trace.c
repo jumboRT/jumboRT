@@ -97,7 +97,7 @@ t_vec
 	{
 		ray = projection_ray(state,
 				x + rt_random_float() - 0.5, y + rt_random_float() - 0.5);
-		color = vec_add(color, trace_ray(&state->scene, ray, RT_MAX_DEPTH));
+		color = vec_add(color, trace_ray_diffuse(&state->scene, ray, RT_MAX_DEPTH));
 		i += 1;
 	}
 	return (vec_scale(color, 1.0 / RT_SAMPLES));
