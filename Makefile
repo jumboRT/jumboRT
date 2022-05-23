@@ -88,7 +88,7 @@ ifndef san
 	san := address
 endif 
 
-ifdef thread
+ifndef nothread
 	CFLAGS		+= -DRT_MT
 endif
 
@@ -123,7 +123,7 @@ endif
 ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit
 else
-	FRAMEWORKS	:= -lX11 -lXext
+	FRAMEWORKS	:= -lX11 -lXext -lm
 	CFLAGS		+= -DRT_LINUX
 endif
 

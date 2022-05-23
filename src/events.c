@@ -14,9 +14,9 @@ int
 	rt_key_down(int key, void *ctx)
 {
 	ft_printf("key %d\n", key);
-	if (key == 53 || key == 12)
+	if (key == RT_KEY_ESC || key == RT_KEY_Q)
 		rt_exit(ctx);
-	if (key == 15)
+	if (key == RT_KEY_R)
 		thread_reset(ctx);
 	return (0);
 }

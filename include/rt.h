@@ -7,7 +7,7 @@
 # else
 #  define RT_ONESHOT 0
 #  ifndef RT_THREADS
-#   define RT_THREADS 8
+#   define RT_THREADS 12
 #  endif
 # endif
 
@@ -16,7 +16,7 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 16
+#  define RT_SAMPLES 160
 # endif
 
 # ifndef RT_MAX_DEPTH
@@ -49,14 +49,14 @@ struct s_rt_state {
 	long		version;
 };
 
-t_vec	trace(t_rt_state *state, int x, int y);
+t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);
 t_ray	projection_ray(t_rt_state *state, FLOAT x, FLOAT y);
 
 void	thread_reset(t_rt_state *state);
 void	thread_start(t_rt_state *state);
 void	thread_stop(t_rt_state *state);
 
-void	render_range(t_rt_state *state, t_vec *dst, size_t begin, size_t end);
+void	render_range(t_thread_ctx *ctx, t_rt_state *state, t_vec *dst, size_t begin, size_t end);
 void	render_draw(t_rt_state *state, t_vec *dst, size_t begin, size_t end);
 
 int		rt_exit(void *ctx);

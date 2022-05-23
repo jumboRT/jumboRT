@@ -21,6 +21,7 @@ const char
 	return (line);
 }
 
+/* TODO: empty string is incorrectly parsed as 0 */
 const char
 	*rt_uint(const char *line, char **error, unsigned int *dst)
 {
@@ -42,6 +43,7 @@ const char
 	return (line);
 }
 
+/* TODO: empty string is incorrectly parsed as 0 */
 const char
 	*rt_float(const char *line, char **error, FLOAT *dst)
 {

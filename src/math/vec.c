@@ -8,7 +8,7 @@ t_vec
 {
 	return (vec(
 			(a.v[Y] * b.v[Z]) - (a.v[Z] * b.v[Y]),
-			(a.v[Z] * b.v[Y]) - (a.v[X] * b.v[Z]),
+			(a.v[X] * b.v[Z]) - (a.v[Z] * b.v[X]),
 			(a.v[X] * b.v[Y]) - (a.v[Y] * b.v[X]),
 			(FLOAT) 0));
 }

@@ -20,10 +20,16 @@ typedef int				(*t_loop_proc)(void *ctx);
 #  define RT_WIN_EVENT_KEY_DOWN KeyPress
 #  define RT_WIN_EVENT_KEY_MASK KeyPressMask
 #  define RT_WIN_EVENT_CLOSE 17
+#  define RT_KEY_ESC 65307
+#  define RT_KEY_Q 113
+#  define RT_KEY_R 114
 # else
 #  define RT_WIN_EVENT_KEY_DOWN 2
 #  define RT_WIN_EVENT_KEY_MASK 0
 #  define RT_WIN_EVENT_CLOSE 17
+#  define RT_KEY_ESC 53
+#  define RT_KEY_Q 12
+#  define RT_KEY_R 15
 # endif
 
 struct s_img {

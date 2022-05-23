@@ -1,7 +1,7 @@
 #include "rt.h"
 
 void
-	render_range(t_rt_state *state, t_vec *dst,
+	render_range(t_thread_ctx *ctx, t_rt_state *state, t_vec *dst,
 		size_t begin, size_t end)
 {
 	size_t	i;
@@ -11,7 +11,7 @@ void
 	while (i < end - begin)
 	{
 		j = state->order[begin + i];
-		dst[i] = trace(state,
+		dst[i] = trace(ctx, state,
 				j % state->img.width, j / state->img.width);
 		i += 1;
 	}

@@ -35,7 +35,7 @@ static void
 	state.scene = *scene;
 	state.size = state.img.width * state.img.height;
 	state.order = rt_malloc(state.size * sizeof(*state.order));
-	rt_random_range(state.order, state.size);
+	rt_random_range(NULL, state.order, state.size);
 	thread_start(&state);
 	win_create(&state.win, loop, state.img.width, state.img.height);
 	setup_events(&state);

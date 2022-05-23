@@ -1,7 +1,7 @@
 #include "rt.h"
 
 static void
-	thread_render(t_rt_state *state)
+	thread_render(t_thread_ctx *ctx, t_rt_state *state)
 {
 	size_t	begin;
 	size_t	end;
@@ -17,7 +17,7 @@ static void
 		state->idx = end;
 		version = state->version;
 		mutex_unlock(&state->mtx);
-		render_range(state, colors, begin, end);
+		render_range(ctx, state, colors, begin, end);
 		mutex_lock(&state->mtx);
 		if (version >= state->version)
 			render_draw(state, colors, begin, end);
@@ -27,13 +27,15 @@ static void
 static void
 	*thread_main(void *arg)
 {
-	t_rt_state	*state;
+	t_rt_state		*state;
+	t_thread_ctx	ctx;
 
 	state = arg;
+	ctx.seed = 7549087012;
 	mutex_lock(&state->mtx);
 	while (state->running)
 	{
-		thread_render(state);
+		thread_render(&ctx, state);
 		if (RT_ONESHOT)
 			state->running = 0;
 		else if (state->running)

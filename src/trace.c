@@ -5,9 +5,7 @@ static int
 {
 	t_hit		tmp;
 	size_t		i;
-	t_entity	*ent;
-	int			did_hit;
-
+	t_entity	*ent; int			did_hit;
 	i = 0;
 	did_hit = 0;
 	hit->t = RT_RAY_LENGTH;
@@ -28,7 +26,7 @@ static int
 }
 
 static t_vec
-	trace_ray(t_scene *scene, t_ray ray, int depth)
+	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
 {
 	t_hit	hit;
 	t_ray	new_ray;
@@ -39,34 +37,22 @@ static t_vec
 
 	// printf("here ");
 	if (depth <= 0)
-		return (vec(0, 0, 0, 1.0));
+		return (vec(0.0, 0.0, 0.0, 0.0));
 	if (trace_hit(scene, ray, &hit))
 	{
-		new_ray.pos = hit.pos;
-		new_ray.dir = rt_random_hvec(hit.normal);
-		p = 1.0 / (2 * RT_PI);
+		p = 1.0 / (RT_2PI);
 		cos_theta = vec_dot(new_ray.dir, hit.normal);
-		BRDF = vec(0.5, 0.5, 0.5, 1.0);
-		incoming = trace_ray(scene, new_ray, depth - 1);
-		// printf("%f %f %f %f; %f %f %f %f; costheta:%f p:%f\n",
-		// 	hit.color.v[X],
-		// 	hit.color.v[Y],
-		// 	hit.color.v[Z],
-		// 	hit.color.v[W],
-		// 	incoming.v[X],
-		// 	incoming.v[Y],
-		// 	incoming.v[Z],
-		// 	incoming.v[W],
-		// 	cos_theta,
-		// 	p
-		// 	);
+		BRDF = vec_scale(vec(1.0, 1.0, 1.0, 0.0), 1.0 / RT_PI);
+		new_ray.pos = vec_add(hit.pos, vec_scale(hit.normal, 0.001));
+		new_ray.dir = rt_random_hvec(&ctx->seed, hit.normal);
+		incoming = trace_ray(ctx, scene, new_ray, depth - 1);
 		return (vec_norm(vec_add(hit.color, vec_scale(vec_colormul(BRDF, incoming), cos_theta / p))));
 	}
-	return (vec(0, 0, 0, 1.0));
+	return (vec(0.0, 0.0, 0.0, 0.0));
 }
 
 static t_vec
-	trace_ray_diffuse(t_scene *scene, t_ray ray, int depth)
+	trace_ray_diffuse(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
 {
 	FLOAT	t;
 	t_hit	hit;
@@ -77,15 +63,15 @@ static t_vec
 	if (trace_hit(scene, ray, &hit))
 	{
 		new_ray.pos = vec_add(hit.pos, vec_scale(hit.normal, 0.001));
-		new_ray.dir = hit.normal;
-		return (vec_scale(trace_ray_diffuse(scene, new_ray, depth - 1), 0.5));
+		new_ray.dir = vec_norm(vec_add(hit.normal, rt_random_unit_vector(&ctx->seed)));
+		return (vec_scale(trace_ray_diffuse(ctx, scene, new_ray, depth - 1), 0.5));
 	}
 	t = 0.5 * (ray.dir.v[Z] + 1.0);
 	return (vec_add(vec_scale(vec(1, 1, 1, 0), 1.0 - t), vec_scale(vec(0.5, 0.7, 1.0, 0.0), t)));
 }
 
 t_vec
-	trace(t_rt_state *state, int x, int y)
+	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y)
 {
 	t_ray	ray;
 	t_vec	color;
@@ -96,8 +82,8 @@ t_vec
 	while (i < RT_SAMPLES)
 	{
 		ray = projection_ray(state,
-				x + rt_random_float() - 0.5, y + rt_random_float() - 0.5);
-		color = vec_add(color, trace_ray(&state->scene, ray, RT_MAX_DEPTH));
+				x + rt_random_float(&ctx->seed) - 0.5, y + rt_random_float(&ctx->seed) - 0.5);
+		color = vec_add(color, trace_ray(ctx, &state->scene, ray, RT_MAX_DEPTH));
 		i += 1;
 	}
 	return (vec_scale(color, 1.0 / RT_SAMPLES));
