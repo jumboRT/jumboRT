@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 /* TODO: only apply the minimum T for hitting the same object twice */
-/* TODO: or come up with a different method to do the same thing */
+/*       or come up with a different method to do the same thing */
 static int
 	trace_hit(t_scene *scene, t_ray ray, t_hit *hit)
 {
@@ -60,7 +60,6 @@ static t_vec
 }
 */
 
-/* TODO: offset from start position so it doesn't intersect itself again */
 static t_vec
 	trace_ray_diffuse(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
 {

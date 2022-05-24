@@ -53,7 +53,7 @@ struct s_rt_state {
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);
 t_ray	project_ray(t_rt_state *state, FLOAT x, FLOAT y);
 
-void	thread_reset(t_rt_state *state, int use_conic);
+void	thread_reset(t_rt_state *state);
 void	thread_start(t_rt_state *state);
 void	thread_stop(t_rt_state *state);
 

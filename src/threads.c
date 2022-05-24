@@ -45,16 +45,13 @@ static void
 	return (NULL);
 }
 
-/* TODO: cleanup, use_conic should not be a parameter here */
 void
-	thread_reset(t_rt_state *state, int use_conic)
+	thread_reset(t_rt_state *state)
 {
 	size_t	i;
 
-	mutex_lock(&state->mtx);
 	state->idx = 0;
 	state->version += 1;
-	state->use_conic = use_conic;
 	i = 0;
 	while (i < state->size)
 	{
@@ -63,7 +60,6 @@ void
 		i += 1;
 	}
 	cond_broadcast(&state->cnd);
-	mutex_unlock(&state->mtx);
 }
 
 void

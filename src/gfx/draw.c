@@ -3,7 +3,6 @@
 #include <libft.h>
 #include <mlx.h>
 
-/* TODO: fix undefined behaviour in pointer cast */
 void
 	win_put(t_win *win, t_img *img)
 {
@@ -19,7 +18,10 @@ void
 	mutex_lock(&img->mtx);
 	while (index < size)
 	{
-		*(int *)(dest + (bpp * index)) = img->data[index];
+		*(dest + (bpp * index)) = img->data[index] & 0xFF;
+		*(dest + (bpp * index) + 1) = (img->data[index] >> 8) & 0xFF;
+		*(dest + (bpp * index) + 2) = (img->data[index] >> 16) & 0xFF;
+		*(dest + (bpp * index) + 3) = (img->data[index] >> 24) & 0xFF;
 		index++;
 	}
 	mutex_unlock(&img->mtx);

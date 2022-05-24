@@ -21,7 +21,6 @@ const char
 	return (line);
 }
 
-/* TODO: empty string is incorrectly parsed as 0 */
 const char
 	*rt_uint(const char *line, char **error, unsigned int *dst)
 {
@@ -30,7 +29,7 @@ const char
 
 	if (line == NULL)
 		return (NULL);
-	if (!ft_isdigit(*line) && *line != '-')
+	if (!ft_isdigit(*line))
 	{
 		ft_asprintf(error, "Expected digit, found '%.*s'",
 			(int) rt_wordlen(beg), beg);
@@ -49,7 +48,6 @@ const char
 	return (line);
 }
 
-/* TODO: empty string is incorrectly parsed as 0 */
 const char
 	*rt_float(const char *line, char **error, FLOAT *dst)
 {
@@ -58,13 +56,13 @@ const char
 	if (line == NULL)
 		return (NULL);
 	line = rt_skip(line, ft_isspace);
-	if (!ft_isdigit(*line))
+	beg = line;
+	if (!ft_isdigit(*line) && *line != '-')
 	{
 		ft_asprintf(error, "Expected digit, found '%.*s'",
 			(int) rt_wordlen(beg), beg);
 		return (NULL);
 	}
-	beg = line;
 	if (!rt_atof(line, dst))
 	{
 		ft_asprintf(error, "Float:'%.*s' would be infinite",

@@ -20,9 +20,18 @@ int
 	if (key == RT_KEY_ESC || key == RT_KEY_Q)
 		rt_exit(ctx);
 	if (key == RT_KEY_R)
-		thread_reset(ctx, state->use_conic);
+	{
+		mutex_lock(&state->mtx);
+		thread_reset(ctx);
+		mutex_unlock(&state->mtx);
+	}
 	if (key == RT_KEY_P)
-		thread_reset(ctx, !state->use_conic);
+	{
+		mutex_lock(&state->mtx);
+		state->use_conic = !state->use_conic;
+		thread_reset(ctx);
+		mutex_unlock(&state->mtx);
+	}
 	return (0);
 }
 

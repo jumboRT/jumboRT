@@ -49,8 +49,6 @@ t_vec
 	return (vec_scale(a, (FLOAT) 1.0 / mag));
 }
 
-/* https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula */
-/* TODO: is this working? i don't think it is */
 t_vec
     vec_rotate(t_vec axis, t_vec v, FLOAT angle)
 {
