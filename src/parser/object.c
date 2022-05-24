@@ -11,7 +11,7 @@ t_entity
 
 	*line = rt_pos(*line, error, &sphere.pos);
 	*line = rt_float(*line, error, &sphere.diameter);
-	*line = rt_color(*line, error, &sphere.color);
+	*line = rt_material(*line, error, &sphere.mat);
 	if (*line == NULL)
 		return (NULL);
 	sphere.base.vt = sphere_vt();
@@ -25,7 +25,7 @@ t_entity
 
 	*line = rt_pos(*line, error, &plane.pos);
 	*line = rt_norm_vec(*line, error, &plane.dir);
-	*line = rt_color(*line, error, &plane.color);
+	*line = rt_material(*line, error, &plane.mat);
 	if (*line == NULL)
 		return (NULL);
 	plane.base.vt = plane_vt();
@@ -41,6 +41,7 @@ t_entity
 	*line = rt_norm_vec(*line, error, &cyl.dir);
 	*line = rt_float(*line, error, &cyl.diameter);
 	*line = rt_float(*line, error, &cyl.height);
+	*line = rt_material(*line, error, &cyl.mat);
 	if (*line == NULL)
 		return (NULL);
 	cyl.base.vt = cylinder_vt();

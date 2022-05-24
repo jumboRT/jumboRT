@@ -30,6 +30,7 @@ const char		*rt_next_word(const char *line);
 const char		*rt_end(const char *line, char **error);
 const char		*rt_expect_char(const char *line, char **error, char c);
 const char		*rt_color(const char *line, char **error, t_vec *dst);
+const char		*rt_material(const char *line, char **error, t_material **dst);
 const char		*rt_pos(const char *line, char **error, t_vec *dst);
 const char		*rt_uint(const char *line, char **error, unsigned int *dst);
 const char		*rt_skip(const char *line, int (*skip_char)(int));

@@ -50,6 +50,7 @@ t_vec
 }
 
 /* https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula */
+/* TODO: is this working? i don't think it is */
 t_vec
     vec_rotate(t_vec axis, t_vec v, FLOAT angle)
 {
@@ -59,4 +60,26 @@ t_vec
                     vec_scale(vec_cross(axis, v), sin(angle))), 
                 vec_scale(axis, 
                     vec_dot(axis, v) * (1.0 - cos(angle)))));
+}
+
+t_vec
+	vec_clamp(t_vec v, FLOAT min, FLOAT max)
+{
+	if (v.v[X] < min)
+		v.v[X] = min;
+	else if (v.v[X] > max)
+		v.v[X] = max;
+	if (v.v[Y] < min)
+		v.v[Y] = min;
+	else if (v.v[Y] > max)
+		v.v[Y] = max;
+	if (v.v[Z] < min)
+		v.v[Z] = min;
+	else if (v.v[Z] > max)
+		v.v[Z] = max;
+	if (v.v[W] < min)
+		v.v[W] = min;
+	else if (v.v[W] > max)
+		v.v[W] = max;
+	return (v);
 }

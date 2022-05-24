@@ -8,7 +8,7 @@ static void
 	long	version;
 	t_vec	colors[RT_RENDER_CHUNK_SIZE];
 
-	while (state->idx < state->size)
+	while (state->idx < state->size && state->running)
 	{
 		begin = state->idx;
 		end = begin + RT_RENDER_CHUNK_SIZE;
@@ -45,14 +45,16 @@ static void
 	return (NULL);
 }
 
+/* TODO: cleanup, use_conic should not be a parameter here */
 void
-	thread_reset(t_rt_state *state)
+	thread_reset(t_rt_state *state, int use_conic)
 {
 	size_t	i;
 
 	mutex_lock(&state->mtx);
 	state->idx = 0;
 	state->version += 1;
+	state->use_conic = use_conic;
 	i = 0;
 	while (i < state->size)
 	{

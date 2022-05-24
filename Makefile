@@ -1,9 +1,10 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c
 GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
 SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c
+MATERIAL_FILES			:= lambertian.c
 BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c
 PARSER_FILES			:= common.c light.c parser.c camera.c object.c
 UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
@@ -22,6 +23,7 @@ FILE_NAMES				:= \
 	$(patsubst %,gfx/%,$(GFX_FILES)) \
 	$(patsubst %,mt/%,$(MT_FILES)) \
 	$(patsubst %,scene/%,$(SCENE_FILES)) \
+	$(patsubst %,material/%,$(MATERIAL_FILES)) \
 	$(patsubst %,parser/%,$(PARSER_FILES)) \
 	$(BASE_FILES)
 
@@ -81,7 +83,7 @@ OBJECT_COLOR			:= $(RED)
 CLEAN_COLOR				:= $(PURPLE)
 
 ifndef config
-	config = debug
+	config = distr
 endif
 
 ifndef san
@@ -150,6 +152,7 @@ clean:
 	$(SILENT)rm -rf build
 	$(SILENT)${MAKE} -C $(LIBFT_DIR) fclean
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) fclean
+	$(SILENT)${MAKE} -C $(MLX_DIR) clean
 
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n

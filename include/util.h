@@ -32,7 +32,7 @@ FLOAT	rt_random_float(t_seed *seed);
 void	rt_random_range(t_seed *seed, size_t *dst, size_t n);
 FLOAT	rt_random_float_range(t_seed *seed, FLOAT min, FLOAT max);
 t_vec	rt_random_hvec(t_seed *seed, t_vec dir);
-t_vec	rt_random_unit_vector(t_seed *seed);
+t_vec	rt_random_svec(t_seed *seed);
 
 
 #endif

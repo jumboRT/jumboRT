@@ -50,12 +50,13 @@ t_vec	vec_sub(t_vec a, t_vec b);
 t_vec	vec_neg(t_vec a);
 t_vec	vec_norm(t_vec a);
 t_vec   vec_rotate(t_vec axis, t_vec v, FLOAT angle);
+t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max);
 
 t_vec	vec_hnorm(t_vec a);
 t_vec	vec_mul(t_vec a, t_mat b);
-t_vec	vec_colormul(t_vec a, t_vec b);
 t_mat	mat_mul(t_mat a, t_mat b);
 
+t_vec	color_mul(t_vec a, t_vec b);
 void	dbg_vec(t_vec a);
 void	dbg_mat(t_mat a);
 

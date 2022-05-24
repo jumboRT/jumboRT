@@ -13,11 +13,16 @@ int
 int
 	rt_key_down(int key, void *ctx)
 {
+	t_rt_state	*state;
+
+	state = ctx;
 	ft_printf("key %d\n", key);
 	if (key == RT_KEY_ESC || key == RT_KEY_Q)
 		rt_exit(ctx);
 	if (key == RT_KEY_R)
-		thread_reset(ctx);
+		thread_reset(ctx, state->use_conic);
+	if (key == RT_KEY_P)
+		thread_reset(ctx, !state->use_conic);
 	return (0);
 }
 

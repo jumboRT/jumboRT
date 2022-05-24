@@ -35,6 +35,7 @@ static void
 	state.scene = *scene;
 	state.size = state.img.width * state.img.height;
 	state.order = rt_malloc(state.size * sizeof(*state.order));
+	state.use_conic = 0;
 	rt_random_range(NULL, state.order, state.size);
 	thread_start(&state);
 	win_create(&state.win, loop, state.img.width, state.img.height);
@@ -42,6 +43,7 @@ static void
 	win_start(&state.win);
 }
 
+/* TODO: destroy scene and other things that might be leaking */
 int
 	main(int argc, char **argv)
 {

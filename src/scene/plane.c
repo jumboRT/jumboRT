@@ -1,11 +1,14 @@
 #include "scene.h"
+
 #include <math.h>
+#include <stdlib.h>
 
 const t_entity_vt
 	*plane_vt(void)
 {
 	static const t_entity_vt	vt = {
-		plane_hit
+		plane_hit,
+		plane_destroy
 	};
 
 	return (&vt);
@@ -30,6 +33,16 @@ int
 		return (0);
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	hit->normal = plane->dir;
-	hit->color = plane->color;
+	hit->mat = plane->mat;
 	return (1);
+}
+
+void
+	plane_destroy(t_entity *ent)
+{
+	t_plane	*plane;
+
+	plane = (t_plane *) ent;
+	plane->mat->vt->destroy(plane->mat);
+	rt_free(ent);
 }

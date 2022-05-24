@@ -1,17 +1,21 @@
 #include "scene.h"
+
 #include <math.h>
+#include <stdlib.h>
 
 const t_entity_vt
 	*sphere_vt(void)
 {
 	static const t_entity_vt	vt = {
-		sphere_hit
+		sphere_hit,
+		sphere_destroy
 	};
 
 	return (&vt);
 }
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
+/* TODO: remake this entire function */
 int
 	sphere_hit(t_entity *ent, t_ray ray, t_hit *hit)
 {
@@ -37,6 +41,16 @@ int
 	hit->t = root;
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	hit->normal = vec_scale(vec_sub(hit->pos, sphere->pos), 2 / sphere->diameter);
-	hit->color = sphere->color;
+	hit->mat = sphere->mat;
 	return (1);
+}
+
+void
+	sphere_destroy(t_entity *ent)
+{
+	t_sphere	*sphere;
+
+	sphere = (t_sphere *) ent;
+	sphere->mat->vt->destroy(sphere->mat);
+	rt_free(ent);
 }

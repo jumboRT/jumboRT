@@ -6,6 +6,7 @@
 #include <limits.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 t_seed
 	rt_random(t_seed *seed)
@@ -60,36 +61,26 @@ void
 t_vec
     rt_random_hvec(t_seed *seed, t_vec dir)
 {
-    FLOAT   theta0;
-    FLOAT   theta1;
-    t_vec   out;
-    t_vec   bef;
-    t_vec   axis;
+	t_vec	vec;
 
-    theta0 = RT_2PI * rt_random_float(seed);
-    theta1 = acos(1 - 2 * rt_random_float(seed));
-    out.v[X] = sin(theta0) * sin(theta1);
-    out.v[Y] = sin(theta0) * cos(theta1);
-    out.v[Z] = fabs(sin(theta1));
-    out.v[W] = 0.0;
-    axis = vec_cross(dir, vec(0.0, 0.0, 1.0, 0.0));
-    bef = out;
-	if (!float_eq(dir.v[Z], 1.0, 0.01))
-		out = vec_rotate(axis, out, acos(dir.v[Z]));
-    if (out.v[X] != out.v[X] || out.v[Y] != out.v[Y] || out.v[Z] != out.v[Z]) {
-        fprintf(stderr, "dir: %f %f %f theta0:%f theta1:%f before: %f %f %f after: %f %f %f\n", dir.v[X], dir.v[Y], dir.v[Z], theta0, theta1, bef.v[X], bef.v[Y], bef.v[Z], out.v[X], out.v[Y], out.v[Z]);
-    }
-    return (out);
+	vec = rt_random_svec(seed);
+	if (vec_dot(vec, dir) < 0.0)
+		return (vec_neg(vec));
+	return (vec);
 }
 
 t_vec
-	rt_random_unit_vector(t_seed *seed)
+	rt_random_svec(t_seed *seed)
 {
 	t_vec	vec;
 
-	vec.v[W] = 0.0;
-	vec.v[X] = rt_random_float(seed) * 2 - 1;
-	vec.v[Y] = rt_random_float(seed) * 2 - 1;
-	vec.v[Z] = rt_random_float(seed) * 2 - 1;
-	return (vec);
+	while (1)
+	{
+		vec.v[X] = rt_random_float(seed) * 2 - 1;
+		vec.v[Y] = rt_random_float(seed) * 2 - 1;
+		vec.v[Z] = rt_random_float(seed) * 2 - 1;
+		vec.v[W] = 0.0;
+		if (vec_mag(vec) < 1.0)
+			return (vec);
+	}
 }

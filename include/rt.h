@@ -16,11 +16,11 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 160
+#  define RT_SAMPLES 100
 # endif
 
 # ifndef RT_MAX_DEPTH
-#  define RT_MAX_DEPTH 8
+#  define RT_MAX_DEPTH 10
 # endif
 
 # ifndef RT_RAY_LENGTH
@@ -47,12 +47,13 @@ struct s_rt_state {
 	size_t		*order;
 	int			running;
 	long		version;
+	int			use_conic;
 };
 
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);
-t_ray	projection_ray(t_rt_state *state, FLOAT x, FLOAT y);
+t_ray	project_ray(t_rt_state *state, FLOAT x, FLOAT y);
 
-void	thread_reset(t_rt_state *state);
+void	thread_reset(t_rt_state *state, int use_conic);
 void	thread_start(t_rt_state *state);
 void	thread_stop(t_rt_state *state);
 
