@@ -30,6 +30,12 @@ const char
 
 	if (line == NULL)
 		return (NULL);
+	if (!ft_isdigit(*line) && *line != '-')
+	{
+		ft_asprintf(error, "Expected digit, found '%.*s'",
+			(int) rt_wordlen(beg), beg);
+		return (NULL);
+	}
 	beg = line;
 	val = ft_atol(line);
 	line = rt_skip(line, ft_isdigit);
@@ -52,6 +58,12 @@ const char
 	if (line == NULL)
 		return (NULL);
 	line = rt_skip(line, ft_isspace);
+	if (!ft_isdigit(*line))
+	{
+		ft_asprintf(error, "Expected digit, found '%.*s'",
+			(int) rt_wordlen(beg), beg);
+		return (NULL);
+	}
 	beg = line;
 	if (!rt_atof(line, dst))
 	{
@@ -165,7 +177,6 @@ const char
 {
 	if (line == NULL)
 		return (NULL);
-	
 	if (*line != c)
 	{
 		ft_asprintf(error, "Unexpected char:'%c' in string:'%.*s' exected:'%c'",

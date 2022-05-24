@@ -15,7 +15,7 @@ const t_entity_vt
 }
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
-/* TODO: remake this entire function */
+/* TODO: rewrite this function so it's not just copied from ^^^ */
 int
 	sphere_hit(t_entity *ent, t_ray ray, t_hit *hit)
 {

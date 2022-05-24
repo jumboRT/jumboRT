@@ -14,6 +14,8 @@ t_material
 	size_t					index;
 	const t_material_entry	*entry;
 
+	if (*line == NULL)
+		return (NULL);
 	*line = rt_skip(*line, ft_isspace);
 	index = 0;
 	while (g_entries[index].identifier != NULL)
@@ -27,6 +29,8 @@ t_material
 		}
 		index += 1;
 	}
+	if (*line == NULL)
+		return (NULL);
 	return (rt_lambertian(line, error));
 }
 

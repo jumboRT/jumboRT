@@ -31,7 +31,7 @@ typedef int				(*t_loop_proc)(void *ctx);
 #  define RT_KEY_ESC 53
 #  define RT_KEY_Q 12
 #  define RT_KEY_R 15
-#  define RT_KEY_P -1 /* TODO */
+#  define RT_KEY_P 35
 # endif
 
 struct s_img {

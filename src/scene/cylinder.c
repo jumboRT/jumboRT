@@ -25,14 +25,15 @@ int
 	FLOAT	a, k, c;
 	FLOAT	b;
 	FLOAT	discr;
+	FLOAT	t1, t2;
 
 	cyl = *(t_cylinder *) ent;
 	p = cyl.pos;
 	q = vec_add(cyl.pos, vec_scale(cyl.dir, cyl.height));
 	r = cyl.diameter / 2;
-	n = vec_scale(ray.dir, 50);
+	n = vec_scale(ray.dir, 5);
 	m = vec_sub(ray.pos, cyl.pos);
-	d = vec_sub(p, q);
+	d = vec_sub(q, p);
 
 	md = vec_dot(m, d);
 	nd = vec_dot(n, d);
@@ -65,24 +66,27 @@ int
 	discr = b * b - a * c;
 	if (discr < 0.0)
 		return (0);
+	t1 = (-b - sqrt(discr)) / a;
+	t2 = (-b + sqrt(discr)) / a;
+	hit->t = t1;
+	if (t2 < t1)
+		hit->t = t2;
 	hit->t = (-b - sqrt(discr)) / a;
 	hit->normal = vec(0.0, 0.0, 1.0, 0.0);
-//	if (hit->t < 0.0 || hit->t > 1.0)
-//		return (0);
+	if (hit->t < 0.0 || hit->t > 1.0)
+		return (0);
 	if (md + hit->t * nd < 0.0) {
 		if (nd <= 0.0)
 			return (0);
 		hit->t = -md / nd;
 		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-//		return (k + 2 * hit->t * (mn + hit->t * nn) <= 0.0);
-		return (1);
+		return (k + 2 * hit->t * (mn + hit->t * nn) <= 0.0);
 	} else if (md + hit->t * nd > dd) {
 		if (nd >= 0.0)
 			return (0);
 		hit->t = (dd - md) / nd;
 		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-//		return (k + dd - 2 * md + hit->t * (2 * (mn - nd) + hit->t * nn) <= 0.0);
-		return (1);
+		return (k + dd - 2 * md + hit->t * (2 * (mn - nd) + hit->t * nn) <= 0.0);
 	}
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	return (1);
