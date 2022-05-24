@@ -15,11 +15,12 @@ const t_material_vt
 
 /* TODO: maybe use random_hvec instead */
 int
-	lambertian_scatter(t_material *mat, t_hit *hit, t_scatter *scatter, t_thread_ctx *ctx)
+	lambertian_scatter(t_material *mat, t_ray in, t_hit *hit, t_scatter *scatter, t_thread_ctx *ctx)
 {
 	t_lambertian	*lambertian;
 	t_vec			dir;
 
+	(void) in;
 	lambertian = (t_lambertian *) mat;
 	scatter->attenuation = lambertian->albedo;
 	scatter->scattered.pos = hit->pos;

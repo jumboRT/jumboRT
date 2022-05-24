@@ -16,8 +16,8 @@ static const t_entry	g_entries[] = {
 t_entity
 	*rt_entity(const char **line, char **error)
 {
-	size_t				index;
-	const t_entry		*entry;
+	size_t			index;
+	const t_entry	*entry;
 
 	index = 0;
 	while (g_entries[index].identifier != NULL)

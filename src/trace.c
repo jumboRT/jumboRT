@@ -72,7 +72,7 @@ static t_vec
 		return (vec(0, 0, 0, 0));
 	if (trace_hit(scene, ray, &hit))
 	{
-		if (hit.mat->vt->scatter(hit.mat, &hit, &scatter, ctx))
+		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx))
 			return (color_mul(scatter.attenuation, trace_ray_diffuse(ctx, scene, scatter.scattered, depth - 1)));
 		return (vec(0, 0, 0, 0));
 	}

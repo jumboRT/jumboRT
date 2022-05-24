@@ -107,17 +107,6 @@ const char
 }
 
 const char
-	*rt_material(const char *line, char **error, t_material **dst)
-{
-	t_lambertian	*lambertian;
-
-	lambertian = rt_malloc(sizeof(*lambertian));
-	lambertian->base.vt = lambertian_vt();
-	*dst = (t_material *) lambertian;
-	return (rt_color(line, error, &lambertian->albedo));
-}
-
-const char
 	*rt_pos(const char *line, char **error, t_vec *dst)
 {
 	if (line == NULL)
