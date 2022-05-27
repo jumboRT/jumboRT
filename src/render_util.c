@@ -10,9 +10,8 @@ void
 	i = 0;
 	while (i < end - begin)
 	{
-		j = state->order[begin + i];
-		dst[i] = trace(ctx, state,
-				j % state->img.width, j / state->img.width);
+		j = state->order[(begin + i) % state->size];
+		dst[i] = trace(ctx, state, j % state->width, j / state->width);
 		i += 1;
 	}
 }
@@ -27,9 +26,9 @@ void
 	i = 0;
 	while (i < end - begin)
 	{
-		j = state->order[begin + i];
-		img_putf(&state->img,
-			j % state->img.width, j / state->img.width, dst[i]);
+		j = state->order[(begin + i) % state->size];
+		state->image[j] = vec_add(state->image[j], dst[i]);
+		state->samples[j] += 1;
 		i += 1;
 	}
 }

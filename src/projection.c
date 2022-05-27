@@ -3,24 +3,24 @@
 #include <math.h>
 #include <stdio.h>
 
-static t_vec
+t_vec
 	project_rotate(t_vec v, FLOAT yaw, FLOAT pitch)
 {
 	FLOAT	vx;
 	FLOAT	vy;
 	FLOAT	vz;
 
-	vy = v.v[Y] * cos(pitch) - v.v[Z] * sin(pitch);
 	vz = v.v[Y] * sin(pitch) + v.v[Z] * cos(pitch);
-	vx = vy * cos(yaw) - v.v[X] * sin(yaw);
-	vy = vy * sin(yaw) + v.v[X] * cos(yaw);
+	vy = v.v[Y] * cos(pitch) - v.v[Z] * sin(pitch);
+	vx = vy * sin(yaw) + v.v[X] * cos(yaw);
+	vy = vy * cos(yaw) - v.v[X] * sin(yaw);
 	return (vec(vx, vy, vz, v.v[W]));
 }
 
-static void
+void
 	project_angles(t_vec v, FLOAT *yaw, FLOAT *pitch)
 {
-	*yaw = atan2(v.v[Y], v.v[X]);
+	*yaw = atan2(v.v[X], v.v[Y]);
 	*pitch = atan2(v.v[Z], v.v[X] * sin(*yaw) + v.v[Y] * cos(*yaw));
 }
 
@@ -63,9 +63,9 @@ t_ray
 {
 	FLOAT	aspect;
 
-	aspect = (FLOAT) state->img.height / state->img.width;
-	x = x / state->img.width - 0.5;
-	y = (y / state->img.height - 0.5) * -aspect;
+	aspect = (FLOAT) state->height / state->width;
+	x = (x / state->width - 0.5) * -1;
+	y = (y / state->height - 0.5) * -aspect;
 	if (state->use_conic)
 		return (project_cone(state->scene.camera, x, y));
 	else

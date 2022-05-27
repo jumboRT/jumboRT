@@ -12,7 +12,7 @@ static int
 	t_rt_state	*state;
 
 	state = handle;
-	win_put(&state->win, &state->img);
+	win_put_state(state);
 	return (0);
 }
 
@@ -28,17 +28,21 @@ static void
 {
 	t_rt_state	state;
 
-	img_create(&state.img, 1920, 1080);
-	img_clear(&state.img, 0);
+	state.width = 1920;
+	state.height = 1080;
+	state.size = state.width * state.height;
+	state.image = rt_malloc(state.size * sizeof(*state.image));
+	state.order = rt_malloc(state.size * sizeof(*state.order));
+	state.samples = rt_malloc(state.size * sizeof(*state.samples));
+	state.end = state.size * RT_SAMPLES;
 	mutex_init(&state.mtx);
 	cond_init(&state.cnd);
 	state.scene = *scene;
-	state.size = state.img.width * state.img.height;
-	state.order = rt_malloc(state.size * sizeof(*state.order));
 	state.use_conic = 0;
 	rt_random_range(NULL, state.order, state.size);
+	thread_reset(&state);
 	thread_start(&state);
-	win_create(&state.win, loop, state.img.width, state.img.height);
+	win_create(&state.win, loop, state.width, state.height);
 	setup_events(&state);
 	win_start(&state.win);
 }

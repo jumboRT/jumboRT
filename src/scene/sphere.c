@@ -17,7 +17,7 @@ const t_entity_vt
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 /* TODO: rewrite this function so it's not just copied from ^^^ */
 int
-	sphere_hit(t_entity *ent, t_ray ray, t_hit *hit)
+	sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_sphere *const	sphere = (t_sphere *) ent;
 	const t_vec		oc = vec_sub(ray.pos, sphere->pos);
@@ -32,10 +32,10 @@ int
 		return (0);
 	sqrtd = sqrt(discriminant);
 	root = (-half_b - sqrtd) / a;
-	if (root <= 0)
+	if (root < min)
 	{
 		root = (-half_b + sqrtd) / a;
-		if (root <= 0)
+		if (root < min)
 			return (0);
 	}
 	hit->t = root;

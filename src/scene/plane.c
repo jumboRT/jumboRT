@@ -17,7 +17,7 @@ const t_entity_vt
 /* http://lousodrome.net/blog/light/2020/07/03/intersection-of-a-ray-and-a-plane/ */
 /* http://wscg.zcu.cz/wscg2002/Papers_2002/A83.pdf */
 int
-	plane_hit(t_entity *ent, t_ray ray, t_hit *hit)
+	plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_plane	*plane;
 	FLOAT	dividend;
@@ -29,7 +29,7 @@ int
 		return (0);
 	dividend = vec_dot(vec_sub(plane->pos, ray.pos), plane->dir);
 	hit->t = dividend / divisor;
-	if (hit->t <= 0.0)
+	if (hit->t < min)
 		return (0);
 	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
 	hit->normal = plane->dir;

@@ -12,15 +12,15 @@
 # endif
 
 # ifndef RT_RENDER_CHUNK_SIZE
-#  define RT_RENDER_CHUNK_SIZE 16
+#  define RT_RENDER_CHUNK_SIZE 256
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 100
+#  define RT_SAMPLES 1024
 # endif
 
 # ifndef RT_MAX_DEPTH
-#  define RT_MAX_DEPTH 10
+#  define RT_MAX_DEPTH 64
 # endif
 
 # ifndef RT_RAY_LENGTH
@@ -37,20 +37,28 @@ typedef struct s_rt_state	t_rt_state;
 
 struct s_rt_state {
 	t_win		win;
-	t_img		img;
 	t_scene		scene;
 	t_mutex		mtx;
 	t_cond		cnd;
 	t_thread	threads[RT_THREADS];
 	size_t		idx;
+	size_t		end;
+	size_t		width;
+	size_t		height;
 	size_t		size;
 	size_t		*order;
 	int			running;
+	t_vec		*image;
+	size_t		*samples;
 	long		version;
 	int			use_conic;
 };
 
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);
+t_vec	project_rotate(t_vec v, FLOAT yaw, FLOAT pitch);
+void	project_angles(t_vec v, FLOAT *yaw, FLOAT *pitch);
+t_ray	project_frustrum(t_camera *cam, FLOAT x, FLOAT y);
+t_ray	project_cone(t_camera *cam, FLOAT x, FLOAT y);
 t_ray	project_ray(t_rt_state *state, FLOAT x, FLOAT y);
 
 void	thread_reset(t_rt_state *state);

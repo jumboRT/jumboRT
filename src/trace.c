@@ -4,31 +4,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* TODO: only apply the minimum T for hitting the same object twice */
-/*       or come up with a different method to do the same thing */
 static int
 	trace_hit(t_scene *scene, t_ray ray, t_hit *hit)
 {
 	t_hit		tmp;
 	size_t		i;
-	t_entity	*ent; int			did_hit;
+	t_entity	*ent;
+
 	i = 0;
-	did_hit = 0;
 	hit->t = RT_RAY_LENGTH;
 	while (i < scene->count)
 	{
 		ent = scene->entities[i];
-		if (ent->vt->hit != NULL && ent->vt->hit(ent, ray, &tmp))
-		{
-			if (tmp.t < hit->t && tmp.t > 0.001)
-			{
-				did_hit = 1;
+		if (ent->vt->hit != NULL && ent->vt->hit(ent, ray, &tmp, 0.001))
+			if (tmp.t < hit->t)
 				*hit = tmp;
-			}
-		}
 		i += 1;
 	}
-	return (did_hit);
+	hit->local_normal = hit->normal;
+	if (vec_dot(ray.dir, hit->normal) >= 0)
+		hit->local_normal = vec_neg(hit->normal);
+	return (hit->t < RT_RAY_LENGTH);
 }
 
 /*
@@ -61,7 +57,7 @@ static t_vec
 */
 
 static t_vec
-	trace_ray_diffuse(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
+	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
 {
 	FLOAT		t;
 	t_hit		hit;
@@ -72,7 +68,7 @@ static t_vec
 	if (trace_hit(scene, ray, &hit))
 	{
 		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx))
-			return (color_mul(scatter.attenuation, trace_ray_diffuse(ctx, scene, scatter.scattered, depth - 1)));
+			return (color_mul(scatter.attenuation, trace_ray(ctx, scene, scatter.scattered, depth - 1)));
 		return (vec(0, 0, 0, 0));
 	}
 	t = 0.5 * (ray.dir.v[Z] + 1.0);
@@ -83,17 +79,8 @@ t_vec
 	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y)
 {
 	t_ray	ray;
-	t_vec	color;
-	size_t	i;
 
-	i = 0;
-	color = vec(0, 0, 0, 0);
-	while (i < RT_SAMPLES)
-	{
-		ray = project_ray(state,
-				x + rt_random_float(&ctx->seed), y + rt_random_float(&ctx->seed));
-		color = vec_add(color, trace_ray_diffuse(ctx, &state->scene, ray, RT_MAX_DEPTH));
-		i += 1;
-	}
-	return (vec_scale(color, 1.0 / RT_SAMPLES));
+	ray = project_ray(state,
+			x + rt_random_float(&ctx->seed), y + rt_random_float(&ctx->seed));
+	return(trace_ray(ctx, &state->scene, ray, RT_MAX_DEPTH));
 }

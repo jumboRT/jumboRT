@@ -5,6 +5,7 @@
 static const t_material_entry	g_entries[] = {
 	{ "lambertian", rt_lambertian },
 	{ "metal", rt_metal },
+	{ "dielectric", rt_dielectric },
 	{ NULL, NULL }
 };
 
@@ -57,4 +58,16 @@ t_material
 	if (*line == NULL)
 		return (NULL);
 	return (rt_memdup(&metal, sizeof(metal)));
+}
+
+t_material
+	*rt_dielectric(const char **line, char **error)
+{
+	t_dielectric	dielectric;
+
+	dielectric.base.vt = dielectric_vt();
+	*line = rt_float(*line, error, &dielectric.ir);
+	if (*line == NULL)
+		return (NULL);
+	return (rt_memdup(&dielectric, sizeof(dielectric)));
 }

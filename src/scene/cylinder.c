@@ -2,6 +2,10 @@
 
 #include <math.h>
 
+
+#include <stdio.h>
+#include <stdlib.h>
+
 const t_entity_vt
 	*cylinder_vt(void)
 {
@@ -14,81 +18,76 @@ const t_entity_vt
 }
 
 int
-	cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit)
+	cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_cylinder	cyl;
-	t_vec	p, q;
-	t_vec	d, m, n;
-	FLOAT	r;
-	FLOAT	md, nd, dd;
-	FLOAT	nn, mn;
-	FLOAT	a, k, c;
-	FLOAT	b;
-	FLOAT	discr;
-	FLOAT	t1, t2;
+	t_vec		cyl_base;
+	t_vec		ray_base;
+	FLOAT		radius;
+	t_vec		cyl_dir;
+	t_vec		ray_dir;
+	t_vec		dist_vec;
+	t_vec		ray_cyl;
+	FLOAT		distance;
+	FLOAT		t;
+	FLOAT		s;
+	t_vec		o;
+	FLOAT		end_t1, end_t2;
+	FLOAT		t_out, t_in;
 
 	cyl = *(t_cylinder *) ent;
-	p = cyl.pos;
-	q = vec_add(cyl.pos, vec_scale(cyl.dir, cyl.height));
-	r = cyl.diameter / 2;
-	n = vec_scale(ray.dir, 5);
-	m = vec_sub(ray.pos, cyl.pos);
-	d = vec_sub(q, p);
-
-	md = vec_dot(m, d);
-	nd = vec_dot(n, d);
-	dd = vec_dot(d, d);
-
-	if (md < 0.0 && md + nd < 0.0)
-		return (0);
-	if (md > dd && md + nd > dd)
-		return (0);
-	nn = vec_dot(n, n);
-	mn = vec_dot(m, n);
-	a = dd * nn - nd * nd;
-	k = vec_dot(m, m) - r * r;
-	c = dd * k - md * md;
+	cyl_base = cyl.pos;
+	ray_base = ray.pos;
+	radius = cyl.diameter / 2.0;
+	cyl_dir = cyl.dir;
+	ray_dir = ray.dir;
 	hit->mat = cyl.mat;
-	if (fabs(a) < 0.0000000001) {
-		if (c > 0.0)
-			return (0);
-		if (md < 0.0)
-			hit->t = -mn / nn;
-		else if (md > dd)
-			hit->t = (nd - mn) / nn;
-		else
-			hit->t = 0.0;
-		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-		hit->normal = vec(0.0, 0.0, 1.0, 0.0);
-		return (1);
-	}
-	b = dd * mn - nd * md;
-	discr = b * b - a * c;
-	if (discr < 0.0)
+	if (float_eq(vec_mag(vec_cross(ray_dir, cyl_dir)), 0.0, 0.00000001)) {
+		/* TODO Implement paralel hit check*/
 		return (0);
-	t1 = (-b - sqrt(discr)) / a;
-	t2 = (-b + sqrt(discr)) / a;
-	hit->t = t1;
-	if (t2 < t1)
-		hit->t = t2;
-	hit->t = (-b - sqrt(discr)) / a;
-	hit->normal = vec(0.0, 0.0, 1.0, 0.0);
-	if (hit->t < 0.0 || hit->t > 1.0)
-		return (0);
-	if (md + hit->t * nd < 0.0) {
-		if (nd <= 0.0)
-			return (0);
-		hit->t = -md / nd;
-		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-		return (k + 2 * hit->t * (mn + hit->t * nn) <= 0.0);
-	} else if (md + hit->t * nd > dd) {
-		if (nd >= 0.0)
-			return (0);
-		hit->t = (dd - md) / nd;
-		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-		return (k + dd - 2 * md + hit->t * (2 * (mn - nd) + hit->t * nn) <= 0.0);
 	}
-	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
+	dist_vec = vec_scale(vec_cross(ray_dir, cyl_dir), 1.0 / vec_mag(vec_cross(ray_dir, cyl_dir)));
+	ray_cyl = vec_sub(ray_base, cyl_base);
+	distance = fabs(vec_dot(ray_cyl, dist_vec));
+	if (distance > radius)
+		return (0); /* Ray did not hit the cylinder */
+	t = vec_dot(vec_cross(ray_cyl, cyl_dir), vec_cross(ray_dir, cyl_dir)) / pow(vec_mag(vec_cross(ray_dir, cyl_dir)), 2.0);
+	o = vec_scale(vec_cross(dist_vec, cyl_dir), 1.0 / vec_mag(vec_cross(dist_vec, cyl_dir)));
+	s = fabs(sqrt((radius * radius) - (distance * distance)) / vec_dot(ray_dir, o));
+	t_out = t + s;
+	t_in = t - s;
+	//hit->t = t_in;
+	end_t1 = - (vec_dot(ray_base, cyl_dir)) / (vec_dot(ray_dir, cyl_dir));
+	end_t2 = - (vec_dot(ray_base, vec_neg(cyl_dir)) + cyl.height) / (vec_dot(ray_dir, vec_neg(cyl_dir)));
+	rt_assert(ray_dir.v[W] == 0.0, "This should not happen1");
+	rt_assert(cyl_dir.v[W] == 0.0, "This should not happen2");
+	if (vec_dot(ray_dir, cyl_dir) < 0) {
+		if (end_t1 < t_out) {
+			t_out = end_t1;
+		}
+	} else if (vec_dot(ray_dir, cyl_dir) > 0) {
+		if (end_t1 > t_in) {
+			t_in = end_t1;
+		}
+	} else {
+		return (0);
+	}
+	if (vec_dot(ray_dir, vec_neg(cyl_dir)) < 0) {
+		if (end_t2 < t_out) {
+			t_out = end_t2;
+		}
+	} else if (vec_dot(ray_dir, vec_neg(cyl_dir)) > 0) {
+		if (end_t2 > t_in) {
+			t_in = end_t2;
+		}
+	} else {
+		return (0);
+	}
+	if (t_out < t_in)
+		return (0); // TODO check with min ray len
+	hit->t = t_in;
+	hit->pos = vec_add(ray_base, vec_scale(ray_dir, hit->t));
+	hit->normal = vec_sub(vec_norm(hit->pos), cyl_dir); /* TODO check if this normal calculation method works */
 	return (1);
 }
 

@@ -150,6 +150,7 @@ const char
 	line = rt_float(line, error, &dst->v[Z]);
 	if (line == NULL)
 		return (NULL);
+	*dst = vec_norm(*dst); //TODO REMOVE BEFORE TURNING IN!!!
 	if (vec_mag(*dst) < 0.99 || vec_mag(*dst) > 1.01)
 	{
 		ft_asprintf(error, "Vector '%.*s' is not a normalized vector",

@@ -8,12 +8,12 @@ static void
 	long	version;
 	t_vec	colors[RT_RENDER_CHUNK_SIZE];
 
-	while (state->idx < state->size && state->running)
+	while (state->idx < state->end && state->running)
 	{
 		begin = state->idx;
 		end = begin + RT_RENDER_CHUNK_SIZE;
-		if (end >= state->size)
-			end = state->size;
+		if (end >= state->end)
+			end = state->end;
 		state->idx = end;
 		version = state->version;
 		mutex_unlock(&state->mtx);
@@ -55,8 +55,8 @@ void
 	i = 0;
 	while (i < state->size)
 	{
-		img_putf(&state->img,
-			i % state->img.width, i / state->img.width, vec(0, 0, 0, 0));
+		state->image[i] = vec(0, 0, 0, 0);
+		state->samples[i] = 0;
 		i += 1;
 	}
 	cond_broadcast(&state->cnd);

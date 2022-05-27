@@ -24,9 +24,9 @@ int
 	lambertian = (t_lambertian *) mat;
 	scatter->attenuation = lambertian->albedo;
 	scatter->scattered.pos = hit->pos;
-	dir = vec_add(hit->normal, rt_random_svec(&ctx->seed));
+	dir = vec_add(hit->local_normal, rt_random_svec(&ctx->seed));
 	if (vec_mag(dir) < 0.001)
-		dir = hit->normal;
+		dir = hit->local_normal;
 	scatter->scattered.dir = vec_norm(dir);
 	return (1);
 }

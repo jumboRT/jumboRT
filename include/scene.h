@@ -21,12 +21,13 @@ typedef struct s_scene			t_scene;
 struct s_hit {
 	t_vec		pos;
 	t_vec		normal;
+	t_vec		local_normal;
 	t_material	*mat;
 	FLOAT		t;
 };
 
 struct s_entity_vt {
-	int	(*hit)(t_entity *ent, t_ray ray, t_hit *hit);
+	int	(*hit)(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 	void (*destroy)(t_entity *ent);
 };
 
@@ -92,9 +93,9 @@ const t_entity_vt	*sphere_vt(void);
 const t_entity_vt	*plane_vt(void);
 const t_entity_vt	*cylinder_vt(void);
 
-int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit);
-int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit);
-int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit);
+int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 
 void				ambient_light_destroy(t_entity *ent);
 void				camera_destroy(t_entity *ent);

@@ -24,6 +24,14 @@ typedef int				(*t_loop_proc)(void *ctx);
 #  define RT_KEY_Q 113
 #  define RT_KEY_R 114
 #  define RT_KEY_P 112
+#  define RT_KEY_UP 65362
+#  define RT_KEY_DOWN 65364
+#  define RT_KEY_LEFT 65361
+#  define RT_KEY_RIGHT 65363
+#  define RT_KEY_W 119
+#  define RT_KEY_S 115
+#  define RT_KEY_A 97
+#  define RT_KEY_D 100
 # else
 #  define RT_WIN_EVENT_KEY_DOWN 2
 #  define RT_WIN_EVENT_KEY_MASK 0
@@ -32,7 +40,18 @@ typedef int				(*t_loop_proc)(void *ctx);
 #  define RT_KEY_Q 12
 #  define RT_KEY_R 15
 #  define RT_KEY_P 35
+/* TODO: these keys are incorrect */
+#  define RT_KEY_UP -1
+#  define RT_KEY_DOWN -1
+#  define RT_KEY_LEFT -1
+#  define RT_KEY_RIGHT -1
+#  define RT_KEY_W -1
+#  define RT_KEY_S -1
+#  define RT_KEY_A -1
+#  define RT_KEY_D -1
 # endif
+
+struct s_rt_state;
 
 struct s_img {
 	t_color	*data;
@@ -54,6 +73,7 @@ int		win_create(t_win *win, t_loop_proc proc, int width, int height);
 int		win_destroy(t_win *win);
 void	win_start(t_win *win);
 void	win_put(t_win *win, t_img *img);
+void	win_put_state(struct s_rt_state *state);
 void	win_mouse_hook(t_win *win, int (*proc)(void*), void *ctx);
 void	win_key_hook(t_win *win, int (*proc)(void*), void *ctx);
 void	win_event_hook(t_win *win, int event, int (*proc)(), void *ctx);

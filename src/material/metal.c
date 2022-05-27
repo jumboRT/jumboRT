@@ -2,6 +2,12 @@
 #include "scene.h"
 #include <math.h>
 
+t_vec
+	reflect(t_vec v, t_vec n)
+{
+	return (vec_sub(v, vec_scale(n, 2 * vec_dot(v, n))));
+}
+
 const t_material_vt
 	*metal_vt(void)
 {
@@ -19,13 +25,12 @@ int
 	t_metal	*metal;
 	t_vec	dir;
 
-	(void) ctx;
 	metal = (t_metal *) mat;
 	scatter->attenuation = metal->albedo;
 	scatter->scattered.pos = hit->pos;
-	dir = vec_sub(in.dir, vec_scale(hit->normal, 2 * vec_dot(in.dir, hit->normal)));
+	dir = reflect(in.dir, hit->local_normal);
 	scatter->scattered.dir = vec_norm(vec_add(dir, vec_scale(rt_random_svec(&ctx->seed), metal->fuzzy)));
-	return (vec_dot(scatter->scattered.dir, hit->normal) > 0);
+	return (vec_dot(scatter->scattered.dir, hit->local_normal) > 0);
 }
 
 void

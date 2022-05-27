@@ -30,6 +30,7 @@ t_entity	*rt_cylinder(const char **line, char **error);
 t_entity	*rt_entity(const char **line, char **error);
 t_material	*rt_lambertian(const char **line, char **error);
 t_material	*rt_metal(const char **line, char **error);
+t_material	*rt_dielectric(const char **line, char **error);
 t_material	*rt_material(const char **line, char **error);
 int			rt_space(const char *line, char **error);
 size_t		rt_wordlen(const char *str);
