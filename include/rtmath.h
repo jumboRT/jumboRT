@@ -62,4 +62,10 @@ void	dbg_mat(t_mat a);
 
 int		float_eq(FLOAT a, FLOAT b, FLOAT error);
 
+t_vec	vec_0(void);
+t_vec	vec_x(FLOAT v);
+t_vec	vec_y(FLOAT v);
+t_vec	vec_z(FLOAT v);
+t_vec	vec_w(FLOAT v);
+
 #endif
