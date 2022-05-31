@@ -62,7 +62,9 @@ int		mlx_int_deal_shm(t_xvar *xvar)
 	char	*dpy;
 	char	buff[33];
 
-	xvar->use_xshm = XShmQueryVersion(xvar->display,&bidon,&bidon,&(use_pshm));
+	/* xvar->use_xshm = XShmQueryVersion(xvar->display,&bidon,&bidon,&(use_pshm)); */
+	xvar->use_xshm = 0;
+	use_pshm = 0;
 	if (xvar->use_xshm && use_pshm)
 		xvar->pshm_format = XShmPixmapFormat(xvar->display);
 	else

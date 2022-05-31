@@ -12,7 +12,12 @@ static int
 	t_rt_state	*state;
 
 	state = handle;
-	win_put_state(state);
+	if (RT_TIME_FRAME || state->time < time_time())
+	{
+		win_put_state(state);
+		state->time += 1.0 / RT_FPS;
+	}
+	time_sleep(state->time);
 	return (0);
 }
 
@@ -39,6 +44,7 @@ static void
 	cond_init(&state.cnd);
 	state.scene = *scene;
 	state.use_conic = 0;
+	state.time = time_time();
 	rt_random_range(NULL, state.order, state.size);
 	thread_reset(&state);
 	thread_start(&state);

@@ -27,6 +27,14 @@
 #  define RT_RAY_LENGTH 1000000.0
 # endif
 
+# ifndef RT_TIME
+#  define RT_TIME_FRAME 1
+# else
+#  define RT_TIME_FRAME 0
+# endif
+
+# define RT_FPS 60
+
 # include "rtmath.h"
 # include "mt.h"
 # include "gfx.h"
@@ -52,6 +60,7 @@ struct s_rt_state {
 	size_t		*samples;
 	long		version;
 	int			use_conic;
+	double		time;
 };
 
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);
@@ -70,5 +79,8 @@ void	render_draw(t_rt_state *state, t_vec *dst, size_t begin, size_t end);
 
 int		rt_exit(void *ctx);
 int		rt_key_down(int key, void *ctx);
+
+double	time_time(void);
+void	time_sleep(double time);
 
 #endif
