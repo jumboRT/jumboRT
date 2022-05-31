@@ -56,7 +56,6 @@ void
 	while (i < state->size)
 	{
 		state->image[i] = vec(0, 0, 0, 0);
-		state->samples[i] = 0;
 		i += 1;
 	}
 	cond_broadcast(&state->cnd);

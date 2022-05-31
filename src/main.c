@@ -38,7 +38,6 @@ static void
 	state.size = state.width * state.height;
 	state.image = rt_malloc(state.size * sizeof(*state.image));
 	state.order = rt_malloc(state.size * sizeof(*state.order));
-	state.samples = rt_malloc(state.size * sizeof(*state.samples));
 	state.end = state.size * RT_SAMPLES;
 	mutex_init(&state.mtx);
 	cond_init(&state.cnd);

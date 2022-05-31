@@ -57,7 +57,6 @@ struct s_rt_state {
 	size_t		*order;
 	int			running;
 	t_vec		*image;
-	size_t		*samples;
 	long		version;
 	int			use_conic;
 	double		time;

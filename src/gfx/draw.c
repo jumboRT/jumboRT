@@ -38,9 +38,8 @@ void
 	int		bpp;
 	char	*dst;
 	t_vec	col;
-	size_t	samples;
+	FLOAT	samples;
 	FLOAT	done;
-	long	*state_samples;
 	t_vec	*state_image;
 
 	i = 0;
@@ -48,12 +47,11 @@ void
 	bpp = state->win.bpp >> 3;
 	done = (FLOAT) state->idx / state->end;
 	mutex_lock(&state->mtx);
-	state_samples = rt_memdup(state->samples, state->size * sizeof(*state_samples));
 	state_image = rt_memdup(state->image, state->size * sizeof(*state_image));
 	mutex_unlock(&state->mtx);
 	while (i < state->size)
 	{
-		samples = state_samples[i];
+		samples = state_image[i].v[W];
 		if (samples == 0)
 			samples = 1;
 		col = vec_scale(state_image[i], 255.0 / samples);
@@ -63,7 +61,6 @@ void
 		dst[bpp * i + 0] = (t_color)(col.v[Z]) & 0xFF;
 		i += 1;
 	}
-	rt_free(state_samples);
 	rt_free(state_image);
 	if (state->idx != state->end)
 	{
