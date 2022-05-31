@@ -91,7 +91,7 @@ ifndef san
 endif 
 
 ifndef nothread
-	CFLAGS		+= -DRT_MT
+	CFLAGS		+= -DRT_MT -DRT_TIME
 endif
 
 ifeq ($(config), debug)

@@ -40,24 +40,31 @@ void
 	t_vec	col;
 	size_t	samples;
 	FLOAT	done;
+	long	*state_samples;
+	t_vec	*state_image;
 
 	i = 0;
 	dst = state->win.data;
 	bpp = state->win.bpp >> 3;
 	done = (FLOAT) state->idx / state->end;
 	mutex_lock(&state->mtx);
+	state_samples = rt_memdup(state->samples, state->size * sizeof(*state_samples));
+	state_image = rt_memdup(state->image, state->size * sizeof(*state_image));
+	mutex_unlock(&state->mtx);
 	while (i < state->size)
 	{
-		samples = state->samples[i];
+		samples = state_samples[i];
 		if (samples == 0)
 			samples = 1;
-		col = vec_scale(state->image[i], 255.0 / samples);
+		col = vec_scale(state_image[i], 255.0 / samples);
 		dst[bpp * i + 3] = (t_color)(col.v[W]) & 0xFF;
 		dst[bpp * i + 2] = (t_color)(col.v[X]) & 0xFF;
 		dst[bpp * i + 1] = (t_color)(col.v[Y]) & 0xFF;
 		dst[bpp * i + 0] = (t_color)(col.v[Z]) & 0xFF;
 		i += 1;
 	}
+	rt_free(state_samples);
+	rt_free(state_image);
 	if (state->idx != state->end)
 	{
 		i = 0;
@@ -79,6 +86,5 @@ void
 			i += 1;
 		}
 	}
-	mutex_unlock(&state->mtx);
 	mlx_put_image_to_window(state->win.mlx, state->win.handle, state->win.img, 0, 0);
 }

@@ -33,7 +33,7 @@
 #  define RT_TIME_FRAME 0
 # endif
 
-# define RT_FPS 60
+# define RT_FPS 10
 
 # include "rtmath.h"
 # include "mt.h"
