@@ -20,6 +20,8 @@ typedef struct s_cylinder		t_cylinder;
 typedef struct s_hit			t_hit;
 typedef struct s_scene			t_scene;
 
+struct s_tree;
+
 struct s_hit {
 	t_vec		pos;
 	t_vec		normal;
@@ -31,6 +33,8 @@ struct s_hit {
 struct s_entity_vt {
 	int	(*hit)(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 	void (*destroy)(t_entity *ent);
+	int (*compare)(t_entity *ent, t_vec pos, t_vec dir);
+	t_vec (*get_pos)(const t_entity *ent);
 };
 
 struct s_entity {
@@ -102,6 +106,7 @@ struct s_cylinder {
 struct s_scene {
 	t_entity		**entities;
 	size_t			count;
+	struct s_tree	*tree;
 	t_camera		*camera;
 	t_ambient_light	*ambient_light;
 	t_light			*main_light;
@@ -132,6 +137,24 @@ void				cone_destroy(t_entity *ent);
 void				plane_destroy(t_entity *ent);
 void				cylinder_destroy(t_entity *ent);
 
+int					triangle_compare(t_entity *ent, t_vec pos, t_vec dir);
+int					sphere_compare(t_entity *ent, t_vec pos, t_vec dir);
+int					cone_compare(t_entity *ent, t_vec pos, t_vec dir);
+int					plane_compare(t_entity *ent, t_vec pos, t_vec dir);
+int					cylinder_compare(t_entity *ent, t_vec pos, t_vec dir);
+int					light_compare(t_entity *ent, t_vec pos, t_vec dir);
+
+t_vec				plane_get_pos(const t_entity *ent);
+t_vec				triangle_get_pos(const t_entity *ent);
+t_vec				sphere_get_pos(const t_entity *ent);
+t_vec				cone_get_pos(const t_entity *ent);
+t_vec				plane_get_pos(const t_entity *ent);
+t_vec				cylinder_get_pos(const t_entity *ent);
+t_vec				light_get_pos(const t_entity *ent);
+
 void				scene_destroy(t_scene *scene);
+
+int					sphere_plane_compare(t_vec plane_pos, t_vec plane_dir, t_vec pos, FLOAT radius);
+int					box_plane_compare(t_vec plane_pos, t_vec plane_dir, t_vec a, t_vec b);
 
 #endif

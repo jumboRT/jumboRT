@@ -8,7 +8,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		NULL,
-		ambient_light_destroy
+		ambient_light_destroy,
+		NULL,
+		NULL,
 	};
 
 	return (&vt);

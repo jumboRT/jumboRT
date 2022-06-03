@@ -3,7 +3,7 @@
 
 # include <stddef.h>
 
-# define FLOAT float
+# define FLOAT double
 
 # define X 0
 # define Y 1
@@ -67,5 +67,8 @@ t_vec	vec_x(FLOAT v);
 t_vec	vec_y(FLOAT v);
 t_vec	vec_z(FLOAT v);
 t_vec	vec_w(FLOAT v);
+
+t_vec	vec_min(t_vec a, t_vec b);
+t_vec	vec_max(t_vec a, t_vec b);
 
 #endif

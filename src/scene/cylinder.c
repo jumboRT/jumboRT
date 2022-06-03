@@ -11,7 +11,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		cylinder_hit,
-		cylinder_destroy
+		cylinder_destroy,
+		cylinder_compare,
+		cylinder_get_pos
 	};
 
 	return (&vt);
@@ -148,3 +150,31 @@ void
 	cylinder->mat->vt->destroy(cylinder->mat);
 	rt_free(ent);
 }
+
+int
+	cylinder_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	t_cylinder	*cylinder;
+	t_vec		pb;
+	t_vec		ce;
+
+	cylinder = (t_cylinder *) ent;
+	pb = vec_add(cylinder->pos, vec_scale(cylinder->dir, cylinder->height));
+	ce = vec(
+		cylinder->diameter / 2 * sqrt(1 - pos.v[X] * pos.v[X]),
+		cylinder->diameter / 2 * sqrt(1 - pos.v[Y] * pos.v[Y]),
+		cylinder->diameter / 2 * sqrt(1 - pos.v[Z] * pos.v[Z]),
+		0);
+	return (box_plane_compare(pos, dir,
+			vec_min(vec_sub(cylinder->pos, ce), vec_sub(pb, ce)),
+			vec_max(vec_add(cylinder->pos, ce), vec_add(pb, ce))));
+}
+
+t_vec	cylinder_get_pos(const t_entity *ent)
+{
+	t_cylinder	*cylinder;
+
+	cylinder = (t_cylinder *) ent;
+	return (cylinder->pos);
+}
+

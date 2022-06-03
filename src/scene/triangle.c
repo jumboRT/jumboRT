@@ -8,7 +8,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		triangle_hit,
-		triangle_destroy
+		triangle_destroy,
+		triangle_compare,
+		triangle_get_pos
 	};
 
 	return (&vt);
@@ -76,3 +78,33 @@ void
 	triangle->mat->vt->destroy(triangle->mat);
 	rt_free(ent);
 }
+
+int
+	triangle_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	t_triangle	*triangle;
+	FLOAT		f0;
+	FLOAT		f1;
+	FLOAT		f2;
+
+	triangle = (t_triangle *) ent;
+	f0 = vec_dot(dir, vec_sub(triangle->pos0, pos));
+	f1 = vec_dot(dir, vec_sub(triangle->pos1, pos));
+	f2 = vec_dot(dir, vec_sub(triangle->pos2, pos));
+	if (f0 < 0 && f1 < 0 && f2 < 0)
+		return (-1);
+	if (f0 > 0 && f1 > 0 && f2 > 0)
+		return (1);
+	return (0);
+}
+
+
+t_vec
+	triangle_get_pos(const t_entity *ent)
+{
+	t_triangle	*triangle;
+
+	triangle = (t_triangle *) ent;
+	return (vec_scale(vec_add(vec_add(triangle->pos0, triangle->pos1), triangle->pos2), 1.0 / 3.0));
+}
+

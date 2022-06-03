@@ -8,7 +8,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		NULL,
-		camera_destroy
+		camera_destroy,
+		NULL,
+		NULL,
 	};
 
 	return (&vt);

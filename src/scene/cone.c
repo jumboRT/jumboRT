@@ -11,7 +11,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		cone_hit,
-		cone_destroy
+		cone_destroy,
+		cone_compare,
+		cone_get_pos
 	};
 
 	return (&vt);
@@ -105,6 +107,7 @@ int
 		r = tan(cone->angle) * cone->height;
 		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, t_end));
 		rel_pos = vec_sub(hit->pos, cone->pos);
+		// TODO: should maybe be sin()?
 		if (cos(cone->angle) * vec_mag(rel_pos) <= r)
 		{
 			hit->t = t_end;
@@ -125,3 +128,34 @@ void
 	cone->mat->vt->destroy(cone->mat);
 	rt_free(ent);
 }
+
+int
+	cone_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	t_cone	*cone;
+	FLOAT	radius;
+	t_vec	pb;
+	t_vec	ce;
+
+	cone = (t_cone *) ent;
+	radius = tan(cone->angle) * cone->height;
+	pb = vec_add(cone->pos, vec_scale(cone->dir, cone->height));
+	ce = vec(
+		radius * sqrt(1 - pos.v[X] * pos.v[X]),
+		radius * sqrt(1 - pos.v[Y] * pos.v[Y]),
+		radius * sqrt(1 - pos.v[Z] * pos.v[Z]),
+		0);
+	return (box_plane_compare(pos, dir,
+			vec_min(cone->pos, vec_sub(pb, ce)),
+			vec_max(cone->pos, vec_add(pb, ce))));
+}
+
+t_vec
+	cone_get_pos(const t_entity *ent)
+{
+	const t_cone	*cone;
+
+	cone = (const t_cone *) ent;
+	return (cone->pos);
+}
+

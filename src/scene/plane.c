@@ -8,7 +8,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		plane_hit,
-		plane_destroy
+		plane_destroy,
+		plane_compare,
+		plane_get_pos
 	};
 
 	return (&vt);
@@ -46,3 +48,22 @@ void
 	plane->mat->vt->destroy(plane->mat);
 	rt_free(ent);
 }
+
+int
+	plane_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	(void) ent;
+	(void) pos;
+	(void) dir;
+	return (0);
+}
+
+t_vec
+	plane_get_pos(const t_entity *ent)
+{
+	const t_plane	*plane;
+
+	plane = (const t_plane *) ent;
+	return (plane->pos);
+}
+

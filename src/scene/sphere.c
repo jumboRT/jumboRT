@@ -8,7 +8,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		sphere_hit,
-		sphere_destroy
+		sphere_destroy,
+		sphere_compare,
+		sphere_get_pos
 	};
 
 	return (&vt);
@@ -54,3 +56,22 @@ void
 	sphere->mat->vt->destroy(sphere->mat);
 	rt_free(ent);
 }
+
+int
+	sphere_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	t_sphere	*sphere;
+
+	sphere = (t_sphere *) ent;
+	return (sphere_plane_compare(pos, dir, sphere->pos, sphere->diameter / 2));
+}
+
+t_vec
+	sphere_get_pos(const t_entity *ent)
+{
+	const t_sphere	*sphere;
+
+	sphere = (const t_sphere *) ent;
+	return (sphere->pos);
+}
+

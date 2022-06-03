@@ -18,7 +18,7 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 1024
+#  define RT_SAMPLES 4
 # endif
 
 # ifndef RT_MAX_DEPTH

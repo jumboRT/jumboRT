@@ -1,9 +1,11 @@
 #include "rt.h"
+#include "tree.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
 static int
 	trace_hit(t_scene *scene, t_ray ray, t_hit *hit)
 {
@@ -26,6 +28,7 @@ static int
 		hit->local_normal = vec_neg(hit->normal);
 	return (hit->t < RT_RAY_LENGTH);
 }
+*/
 
 /*
 static t_vec
@@ -94,7 +97,7 @@ static t_vec
 //	if (vec_dot(light_ray.dir, hit->normal) >= 0)
 //		return (vec(0, 0, 0, 0));
 //	light_ray.pos = vec_add(light_ray.pos, vec_scale(light_ray.dir, 0.0001));
-	if (!trace_hit(scene, light_ray, &obj_hit))
+	if (!tree_hit(scene->tree, light_ray, &obj_hit, HUGE_VAL))
 		obj_hit.t = HUGE_VAL;
 	dist = near_dist;
 	//dist = vec_mag(vec_sub(hit->pos, light_pos));
@@ -135,7 +138,7 @@ static t_vec
 
 	if (depth == 0)
 		return (vec(0, 0, 0, 0));
-	if (trace_hit(scene, ray, &hit))
+	if (tree_hit(scene->tree, ray, &hit, HUGE_VAL))
 	{
 		// TODO: use the BRDF stuff
 		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx) && vec_mag(scatter.attenuation) > 0)
@@ -162,7 +165,7 @@ void
 	state->dbg_norm_size = 0;
 	while (state->dbg_line_size < RT_MAX_DEPTH + 1)
 	{
-		if (!trace_hit(&state->scene, ray, &hit))
+		if (!tree_hit(state->scene.tree, ray, &hit, HUGE_VAL))
 		{
 			state->dbg_line[state->dbg_line_size] = vec_add(ray.pos, vec_scale(ray.dir, RT_RAY_LENGTH));
 			state->dbg_line_size += 1;

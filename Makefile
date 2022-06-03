@@ -1,13 +1,14 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c cmp.c
 GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
-SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c
+SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c compare.c
 MATERIAL_FILES			:= lambertian.c metal.c dielectric.c emitter.c
 BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c time.c
 PARSER_FILES			:= common.c light.c parser.c camera.c object.c material.c
 UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
+TREE_FILES				:= tree.c util.c optimize.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -25,6 +26,7 @@ FILE_NAMES				:= \
 	$(patsubst %,scene/%,$(SCENE_FILES)) \
 	$(patsubst %,material/%,$(MATERIAL_FILES)) \
 	$(patsubst %,parser/%,$(PARSER_FILES)) \
+	$(patsubst %,tree/%,$(TREE_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang

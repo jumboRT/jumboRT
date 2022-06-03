@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "tree.h"
 
 #include <stdlib.h>
 
@@ -22,4 +23,5 @@ void
 		ent->vt->destroy(ent);
 	}
 	rt_free(scene->entities);
+	tree_destroy(scene->tree);
 }

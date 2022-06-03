@@ -10,7 +10,9 @@ const t_entity_vt
 {
 	static const t_entity_vt	vt = {
 		light_hit,
-		light_destroy
+		light_destroy,
+		light_compare,
+		light_get_pos
 	};
 
 	return (&vt);
@@ -56,3 +58,22 @@ void
 	light->mat->vt->destroy(light->mat);
 	rt_free(ent);
 }
+
+int
+	light_compare(t_entity *ent, t_vec pos, t_vec dir)
+{
+	t_light	*light;
+
+	light = (t_light *) ent;
+	return (sphere_plane_compare(pos, dir, light->pos, LIGHT_RADIUS));
+}
+
+t_vec
+	light_get_pos(const t_entity *ent)
+{
+	const t_light	*light;
+
+	light = (const t_light *) ent;
+	return (light->pos);
+}
+
