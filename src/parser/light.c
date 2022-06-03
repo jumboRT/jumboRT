@@ -19,7 +19,8 @@ t_entity
 t_entity
 	*rt_light(const char **line, char **error)
 {
-	t_light	light;
+	t_light		light;
+	t_emitter	*emitter;
 
 	*line = rt_pos(*line, error, &light.pos);
 	*line = rt_float(*line, error, &light.brightness);
@@ -27,5 +28,11 @@ t_entity
 	if (line == NULL)
 		return (NULL);
 	light.base.vt = light_vt();
+	emitter = rt_malloc(sizeof(*emitter));
+	emitter->base.vt = emitter_vt();
+	emitter->emittance = light.color;
+	emitter->brightness = light.brightness;
+	emitter->child = NULL;
+	light.mat = (t_material *) emitter;
 	return (rt_memdup(&light, sizeof(light)));
 }

@@ -11,6 +11,7 @@ typedef struct s_entity			t_entity;
 typedef struct s_ambient_light	t_ambient_light;
 typedef struct s_camera			t_camera;
 typedef struct s_light			t_light;
+typedef struct s_triangle		t_triangle;
 typedef struct s_sphere			t_sphere;
 typedef struct s_plane			t_plane;
 typedef struct s_cylinder		t_cylinder;
@@ -53,6 +54,16 @@ struct s_light {
 	t_vec		pos;
 	FLOAT		brightness;
 	t_vec		color;
+	t_material	*mat;
+};
+
+struct s_triangle {
+	t_entity	base;
+	t_vec		pos0;
+	t_vec		pos1;
+	t_vec		pos2;
+	FLOAT		diameter;
+	t_material	*mat;
 };
 
 struct s_sphere {
@@ -87,19 +98,23 @@ struct s_scene {
 };
 
 const t_entity_vt	*ambient_light_vt(void);
+const t_entity_vt	*triangle_vt(void);
 const t_entity_vt	*camera_vt(void);
 const t_entity_vt	*light_vt(void);
 const t_entity_vt	*sphere_vt(void);
 const t_entity_vt	*plane_vt(void);
 const t_entity_vt	*cylinder_vt(void);
 
+int					triangle_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					light_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 
 void				ambient_light_destroy(t_entity *ent);
 void				camera_destroy(t_entity *ent);
 void				light_destroy(t_entity *ent);
+void				triangle_destroy(t_entity *ent);
 void				sphere_destroy(t_entity *ent);
 void				plane_destroy(t_entity *ent);
 void				cylinder_destroy(t_entity *ent);

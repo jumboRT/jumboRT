@@ -22,6 +22,7 @@ struct s_material_entry {
 int			rt_scene(t_scene *scene, const char *file, char **error);
 
 t_entity	*rt_ambient_light(const char **line, char **error);
+t_entity	*rt_triangle(const char **line, char **error);
 t_entity	*rt_camera(const char **line, char **error);
 t_entity	*rt_light(const char **line, char **error);
 t_entity	*rt_sphere(const char **line, char **error);
@@ -31,6 +32,7 @@ t_entity	*rt_entity(const char **line, char **error);
 t_material	*rt_lambertian(const char **line, char **error);
 t_material	*rt_metal(const char **line, char **error);
 t_material	*rt_dielectric(const char **line, char **error);
+t_material	*rt_emitter(const char **line, char **error);
 t_material	*rt_material(const char **line, char **error);
 int			rt_space(const char *line, char **error);
 size_t		rt_wordlen(const char *str);

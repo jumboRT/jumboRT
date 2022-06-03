@@ -60,6 +60,8 @@ int
 	FLOAT		d;
 	FLOAT		t1;
 	FLOAT		t2;
+	FLOAT		z1;
+	FLOAT		z2;
 	FLOAT		t_top;
 	FLOAT		t_bot;
 	FLOAT		h;
@@ -97,74 +99,45 @@ int
 		return (0);
 	t1 = (-b - sqrt(d)) / (2 * a);
 	t2 = (-b + sqrt(d)) / (2 * a);
+	z1 = vec_add(ray.pos, vec_scale(ray.dir, t1)).v[Z];
+	z2 = vec_add(ray.pos, vec_scale(ray.dir, t2)).v[Z];
 	h = cylinder->height;
-	t_top = (h - ray.pos.v[Z]) / ray.dir.v[Z]; // TODO: division by 0
-	t_bot = (0 - ray.pos.v[Z]) / ray.dir.v[Z]; // TODO: division by 0
-	hit->t = HUGE_VAL; // TODO: try to get rid of this?
-	if (t_top < hit->t && t_top >= min && between(t_top, t1, t2))
+	t_top = HUGE_VAL;
+	t_bot = -HUGE_VAL;
+	if (ray.dir.v[Z] != 0)
+	{
+		t_top = (h - ray.pos.v[Z]) / ray.dir.v[Z];
+		t_bot = (0 - ray.pos.v[Z]) / ray.dir.v[Z];
+	}
+	hit->t = HUGE_VAL;
+	if (t_top < hit->t && t_top >= min && between(h, z1, z2))
 	{
 		hit->t = t_top;
 		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
 		hit->normal = cylinder->dir;
 	}
-	if (t_bot < hit->t && t_bot >= min && between(t_bot, t1, t2))
+	if (t_bot < hit->t && t_bot >= min && between(0, z1, z2))
 	{
 		hit->t = t_bot;
 		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
 		hit->normal = vec_neg(cylinder->dir);
 	}
-	if (t1 < hit->t && t1 >= min && between(t1, t_top, t_bot))
+	if (t1 < hit->t && t1 >= min && between(z1, h, 0))
 	{
 		hit->t = t1;
 		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = vec_norm(vec_sub(vec_scale(cylinder->dir, vec_dot(hit->pos, cylinder->dir)), hit->pos)); 
+		hit->normal = vec_norm(vec_sub(hit->pos, vec_add(cylinder->pos, vec_scale(cylinder->dir, vec_dot(vec_sub(hit->pos, cylinder->pos), cylinder->dir)))));
 	}
-	if (t2 < hit->t && t2 >= min && between(t2, t_top, t_bot))
+	if (t2 < hit->t && t2 >= min && between(z2, h, 0))
 	{
 		hit->t = t2;
 		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = vec_norm(vec_sub(vec_scale(cylinder->dir, vec_dot(hit->pos, cylinder->dir)), hit->pos)); 
+		hit->normal = vec_norm(vec_sub(hit->pos, vec_add(cylinder->pos, vec_scale(cylinder->dir, vec_dot(vec_sub(hit->pos, cylinder->pos), cylinder->dir)))));
 	}
 	if (hit->t != HUGE_VAL)
 		return (1);
 	return (0);
-	/*
-	if ((ray.pos.v[Z] > h && v1.v[Z] > h && v2.v[Z] < h)
-			|| (ray.pos.v[Z] < h && v1.v[Z] < h && v2.v[Z] > h))
-	{
-		hit->normal = cylinder->dir;
-		hit->t = vec_dot(ray.dir, vec_z(1)) / vec_dot(
-				vec_sub(
-						vec_scale(vec_z(1), cylinder->height), ray.pos), vec_z(1));
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		if ((hit->t > t1 && hit->t < t2) || (hit->t > t2 && hit->t < t1))
-			return (1);
-		// hit top
-	}
-	if ((ray.pos.v[Z] > 0 && v1.v[Z] > 0 && v2.v[Z] < 0)
-			|| (ray.pos.v[Z] < 0 && v1.v[Z] < 0 && v2.v[Z] > 0))
-	{
-		hit->normal = vec_neg(cylinder->dir);
-		hit->t = vec_dot(ray.dir, vec_z(-1)) / vec_dot(vec_neg(ray.pos), vec_z(-1));
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		if ((hit->t > t1 && hit->t < t2) || (hit->t > t2 && hit->t < t1))
-			return (1);
-		// hit bottom
-	}
-	hit->t = t1;
-	if (t1 > t2 && t2 >= min)
-		hit->t = t2;
-	if (hit->t < min)
-		return (0);
-	hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-	if (hit->pos.v[Z] < 0 || hit->pos.v[Z] > cylinder->height)
-		return (0);
-	hit->normal = vec_norm(vec_sub(vec_norm(hit->pos), cylinder->dir));
-	//hit->normal = vec_x(1);
-	return (1);
-	*/
 }
-//TODO check if it ever happens that the min distance of the ray completely skips an object
 
 void
 	cylinder_destroy(t_entity *ent)

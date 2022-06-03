@@ -30,6 +30,7 @@ int
 	scatter->scattered.pos = hit->pos;
 	dir = reflect(in.dir, hit->local_normal);
 	scatter->scattered.dir = vec_norm(vec_add(dir, vec_scale(rt_random_svec(&ctx->seed), metal->fuzzy)));
+	scatter->emittance = vec(0, 0, 0, 0);
 	return (vec_dot(scatter->scattered.dir, hit->local_normal) > 0);
 }
 

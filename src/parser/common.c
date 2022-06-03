@@ -105,7 +105,7 @@ const char
 	if (line == NULL)
 		return (NULL);
 	line = rt_skip(line, ft_isspace);
-	dst->v[W] = 1.0;
+	dst->v[W] = 0.0;
 	line = rt_color_part(line, error, &dst->v[X]);
 	line = rt_expect_char(line, error, ',');
 	line = rt_color_part(line, error, &dst->v[Y]);
@@ -130,7 +130,7 @@ const char
 	line = rt_float(line, error, &dst->v[Z]);
 	if (line == NULL)
 		return (NULL);
-	return (rt_skip(line, ft_isspace));
+	return (line);
 }
 
 const char

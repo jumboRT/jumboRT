@@ -28,6 +28,7 @@ int
 	if (vec_mag(dir) < 0.001)
 		dir = hit->local_normal;
 	scatter->scattered.dir = vec_norm(dir);
+	scatter->emittance = vec(0, 0, 0, 0);
 	return (1);
 }
 

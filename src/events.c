@@ -72,3 +72,13 @@ int
 	return (0);
 }
 
+int
+	rt_button_down(int button, int x, int y, void *ctx)
+{
+	t_rt_state	*state;
+
+	(void) button;
+	state = ctx;
+	trace_debug(state, x, y);
+	return (0);
+}

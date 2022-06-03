@@ -6,6 +6,7 @@ static const t_material_entry	g_entries[] = {
 	{ "lambertian", rt_lambertian },
 	{ "metal", rt_metal },
 	{ "dielectric", rt_dielectric },
+	{ "emitter", rt_emitter },
 	{ NULL, NULL }
 };
 
@@ -71,3 +72,18 @@ t_material
 		return (NULL);
 	return (rt_memdup(&dielectric, sizeof(dielectric)));
 }
+
+t_material
+	*rt_emitter(const char **line, char **error)
+{
+	t_emitter	emitter;
+
+	emitter.base.vt = emitter_vt();
+	*line = rt_float(*line, error, &emitter.brightness);
+	*line = rt_color(*line, error, &emitter.emittance);
+	emitter.child = rt_material(line, error);
+	if (*line == NULL)
+		return (NULL);
+	return (rt_memdup(&emitter, sizeof(emitter)));
+}
+
