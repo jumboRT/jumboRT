@@ -25,6 +25,7 @@ t_entity	*rt_ambient_light(const char **line, char **error);
 t_entity	*rt_camera(const char **line, char **error);
 t_entity	*rt_light(const char **line, char **error);
 t_entity	*rt_sphere(const char **line, char **error);
+t_entity	*rt_cone(const char **line, char **error);
 t_entity	*rt_plane(const char **line, char **error);
 t_entity	*rt_cylinder(const char **line, char **error);
 t_entity	*rt_entity(const char **line, char **error);

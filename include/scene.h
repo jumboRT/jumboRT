@@ -12,6 +12,7 @@ typedef struct s_ambient_light	t_ambient_light;
 typedef struct s_camera			t_camera;
 typedef struct s_light			t_light;
 typedef struct s_sphere			t_sphere;
+typedef struct s_cone			t_cone;
 typedef struct s_plane			t_plane;
 typedef struct s_cylinder		t_cylinder;
 
@@ -62,6 +63,15 @@ struct s_sphere {
 	t_material	*mat;
 };
 
+struct s_cone {
+	t_entity	base;
+	t_vec		pos;
+	t_vec		dir;
+	FLOAT		angle;
+	FLOAT		height;
+	t_material	*mat;
+};
+
 struct s_plane {
 	t_entity	base;
 	t_vec		pos;
@@ -90,10 +100,12 @@ const t_entity_vt	*ambient_light_vt(void);
 const t_entity_vt	*camera_vt(void);
 const t_entity_vt	*light_vt(void);
 const t_entity_vt	*sphere_vt(void);
+const t_entity_vt	*cone_vt(void);
 const t_entity_vt	*plane_vt(void);
 const t_entity_vt	*cylinder_vt(void);
 
 int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					cone_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 
@@ -101,6 +113,7 @@ void				ambient_light_destroy(t_entity *ent);
 void				camera_destroy(t_entity *ent);
 void				light_destroy(t_entity *ent);
 void				sphere_destroy(t_entity *ent);
+void				cone_destroy(t_entity *ent);
 void				plane_destroy(t_entity *ent);
 void				cylinder_destroy(t_entity *ent);
 
