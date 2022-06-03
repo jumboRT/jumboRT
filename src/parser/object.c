@@ -37,6 +37,22 @@ t_entity
 }
 
 t_entity
+	*rt_cone(const char **line, char **error)
+{
+	t_cone	cone;
+
+	*line = rt_pos(*line, error, &cone.pos);
+	*line = rt_norm_vec(*line, error, &cone.dir);
+	*line = rt_float(*line, error, &cone.angle);
+	*line = rt_float(*line, error, &cone.height);
+	cone.mat = rt_material(line, error);
+	if (*line == NULL)
+		return (NULL);
+	cone.base.vt = cone_vt();
+	return (rt_memdup(&cone, sizeof(cone)));
+}
+
+t_entity
 	*rt_plane(const char **line, char **error)
 {
 	t_plane		plane;

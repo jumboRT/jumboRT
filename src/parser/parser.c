@@ -9,6 +9,7 @@ static const t_entry	g_entries[] = {
 	{ "L", rt_light },
 	{ "tr", rt_triangle },
 	{ "sp", rt_sphere },
+	{ "co", rt_cone },
 	{ "pl", rt_plane },
 	{ "cy", rt_cylinder },
 	{ NULL, NULL }
