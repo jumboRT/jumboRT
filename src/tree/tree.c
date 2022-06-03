@@ -1,5 +1,6 @@
 #include "tree.h"
 #include "rt.h"
+#include "ft_printf.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -104,40 +105,16 @@ int
 		if (hit_back.t < hit->t)
 			*hit = hit_back;
 	}
-	/*
-	hit_front.t = RT_RAY_LENGTH;
-	hit_back.t = RT_RAY_LENGTH;
-	if (plane_t >= 0)
-	{
-		if (dot > 0)
-		{
-			tree_hit(tree->front, ray, &hit_front, HUGE_VAL);
-			if (plane_t < max_t)
-				tree_hit(tree->back, ray, &hit_back, HUGE_VAL);
-		}
-		else
-		{
-			tree_hit(tree->back, ray, &hit_back, HUGE_VAL);
-			if (plane_t < max_t)
-				tree_hit(tree->front, ray, &hit_front, HUGE_VAL);
-		}
-		if (hit_back.t < hit->t)
-			*hit = hit_back;
-		if (hit_front.t < hit->t)
-			*hit = hit_front;
-	}
-	else if (dot > 0)
-	{
-		tree_hit(tree->front, ray, &hit_front, HUGE_VAL);
-		if (hit_front.t < hit->t)
-			*hit = hit_front;
-	}
-	else
-	{
-		tree_hit(tree->back, ray, &hit_back, HUGE_VAL);
-		if (hit_back.t < hit->t)
-			*hit = hit_back;
-	}
-	*/
 	return (hit->t < RT_RAY_LENGTH);
 }
+
+void
+	dbg_tree(t_tree *tree, int depth)
+{
+	if (tree == NULL)
+		return ;
+	ft_printf("%*s%d\n", depth * 2 + 2, "+ ", (int) tree->count);
+	dbg_tree(tree->front, depth + 1);
+	dbg_tree(tree->back, depth + 1);
+}
+

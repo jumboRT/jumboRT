@@ -47,13 +47,13 @@ FLOAT
 	FLOAT	front;
 	FLOAT	back;
 
-	if (tree == NULL)
-		return (0);
-	if (tree->list != NULL)
+	if (tree == NULL || tree->list != NULL)
 		return (tree->count);
 	front = tree_quality(tree->front);
 	back = tree_quality(tree->back);
-	return (fmax(front, back) + 1);
+	if (front == 0 || back == 0 || front == HUGE_VAL || back == HUGE_VAL)
+		return (HUGE_VAL);
+	return (fmax(front, back) / fmin(front, back));
 }
 
 t_tree
@@ -114,7 +114,7 @@ void
 	{
 		split = tree_copy(tree);
 		tree_split(split, planes[i].pos, planes[i].dir);
-		if (tree_quality(split) <= tree_quality(best))
+		if (tree_quality(split) < tree_quality(best))
 			tree_swap(best, split);
 		tree_destroy(split);
 		i += 1;

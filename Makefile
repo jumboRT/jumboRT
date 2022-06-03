@@ -162,7 +162,7 @@ fclean: clean
 	$(SILENT)rm -f crash
 
 re: fclean
-	make all
+	$(MAKE) all
 
 -include $(DEPENDS)
 .PHONY: all clean fclean re

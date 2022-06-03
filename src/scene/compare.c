@@ -46,13 +46,11 @@ int
 	sphere_plane_compare(t_vec plane_pos, t_vec plane_dir, t_vec pos, FLOAT radius)
 {
 	t_vec	plane_sphere;
-	t_vec	closest_vec;
 	FLOAT	f;
 
 	plane_sphere = vec_sub(pos, plane_pos);
 	f = vec_dot(plane_sphere, plane_dir);
-	closest_vec = vec_scale(plane_dir, f);
-	if (vec_dot(closest_vec, closest_vec) > radius * radius)
+	if (fabs(f) > radius)
 		return ((f > 0) - (f < 0));
 	return (0);
 }

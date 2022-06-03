@@ -123,11 +123,8 @@ int
 	else
 	{
 		scene->tree = tree_new(scene->entities, scene->count);
-		tree_optimize(scene->tree, 4);
-		/* ft_printf("tree quality * 1000: %d\n", (int) tree_quality(scene->tree) * 1000);
-		ft_printf("main tree count: %d\n", (int) scene->tree->count);
-		ft_printf("front tree count: %d\n", (int) scene->tree->front->count);
-		ft_printf("back tree count: %d\n", (int) scene->tree->back->count);*/
+		tree_optimize(scene->tree, RT_TREE_DEPTH);
+		dbg_tree(scene->tree, 0);
 	}
 	return (err);
 }

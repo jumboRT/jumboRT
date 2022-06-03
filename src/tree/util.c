@@ -1,14 +1,15 @@
 #include "tree.h"
 
+#include <math.h>
+
 static void 
 	gen_bounding_box(t_vec points[2], t_entity **list, size_t count)
 {
 	size_t	index;
 
-	points[0] = list[0]->vt->get_pos(list[0]);
-	points[1] = list[1]->vt->get_pos(list[1]);
-	index = 2;
-
+	points[0] = vec(HUGE_VAL, HUGE_VAL, HUGE_VAL, 0);
+	points[1] = vec(-HUGE_VAL, -HUGE_VAL, -HUGE_VAL, 0);
+	index = 0;
 	while (index < count)
 	{
 		points[0] = vec_min(list[index]->vt->get_pos(list[index]), points[0]);
@@ -28,11 +29,10 @@ t_tree_plane
 	t_vec			mid;
 	t_tree_plane	*planes;
 	t_vec			normal;
-	t_seed			seed;
+	static t_seed	seed = 142531425314253;
 
-	seed = 142531425314253;
 	gen_bounding_box(bounding_box, list, count);
-	mid = vec_scale(vec_sub(bounding_box[0], bounding_box[1]), 0.5);
+	mid = vec_scale(vec_add(bounding_box[0], bounding_box[1]), 0.5);
 	planes = rt_malloc(sizeof(*planes) * RT_TREE_STEPS * RT_TREE_DIRECTIONS);
 	dir_index = 0;
 	index = 0;

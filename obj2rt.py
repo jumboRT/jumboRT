@@ -21,7 +21,7 @@ for line in lines:
 
 sys.stdout.write(f"C 0,0,0 1,0,0 90\n")
 sys.stdout.write(f"A 0.1 255,255,255\n")
-sys.stdout.write(f"L 0,0,1 1.0 255,255,255\n")
+sys.stdout.write(f"sp -8,0,8 20.0 emitter 1.0 255,255,255 255,255,255\n")
 for face in faces:
         a = ",".join(f"{v}" for v in vertices[face[0]])
         b = ",".join(f"{v}" for v in vertices[face[1]])
