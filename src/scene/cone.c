@@ -49,9 +49,10 @@ int
 	FLOAT	d;
 	t_vec	CO;
 	FLOAT	costheta2;
-	FLOAT	t1, t2;
-	t_vec	trans_pos;
-	FLOAT	pos_height;
+	FLOAT	t1, t2, t_end;
+	t_vec	rel_pos;
+	FLOAT	divisor;
+	FLOAT	r;
 	
 	cone = (t_cone *) ent;
 	CO = vec_sub(ray.pos, cone->pos);
@@ -66,21 +67,51 @@ int
 
 	t1 = (-b + sqrt(d)) / (2 * a);
 	t2 = (-b - sqrt(d)) / (2 * a);
+	divisor = vec_dot(ray.dir, cone->dir);
+	t_end = HUGE_VAL;
+	if (!float_eq(divisor, 0, 0.001))
+		t_end = vec_dot(vec_sub(vec_add(cone->pos, vec_scale(cone->dir, cone->height)), ray.pos), cone->dir) / divisor;
 	
 	hit->t = HUGE_VAL;
 	if (t1 >= min)
-		hit->t = t1;
+	{
+		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, t1));
+		rel_pos = vec_sub(hit->pos, cone->pos);
+		if (vec_dot(rel_pos, cone->dir) >= 0)
+		{
+			if (vec_mag(vec_scale(cone->dir, vec_dot(rel_pos, cone->dir))) <= cone->height)
+			{
+				hit->t = t1;
+				hit->normal = vec_norm(vec_cross(rel_pos, vec_cross(rel_pos, cone->dir)));
+			}
+		}
+	}
 	if (t2 < hit->t && t2 >= min)
-		hit->t = t2;
+	{
+
+		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, t2));
+		rel_pos = vec_sub(hit->pos, cone->pos);
+		if (vec_dot(rel_pos, cone->dir) >= 0)
+		{
+			if (vec_mag(vec_scale(cone->dir, vec_dot(rel_pos, cone->dir))) <= cone->height)
+			{
+				hit->t = t2;
+				hit->normal = vec_norm(vec_cross(rel_pos, vec_cross(rel_pos, cone->dir)));
+			}
+		}
+	}
+	if (t_end < hit->t && t_end < t2 && t_end >= min)
+	{
+		r = tan(cone->angle) * cone->height;
+		hit->pos = vec_add(ray.pos, vec_scale(ray.dir, t_end));
+		rel_pos = vec_sub(hit->pos, cone->pos);
+		if (cos(cone->angle) * vec_mag(rel_pos) <= r)
+		{
+			hit->t = t_end;
+			hit->normal = cone->dir;
+		}
+	}
 	if (hit->t == HUGE_VAL)
-		return (0);
-	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-	hit->normal = vec(1, 0, 0, 0);
-	trans_pos = vec_sub(hit->pos, cone->pos);
-	if (vec_dot(trans_pos, cone->dir) < 0)
-		return (0);
-	pos_height = vec_mag(vec_scale(cone->dir, vec_dot(trans_pos, cone->dir)));
-	if (pos_height < 0 || pos_height > cone->height)
 		return (0);
 	return (1);
 }

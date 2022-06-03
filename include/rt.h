@@ -62,8 +62,10 @@ struct s_rt_state {
 	long		version;
 	int			use_conic;
 	double		time;
-	t_vec		dbg_line[RT_MAX_DEPTH];
-	size_t		dbg_size;
+	t_vec		dbg_line[RT_MAX_DEPTH + 1];
+	size_t		dbg_line_size;
+	t_vec		dbg_norm[RT_MAX_DEPTH][2];
+	size_t		dbg_norm_size;
 };
 
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);

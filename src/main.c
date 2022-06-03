@@ -45,7 +45,8 @@ static void
 	state.scene = *scene;
 	state.use_conic = 0;
 	state.time = time_time();
-	state.dbg_size = 0;
+	state.dbg_line_size = 0;
+	state.dbg_norm_size = 0;
 	rt_random_range(NULL, state.order, state.size);
 	thread_reset(&state);
 	thread_start(&state);

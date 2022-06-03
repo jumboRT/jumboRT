@@ -137,10 +137,13 @@ static t_vec
 		return (vec(0, 0, 0, 0));
 	if (trace_hit(scene, ray, &hit))
 	{
+		// TODO: use the BRDF stuff
 		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx) && vec_mag(scatter.attenuation) > 0)
 			return (vec_add(scatter.emittance, color_mul(scatter.attenuation, trace_ray(ctx, scene, scatter.scattered, depth - 1))));
 		return (scatter.emittance);
 	}
+	if (scene->ambient_light != NULL)
+		return (vec_scale(scene->ambient_light->color, scene->ambient_light->ratio));
 	return (vec(0, 0, 0, 0));
 }
 
@@ -155,66 +158,97 @@ void
 	ray = project_ray(state, x, y);
 	mutex_lock(&state->mtx);
 	state->dbg_line[0] = ray.pos;
-	state->dbg_size = 1;
-	while (state->dbg_size < sizeof(state->dbg_line) / sizeof(*state->dbg_line))
+	state->dbg_line_size = 1;
+	state->dbg_norm_size = 0;
+	while (state->dbg_line_size < RT_MAX_DEPTH + 1)
 	{
 		if (!trace_hit(&state->scene, ray, &hit))
 		{
-			state->dbg_line[state->dbg_size] = vec_add(ray.pos, vec_scale(ray.dir, RT_RAY_LENGTH));
-			state->dbg_size += 1;
+			state->dbg_line[state->dbg_line_size] = vec_add(ray.pos, vec_scale(ray.dir, RT_RAY_LENGTH));
+			state->dbg_line_size += 1;
 			break ;
 		}
+		state->dbg_norm[state->dbg_norm_size][0] = hit.pos;
+		state->dbg_norm[state->dbg_norm_size][1] = vec_add(hit.pos, vec_scale(hit.normal, 0.1));
+		state->dbg_norm_size += 1;
 		if (!hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, &ctx))
 		{
+			state->dbg_line[state->dbg_line_size] = hit.pos;
+			state->dbg_line_size += 1;
 			break ;
 		}
 		ray = scatter.scattered;
-		state->dbg_line[state->dbg_size] = ray.pos;
-		state->dbg_size += 1;
+		state->dbg_line[state->dbg_line_size] = ray.pos;
+		state->dbg_line_size += 1;
 	}
 	thread_reset(state);
 	mutex_unlock(&state->mtx);
+}
+
+FLOAT
+	trace_line(t_ray ray, t_vec src, t_vec dst)
+{
+	t_vec	dir;
+	t_vec	cross;
+	t_vec	c1;
+	t_vec	c2;
+	t_vec	n1;
+	t_vec	n2;
+	FLOAT	t1;
+	FLOAT	t2;
+		
+	dir = vec_norm(vec_sub(dst, src));
+	cross = vec_cross(ray.dir, dir);
+	if (vec_mag(cross) != 0)
+	{
+		n2 = vec_cross(dir, cross);
+		t1 = vec_dot(vec_sub(src, ray.pos), n2) / vec_dot(ray.dir, n2);
+		c1 = vec_add(ray.pos, vec_scale(ray.dir, t1));
+		n1 = vec_cross(ray.dir, cross);
+		t2 = vec_dot(vec_sub(ray.pos, src), n1) / vec_dot(dir, n1);
+		c2 = vec_add(src, vec_scale(dir, t2));
+		if (t2 > 0 && t2 < vec_mag(vec_sub(dst, src)) && t1 > 0)
+			return (vec_mag(vec_sub(c1, c2)));
+	}
+	return (HUGE_VAL);
 }
 
 t_vec
 	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y)
 {
 	t_ray	ray;
-	t_ray	tmp;
-	t_vec	cross;
-	t_vec	c1;
-	t_vec	c2;
-	t_vec	n1;
-	t_vec	n2;
 	size_t	i;
 	FLOAT	min_dist;
-	FLOAT	t1;
-	FLOAT	t2;
+	FLOAT	dist;
+	t_vec	color;
 
 	ray = project_ray(state,
 			x + rt_random_float(&ctx->seed), y + rt_random_float(&ctx->seed));
 	min_dist = HUGE_VAL;
 	i = 0;
-	while (i < state->dbg_size && i < state->dbg_size - 1)
+	while (i < state->dbg_norm_size)
 	{
-		tmp.pos = state->dbg_line[i];
-		tmp.dir = vec_norm(vec_sub(state->dbg_line[i + 1], tmp.pos));
-		cross = vec_cross(ray.dir, tmp.dir);
-		if (vec_mag(cross) != 0)
+		dist = trace_line(ray, state->dbg_norm[i][0], state->dbg_norm[i][1]);
+		if (dist < min_dist)
 		{
-			n2 = vec_cross(tmp.dir, cross);
-			t1 = vec_dot(vec_sub(tmp.pos, ray.pos), n2) / vec_dot(ray.dir, n2);
-			c1 = vec_add(ray.pos, vec_scale(ray.dir, t1));
-			n1 = vec_cross(ray.dir, cross);
-			t2 = vec_dot(vec_sub(ray.pos, tmp.pos), n1) / vec_dot(tmp.dir, n1);
-			c2 = vec_add(tmp.pos, vec_scale(tmp.dir, t2));
-			if (vec_mag(vec_sub(c1, c2)) < min_dist && t2 > 0 && t2 < vec_mag(vec_sub(state->dbg_line[i + 1], tmp.pos)) && t1 > 0)
-				min_dist = vec_mag(vec_sub(c1, c2));
+			color = vec(0, 0, 1, 0);
+			min_dist = dist;
+		}
+		i += 1;
+	}
+	i = 0;
+	while (i < state->dbg_line_size && i < state->dbg_line_size - 1)
+	{
+		dist = trace_line(ray, state->dbg_line[i], state->dbg_line[i + 1]);
+		if (dist < min_dist)
+		{
+			color = vec(1, 0, 0, 0);
+			min_dist = dist;
 		}
 		i += 1;
 	}
 	if (min_dist < 0.0025)
-		return (vec(1, 0, 0, 0));
+		return (color);
 	else
 		return (trace_ray(ctx, &state->scene, ray, RT_MAX_DEPTH));
 }
