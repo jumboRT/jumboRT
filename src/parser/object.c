@@ -4,6 +4,24 @@
 #include "scene.h"
 #include <libft.h>
 
+
+#include <stdio.h>
+
+t_entity
+	*rt_triangle(const char **line, char **error)
+{
+	t_triangle	triangle;
+
+	*line = rt_pos(*line, error, &triangle.pos0);
+	*line = rt_pos(*line, error, &triangle.pos1);
+	*line = rt_pos(*line, error, &triangle.pos2);
+	triangle.mat = rt_material(line, error);
+	if (*line == NULL)
+		return (NULL);
+	triangle.base.vt = triangle_vt();
+	return (rt_memdup(&triangle, sizeof(triangle)));
+}
+
 t_entity
 	*rt_sphere(const char **line, char **error)
 {

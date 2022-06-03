@@ -19,6 +19,8 @@ typedef int				(*t_loop_proc)(void *ctx);
 #  include <X11/Xlib.h>
 #  define RT_WIN_EVENT_KEY_DOWN KeyPress
 #  define RT_WIN_EVENT_KEY_MASK KeyPressMask
+#  define RT_WIN_EVENT_BUTTON_DOWN ButtonPress
+#  define RT_WIN_EVENT_BUTTON_MASK ButtonPressMask
 #  define RT_WIN_EVENT_CLOSE 17
 #  define RT_KEY_ESC 65307
 #  define RT_KEY_Q 113

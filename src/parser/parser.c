@@ -7,6 +7,7 @@ static const t_entry	g_entries[] = {
 	{ "A", rt_ambient_light },
 	{ "C", rt_camera },
 	{ "L", rt_light },
+	{ "tr", rt_triangle },
 	{ "sp", rt_sphere },
 	{ "co", rt_cone },
 	{ "pl", rt_plane },
@@ -54,17 +55,19 @@ int
 			return (ft_asprintf(error, "Multiple cameras"), 1);
 		scene->camera = (t_camera *) entity;
 	}
-	else if (entity->vt == camera_vt())
+	else if (entity->vt == ambient_light_vt())
 	{
 		if (scene->ambient_light != NULL)
 			return (ft_asprintf(error, "Multiple ambient lights"), 1);
 		scene->ambient_light = (t_ambient_light *) entity;
 	}
-	else if (entity->vt == camera_vt())
+	else if (entity->vt == light_vt())
 	{
 		if (scene->main_light != NULL)
 			return (ft_asprintf(error, "Multiple lights"), 1);
-		scene->main_light = (t_light *) entity;
+		// TODO: can't set this here cause it will get freed twice
+		// scene->main_light = (t_light *) entity;
+		rt_scene_add(scene, entity);
 	}
 	else
 		rt_scene_add(scene, entity);

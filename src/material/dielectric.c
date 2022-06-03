@@ -53,6 +53,7 @@ int
 	else
 		dir = refract(in.dir, hit->local_normal, rr);
 	scatter->scattered.dir = vec_norm(dir);
+	scatter->emittance = vec(0, 0, 0, 0);
 	return (1);
 }
 

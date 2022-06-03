@@ -26,6 +26,7 @@ static void
 {
 	win_event_hook(&state->win, RT_WIN_EVENT_CLOSE, rt_exit, state);
 	win_event_hook(&state->win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, state);
+	win_event_hook(&state->win, RT_WIN_EVENT_BUTTON_DOWN, rt_button_down, state);
 }
 
 static void
@@ -38,13 +39,13 @@ static void
 	state.size = state.width * state.height;
 	state.image = rt_malloc(state.size * sizeof(*state.image));
 	state.order = rt_malloc(state.size * sizeof(*state.order));
-	state.samples = rt_malloc(state.size * sizeof(*state.samples));
 	state.end = state.size * RT_SAMPLES;
 	mutex_init(&state.mtx);
 	cond_init(&state.cnd);
 	state.scene = *scene;
 	state.use_conic = 0;
 	state.time = time_time();
+	state.dbg_size = 0;
 	rt_random_range(NULL, state.order, state.size);
 	thread_reset(&state);
 	thread_start(&state);
