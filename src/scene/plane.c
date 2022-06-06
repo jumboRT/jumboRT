@@ -16,6 +16,22 @@ const t_entity_vt
 	return (&vt);
 }
 
+int
+	ray_plane_intersect(t_vec normal, t_vec pos, t_ray ray, FLOAT *t)
+{
+	FLOAT			dividend;
+	FLOAT			divisor;
+
+	divisor = vec_dot(ray.dir, normal);
+	if (float_eq(divisor, 0, 0.001))
+		return (0);
+	dividend = vec_dot(vec_sub(pos, ray.pos), normal);
+	*t = dividend / divisor;
+	if (*t < 0)
+		return (0);
+	return (1);
+}
+
 /* http://lousodrome.net/blog/light/2020/07/03/intersection-of-a-ray-and-a-plane/ */
 /* http://wscg.zcu.cz/wscg2002/Papers_2002/A83.pdf */
 int

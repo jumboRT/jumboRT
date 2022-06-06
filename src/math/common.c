@@ -24,6 +24,16 @@ t_mat
 	return (result);
 }
 
+t_ray
+	ray(t_vec org, t_vec dir)
+{
+	t_ray	result;
+
+	result.pos = org;
+	result.dir = dir;
+	return (result);
+}
+
 t_vec
 	row(t_mat m, size_t i)
 {

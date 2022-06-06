@@ -17,6 +17,7 @@ void
 	}
 }
 
+/*
 static FLOAT 
 	ray_plane_intersect(t_ray ray, t_vec pos, t_vec normal)
 {
@@ -35,6 +36,7 @@ static FLOAT
 		return (HUGE_VAL);
 	return (t);
 }
+*/
 
 int
 	tree_hit(t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t)
@@ -75,7 +77,9 @@ int
 		*hit = hit_front;
 	if (hit_back.t < hit->t)
 		*hit = hit_back;*/
-	plane_t = ray_plane_intersect(ray, tree->plane_pos, tree->plane_dir);
+	if (!ray_plane_intersect(tree->plane_pos, tree->plane_dir, ray, &plane_t))
+		plane_t = HUGE_VAL;
+//	plane_t = ray_plane_intersect(ray, tree->plane_pos, tree->plane_dir);
 	dot = vec_dot(vec_sub(ray.pos, tree->plane_pos), tree->plane_dir);
 	if (dot > 0)
 	{

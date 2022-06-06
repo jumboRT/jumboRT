@@ -83,6 +83,8 @@ struct s_cone {
 	t_vec		pos;
 	t_vec		dir;
 	FLOAT		angle;
+	FLOAT		r;
+	FLOAT		costheta2;
 	FLOAT		height;
 	t_material	*mat;
 };

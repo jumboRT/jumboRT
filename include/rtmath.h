@@ -40,6 +40,7 @@ struct s_quadratic {
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w);
 t_mat	mat(t_vec a, t_vec b, t_vec c, t_vec d);
+t_ray	ray(t_vec pos, t_vec dir);
 t_vec	row(t_mat m, size_t i);
 t_vec	col(t_mat m, size_t i);
 
@@ -79,6 +80,8 @@ t_vec	vec_min(t_vec a, t_vec b);
 t_vec	vec_max(t_vec a, t_vec b);
 
 t_vec	ray_at_t(t_ray ray, FLOAT t);
+int		ray_plane_intersect(t_vec normal, t_vec pos, t_ray ray, FLOAT *t);
+
 int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 
 #endif

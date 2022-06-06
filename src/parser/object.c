@@ -3,6 +3,7 @@
 #include "util.h"
 #include "scene.h"
 #include <libft.h>
+#include <math.h>
 
 
 #include <stdio.h>
@@ -49,6 +50,8 @@ t_entity
 	if (*line == NULL)
 		return (NULL);
 	cone.base.vt = cone_vt();
+	cone.costheta2 = pow(cos(cone.angle), 2.0);
+	cone.r = tan(cone.angle) * cone.height;
 	return (rt_memdup(&cone, sizeof(cone)));
 }
 
