@@ -13,9 +13,10 @@
 # define RT_PI 3.14159
 # define RT_2PI (RT_PI * 2)
 
-typedef struct s_vec	t_vec;
-typedef struct s_mat	t_mat;
-typedef struct s_ray	t_ray;
+typedef struct s_vec		t_vec;
+typedef struct s_mat		t_mat;
+typedef struct s_ray		t_ray;
+typedef struct s_quadratic	t_quadratic;
 
 struct s_vec {
 	FLOAT	v[4];
@@ -29,6 +30,12 @@ struct s_mat {
 struct s_ray {
 	t_vec	pos;
 	t_vec	dir;
+};
+
+struct s_quadratic {
+	FLOAT	a;
+	FLOAT	b;
+	FLOAT	c;
 };
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w);
@@ -70,5 +77,8 @@ t_vec	vec_w(FLOAT v);
 
 t_vec	vec_min(t_vec a, t_vec b);
 t_vec	vec_max(t_vec a, t_vec b);
+
+t_vec	ray_at_t(t_ray ray, FLOAT t);
+int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 
 #endif

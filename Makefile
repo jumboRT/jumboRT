@@ -1,6 +1,6 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c cmp.c
+MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c cmp.c ray.c polynomial.c
 GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
 SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c compare.c
@@ -105,6 +105,9 @@ ifeq ($(config), debug)
 	else ifeq ($(san), memory)
 		CFLAGS	+= -fsanitize=memory,undefined
 		LFLAGS	+= -fsanitize=memory,undefined
+	else ifeq($(san), thread)
+		CLFLAGS	+= -fsanitize=thread,undefined
+		LFLAGS	+= -fsanitize=thread,undefined
 	endif
 else ifeq ($(config), release)
 	CFLAGS		+= -g3 -O2

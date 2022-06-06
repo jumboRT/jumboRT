@@ -19,32 +19,8 @@ const t_entity_vt
 	return (&vt);
 }
 
-/*
-static t_ray
-	cone_transform_ray(t_ray ray, t_cone *cone)
-{
-	FLOAT	z_rot;
-	FLOAT	x_rot;
-
-	ray.pos = vec_sub(ray.pos, cone->pos);
-	if (fabs(cone->dir.v[Y]) > 0.0001)
-	{
-		z_rot = atan(cone->dir.v[X] / cone->dir.v[Y]);
-		ray.dir = vec_rotate(vec_z(1), ray.dir, z_rot);
-		ray.pos = vec_rotate(vec_z(1), ray.pos, z_rot);
-	}
-	if (fabs(cone->dir.v[Z]) > 0.0001)
-	{
-		x_rot = atan(cone->dir.v[Y] / cone->dir.v[Z]);
-		ray.dir = vec_rotate(vec_x(1), ray.dir, x_rot);
-		ray.pos = vec_rotate(vec_x(1), ray.pos, x_rot);
-	}
-	return (ray);
-}
-*/
-
 int
-	cone_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	cone_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_cone	*cone;
 	FLOAT	a, b, c;

@@ -5,11 +5,11 @@
 #include "scene.h"
 
 # ifndef RT_TREE_DIRECTIONS
-#  define RT_TREE_DIRECTIONS 12
+#  define RT_TREE_DIRECTIONS 40
 # endif
 
 # ifndef RT_TREE_STEPS
-#  define RT_TREE_STEPS 10
+#  define RT_TREE_STEPS 20
 # endif
 
 # ifndef RT_TREE_DEPTH

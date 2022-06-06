@@ -9,7 +9,7 @@
 # else
 #  define RT_ONESHOT 0
 #  ifndef RT_THREADS
-#   define RT_THREADS 12
+#   define RT_THREADS 8
 #  endif
 # endif
 
@@ -18,7 +18,7 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 1024
+#  define RT_SAMPLES 100
 # endif
 
 # ifndef RT_MAX_DEPTH

@@ -31,7 +31,7 @@ struct s_hit {
 };
 
 struct s_entity_vt {
-	int	(*hit)(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+	int	(*hit)(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 	void (*destroy)(t_entity *ent);
 	int (*compare)(t_entity *ent, t_vec pos, t_vec dir);
 	t_vec (*get_pos)(const t_entity *ent);
@@ -121,12 +121,12 @@ const t_entity_vt	*cone_vt(void);
 const t_entity_vt	*plane_vt(void);
 const t_entity_vt	*cylinder_vt(void);
 
-int					triangle_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
-int					sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
-int					cone_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
-int					plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
-int					cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
-int					light_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					triangle_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					sphere_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					cone_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					plane_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					cylinder_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
+int					light_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 
 void				ambient_light_destroy(t_entity *ent);
 void				camera_destroy(t_entity *ent);

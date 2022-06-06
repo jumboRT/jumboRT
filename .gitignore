@@ -6,3 +6,7 @@
 /miniRT
 /.vscode
 /.cache
+*.swp
+/*.dSYM
+tags
+*.a

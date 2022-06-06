@@ -52,7 +52,7 @@ static int
 }
 
 int
-	cylinder_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	cylinder_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_cylinder	*cylinder;
 	t_ray		org_ray;

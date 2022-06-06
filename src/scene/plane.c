@@ -19,7 +19,7 @@ const t_entity_vt
 /* http://lousodrome.net/blog/light/2020/07/03/intersection-of-a-ray-and-a-plane/ */
 /* http://wscg.zcu.cz/wscg2002/Papers_2002/A83.pdf */
 int
-	plane_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	plane_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_plane	*plane;
 	FLOAT	dividend;

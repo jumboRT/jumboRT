@@ -5,60 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
-static int
-	trace_hit(t_scene *scene, t_ray ray, t_hit *hit)
-{
-	t_hit		tmp;
-	size_t		i;
-	t_entity	*ent;
-
-	i = 0;
-	hit->t = RT_RAY_LENGTH;
-	while (i < scene->count)
-	{
-		ent = scene->entities[i];
-		if (ent->vt->hit != NULL && ent->vt->hit(ent, ray, &tmp, 0.001))
-			if (tmp.t < hit->t)
-				*hit = tmp;
-		i += 1;
-	}
-	hit->local_normal = hit->normal;
-	if (vec_dot(ray.dir, hit->normal) >= 0)
-		hit->local_normal = vec_neg(hit->normal);
-	return (hit->t < RT_RAY_LENGTH);
-}
-*/
-
-/*
-static t_vec
-	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
-{
-	t_hit	hit;
-	t_ray	new_ray;
-	FLOAT	p;
-	FLOAT	cos_theta;
-	t_vec	BRDF;
-	t_vec	incoming;
-
-	// printf("here ");
-	if (depth <= 0)
-		return (vec(0.0, 0.0, 0.0, 0.0));
-	if (trace_hit(scene, ray, &hit))
-	{
-		p = 1.0 / (RT_2PI);
-//		BRDF = vec_scale(vec(0.5, 0.5, 0.5, 1.0), 1.0 / RT_PI);
-		BRDF = vec_scale(vec(5.0, 5.0, 5.0, 1.0), 1);
-		new_ray.pos = vec_add(hit.pos, vec_scale(hit.normal, 0.01));
-		new_ray.dir = rt_random_hvec(&ctx->seed, hit.normal);
-		cos_theta = vec_dot(new_ray.dir, hit.normal);
-		incoming = trace_ray(ctx, scene, new_ray, depth - 1);
-		return (vec_clamp(vec_add(vec_scale(hit.color, 0.5), vec_scale(color_mul(BRDF, incoming), cos_theta / p)), 0.0, 1.0));
-	}
-	return (vec(0.0, 0.0, 0.0, 0.0));
-}
-*/
-
 static t_vec
 	trace_lights(t_scene *scene, t_ray ray, FLOAT min, FLOAT max)
 {
@@ -75,60 +21,20 @@ static t_vec
 	if (scene->main_light == NULL)
 		return (vec(0, 0, 0, 0));
 	light_pos = scene->main_light->pos;
-
 	const_att = 0.0;
 	linear_att = 0.0;
 	quad_att = 10.0;
-
-//	near_dist = vec_mag(
-//			vec_sub(
-//				vec_sub(light_pos, ray.pos),
-//				vec_scale(ray.dir, vec_dot(
-//						vec_sub(light_pos, ray.pos), ray.dir))));
-	/*
-	if (near_dist > 1) //TODO remove magic number
-		return (vec(0, 0, 0, 0));
-	*/
-//	light_ray.pos = hit->pos;
 	t = vec_dot(vec_sub(light_pos, ray.pos), ray.dir);
 	light_ray.pos = vec_add(ray.pos, vec_scale(ray.dir, t));
 	near_dist = vec_mag(vec_sub(light_ray.pos, light_pos));
 	light_ray.dir = vec_norm(vec_sub(light_pos, light_ray.pos));
-//	if (vec_dot(light_ray.dir, hit->normal) >= 0)
-//		return (vec(0, 0, 0, 0));
-//	light_ray.pos = vec_add(light_ray.pos, vec_scale(light_ray.dir, 0.0001));
 	if (!tree_hit(scene->tree, light_ray, &obj_hit, HUGE_VAL))
 		obj_hit.t = HUGE_VAL;
 	dist = near_dist;
-	//dist = vec_mag(vec_sub(hit->pos, light_pos));
 	if (obj_hit.t < dist || t < min || t > max)
 		return (vec(0, 0, 0, 0));
 	return (vec_scale(scene->main_light->color, 1.0 / (const_att + (linear_att * dist) + (quad_att * dist * dist))));
 }
-
-/*
-static t_vec
-	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
-{
-	FLOAT		t;
-	t_hit		hit;
-	t_scatter	scatter;
-	t_vec		light_col;
-
-	if (depth == 0)
-		return (vec(0, 0, 0, 0));
-	if (trace_hit(scene, ray, &hit))
-	{
-		light_col = trace_lights(scene, ray, 0.001, hit.t);
-		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx))
-			return (vec_add(light_col, color_mul(scatter.attenuation, trace_ray(ctx, scene, scatter.scattered, depth - 1))));
-	}
-	light_col = trace_lights(scene, ray, 0.001, RT_RAY_LENGTH);
-	return (light_col);
-	t = 0.5 * (ray.dir.v[Z] + 1.0);
-	return (vec_add(vec_scale(vec(1, 1, 1, 0), 1.0 - t), vec_scale(vec(0.5, 0.7, 1.0, 0.0), t)));
-}
-*/
 
 static t_vec
 	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)

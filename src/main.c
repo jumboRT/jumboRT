@@ -17,7 +17,11 @@ static int
 		win_put_state(state);
 		state->time += 1.0 / RT_FPS;
 	}
+#ifdef RT_LINUX
 	time_sleep(state->time);
+#else
+	time_sleep(1.0 / RT_FPS);
+#endif
 	return (0);
 }
 

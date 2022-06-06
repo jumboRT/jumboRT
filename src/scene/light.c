@@ -21,7 +21,7 @@ const t_entity_vt
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 /* TODO: rewrite this function so it's not just copied from ^^^ */
 int
-	light_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	light_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_light *const	light = (t_light *) ent;
 	const t_vec		oc = vec_sub(ray.pos, light->pos);

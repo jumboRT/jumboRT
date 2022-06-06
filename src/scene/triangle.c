@@ -17,7 +17,7 @@ const t_entity_vt
 }
 
 int
-	triangle_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	triangle_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
 	t_triangle	*triangle;
 	t_vec		normal;

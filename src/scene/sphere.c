@@ -17,32 +17,28 @@ const t_entity_vt
 }
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
-/* TODO: rewrite this function so it's not just copied from ^^^ */
 int
-	sphere_hit(t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+	sphere_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
-	t_sphere *const	sphere = (t_sphere *) ent;
-	const t_vec		oc = vec_sub(ray.pos, sphere->pos);
-	const FLOAT		a = vec_mag2(ray.dir);
-	const FLOAT		half_b = vec_dot(oc, ray.dir);
-	const FLOAT		c = vec_mag2(oc) - pow(sphere->diameter / 2, 2);
-	const FLOAT		discriminant = half_b * half_b - a * c;
-	FLOAT			sqrtd;
-	FLOAT			root;
+	const t_sphere	*sphere;
+	t_quadratic		quadratic;
+	t_vec			oc;
+	FLOAT			t[2];
 
-	if (discriminant < 0)
+	sphere = (const t_sphere *) ent;
+	oc = vec_sub(ray.pos, sphere->pos);
+	quadratic.a = vec_mag2(ray.dir);
+	quadratic.b = 2.0 * vec_dot(oc, ray.dir);
+	quadratic.c = vec_mag2(oc) - pow(sphere->diameter / 2.0, 2.0);
+	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
-	sqrtd = sqrt(discriminant);
-	root = (-half_b - sqrtd) / a;
-	if (root < min)
-	{
-		root = (-half_b + sqrtd) / a;
-		if (root < min)
-			return (0);
-	}
-	hit->t = root;
-	hit->pos = vec_add(ray.pos, vec_scale(ray.dir, hit->t));
-	hit->normal = vec_scale(vec_sub(hit->pos, sphere->pos), 2 / sphere->diameter);
+	if (t[0] < min)
+		t[0] = t[1];
+	if (t[0] < min)
+		return (0);
+	hit->t = t[0];
+	hit->pos = ray_at_t(ray, t[0]);
+	hit->normal = vec_scale(vec_sub(hit->pos, sphere->pos), 2.0 / sphere->diameter);
 	hit->mat = sphere->mat;
 	return (1);
 }
