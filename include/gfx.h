@@ -37,20 +37,24 @@ typedef int				(*t_loop_proc)(void *ctx);
 # else
 #  define RT_WIN_EVENT_KEY_DOWN 2
 #  define RT_WIN_EVENT_KEY_MASK 0
+
+/* TODO these two values are propably not correct */
+#  define RT_WIN_EVENT_BUTTON_DOWN 0
+#  define RT_WIN_EVENT_BUTTON_MASK 0
+
 #  define RT_WIN_EVENT_CLOSE 17
 #  define RT_KEY_ESC 53
 #  define RT_KEY_Q 12
 #  define RT_KEY_R 15
 #  define RT_KEY_P 35
-/* TODO: these keys are incorrect */
-#  define RT_KEY_UP -1
-#  define RT_KEY_DOWN -1
-#  define RT_KEY_LEFT -1
-#  define RT_KEY_RIGHT -1
-#  define RT_KEY_W -1
-#  define RT_KEY_S -1
-#  define RT_KEY_A -1
-#  define RT_KEY_D -1
+#  define RT_KEY_UP 126
+#  define RT_KEY_DOWN 125
+#  define RT_KEY_LEFT 123
+#  define RT_KEY_RIGHT 124
+#  define RT_KEY_W 13
+#  define RT_KEY_S 1
+#  define RT_KEY_A 0
+#  define RT_KEY_D 2
 # endif
 
 struct s_rt_state;
