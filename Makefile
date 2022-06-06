@@ -105,7 +105,7 @@ ifeq ($(config), debug)
 	else ifeq ($(san), memory)
 		CFLAGS	+= -fsanitize=memory,undefined
 		LFLAGS	+= -fsanitize=memory,undefined
-	else ifeq($(san), thread)
+	else ifeq ($(san), thread)
 		CLFLAGS	+= -fsanitize=thread,undefined
 		LFLAGS	+= -fsanitize=thread,undefined
 	endif
