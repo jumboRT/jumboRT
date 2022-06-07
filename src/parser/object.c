@@ -82,5 +82,6 @@ t_entity
 	if (*line == NULL)
 		return (NULL);
 	cyl.base.vt = cylinder_vt();
+	cyl.radius = cyl.diameter / 2.0;
 	return (rt_memdup(&cyl, sizeof(cyl)));
 }

@@ -83,7 +83,7 @@ struct s_cone {
 	t_vec		pos;
 	t_vec		dir;
 	FLOAT		angle;
-	FLOAT		r;
+	FLOAT		r; /* TODO rename to radius */
 	FLOAT		costheta2;
 	FLOAT		height;
 	t_material	*mat;
@@ -102,6 +102,7 @@ struct s_cylinder {
 	t_vec		dir;
 	FLOAT		diameter;
 	FLOAT		height;
+	FLOAT		radius;
 	t_material	*mat;
 };
 
