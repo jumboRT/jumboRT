@@ -10,12 +10,13 @@ const t_entity_vt
 		triangle_hit,
 		triangle_destroy,
 		triangle_compare,
-		triangle_get_pos
+		triangle_get_bounds
 	};
 
 	return (&vt);
 }
 
+/*
 int
 	triangle_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
 {
@@ -68,6 +69,75 @@ int
 		return (0);
 	return (1);
 }
+*/
+
+int
+	triangler_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+{
+	const t_triangle	*triangle;
+	FLOAT				t;
+	t_vec				norm[3];
+	t_vec				pos;
+
+	triangle = (const t_triangle*) ent;
+	if (!ray_plane_intersect(ray, triangle->pos0, triangle->normal, &t))
+		return (0);
+	if (t < min)
+		return (0);
+	pos = ray_at_t(ray, t);
+	norm[0] = vec_cross(vec_sub(pos, triangle->pos2), vec_sub(triangle->pos2, triangle->pos0));
+	norm[1] = vec_cross(vec_sub(triangle->pos1, pos), vec_sub(pos, triangle->pos0));
+	norm[2] = vec_cross(vec_sub(triangle->pos1, triangle->pos2), vec_sub(triangle->pos2, pos));
+	if (vec_dot(norm[0], norm[1]) < 0 || vec_dot(norm[1], norm[2]) < 0)
+		return (0);
+	hit->t = t;
+	hit->mat = triangle->mat;
+	hit->pos = ray_at_t(ray, t);
+	hit->normal = triangle->normal;
+	return (1);
+}
+
+/* https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates */
+int
+	triangle_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
+{
+	const t_triangle	*triangle;
+	FLOAT				t;
+	t_vec				pos;
+	t_vec				v[3];
+	FLOAT				uvw[3];
+	FLOAT				d00, d01, d11, d20, d21;
+	FLOAT				denom;
+
+	triangle = (const t_triangle *) ent;
+	if (!ray_plane_intersect(ray, triangle->pos0, triangle->normal, &t))
+		return (0);
+	if (t < min)
+		return (0);
+	pos = ray_at_t(ray, t);
+	v[0] = vec_sub(triangle->pos1, triangle->pos0);
+	v[1] = vec_sub(triangle->pos2, triangle->pos0);
+	v[2] = vec_sub(pos, triangle->pos0);
+	d00 = vec_dot(v[0], v[0]);
+	d01 = vec_dot(v[0], v[1]);
+	d11 = vec_dot(v[1], v[1]);
+	d20 = vec_dot(v[2], v[0]);
+	d21 = vec_dot(v[2], v[1]);
+	/* This denom can be precomputed */
+	denom = d00 * d11 - d01 * d01;
+	uvw[1] = (d11 * d20 - d01 * d21) / denom;
+	uvw[2] = (d00 * d21 - d01 * d20) / denom;
+	uvw[0] = 1.0 - uvw[1] - uvw[2];
+	if (uvw[0] < 0 || uvw[1] < 0 || uvw[2] < 0)
+		return (0);
+	if (!float_eq(uvw[0] + uvw[1] + uvw[2], 1.0, 0.001))
+		return (0);
+	hit->t = t;
+	hit->pos = pos;
+	hit->normal = triangle->normal;
+	hit->mat = triangle->mat;
+	return (1);
+}
 
 void
 	triangle_destroy(t_entity *ent)
@@ -91,20 +161,22 @@ int
 	f0 = vec_dot(dir, vec_sub(triangle->pos0, pos));
 	f1 = vec_dot(dir, vec_sub(triangle->pos1, pos));
 	f2 = vec_dot(dir, vec_sub(triangle->pos2, pos));
-	if (f0 < 0 && f1 < 0 && f2 < 0)
+	if (f0 <= 0 && f1 <= 0 && f2 <= 0)
 		return (-1);
-	if (f0 > 0 && f1 > 0 && f2 > 0)
+	if (f0 >= 0 && f1 >= 0 && f2 >= 0)
 		return (1);
 	return (0);
 }
 
 
-t_vec
-	triangle_get_pos(const t_entity *ent)
+int
+	triangle_get_bounds(const t_entity *ent, t_vec *a, t_vec *b)
 {
 	t_triangle	*triangle;
 
 	triangle = (t_triangle *) ent;
-	return (vec_scale(vec_add(vec_add(triangle->pos0, triangle->pos1), triangle->pos2), 1.0 / 3.0));
+	*a = vec_min(vec_min(triangle->pos0, triangle->pos1), triangle->pos2);
+	*b = vec_max(vec_min(triangle->pos0, triangle->pos1), triangle->pos2);
+	return (1);
 }
 

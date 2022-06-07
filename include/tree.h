@@ -39,7 +39,7 @@ void			tree_swap(t_tree *tree, t_tree *other);
 FLOAT			tree_quality(t_tree *tree);
 void			tree_optimize(t_tree *tree, int depth);
 void			tree_destroy(t_tree *tree);
-int				tree_hit(t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t);
+int				tree_hit(t_thread_ctx *ctx, t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t);
 
 t_tree_plane	*tree_gen_planes(t_entity **list, size_t count, size_t *out_count);
 

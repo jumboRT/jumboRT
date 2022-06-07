@@ -12,7 +12,7 @@ const t_entity_vt
 		light_hit,
 		light_destroy,
 		light_compare,
-		light_get_pos
+		light_get_bounds
 	};
 
 	return (&vt);
@@ -68,12 +68,16 @@ int
 	return (sphere_plane_compare(pos, dir, light->pos, LIGHT_RADIUS));
 }
 
-t_vec
-	light_get_pos(const t_entity *ent)
+int
+	light_get_bounds(const t_entity *ent, t_vec *a, t_vec *b)
 {
 	const t_light	*light;
+	FLOAT			radius;
 
 	light = (const t_light *) ent;
-	return (light->pos);
+	radius = LIGHT_RADIUS;
+	*a = vec_sub(light->pos, vec(radius, radius, radius, radius));
+	*b = vec_add(light->pos, vec(radius, radius, radius, radius));
+	return (1);
 }
 

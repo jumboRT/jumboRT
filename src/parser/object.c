@@ -20,6 +20,9 @@ t_entity
 	if (*line == NULL)
 		return (NULL);
 	triangle.base.vt = triangle_vt();
+	triangle.normal = vec_cross(
+						vec_sub(triangle.pos1, triangle.pos2),
+						vec_sub(triangle.pos2, triangle.pos0));
 	return (rt_memdup(&triangle, sizeof(triangle)));
 }
 
@@ -34,6 +37,7 @@ t_entity
 	if (*line == NULL)
 		return (NULL);
 	sphere.base.vt = sphere_vt();
+	sphere.radius = sphere.diameter / 2.0;
 	return (rt_memdup(&sphere, sizeof(sphere)));
 }
 
@@ -51,7 +55,7 @@ t_entity
 		return (NULL);
 	cone.base.vt = cone_vt();
 	cone.costheta2 = pow(cos(cone.angle), 2.0);
-	cone.r = tan(cone.angle) * cone.height;
+	cone.radius = tan(cone.angle) * cone.height;
 	return (rt_memdup(&cone, sizeof(cone)));
 }
 

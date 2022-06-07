@@ -13,7 +13,7 @@ const t_entity_vt
 		cone_hit,
 		cone_destroy,
 		cone_compare,
-		cone_get_pos
+		cone_get_bounds
 	};
 
 	return (&vt);
@@ -48,7 +48,7 @@ int
 	cone = (const t_cone*) ent;
 	if (!ray_cone_intersect(cone, ry, t))
 		return (0);
-	if (!ray_plane_intersect(cone->dir, ray_at_t(ray(cone->pos, cone->dir), cone->height), ry, &t_end))
+	if (!ray_plane_intersect(ry, ray_at_t(ray(cone->pos, cone->dir), cone->height), cone->dir, &t_end))
 		t_end = HUGE_VAL;
 	hit->t = HUGE_VAL;
 	if (t[0] >= min)
@@ -77,7 +77,7 @@ int
 	{
 		hit->pos = ray_at_t(ry, t_end);
 		relative_pos = vec_sub(hit->pos, cone->pos);
-		if (cone->costheta2 * vec_mag2(relative_pos) <= cone->r * cone->r)
+		if (cone->costheta2 * vec_mag2(relative_pos) <= cone->radius * cone->radius)
 		{
 			hit->t = t_end;
 			hit->normal = cone->dir;
@@ -104,30 +104,33 @@ void
 int
 	cone_compare(t_entity *ent, t_vec pos, t_vec dir)
 {
-	t_cone	*cone;
-	FLOAT	radius;
-	t_vec	pb;
-	t_vec	ce;
+	t_vec	a;
+	t_vec	b;
 
-	cone = (t_cone *) ent;
+	cone_get_bounds(ent, &a, &b);
+	return (box_plane_compare(pos, dir, a, b));
+}
+
+int
+	cone_get_bounds(const t_entity *ent, t_vec *a, t_vec *b)
+{
+	const t_cone	*cone;
+	FLOAT			radius;
+	t_vec			pos;
+	t_vec			pb;
+	t_vec			ce;
+
+	cone = (const t_cone *) ent;
 	radius = tan(cone->angle) * cone->height;
-	pb = vec_add(cone->pos, vec_scale(cone->dir, cone->height));
+	pos = vec_scale(cone->dir, cone->height);
+	pb = vec_add(cone->pos, pos);
 	ce = vec(
 		radius * sqrt(1 - pos.v[X] * pos.v[X]),
 		radius * sqrt(1 - pos.v[Y] * pos.v[Y]),
 		radius * sqrt(1 - pos.v[Z] * pos.v[Z]),
 		0);
-	return (box_plane_compare(pos, dir,
-			vec_min(cone->pos, vec_sub(pb, ce)),
-			vec_max(cone->pos, vec_add(pb, ce))));
-}
-
-t_vec
-	cone_get_pos(const t_entity *ent)
-{
-	const t_cone	*cone;
-
-	cone = (const t_cone *) ent;
-	return (cone->pos);
+	*a = vec_min(cone->pos, vec_sub(pb, ce));
+	*b = vec_max(cone->pos, vec_add(pb, ce));
+	return (1);
 }
 

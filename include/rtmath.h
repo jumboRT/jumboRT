@@ -80,8 +80,7 @@ t_vec	vec_min(t_vec a, t_vec b);
 t_vec	vec_max(t_vec a, t_vec b);
 
 t_vec	ray_at_t(t_ray ray, FLOAT t);
-int		ray_plane_intersect(t_vec normal, t_vec pos, t_ray ray, FLOAT *t);
-
+int		ray_plane_intersect(t_ray ray, t_vec pos, t_vec normal, FLOAT *t);
 int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 
 #endif

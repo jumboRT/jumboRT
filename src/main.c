@@ -83,7 +83,7 @@ int
 		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
 		exit(EXIT_FAILURE);
 	}
-	free(file);
+	rt_free(file);
 	start(&scene);
 	return (EXIT_FAILURE);
 }

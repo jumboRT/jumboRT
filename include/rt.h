@@ -2,6 +2,7 @@
 # define RT_H
 
 /* TODO: lights do not seem to be working at the moment */
+/* TODO: there are many functions that take both t_thread_ctx and t_rt_state even though t_thread_ctx has a pointer to t_rt_state */
 
 # ifndef RT_MT
 #  define RT_THREADS 1
@@ -9,7 +10,7 @@
 # else
 #  define RT_ONESHOT 0
 #  ifndef RT_THREADS
-#   define RT_THREADS 8
+#   define RT_THREADS 12
 #  endif
 # endif
 
@@ -18,7 +19,7 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 100
+#  define RT_SAMPLES 4
 # endif
 
 # ifndef RT_MAX_DEPTH
@@ -89,5 +90,8 @@ int		rt_button_down(int button, int x, int y, void *ctx);
 
 double	time_time(void);
 void	time_sleep(double time);
+
+void	context_create(t_thread_ctx *ctx, t_rt_state *state);
+void	context_destroy(t_thread_ctx *ctx);
 
 #endif

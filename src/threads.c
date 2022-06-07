@@ -31,7 +31,7 @@ static void
 	t_thread_ctx	ctx;
 
 	state = arg;
-	ctx.seed = 7549087012;
+	context_create(&ctx, state);
 	mutex_lock(&state->mtx);
 	while (state->running)
 	{
@@ -42,6 +42,7 @@ static void
 			cond_wait(&state->cnd, &state->mtx);
 	}
 	mutex_unlock(&state->mtx);
+	context_destroy(&ctx);
 	return (NULL);
 }
 

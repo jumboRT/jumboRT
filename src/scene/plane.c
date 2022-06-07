@@ -10,20 +10,20 @@ const t_entity_vt
 		plane_hit,
 		plane_destroy,
 		plane_compare,
-		plane_get_pos
+		plane_get_bounds
 	};
 
 	return (&vt);
 }
 
 int
-	ray_plane_intersect(t_vec normal, t_vec pos, t_ray ray, FLOAT *t)
+	ray_plane_intersect(t_ray ray, t_vec pos, t_vec normal, FLOAT *t)
 {
 	FLOAT			dividend;
 	FLOAT			divisor;
 
 	divisor = vec_dot(ray.dir, normal);
-	if (float_eq(divisor, 0, 0.001))
+	if (float_eq(divisor, 0, 0.000001))
 		return (0);
 	dividend = vec_dot(vec_sub(pos, ray.pos), normal);
 	*t = dividend / divisor;
@@ -76,12 +76,14 @@ int
 	return (0);
 }
 
-t_vec
-	plane_get_pos(const t_entity *ent)
+int
+	plane_get_bounds(const t_entity *ent, t_vec *a, t_vec *b)
 {
 	const t_plane	*plane;
 
 	plane = (const t_plane *) ent;
-	return (plane->pos);
+	*a = plane->pos;
+	*b = plane->pos;
+	return (0);
 }
 

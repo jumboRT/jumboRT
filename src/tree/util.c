@@ -6,14 +6,17 @@ static void
 	gen_bounding_box(t_vec points[2], t_entity **list, size_t count)
 {
 	size_t	index;
+	t_vec	a;
+	t_vec	b;
 
 	points[0] = vec(HUGE_VAL, HUGE_VAL, HUGE_VAL, 0);
 	points[1] = vec(-HUGE_VAL, -HUGE_VAL, -HUGE_VAL, 0);
 	index = 0;
 	while (index < count)
 	{
-		points[0] = vec_min(list[index]->vt->get_pos(list[index]), points[0]);
-		points[1] = vec_max(list[index]->vt->get_pos(list[index]), points[1]);
+		list[index]->vt->get_bounds(list[index], &a, &b);
+		points[0] = vec_min(a, points[0]);
+		points[1] = vec_max(b, points[1]);
 		index++;
 	}
 }

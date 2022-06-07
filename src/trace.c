@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
 static t_vec
 	trace_lights(t_scene *scene, t_ray ray, FLOAT min, FLOAT max)
 {
@@ -28,13 +29,14 @@ static t_vec
 	light_ray.pos = vec_add(ray.pos, vec_scale(ray.dir, t));
 	near_dist = vec_mag(vec_sub(light_ray.pos, light_pos));
 	light_ray.dir = vec_norm(vec_sub(light_pos, light_ray.pos));
-	if (!tree_hit(scene->tree, light_ray, &obj_hit, HUGE_VAL))
+	if (!tree_hit(ctx, scene->tree, light_ray, &obj_hit, HUGE_VAL))
 		obj_hit.t = HUGE_VAL;
 	dist = near_dist;
 	if (obj_hit.t < dist || t < min || t > max)
 		return (vec(0, 0, 0, 0));
 	return (vec_scale(scene->main_light->color, 1.0 / (const_att + (linear_att * dist) + (quad_att * dist * dist))));
 }
+*/
 
 static t_vec
 	trace_ray(t_thread_ctx *ctx, t_scene *scene, t_ray ray, int depth)
@@ -44,7 +46,7 @@ static t_vec
 
 	if (depth == 0)
 		return (vec(0, 0, 0, 0));
-	if (tree_hit(scene->tree, ray, &hit, HUGE_VAL))
+	if (tree_hit(ctx, scene->tree, ray, &hit, HUGE_VAL))
 	{
 		// TODO: use the BRDF stuff
 		if (hit.mat->vt->scatter(hit.mat, ray, &hit, &scatter, ctx) && vec_mag(scatter.attenuation) > 0)
@@ -59,19 +61,20 @@ static t_vec
 void
 	trace_debug(t_rt_state *state, int x, int y)
 {
-	t_ray				ray;
-	t_hit				hit;
-	t_scatter			scatter;
-	static t_thread_ctx	ctx = { 7549087012 };
+	t_ray			ray;
+	t_hit			hit;
+	t_scatter		scatter;
+	t_thread_ctx	ctx;
 
 	ray = project_ray(state, x, y);
+	context_create(&ctx, state);
 	mutex_lock(&state->mtx);
 	state->dbg_line[0] = ray.pos;
 	state->dbg_line_size = 1;
 	state->dbg_norm_size = 0;
 	while (state->dbg_line_size < RT_MAX_DEPTH + 1)
 	{
-		if (!tree_hit(state->scene.tree, ray, &hit, HUGE_VAL))
+		if (!tree_hit(&ctx, state->scene.tree, ray, &hit, HUGE_VAL))
 		{
 			state->dbg_line[state->dbg_line_size] = vec_add(ray.pos, vec_scale(ray.dir, RT_RAY_LENGTH));
 			state->dbg_line_size += 1;
@@ -92,6 +95,7 @@ void
 	}
 	thread_reset(state);
 	mutex_unlock(&state->mtx);
+	context_destroy(&ctx);
 }
 
 FLOAT

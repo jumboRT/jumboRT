@@ -34,11 +34,12 @@ struct s_entity_vt {
 	int	(*hit)(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min);
 	void (*destroy)(t_entity *ent);
 	int (*compare)(t_entity *ent, t_vec pos, t_vec dir);
-	t_vec (*get_pos)(const t_entity *ent);
+	int (*get_bounds)(const t_entity *ent, t_vec *a, t_vec *b);
 };
 
 struct s_entity {
 	const t_entity_vt	*vt;
+	size_t				id;
 };
 
 struct s_ambient_light {
@@ -67,7 +68,12 @@ struct s_triangle {
 	t_vec		pos0;
 	t_vec		pos1;
 	t_vec		pos2;
+	t_vec		normal;
 	FLOAT		diameter;
+	FLOAT		d00;
+	FLOAT		d01;
+	FLOAT		d11;
+	FLOAT		inv_denom;
 	t_material	*mat;
 };
 
@@ -75,6 +81,7 @@ struct s_sphere {
 	t_entity	base;
 	t_vec		pos;
 	FLOAT		diameter;
+	FLOAT		radius;
 	t_material	*mat;
 };
 
@@ -83,7 +90,7 @@ struct s_cone {
 	t_vec		pos;
 	t_vec		dir;
 	FLOAT		angle;
-	FLOAT		r; /* TODO rename to radius */
+	FLOAT		radius;
 	FLOAT		costheta2;
 	FLOAT		height;
 	t_material	*mat;
@@ -147,13 +154,13 @@ int					plane_compare(t_entity *ent, t_vec pos, t_vec dir);
 int					cylinder_compare(t_entity *ent, t_vec pos, t_vec dir);
 int					light_compare(t_entity *ent, t_vec pos, t_vec dir);
 
-t_vec				plane_get_pos(const t_entity *ent);
-t_vec				triangle_get_pos(const t_entity *ent);
-t_vec				sphere_get_pos(const t_entity *ent);
-t_vec				cone_get_pos(const t_entity *ent);
-t_vec				plane_get_pos(const t_entity *ent);
-t_vec				cylinder_get_pos(const t_entity *ent);
-t_vec				light_get_pos(const t_entity *ent);
+int					plane_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					triangle_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					sphere_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					cone_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					plane_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					cylinder_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
+int					light_get_bounds(const t_entity *ent, t_vec *a, t_vec *b);
 
 void				scene_destroy(t_scene *scene);
 

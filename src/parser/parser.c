@@ -44,7 +44,8 @@ void
 	scene->entities = rt_realloc(scene->entities,
 			(scene->count + 0) * sizeof(*scene->entities),
 			(scene->count + 1) * sizeof(*scene->entities));
-	scene->entities[scene->count++] = entity;
+	scene->entities[scene->count] = entity;
+	entity->id = scene->count++;
 }
 
 int

@@ -35,9 +35,42 @@ static void
 			tree_add(tree->back, ent);
 		i += 1;
 	}
-	free(tree->list);
+	rt_free(tree->list);
 	tree->list = NULL;
 	tree->count = 0;
+}
+
+/* TODO: maybe don't split empty nodes */
+static void
+	tree_split3d(t_tree *tree, t_vec pos)
+{
+	tree_split(tree, pos, vec(1, 0, 0, 0));
+	tree_split(tree->front, pos, vec(0, 1, 0, 0));
+	tree_split(tree->front->front, pos, vec(0, 0, 1, 0));
+	tree_split(tree->front->back, pos, vec(0, 0, 1, 0));
+	tree_split(tree->back, pos, vec(0, 1, 0, 0));
+	tree_split(tree->back->front, pos, vec(0, 0, 1, 0));
+	tree_split(tree->back->back, pos, vec(0, 0, 1, 0));
+}
+
+/* TODO: there is an almost duplicate version of this in tree/util.c */
+static void 
+	tree_bounding_box(t_entity **list, size_t count, t_vec *a1, t_vec *b1)
+{
+	size_t	index;
+	t_vec	a;
+	t_vec	b;
+
+	*a1 = vec(HUGE_VAL, HUGE_VAL, HUGE_VAL, 0);
+	*b1 = vec(-HUGE_VAL, -HUGE_VAL, -HUGE_VAL, 0);
+	index = 0;
+	while (index < count)
+	{
+		list[index]->vt->get_bounds(list[index], &a, &b);
+		*a1 = vec_min(a, *a1);
+		*b1 = vec_max(b, *b1);
+		index++;
+	}
 }
 
 // TODO: this function does not work properly and is only an estimate rn
@@ -61,7 +94,7 @@ t_tree
 {
 	t_tree	*tree;
 
-	tree = malloc(sizeof(*tree));
+	tree = rt_malloc(sizeof(*tree));
 	tree->list = rt_memdup(list, count * sizeof(*list));
 	tree->count = count;
 	tree->plane_pos = vec(0, 0, 0, 0);
@@ -97,7 +130,7 @@ void
 }
 
 void
-	tree_optimize(t_tree *tree, int depth)
+	tree_optimizer(t_tree *tree, int depth)
 {
 	t_tree			*split;
 	t_tree			*best;
@@ -119,10 +152,22 @@ void
 		tree_destroy(split);
 		i += 1;
 	}
-	free(planes);
+	rt_free(planes);
 	tree_optimize(best->front, depth - 1);
 	tree_optimize(best->back, depth - 1);
 	tree_swap(tree, best);
 	tree_destroy(best);
+}
+
+void
+	tree_optimize(t_tree *tree, int depth)
+{
+	t_vec	a;
+	t_vec	b;
+
+	(void) depth;
+	tree_bounding_box(tree->list, tree->count, &a, &b);
+	tree_split3d(tree, a);
+	tree_split3d(tree->front->front->front, b);
 }
 

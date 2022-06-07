@@ -13,7 +13,7 @@ const t_entity_vt
 		cylinder_hit,
 		cylinder_destroy,
 		cylinder_compare,
-		cylinder_get_pos
+		cylinder_get_bounds
 	};
 
 	return (&vt);
@@ -157,8 +157,7 @@ int
 	cylinder = (const t_cylinder *) ent;
 	relative_ray = cylinder_transform_ray(ray, cylinder);
 	hit->mat = cylinder->mat;
-	/* NOTE I think we need to check the absolute alue of the dot_product here */
-	if (float_eq(vec_dot(cylinder->dir, relative_ray.dir), 1.0, 0.00001))
+	if (float_eq(fabs(vec_dot(cylinder->dir, relative_ray.dir)), 1.0, 0.00001))
 	{
 		if (cylinder_hit_parallel(cylinder, relative_ray, hit, min))
 		{
@@ -187,27 +186,31 @@ void
 int
 	cylinder_compare(t_entity *ent, t_vec pos, t_vec dir)
 {
+	t_vec	a;
+	t_vec	b;
+
+	cylinder_get_bounds(ent, &a, &b);
+	return (box_plane_compare(pos, dir, a, b));
+}
+
+int
+	cylinder_get_bounds(const t_entity *ent, t_vec *a, t_vec *b)
+{
 	t_cylinder	*cylinder;
+	t_vec		pos;
 	t_vec		pb;
 	t_vec		ce;
 
 	cylinder = (t_cylinder *) ent;
-	pb = vec_add(cylinder->pos, vec_scale(cylinder->dir, cylinder->height));
+	pos = vec_scale(cylinder->dir, cylinder->height);
+	pb = vec_add(cylinder->pos, pos);
 	ce = vec(
-		cylinder->diameter / 2 * sqrt(1 - pos.v[X] * pos.v[X]),
-		cylinder->diameter / 2 * sqrt(1 - pos.v[Y] * pos.v[Y]),
-		cylinder->diameter / 2 * sqrt(1 - pos.v[Z] * pos.v[Z]),
+		cylinder->radius * sqrt(1.0 - pos.v[X] * pos.v[X]),
+		cylinder->radius * sqrt(1.0 - pos.v[Y] * pos.v[Y]),
+		cylinder->radius * sqrt(1.0 - pos.v[Z] * pos.v[Z]),
 		0);
-	return (box_plane_compare(pos, dir,
-			vec_min(vec_sub(cylinder->pos, ce), vec_sub(pb, ce)),
-			vec_max(vec_add(cylinder->pos, ce), vec_add(pb, ce))));
-}
-
-t_vec	cylinder_get_pos(const t_entity *ent)
-{
-	t_cylinder	*cylinder;
-
-	cylinder = (t_cylinder *) ent;
-	return (cylinder->pos);
+	*a = vec_min(vec_sub(cylinder->pos, ce), vec_sub(pb, ce));
+	*b = vec_max(vec_add(cylinder->pos, ce), vec_add(pb, ce));
+	return (1);
 }
 

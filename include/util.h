@@ -14,8 +14,14 @@ typedef struct s_thread_ctx	t_thread_ctx;
 typedef unsigned int		t_color;
 typedef unsigned long		t_seed;
 
+struct s_rt_state;
+
+/* TODO: count use a bit vector for ctx->visited */
+
 struct s_thread_ctx {
-    t_seed	seed;
+    t_seed				seed;
+	unsigned char		*visited;
+	struct s_rt_state	*state;
 };
 
 void	rt_assert(int condition, const char *msg);

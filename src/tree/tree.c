@@ -1,6 +1,7 @@
 #include "tree.h"
 #include "rt.h"
 #include "ft_printf.h"
+#include "libft.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -12,14 +13,13 @@ void
 	{
 		tree_destroy(tree->front);
 		tree_destroy(tree->back);
-		free(tree->list);
-		free(tree);
+		rt_free(tree->list);
+		rt_free(tree);
 	}
 }
 
-/*
 static FLOAT 
-	ray_plane_intersect(t_ray ray, t_vec pos, t_vec normal)
+	old_ray_plane_intersect(t_ray ray, t_vec pos, t_vec normal)
 {
 	FLOAT	dividend;
 	FLOAT	divisor;
@@ -36,31 +36,31 @@ static FLOAT
 		return (HUGE_VAL);
 	return (t);
 }
-*/
 
-int
-	tree_hit(t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t)
+static int
+	tree_hit_int(t_thread_ctx *ctx, t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t)
 {
 	t_hit		tmp;
 	size_t		i;
-	size_t		count;
 	t_entity	*ent;
 	FLOAT		plane_t;
 	FLOAT		dot;
-	t_hit		hit_front;
-	t_hit		hit_back;
+	int			did_hit;
 
 	i = 0;
-	count = tree->count;
-	hit->t = RT_RAY_LENGTH;
+	tmp.t = RT_RAY_LENGTH;
 	if (tree->list != NULL)
 	{
-		while (i < count)
+		while (i < tree->count)
 		{
 			ent = tree->list[i];
-			if (ent->vt->hit != NULL && ent->vt->hit(ent, ray, &tmp, 0.001))
-				if (tmp.t < hit->t)
-					*hit = tmp;
+			if (!ctx->visited[ent->id])
+			{
+				ctx->visited[ent->id] = 1;
+				if (ent->vt->hit != NULL && ent->vt->hit(ent, ray, &tmp, 0.001))
+					if (tmp.t < hit->t)
+						*hit = tmp;
+			}
 			i += 1;
 		}
 		if (hit->t < RT_RAY_LENGTH)
@@ -71,45 +71,32 @@ int
 		}
 		return (hit->t < RT_RAY_LENGTH);
 	}
-	/*tree_hit(tree->front, ray, &hit_front, HUGE_VAL);
-	tree_hit(tree->back, ray, &hit_back, HUGE_VAL);
-	if (hit_front.t < hit->t)
-		*hit = hit_front;
-	if (hit_back.t < hit->t)
-		*hit = hit_back;*/
-	if (!ray_plane_intersect(tree->plane_pos, tree->plane_dir, ray, &plane_t))
+	if (!ray_plane_intersect(ray, tree->plane_pos, tree->plane_dir, &plane_t))
 		plane_t = HUGE_VAL;
-//	plane_t = ray_plane_intersect(ray, tree->plane_pos, tree->plane_dir);
 	dot = vec_dot(vec_sub(ray.pos, tree->plane_pos), tree->plane_dir);
 	if (dot > 0)
 	{
-		if (!tree_hit(tree->front, ray, &hit_front, fmin(plane_t, max_t)) || hit_front.t > plane_t)
-		{
-			if (plane_t < max_t)
-			{
-				if (tree_hit(tree->back, ray, &hit_back, max_t))
-					if (hit_back.t < hit->t)
-						*hit = hit_back;
-			}
-		}
-		if (hit_front.t < hit->t)
-			*hit = hit_front;
+		did_hit = tree_hit(ctx, tree->front, ray, &tmp, fmin(plane_t, max_t));
+		if ((!did_hit || tmp.t > plane_t) && plane_t < max_t)
+			did_hit = tree_hit(ctx, tree->back, ray, &tmp, max_t);
 	}
 	else
 	{
-		if (!tree_hit(tree->back, ray, &hit_back, fmin(plane_t, max_t)) || hit_back.t > plane_t)
-		{
-			if (plane_t < max_t)
-			{
-				if (tree_hit(tree->front, ray, &hit_front, max_t))
-					if (hit_front.t < hit->t)
-						*hit = hit_front;
-			}
-		}
-		if (hit_back.t < hit->t)
-			*hit = hit_back;
+		did_hit = tree_hit(ctx, tree->back, ray, &tmp, fmin(plane_t, max_t));
+		if ((!did_hit || tmp.t > plane_t) && plane_t < max_t)
+			did_hit = tree_hit(ctx, tree->front, ray, &tmp, max_t);
 	}
+	if (tmp.t < hit->t)
+		*hit = tmp;
 	return (hit->t < RT_RAY_LENGTH);
+}
+
+int
+	tree_hit(t_thread_ctx *ctx, t_tree *tree, t_ray ray, t_hit *hit, FLOAT max_t)
+{
+	hit->t = RT_RAY_LENGTH;
+	ft_bzero(ctx->visited, ctx->state->scene.count);
+	return (tree_hit_int(ctx, tree, ray, hit, max_t));
 }
 
 void
