@@ -51,98 +51,6 @@ static int
 	return (0);
 }
 
-/*
-int
-	cylinder_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
-{
-	t_cylinder	*cylinder;
-	t_ray		org_ray;
-	FLOAT		a;
-	FLOAT		b;
-	FLOAT		c;
-	FLOAT		d;
-	FLOAT		t1;
-	FLOAT		t2;
-	FLOAT		z1;
-	FLOAT		z2;
-	FLOAT		t_top;
-	FLOAT		t_bot;
-	FLOAT		h;
-	FLOAT		r;
-
-	cylinder = (t_cylinder *) ent;
-	hit->mat = cylinder->mat;
-	r = cylinder->diameter / 2.0;
-	org_ray = ray;
-	ray = cylinder_transform_ray(ray, cylinder);
-	if (float_eq(vec_dot(cylinder->dir, ray.dir), 1.0, 0.00001))
-	{
-		//Ray is parallel to cylinder
-		if (vec_mag(ray.pos) > r)
-			return (0);
-		if (ray.pos.v[Z] < 0 && ray.pos.v[Z] > min)
-		{
-			hit->normal = vec_neg(cylinder->dir);
-			hit->t = -ray.pos.v[Z];
-			hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		}
-		else
-		{
-			hit->normal = cylinder->dir;
-			hit->t = cylinder->height - ray.pos.v[Z];
-			hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		}
-		return (1);
-	}
-	a = pow(ray.dir.v[X], 2) + pow(ray.dir.v[Y], 2);
-	b = 2 * (ray.dir.v[X] * ray.pos.v[X] + ray.dir.v[Y] * ray.pos.v[Y]);
-	c = pow(ray.pos.v[X], 2) + pow(ray.pos.v[Y], 2) - pow(r, 2);
-	d = (b * b) - (4 * a * c);
-	if (d < 0)
-		return (0);
-	t1 = (-b - sqrt(d)) / (2 * a);
-	t2 = (-b + sqrt(d)) / (2 * a);
-	z1 = vec_add(ray.pos, vec_scale(ray.dir, t1)).v[Z];
-	z2 = vec_add(ray.pos, vec_scale(ray.dir, t2)).v[Z];
-	h = cylinder->height;
-	t_top = HUGE_VAL;
-	t_bot = -HUGE_VAL;
-	if (ray.dir.v[Z] != 0)
-	{
-		t_top = (h - ray.pos.v[Z]) / ray.dir.v[Z];
-		t_bot = (0 - ray.pos.v[Z]) / ray.dir.v[Z];
-	}
-	hit->t = HUGE_VAL;
-	if (t_top < hit->t && t_top >= min && between(h, z1, z2))
-	{
-		hit->t = t_top;
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = cylinder->dir;
-	}
-	if (t_bot < hit->t && t_bot >= min && between(0, z1, z2))
-	{
-		hit->t = t_bot;
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = vec_neg(cylinder->dir);
-	}
-	if (t1 < hit->t && t1 >= min && between(z1, h, 0))
-	{
-		hit->t = t1;
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = vec_norm(vec_sub(hit->pos, vec_add(cylinder->pos, vec_scale(cylinder->dir, vec_dot(vec_sub(hit->pos, cylinder->pos), cylinder->dir)))));
-	}
-	if (t2 < hit->t && t2 >= min && between(z2, h, 0))
-	{
-		hit->t = t2;
-		hit->pos = vec_add(org_ray.pos, vec_scale(org_ray.dir, hit->t));
-		hit->normal = vec_norm(vec_sub(hit->pos, vec_add(cylinder->pos, vec_scale(cylinder->dir, vec_dot(vec_sub(hit->pos, cylinder->pos), cylinder->dir)))));
-	}
-	if (hit->t != HUGE_VAL)
-		return (1);
-	return (0);
-}
-*/
-
 static t_vec
 	cylinder_normal_at(FLOAT radius, t_vec relative_point)
 {
@@ -208,10 +116,10 @@ static int
 	t_end[0] = HUGE_VAL;
 	t_end[1] = -HUGE_VAL;
 	hit->t = HUGE_VAL;
-	if (relative_ray.dir.v[Z] != 0)
+	if (relative_ray.dir.v[Z] != 0.0)
 	{
 		t_end[0] = (height - relative_ray.pos.v[Z]) / relative_ray.dir.v[Z];
-		t_end[1] = (0 - relative_ray.pos.v[Z]) / relative_ray.dir.v[Z];
+		t_end[1] = (0.0 - relative_ray.pos.v[Z]) / relative_ray.dir.v[Z];
 	}
 	hit->t = HUGE_VAL;
 	if (t_end[0] < hit->t && t_end[0] >= min && between(height, z[0], z[1]))
@@ -221,7 +129,7 @@ static int
 	}
 	if (t_end[1] < hit->t && t_end[1] >= min && between(0.0, z[0], z[1]))
 	{
-		hit->t = t_end[0];
+		hit->t = t_end[1];
 		hit->normal = vec_neg(cylinder->dir);
 	}
 	if (t_side[0] < hit->t && t_side[0] >= min && between(z[0], height, 0.0))
@@ -231,7 +139,7 @@ static int
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min && between(z[1], height, 0.0))
 	{
-		hit->t = t_side [0];
+		hit->t = t_side[1];
 		hit->normal = cylinder_normal_at(cylinder->radius, ray_at_t(relative_ray, hit->t));
 	}
 	if (hit->t == HUGE_VAL)
@@ -248,6 +156,7 @@ int
 	
 	cylinder = (const t_cylinder *) ent;
 	relative_ray = cylinder_transform_ray(ray, cylinder);
+	hit->mat = cylinder->mat;
 	/* NOTE I think we need to check the absolute alue of the dot_product here */
 	if (float_eq(vec_dot(cylinder->dir, relative_ray.dir), 1.0, 0.00001))
 	{
