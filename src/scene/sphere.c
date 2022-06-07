@@ -32,7 +32,7 @@ int
 	quadratic.c = vec_mag2(oc) - pow(sphere->diameter / 2.0, 2.0);
 	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
-	if (t[0] < min)
+	if (t[1] < t[0] && t[1] >= min)
 		t[0] = t[1];
 	if (t[0] < min)
 		return (0);
