@@ -17,7 +17,7 @@ static const t_entry	g_entries[] = {
 };
 
 t_entity
-	*rt_entity(const char **line, char **error)
+	*rt_entity(t_scene *scene, const char **line, char **error)
 {
 	size_t			index;
 	const t_entry	*entry;
@@ -30,7 +30,7 @@ t_entity
 				rt_wordlen(entry->identifier)))
 		{
 			*line = rt_next_word(*line);
-			return (entry->proc(line, error));
+			return (entry->proc(scene, line, error));
 		}
 		index += 1;
 	}
@@ -88,7 +88,7 @@ int
 		if (!sol)
 			return (ft_asprintf(error, "Expected newline at end of line"
 					", found '%c'", *file), 1);
-		entity = rt_entity(&file, error);
+		entity = rt_entity(scene, &file, error);
 		if (entity == NULL || rt_scene_one(scene, entity, error))
 			return (1);
 		sol = *file == '\n';
@@ -108,6 +108,7 @@ int
 	scene->camera = NULL;
 	scene->ambient_light = NULL;
 	scene->main_light = NULL;
+	tex_create(&scene->texs);
 	err = rt_scene_all(scene, file, error);
 	if (!err && scene->camera == NULL)
 		ft_asprintf(error, "Scene has no camera");
@@ -123,9 +124,11 @@ int
 	}
 	else
 	{
+		ft_printf("Done loading\n");
 		scene->tree = tree_new(scene->entities, scene->count);
 		tree_optimize(scene->tree, RT_TREE_DEPTH);
-		dbg_tree(scene->tree, 0);
+		ft_printf("Done making tree\n");
+		/*dbg_tree(scene->tree, 0);*/
 	}
 	return (err);
 }

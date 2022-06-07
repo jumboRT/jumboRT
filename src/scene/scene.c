@@ -24,4 +24,5 @@ void
 	}
 	rt_free(scene->entities);
 	tree_destroy(scene->tree);
+	tex_destroy(&scene->texs);
 }

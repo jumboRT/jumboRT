@@ -47,6 +47,7 @@ int
 	hit->pos = pos;
 	hit->normal = triangle->normal;
 	hit->mat = triangle->mat;
+	hit->uv = vec_add(triangle->local_uv, vec(uvw[0], uvw[1], 0.0, 0.0));
 	return (1);
 }
 

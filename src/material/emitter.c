@@ -18,6 +18,7 @@ int
 {
 	t_emitter	*emitter;
 	int			tmp;
+	t_vec		sample;
 
 	emitter = (t_emitter *) mat;
 	tmp = 0;
@@ -25,7 +26,8 @@ int
 		tmp = emitter->child->vt->scatter(emitter->child, in, hit, scatter, ctx);
 	else
 		scatter->emittance = vec(0, 0, 0, 0);
-	scatter->emittance = vec_add(scatter->emittance, vec_scale(emitter->emittance, emitter->brightness));
+	sample = emitter->emittance->vt->sample(emitter->emittance, hit->uv);
+	scatter->emittance = vec_add(scatter->emittance, vec_scale(sample, emitter->brightness));
 	return (tmp);
 }
 
@@ -36,5 +38,6 @@ void
 
 	emitter = (t_emitter *) mat;
 	emitter->child->vt->destroy(emitter->child);
+	emitter->emittance->vt->destroy(emitter->emittance);
 	rt_free(mat);
 }

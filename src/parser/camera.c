@@ -5,10 +5,11 @@
 #include <ft_printf.h>
 
 t_entity
-	*rt_camera(const char **line, char **error)
+	*rt_camera(t_scene *scene, const char **line, char **error)
 {
 	t_camera	camera;
 
+	(void) scene;
 	*line = rt_pos(*line, error, &camera.pos);
 	*line = rt_norm_vec(*line, error, &camera.dir);
 	*line = rt_float(*line, error, &camera.fov);

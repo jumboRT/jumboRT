@@ -50,6 +50,17 @@ t_vec
 }
 
 t_vec
+	vec_norm2(t_vec a)
+{
+	FLOAT	mag;
+	
+	mag = vec_mag(a);
+	if (mag == 0)
+		return (vec(0, 0, 1, 0));
+	return (vec_scale(a, (FLOAT) 1.0 / mag));
+}
+
+t_vec
     vec_rotate(t_vec axis, t_vec v, FLOAT angle)
 {
     return (vec_add(

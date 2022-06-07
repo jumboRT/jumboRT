@@ -29,13 +29,13 @@ const char
 
 	if (line == NULL)
 		return (NULL);
+	beg = line;
 	if (!ft_isdigit(*line))
 	{
 		ft_asprintf(error, "Expected digit, found '%.*s'",
 			(int) rt_wordlen(beg), beg);
 		return (NULL);
 	}
-	beg = line;
 	val = ft_atol(line);
 	line = rt_skip(line, ft_isdigit);
 	if (val < 0 || val > UINT_MAX)

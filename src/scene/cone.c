@@ -19,6 +19,36 @@ const t_entity_vt
 	return (&vt);
 }
 
+
+static t_vec
+	circle_uv_at(FLOAT radius, t_vec point, t_vec offset)
+{
+	return (vec(
+				((point.v[U] + radius) / (2.0 * radius)) + offset.v[U],
+				((point.v[V] + radius) / (2.0 * radius)) + offset.v[V],
+				0.0,
+				0.0));
+}
+
+static t_vec
+	cone_uv_at(FLOAT radius, t_vec point, t_vec offset)
+{
+	/*
+	return (vec(
+				((vec_dot(vec_x(1.0), point) + radius) / (2.0 * radius)) + offset.v[U],
+				((vec_dot(vec_y(1.0), point) + radius) / (2.0 * radius)) + offset.v[V],
+				0.0,
+				0.0));
+	*/
+	return (circle_uv_at(
+				radius,
+				vec(vec_dot(vec_x(1.0), point),
+					vec_dot(vec_y(1.0), point),
+					0.0,
+					0.0), offset));
+
+}
+
 static int
 	ray_cone_intersect(const t_cone *cone, t_ray ry, FLOAT intersects[2])
 {
@@ -60,6 +90,7 @@ int
 		{
 			hit->t = t[0];
 			hit->normal = vec_norm(vec_cross(relative_pos, vec_cross(relative_pos, cone->dir)));
+			hit->uv = cone_uv_at(cone->radius, relative_pos, cone->side_uv);
 		}
 	}
 	if (t[1] < hit->t && t[1] >= min)
@@ -71,6 +102,7 @@ int
 		{
 			hit->t = t[1];
 			hit->normal = vec_norm(vec_cross(relative_pos, vec_cross(relative_pos, cone->dir)));
+			hit->uv = cone_uv_at(cone->radius, relative_pos, cone->side_uv);
 		}
 	}
 	if (t_end < hit->t && t_end >= min)
@@ -81,6 +113,7 @@ int
 		{
 			hit->t = t_end;
 			hit->normal = cone->dir;
+			hit->uv = circle_uv_at(cone->radius, vec_sub(hit->pos, cone->bot), cone->bot_uv); 
 		}
 	}
 	if (hit->t == HUGE_VAL)

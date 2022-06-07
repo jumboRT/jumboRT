@@ -10,6 +10,9 @@
 # define Z 2
 # define W 3
 
+# define U 0
+# define V 1
+
 # define RT_PI 3.14159
 # define RT_2PI (RT_PI * 2)
 
@@ -57,6 +60,7 @@ t_vec	vec_add(t_vec a, t_vec b);
 t_vec	vec_sub(t_vec a, t_vec b);
 t_vec	vec_neg(t_vec a);
 t_vec	vec_norm(t_vec a);
+t_vec	vec_norm2(t_vec a);
 t_vec   vec_rotate(t_vec axis, t_vec v, FLOAT angle);
 t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max);
 

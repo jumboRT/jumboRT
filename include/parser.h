@@ -4,10 +4,12 @@
 # include "gfx.h"
 # include "scene.h"
 
-typedef t_entity				*(*t_parse_proc)(const char **line, char **error);
-typedef t_material				*(*t_material_parse_proc)(const char **line, char **error);
+typedef t_entity				*(*t_parse_proc)(t_scene *scene, const char **line, char **error);
+typedef t_material				*(*t_material_parse_proc)(t_scene *scene, const char **line, char **error);
+typedef t_texture				*(*t_texture_parse_proc)(t_scene *scene, const char **line, char **error);
 typedef struct s_entry			t_entry;
 typedef struct s_material_entry	t_material_entry;
+typedef struct s_texture_entry	t_texture_entry;
 
 struct s_entry {
 	const char		*identifier;
@@ -19,22 +21,30 @@ struct s_material_entry {
 	t_material_parse_proc	proc;
 };
 
+struct s_texture_entry {
+	const char				*identifier;
+	t_texture_parse_proc	proc;
+};
+
 int			rt_scene(t_scene *scene, const char *file, char **error);
 
-t_entity	*rt_ambient_light(const char **line, char **error);
-t_entity	*rt_triangle(const char **line, char **error);
-t_entity	*rt_camera(const char **line, char **error);
-t_entity	*rt_light(const char **line, char **error);
-t_entity	*rt_sphere(const char **line, char **error);
-t_entity	*rt_cone(const char **line, char **error);
-t_entity	*rt_plane(const char **line, char **error);
-t_entity	*rt_cylinder(const char **line, char **error);
-t_entity	*rt_entity(const char **line, char **error);
-t_material	*rt_lambertian(const char **line, char **error);
-t_material	*rt_metal(const char **line, char **error);
-t_material	*rt_dielectric(const char **line, char **error);
-t_material	*rt_emitter(const char **line, char **error);
-t_material	*rt_material(const char **line, char **error);
+t_entity	*rt_ambient_light(t_scene *scene, const char **line, char **error);
+t_entity	*rt_triangle(t_scene *scene, const char **line, char **error);
+t_entity	*rt_camera(t_scene *scene, const char **line, char **error);
+t_entity	*rt_light(t_scene *scene, const char **line, char **error);
+t_entity	*rt_sphere(t_scene *scene, const char **line, char **error);
+t_entity	*rt_cone(t_scene *scene, const char **line, char **error);
+t_entity	*rt_plane(t_scene *scene, const char **line, char **error);
+t_entity	*rt_cylinder(t_scene *scene, const char **line, char **error);
+t_entity	*rt_entity(t_scene *scene, const char **line, char **error);
+t_material	*rt_lambertian(t_scene *scene, const char **line, char **error);
+t_material	*rt_metal(t_scene *scene, const char **line, char **error);
+t_material	*rt_dielectric(t_scene *scene, const char **line, char **error);
+t_material	*rt_emitter(t_scene *scene, const char **line, char **error);
+t_material	*rt_material(t_scene *scene, const char **line, char **error);
+t_texture	*rt_image_texture(t_scene *scene, const char **line, char **error);
+t_texture	*rt_color_texture(t_scene *scene, const char **line, char **error);
+t_texture	*rt_texture(t_scene *scene, const char **line, char **error);
 int			rt_space(const char *line, char **error);
 size_t		rt_wordlen(const char *str);
 

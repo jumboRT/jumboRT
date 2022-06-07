@@ -3,6 +3,7 @@
 
 # include "rtmath.h"
 # include "util.h"
+# include "tex.h"
 
 typedef struct s_scatter		t_scatter;
 typedef struct s_material_vt	t_material_vt;
@@ -31,12 +32,12 @@ struct s_material {
 
 struct s_lambertian {
 	t_material	base;
-	t_vec		albedo;
+	t_texture	*albedo;
 };
 
 struct s_metal {
 	t_material	base;
-	t_vec		albedo;
+	t_texture	*albedo;
 	FLOAT		fuzzy;
 };
 
@@ -48,7 +49,7 @@ struct s_dielectric {
 struct s_emitter {
 	t_material	base;
 	FLOAT		brightness;
-	t_vec		emittance;
+	t_texture	*emittance;
 	t_material	*child;
 };
 

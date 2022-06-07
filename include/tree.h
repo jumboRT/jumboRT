@@ -12,8 +12,9 @@
 #  define RT_TREE_STEPS 20
 # endif
 
+/* TODO: automatically find the best value for this */
 # ifndef RT_TREE_DEPTH
-#  define RT_TREE_DEPTH 4
+#  define RT_TREE_DEPTH 0
 # endif
 
 typedef struct s_tree		t_tree;

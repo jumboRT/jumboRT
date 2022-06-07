@@ -62,6 +62,32 @@ static t_vec
 					vec_scale(vec_z(1.0), vec_dot(relative_point, vec_z(1.0))))));
 }
 
+/* Expects circle to be at 0,0 */
+/* Might be better to pre-calculate 1.0 / radius */
+static t_vec
+	circle_uv_at(FLOAT radius, t_vec point, t_vec offset)
+{
+	return (vec(
+				((point.v[U] + radius) / (2.0 * radius)) + offset.v[U],
+				((point.v[V] + radius) / (2.0 * radius)) + offset.v[V],
+				0.0,
+				0.0));
+
+}
+
+static t_vec
+	cylinder_uv_at(FLOAT radius, FLOAT height, t_vec point, t_vec offset)
+{
+	FLOAT	x_offset;
+
+	x_offset = (FLOAT) point.v[X] < 0.0;
+	return (vec(
+				(point.v[Y] / (4.0 * radius)) + x_offset + offset.v[U],
+				(point.v[Z] / (2.0 * height)) + x_offset + offset.v[V],
+				0.0,
+				0.0));
+}
+
 static int
 	cylinder_hit_parallel(const t_cylinder *cylinder, t_ray relative_ray, t_hit *hit, FLOAT min)
 {
@@ -69,15 +95,23 @@ static int
 	{
 		return (0);
 	}
-	if (relative_ray.pos.v[Z] < 0 && relative_ray.pos.v[Z] >= min)
+	if (relative_ray.pos.v[Z] < 0.0 && relative_ray.pos.v[Z] >= min)
 	{
 		hit->normal = vec_neg(cylinder->dir);
 		hit->t = -relative_ray.pos.v[Z];
+		hit->uv = circle_uv_at(
+				cylinder->radius,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->top_uv);
 	}
 	else if (cylinder->height - relative_ray.pos.v[Z] >= min)
 	{
 		hit->normal = cylinder->dir;
 		hit->t = cylinder->height - relative_ray.pos.v[Z];
+		hit->uv = circle_uv_at(
+				cylinder->radius,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->bot_uv);
 	}
 	else
 	{
@@ -126,21 +160,39 @@ static int
 	{
 		hit->t = t_end[0];
 		hit->normal = cylinder->dir;
+		hit->uv = circle_uv_at(
+				cylinder->radius,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->top_uv);
 	}
 	if (t_end[1] < hit->t && t_end[1] >= min && between(0.0, z[0], z[1]))
 	{
 		hit->t = t_end[1];
 		hit->normal = vec_neg(cylinder->dir);
+		hit->uv = circle_uv_at(
+				cylinder->radius,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->bot_uv);
 	}
 	if (t_side[0] < hit->t && t_side[0] >= min && between(z[0], height, 0.0))
 	{
 		hit->t = t_side[0];
 		hit->normal = cylinder_normal_at(cylinder->radius, ray_at_t(relative_ray, hit->t));
+		hit->uv = cylinder_uv_at(
+				cylinder->radius,
+				cylinder->height,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->side_uv);
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min && between(z[1], height, 0.0))
 	{
 		hit->t = t_side[1];
 		hit->normal = cylinder_normal_at(cylinder->radius, ray_at_t(relative_ray, hit->t));
+		hit->uv = cylinder_uv_at(
+				cylinder->radius,
+				cylinder->height,
+				ray_at_t(relative_ray, hit->t),
+				cylinder->side_uv);
 	}
 	if (hit->t == HUGE_VAL)
 		return (0);

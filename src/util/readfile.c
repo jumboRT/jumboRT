@@ -57,44 +57,46 @@ static char
 }
 
 static char
-	*rt_readfile_fd(int fd, char **error)
+	*rt_readfile_fd(int fd, char **error, size_t *index)
 {
 	char	*buffer;
 	size_t	size;
 	ssize_t	read_size;
-	size_t	index;
 
 	size = RT_BUFFER_SIZE;
 	buffer = rt_malloc(RT_BUFFER_SIZE);
-	index = 0;
 	while (1)
 	{
-		if (index + RT_BUFFER_SIZE >= size)
+		if (*index + RT_BUFFER_SIZE >= size)
 			buffer = rt_realloc(buffer, size, size * 2);
-		if (index + RT_BUFFER_SIZE >= size)
+		if (*index + RT_BUFFER_SIZE >= size)
 			size = size * 2;
-		read_size = rt_read(fd, &buffer[index], RT_BUFFER_SIZE);
+		read_size = rt_read(fd, &buffer[*index], RT_BUFFER_SIZE);
 		if (read_size < 0)
 			return (rt_free(buffer), ft_asprintf(error,
 					"Failed to read from fd %d: '%s'", fd, strerror(errno)),
 				NULL);
 		else if (read_size == 0)
-			return (rt_readfile_fd_end(buffer, index, size));
-		index += read_size;
+			return (rt_readfile_fd_end(buffer, *index, size));
+		*index += read_size;
 	}
 	return (NULL);
 }
 
 char
-	*rt_readfile(const char *path, char **error)
+	*rt_readfile(const char *path, char **error, size_t *size)
 {
-	int	fd;
+	int		fd;
+	size_t	size_int;
 
+	if (size == NULL)
+		size = &size_int;
+	*size = 0;
 	fd = rt_open(path, O_RDONLY);
 	if (fd < 0)
 	{
 		ft_asprintf(error, "Unable to open '%s': %s", path, strerror(errno));
 		return (NULL);
 	}
-	return (rt_readfile_fd(fd, error));
+	return (rt_readfile_fd(fd, error, size));
 }

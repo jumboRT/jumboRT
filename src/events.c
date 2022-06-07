@@ -79,6 +79,7 @@ int
 
 	(void) button;
 	state = ctx;
-	trace_debug(state, x, y);
+	if (button == 3)
+		trace_debug(state, x, y);
 	return (0);
 }

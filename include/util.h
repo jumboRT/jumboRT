@@ -5,7 +5,7 @@
 # include <stddef.h>
 
 # ifndef RT_BUFFER_SIZE
-#  define RT_BUFFER_SIZE 1024
+#  define RT_BUFFER_SIZE 10240
 # elif RT_BUFFER_SIZE <= 0
 #  error RT_BUFFER_SIZE must be a positive integer
 # endif
@@ -31,7 +31,7 @@ void	rt_free(void *ptr);
 void	*rt_memdup(const void *src, size_t size);
 
 int		rt_atof(const char *str, FLOAT *dst);
-char	*rt_readfile(const char *path, char **error);
+char	*rt_readfile(const char *path, char **error, size_t *size);
 
 t_seed	rt_random(t_seed *seed);
 FLOAT	rt_random_float(t_seed *seed);

@@ -26,7 +26,7 @@ int
 	t_vec	dir;
 
 	metal = (t_metal *) mat;
-	scatter->attenuation = metal->albedo;
+	scatter->attenuation = metal->albedo->vt->sample(metal->albedo, hit->uv);
 	scatter->scattered.pos = hit->pos;
 	dir = reflect(in.dir, hit->local_normal);
 	scatter->scattered.dir = vec_norm(vec_add(dir, vec_scale(rt_random_svec(&ctx->seed), metal->fuzzy)));
@@ -37,5 +37,9 @@ int
 void
 	metal_destroy(t_material *mat)
 {
+	t_metal	*metal;
+
+	metal = (t_metal *) mat;
+	metal->albedo->vt->destroy(metal->albedo);
 	rt_free(mat);
 }

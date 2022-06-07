@@ -72,15 +72,18 @@ int
 		ft_fprintf(STDERR_FILENO, "Usage: %s scene_file\n", argv[0]);
 		return (EXIT_FAILURE);
 	}
-	file = rt_readfile(argv[1], &error);
+	error = NULL;
+	file = rt_readfile(argv[1], &error, NULL);
 	if (file == NULL)
 	{
 		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
+		rt_free(error);
 		exit(EXIT_FAILURE);
 	}
 	if (rt_scene(&scene, file, &error))
 	{
 		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
+		rt_free(error);
 		exit(EXIT_FAILURE);
 	}
 	rt_free(file);

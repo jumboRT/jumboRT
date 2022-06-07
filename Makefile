@@ -5,8 +5,9 @@ GFX_FILES				:= win.c img.c draw.c hook.c
 MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
 SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c compare.c
 MATERIAL_FILES			:= lambertian.c metal.c dielectric.c emitter.c
+TEX_FILES				:= tex.c image.c color.c
 BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c time.c context.c
-PARSER_FILES			:= common.c light.c parser.c camera.c object.c material.c
+PARSER_FILES			:= common.c light.c parser.c camera.c object.c material.c texture.c
 UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
 TREE_FILES				:= tree.c util.c optimize.c
 
@@ -25,6 +26,7 @@ FILE_NAMES				:= \
 	$(patsubst %,mt/%,$(MT_FILES)) \
 	$(patsubst %,scene/%,$(SCENE_FILES)) \
 	$(patsubst %,material/%,$(MATERIAL_FILES)) \
+	$(patsubst %,tex/%,$(TEX_FILES)) \
 	$(patsubst %,parser/%,$(PARSER_FILES)) \
 	$(patsubst %,tree/%,$(TREE_FILES)) \
 	$(BASE_FILES)
@@ -113,8 +115,8 @@ else ifeq ($(config), release)
 	CFLAGS		+= -g3 -O2
 	LFLAGS		+=
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto
-	LFLAGS		+= -g0 -Ofast -flto
+	CFLAGS		+= -g0 -Ofast -flto -march=native
+	LFLAGS		+= -g0 -Ofast -flto -march=native
 else
 $(error "invalid config $(config"))
 endif

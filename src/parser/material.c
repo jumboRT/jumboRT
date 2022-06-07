@@ -11,7 +11,7 @@ static const t_material_entry	g_entries[] = {
 };
 
 t_material
-	*rt_material(const char **line, char **error)
+	*rt_material(t_scene *scene, const char **line, char **error)
 {
 	size_t					index;
 	const t_material_entry	*entry;
@@ -27,34 +27,34 @@ t_material
 				rt_wordlen(entry->identifier)))
 		{
 			*line = rt_next_word(*line);
-			return (entry->proc(line, error));
+			return (entry->proc(scene, line, error));
 		}
 		index += 1;
 	}
 	if (*line == NULL)
 		return (NULL);
-	return (rt_lambertian(line, error));
+	return (rt_lambertian(scene, line, error));
 }
 
 t_material
-	*rt_lambertian(const char **line, char **error)
+	*rt_lambertian(t_scene *scene, const char **line, char **error)
 {
 	t_lambertian	lambertian;
 
 	lambertian.base.vt = lambertian_vt();
-	*line = rt_color(*line, error, &lambertian.albedo);
+	lambertian.albedo = rt_texture(scene, line, error);
 	if (*line == NULL)
 		return (NULL);
 	return (rt_memdup(&lambertian, sizeof(lambertian)));
 }
 
 t_material
-	*rt_metal(const char **line, char **error)
+	*rt_metal(t_scene *scene, const char **line, char **error)
 {
 	t_metal	metal;
 
 	metal.base.vt = metal_vt();
-	*line = rt_color(*line, error, &metal.albedo);
+	metal.albedo = rt_texture(scene, line, error);
 	*line = rt_float(*line, error, &metal.fuzzy);
 	if (*line == NULL)
 		return (NULL);
@@ -62,10 +62,11 @@ t_material
 }
 
 t_material
-	*rt_dielectric(const char **line, char **error)
+	*rt_dielectric(t_scene *scene, const char **line, char **error)
 {
 	t_dielectric	dielectric;
 
+	(void) scene;
 	dielectric.base.vt = dielectric_vt();
 	*line = rt_float(*line, error, &dielectric.ir);
 	if (*line == NULL)
@@ -74,14 +75,14 @@ t_material
 }
 
 t_material
-	*rt_emitter(const char **line, char **error)
+	*rt_emitter(t_scene *scene, const char **line, char **error)
 {
 	t_emitter	emitter;
 
 	emitter.base.vt = emitter_vt();
 	*line = rt_float(*line, error, &emitter.brightness);
-	*line = rt_color(*line, error, &emitter.emittance);
-	emitter.child = rt_material(line, error);
+	emitter.emittance = rt_texture(scene, line, error);
+	emitter.child = rt_material(scene, line, error);
 	if (*line == NULL)
 		return (NULL);
 	return (rt_memdup(&emitter, sizeof(emitter)));

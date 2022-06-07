@@ -16,6 +16,19 @@ const t_entity_vt
 	return (&vt);
 }
 
+/* Get uv coords on unit sphere at center */
+static t_vec
+	sphere_uv_at(t_vec point)
+{
+	t_vec	uv;
+
+	/* TODO Check if better to multiply by constant
+	 * 1.0 / RT_2PI instead of dividing*/
+	uv.v[U] = 0.5 + (atan2(point.v[X], point.v[Y]) / RT_2PI);
+	uv.v[V] = 0.5 + (asin(-point.v[Z] / RT_2PI));
+	return (uv);
+}
+
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 int
 	sphere_hit(const t_entity *ent, t_ray ray, t_hit *hit, FLOAT min)
@@ -40,6 +53,7 @@ int
 	hit->pos = ray_at_t(ray, t[0]);
 	hit->normal = vec_scale(vec_sub(hit->pos, sphere->pos), 2.0 / sphere->diameter);
 	hit->mat = sphere->mat;
+	hit->uv = sphere_uv_at(hit->normal);
 	return (1);
 }
 

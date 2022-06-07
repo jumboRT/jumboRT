@@ -26,6 +26,7 @@ struct s_hit {
 	t_vec		pos;
 	t_vec		normal;
 	t_vec		local_normal;
+	t_vec		uv;
 	t_material	*mat;
 	FLOAT		t;
 };
@@ -69,6 +70,7 @@ struct s_triangle {
 	t_vec		pos1;
 	t_vec		pos2;
 	t_vec		normal;
+	t_vec		local_uv;
 	FLOAT		diameter;
 	t_vec		v0;
 	t_vec		v1;
@@ -90,7 +92,10 @@ struct s_sphere {
 struct s_cone {
 	t_entity	base;
 	t_vec		pos;
+	t_vec		bot;
 	t_vec		dir;
+	t_vec		bot_uv;
+	t_vec		side_uv;
 	FLOAT		angle;
 	FLOAT		radius;
 	FLOAT		costheta2;
@@ -102,6 +107,7 @@ struct s_plane {
 	t_entity	base;
 	t_vec		pos;
 	t_vec		dir;
+	t_vec		uv_repeat;
 	t_material	*mat;
 };
 
@@ -112,6 +118,9 @@ struct s_cylinder {
 	FLOAT		diameter;
 	FLOAT		height;
 	FLOAT		radius;
+	t_vec		top_uv;
+	t_vec		bot_uv;
+	t_vec		side_uv;
 	t_material	*mat;
 };
 
@@ -122,6 +131,7 @@ struct s_scene {
 	t_camera		*camera;
 	t_ambient_light	*ambient_light;
 	t_light			*main_light;
+	t_tex_list		texs;
 };
 
 const t_entity_vt	*ambient_light_vt(void);

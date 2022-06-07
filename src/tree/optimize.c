@@ -73,6 +73,25 @@ static void
 	}
 }
 
+static t_vec
+	tree_median(t_entity **list, size_t count)
+{
+	size_t	index;
+	t_vec	a;
+	t_vec	b;
+	t_vec	total;
+
+	index = 0;
+	total = vec(0, 0, 0, 0);
+	while (index < count)
+	{
+		list[index]->vt->get_bounds(list[index], &a, &b);
+		total = vec_add(total, vec_scale(vec_add(a, b), 0.5));
+		index += 1;
+	}
+	return vec_scale(total, 1.0 / count);
+}
+
 // TODO: this function does not work properly and is only an estimate rn
 FLOAT
 	tree_quality(t_tree *tree)
@@ -130,7 +149,7 @@ void
 }
 
 void
-	tree_optimizer(t_tree *tree, int depth)
+	tree_optimize_monte_carlo(t_tree *tree, int depth)
 {
 	t_tree			*split;
 	t_tree			*best;
@@ -153,21 +172,69 @@ void
 		i += 1;
 	}
 	rt_free(planes);
-	tree_optimize(best->front, depth - 1);
-	tree_optimize(best->back, depth - 1);
+	tree_optimize_monte_carlo(best->front, depth - 1);
+	tree_optimize_monte_carlo(best->back, depth - 1);
 	tree_swap(tree, best);
 	tree_destroy(best);
 }
 
 void
-	tree_optimize(t_tree *tree, int depth)
+	tree_optimize_octree(t_tree *tree, int depth)
 {
 	t_vec	a;
 	t_vec	b;
 
-	(void) depth;
+	if (depth == 0)
+		return ;
+	tree_bounding_box(tree->list, tree->count, &a, &b);
+	dbg_vec(a);
+	dbg_vec(b);
+	tree_split3d(tree, vec_scale(vec_add(a, b), 0.5));
+	tree_optimize_octree(tree->front->front->front, depth - 1);
+	tree_optimize_octree(tree->front->front->back, depth - 1);
+	tree_optimize_octree(tree->front->back->front, depth - 1);
+	tree_optimize_octree(tree->front->back->back, depth - 1);
+	tree_optimize_octree(tree->back->front->front, depth - 1);
+	tree_optimize_octree(tree->back->front->back, depth - 1);
+	tree_optimize_octree(tree->back->back->front, depth - 1);
+	tree_optimize_octree(tree->back->back->back, depth - 1);
+}
+
+t_tree
+	*tree_optimize_contain(t_tree *tree)
+{
+	t_vec	a;
+	t_vec	b;
+
 	tree_bounding_box(tree->list, tree->count, &a, &b);
 	tree_split3d(tree, a);
-	tree_split3d(tree->front->front->front, b);
+	tree = tree->front->front->front;
+	tree_split3d(tree, b);
+	tree = tree->back->back->back;
+	return (tree);
+}
+
+void
+	tree_optimize_median(t_tree *tree, int depth, int axis)
+{
+	t_vec	median;
+
+	if (depth == 0)
+		return ;
+	median = tree_median(tree->list, tree->count);
+	if (axis % 3 == 0)
+		tree_split(tree, median, vec(1, 0, 0, 0));
+	if (axis % 3 == 1)
+		tree_split(tree, median, vec(0, 1, 0, 0));
+	if (axis % 3 == 2)
+		tree_split(tree, median, vec(0, 0, 1, 0));
+	tree_optimize_median(tree->front, depth - 1, axis + 1);
+	tree_optimize_median(tree->back, depth - 1, axis + 1);
+}
+
+void
+	tree_optimize(t_tree *tree, int depth)
+{
+	tree_optimize_median(tree, depth, 0);
 }
 

@@ -22,7 +22,7 @@ int
 
 	(void) in;
 	lambertian = (t_lambertian *) mat;
-	scatter->attenuation = lambertian->albedo;
+	scatter->attenuation = lambertian->albedo->vt->sample(lambertian->albedo, hit->uv);
 	scatter->scattered.pos = hit->pos;
 	dir = vec_add(hit->local_normal, rt_random_svec(&ctx->seed));
 	if (vec_mag(dir) < 0.001)
@@ -35,5 +35,9 @@ int
 void
 	lambertian_destroy(t_material *mat)
 {
+	t_lambertian	*lambertian;
+
+	lambertian = (t_lambertian *) mat;
+	lambertian->albedo->vt->destroy(lambertian->albedo);
 	rt_free(mat);
 }

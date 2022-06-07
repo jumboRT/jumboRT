@@ -32,6 +32,18 @@ int
 	return (1);
 }
 
+/*
+static t_vec
+	plane_uv_at(t_vec up, t_vec normal, t_vec point, t_vec uv_repeat)
+{
+	t_vec	perp0, perp1;
+
+	perp0 = vec_norm(point);
+	perp1 = vec_norm(vec_cross(normal, perp0));
+
+}
+*/
+
 /* http://lousodrome.net/blog/light/2020/07/03/intersection-of-a-ray-and-a-plane/ */
 /* http://wscg.zcu.cz/wscg2002/Papers_2002/A83.pdf */
 int
