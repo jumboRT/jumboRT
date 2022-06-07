@@ -23,6 +23,12 @@ t_entity
 	triangle.normal = vec_cross(
 						vec_sub(triangle.pos1, triangle.pos2),
 						vec_sub(triangle.pos2, triangle.pos0));
+	triangle.v0 = vec_sub(triangle.pos1, triangle.pos0);
+	triangle.v1 = vec_sub(triangle.pos2, triangle.pos0);
+	triangle.d00 = vec_dot(triangle.v0, triangle.v0);
+	triangle.d01 = vec_dot(triangle.v0, triangle.v1);
+		triangle.d11 = vec_dot(triangle.v1, triangle.v1);
+	triangle.inv_denom = 1.0 / (triangle.d00 * triangle.d11 - triangle.d01 * triangle.d01);
 	return (rt_memdup(&triangle, sizeof(triangle)));
 }
 

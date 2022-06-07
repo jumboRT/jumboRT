@@ -70,6 +70,8 @@ struct s_triangle {
 	t_vec		pos2;
 	t_vec		normal;
 	FLOAT		diameter;
+	t_vec		v0;
+	t_vec		v1;
 	FLOAT		d00;
 	FLOAT		d01;
 	FLOAT		d11;
