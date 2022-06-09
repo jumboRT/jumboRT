@@ -1,5 +1,7 @@
 #include "rt.h"
 
+#include "ft_printf.h"
+
 static void
 	thread_render(t_thread_ctx *ctx, t_rt_state *state)
 {
@@ -7,6 +9,8 @@ static void
 	size_t	end;
 	long	version;
 	t_vec	colors[RT_RENDER_CHUNK_SIZE];
+	double	now;
+	double	sps;
 
 	while (state->idx < state->end && state->running)
 	{
@@ -20,7 +24,16 @@ static void
 		render_range(ctx, state, colors, begin, end);
 		mutex_lock(&state->mtx);
 		if (version >= state->version)
+		{
+			now = time_time();
+			if (RT_TIME_PROGRESS && now > state->last_update + 1)
+			{
+				sps = state->idx / (now - state->start);
+				ft_printf("%d samples per second\n", (int) sps);
+				state->last_update = now;
+			}
 			render_draw(state, colors, begin, end);
+		}
 	}
 }
 
@@ -53,6 +66,8 @@ void
 
 	state->idx = 0;
 	state->version += 1;
+	state->start = time_time();
+	state->last_update = time_time();
 	i = 0;
 	while (i < state->size)
 	{

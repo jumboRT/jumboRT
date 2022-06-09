@@ -3,6 +3,7 @@
 
 #include <libft.h>
 #include <mlx.h>
+#include <math.h>
 
 /* TODO: this function is no longer used */
 /* TODO: t_img is no longer used either i think */
@@ -54,11 +55,11 @@ void
 		samples = state_image[i].v[W];
 		if (samples == 0)
 			samples = 1;
-		col = vec_scale(state_image[i], 255.0 / samples);
-		dst[bpp * i + 3] = (t_color)(col.v[W]) & 0xFF;
-		dst[bpp * i + 2] = (t_color)(col.v[X]) & 0xFF;
-		dst[bpp * i + 1] = (t_color)(col.v[Y]) & 0xFF;
-		dst[bpp * i + 0] = (t_color)(col.v[Z]) & 0xFF;
+		col = vec_scale(state_image[i], 1.0 / samples);
+		dst[bpp * i + 3] = (t_color)(sqrt(col.v[W]) * 255.0) & 0xFF;
+		dst[bpp * i + 2] = (t_color)(sqrt(col.v[X]) * 255.0) & 0xFF;
+		dst[bpp * i + 1] = (t_color)(sqrt(col.v[Y]) * 255.0) & 0xFF;
+		dst[bpp * i + 0] = (t_color)(sqrt(col.v[Z]) * 255.0) & 0xFF;
 		i += 1;
 	}
 	rt_free(state_image);

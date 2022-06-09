@@ -19,11 +19,11 @@
 # endif
 
 # ifndef RT_SAMPLES
-#  define RT_SAMPLES 1024
+#  define RT_SAMPLES 65536
 # endif
 
 # ifndef RT_MAX_DEPTH
-#  define RT_MAX_DEPTH 64
+#  define RT_MAX_DEPTH 16
 # endif
 
 # ifndef RT_RAY_LENGTH
@@ -32,8 +32,10 @@
 
 # ifndef RT_TIME
 #  define RT_TIME_FRAME 1
+#  define RT_TIME_PROGRESS 0
 # else
 #  define RT_TIME_FRAME 0
+#  define RT_TIME_PROGRESS 1
 # endif
 
 # define RT_FPS 10
@@ -67,6 +69,8 @@ struct s_rt_state {
 	size_t		dbg_line_size;
 	t_vec		dbg_norm[RT_MAX_DEPTH][2];
 	size_t		dbg_norm_size;
+	double		start;
+	double		last_update;
 };
 
 t_vec	trace(t_thread_ctx *ctx, t_rt_state *state, int x, int y);

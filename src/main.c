@@ -38,8 +38,8 @@ static void
 {
 	t_rt_state	state;
 
-	state.width = 1920;
-	state.height = 1080;
+	state.width = 640;
+	state.height = 480;
 	state.size = state.width * state.height;
 	state.image = rt_malloc(state.size * sizeof(*state.image));
 	state.order = rt_malloc(state.size * sizeof(*state.order));
