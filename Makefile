@@ -1,15 +1,10 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c cmp.c ray.c polynomial.c
-GFX_FILES				:= win.c img.c draw.c hook.c
-MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
-SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c compare.c
-MATERIAL_FILES			:= lambertian.c metal.c dielectric.c emitter.c
-TEX_FILES				:= tex.c image.c color.c
-BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c time.c context.c
-PARSER_FILES			:= common.c light.c parser.c camera.c object.c material.c texture.c
-UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
-TREE_FILES				:= tree.c util.c optimize.c
+UTIL_FILES				:= util.c memory.c
+MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c
+WORK_FILES				:= work.c util.c single.c compute.c
+MATH_FILES				:= vec_arith.c
+BASE_FILES				:= main.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -20,15 +15,10 @@ ifndef platform
 endif
 
 FILE_NAMES				:= \
-	$(patsubst %,util/%,$(UTIL_FILES)) \
-	$(patsubst %,math/%,$(MATH_FILES)) \
-	$(patsubst %,gfx/%,$(GFX_FILES)) \
-	$(patsubst %,mt/%,$(MT_FILES)) \
-	$(patsubst %,scene/%,$(SCENE_FILES)) \
-	$(patsubst %,material/%,$(MATERIAL_FILES)) \
-	$(patsubst %,tex/%,$(TEX_FILES)) \
-	$(patsubst %,parser/%,$(PARSER_FILES)) \
-	$(patsubst %,tree/%,$(TREE_FILES)) \
+	$(patsubst %.c,util/%.c,$(UTIL_FILES)) \
+	$(patsubst %.c,mt/%.c,$(MT_FILES)) \
+	$(patsubst %.c,work/%.c,$(WORK_FILES)) \
+	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
