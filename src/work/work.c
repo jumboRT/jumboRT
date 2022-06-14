@@ -10,16 +10,18 @@ void
 	work->count = 0;
 	work->work_index = 0;
 	work->work_size = 0;
+	work->work_progress = 0;
 	work->ctx = NULL;
 	mutex_init(&work->mtx);
 	cond_init(&work->cnd);
-	work->pause = 1;
+	work->pause = 0;
 	work->stop = 0;
 	work->paused = 0;
 	work->stopped = 0;
 	work->data = NULL;
 	work->capacity = 0;
 	work_int_create(work);
+	work_pause(work);
 }
 
 void
@@ -40,11 +42,11 @@ void
 		thread_join(&work->workers[i]->thread);
 		i += 1;
 	}
+	work_int_destroy(work);
 	rt_free(work->workers);
 	rt_free(work->data);
 	mutex_destroy(&work->mtx);
 	cond_destroy(&work->cnd);
-	work_int_destroy(work);
 }
 
 void
@@ -79,6 +81,8 @@ void
 	{
 		ptr = work->data;
 		n = queue_recv(&work->workers[i]->queue, &ptr, &work->capacity);
+		n /= sizeof(t_result);
+		work->work_progress += n;
 		work->data = ptr;
 		work_done(work, work->data, n);
 		i += 1;

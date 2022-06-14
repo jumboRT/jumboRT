@@ -1,10 +1,11 @@
 NAME					:= miniRT
 
-UTIL_FILES				:= util.c memory.c
+UTIL_FILES				:= util.c memory.c image.c writefile.c readfile.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c
-WORK_FILES				:= work.c util.c single.c compute.c
-MATH_FILES				:= vec_arith.c
-BASE_FILES				:= main.c
+WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c
+MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
+							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c
+BASE_FILES				:= main.c queue.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -44,8 +45,8 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+=
-LFLAGS          		+=
+CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT
+LFLAGS          		+= -lOpenCL
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
 OBJECTS					:= $(patsubst %.c,$(OBJ_DIR)/%.o,$(FILE_NAMES))
@@ -83,10 +84,6 @@ endif
 ifndef san
 	san := address
 endif 
-
-ifndef nothread
-	CFLAGS		+= -DRT_MT -DRT_TIME
-endif
 
 ifeq ($(config), debug)
 	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -O0 -DSH_BACKTRACE

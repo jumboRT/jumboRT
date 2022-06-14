@@ -1,18 +1,15 @@
 #include "rtmath.h"
 
-#if defined RT_SSE
-#include <smmintrin.h>
+#if defined RT_VECTORIZE
 
 __attribute__ ((const))
 FLOAT
 	vec_dot(t_vec a, t_vec b)
 {
-	FLOAT	res[4];
-	__m128	dot;
+	t_vec_conv	conv;
 
-	dot = _mm_dp_ps(a.v, b.v, -1);
-	_mm_store_ps(res, dot);
-	return (res[0]);
+	conv.vec = a * b;
+	return (conv.elem[0] + conv.elem[1] + conv.elem[3]);
 }
 
 __attribute__ ((const))

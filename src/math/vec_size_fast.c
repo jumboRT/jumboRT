@@ -1,6 +1,6 @@
 #include "rtmath.h"
 
-#if !defined RT_VECTORIZE
+#if defined RT_VECTORIZE
 
 __attribute__ ((const))
 FLOAT
@@ -40,18 +40,21 @@ __attribute__ ((const))
 t_vec
 	vec_clamp(t_vec v, FLOAT min, FLOAT max)
 {
-	if (v.x < min)
-		v.x = min;
-	else if (v.x > max)
-		v.x = max;
-	if (v.y < min)
-		v.y = min;
-	else if (v.y > max)
-		v.y = max;
-	if (v.z < min)
-		v.z = min;
-	else if (v.z > max)
-		v.z = max;
-	return (v);
+	t_vec_conv	conv;
+
+	conv.vec = v;
+	if (conv.elem[0] < min)
+		conv.elem[0] = min;
+	else if (conv.elem[0] > max)
+		conv.elem[0] = max;
+	if (conv.elem[1] < min)
+		conv.elem[1] = min;
+	else if (conv.elem[1] > max)
+		conv.elem[1] = max;
+	if (conv.elem[2] < min)
+		conv.elem[2] = min;
+	else if (conv.elem[2] > max)
+		conv.elem[2] = max;
+	return (conv.vec);
 }
 #endif

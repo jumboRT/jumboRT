@@ -1,6 +1,6 @@
 #include "rtmath.h"
 
-#if !defined RT_SSE
+#if !defined RT_VECTORIZE
 
 __attribute__ ((const))
 FLOAT

@@ -7,18 +7,8 @@
 #  define FLOAT float
 # endif
 
-//# define RT_VECTORIZE
-
-# if defined RT_VECTORIZE
-typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
-
-typedef union u_vec_conv {
-	t_vec vec;
-	FLOAT elem[4];
-}	t_vec_conv;
-# endif
-
-typedef struct s_ray		t_ray;
+typedef struct s_vec	t_vec;
+typedef struct s_ray	t_ray;
 
 typedef struct s_plane		t_plane;
 typedef struct s_triangle	t_triangle;
@@ -30,13 +20,11 @@ typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
 
-# if !defined RT_VECTORIZE
-typedef struct s_vec {
-	FLOAT x;
-	FLOAT y;
-	FLOAT z;
-}	t_vec;
-# endif
+struct s_vec {
+	FLOAT	x;
+	FLOAT	y;
+	FLOAT	z;
+};
 
 struct s_ray {
 	t_vec	org;
@@ -77,16 +65,11 @@ struct t_cone {
 	t_vec	radius;
 };
 
-struct s_hit {
+struct	s_hit {
 	t_vec	pos;
 	t_vec	normal;
 	FLOAT	t;
 };
-
-FLOAT	rt_sqrt(FLOAT a);
-FLOAT	rt_sin(FLOAT a);
-FLOAT	rt_cos(FLOAT a);
-FLOAT	rt_tan(FLOAT a);
 
 int		float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 
@@ -115,6 +98,7 @@ t_vec	vec_scale(t_vec v, FLOAT s) __attribute__ ((const));
 t_vec	vec_cross(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_add(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_sub(t_vec a, t_vec b) __attribute__ ((const));
+
 t_vec	vec_norm(t_vec v) __attribute__ ((const));
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec	vec_norm2(t_vec v) __attribute__ ((const));

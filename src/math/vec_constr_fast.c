@@ -1,16 +1,17 @@
 #include "rtmath.h"
 
-#if !defined RT_VECTORIZE
+#if defined RT_VECTORIZE
 
 t_vec
 	vec(FLOAT x, FLOAT y, FLOAT z)
 {
-	t_vec	result;
+	t_vec_conv	conv;
 
-	result.x = x;
-	result.y = y;
-	result.z = z;
-	return (result);
+	conv.elem[0] = x;
+	conv.elem[1] = y;
+	conv.elem[2] = z;
+	conv.elem[3] = 0.0;
+	return (conv.vec);
 }
 	
 t_vec

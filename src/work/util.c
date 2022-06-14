@@ -20,7 +20,7 @@ void
 }
 
 int
-	work_sync(t_work *work, size_t *begin, size_t *end, size_t size)
+	work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size)
 {
 	mutex_lock(&work->mtx);
 	if (work->stop)
