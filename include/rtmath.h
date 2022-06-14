@@ -9,6 +9,7 @@ typedef struct s_ray	t_ray;
 
 # if !defined FLOAT && defined RT_SSE
 #  define FLOAT float
+#  include <smmintrin.h>
 
 struct s_vec {
 	__m128	v;
