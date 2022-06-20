@@ -5,7 +5,11 @@
 
 #if defined RT_WORK_OPENCL
 
-# include <CL/cl.h>
+# ifdef RT_LINUX
+#  include <CL/cl.h>
+# else
+#  include <OpenCL/cl.h>
+# endif
 
 # ifndef RT_WORK_OPENCL_CHUNK_SIZE
 #  define RT_WORK_OPENCL_CHUNK_SIZE 4096

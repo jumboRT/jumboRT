@@ -22,9 +22,9 @@ __kernel void
 t_ray
 	project(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
-	t_image_meta	*meta;
-	FLOAT			u;
-	FLOAT			v;
+	GLOBAL t_image_meta	*meta;
+	FLOAT				u;
+	FLOAT				v;
 
 	(void) ctx;
 	meta = &world->img_meta;

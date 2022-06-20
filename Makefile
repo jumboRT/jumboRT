@@ -46,7 +46,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
 CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT
-LFLAGS          		+= -lOpenCL
+LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
 OBJECTS					:= $(patsubst %.c,$(OBJ_DIR)/%.o,$(FILE_NAMES))
@@ -117,9 +117,10 @@ ifndef verbose
 endif
 
 ifeq ($(platform), macos)
-	FRAMEWORKS	:= -framework OpenGL -framework AppKit
+	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
+	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
 else
-	FRAMEWORKS	:= -lX11 -lXext -lm
+	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL
 	CFLAGS		+= -DRT_LINUX
 endif
 
