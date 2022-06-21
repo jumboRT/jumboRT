@@ -1,5 +1,7 @@
 #include "world.h"
 
+#include <stdio.h>
+
 static int
 	world_intersect_sphere(const void *ptr, t_ray ray, t_hit *hit)
 {
@@ -49,14 +51,14 @@ static int
 	primitives = (const char*) world->primitives;
 	hit->t = RT_HUGE_VAL;
 	while (index < world->primitives_size) {
-		primitive = (const t_primitive *) &primitives[index];
+		primitive = (const t_primitive *) (primitives + index);
 		if (primitive->shape_type == RT_SHAPE_SPHERE)
 		{
 			if (world_intersect_sphere(primitive, ray, &current_hit) && current_hit.t < hit->t)
 			{
 				*hit = current_hit;
 			}
-			index += sizeof(t_shape_sphere);
+			index += (sizeof(t_shape_sphere) + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 		}
 		else
 		{
@@ -64,7 +66,7 @@ static int
 			{
 				*hit = current_hit;
 			}
-			index += sizeof(t_shape_triangle);
+			index += (sizeof(t_shape_triangle) + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 		}
 	}
 	return (hit->t < RT_HUGE_VAL);

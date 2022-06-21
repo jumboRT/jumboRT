@@ -36,14 +36,14 @@ uint32_t
 }
 
 uint32_t
-	world_add_primitive(t_world *world, void *shape, size_t size)
+	world_add_primitive(t_world *world, void *primitive, size_t size)
 {
 	size_t	old_size;
 
 	old_size = world->primitives_size;
 	world->primitives_size += (size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 	world->primitives = rt_realloc(world->primitives, old_size, world->primitives_size);
-	ft_memcpy((char *) world->primitives + old_size, shape, size);
+	ft_memcpy((char *) world->primitives + old_size, primitive, size);
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }
 
