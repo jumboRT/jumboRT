@@ -1,5 +1,6 @@
 #include "work.h"
 #include "util.h"
+#include "world_impl.h"
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -8,11 +9,12 @@
 int
 	main(void)
 {
-	t_image	image;
-	t_world	world;
-	t_state	state;
-	t_work	work;
-	size_t	i;
+	t_image			image;
+	t_world			world;
+	t_state			state;
+	t_work			work;
+	t_shape_sphere	sphere;
+	size_t			i;
 
 	image.width = 1920;
 	image.height = 1080;
@@ -26,7 +28,28 @@ int
 	}
 	state.image = &image;
 	state.world = &world;
-	world.color = vec(1.0, 0.0, 0.0);
+	world_create(&world);
+	sphere.base.shape_type = RT_SHAPE_SPHERE;
+	sphere.base.mat_index = 0;
+	sphere.radius = 0.5;
+	sphere.pos = vec(1.0, 0.0, 0.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, 1.0, 0.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, -1.0, 0.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, 0.0, -1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, 1.0, -1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, -1.0, -1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, 0.0, 1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, 1.0, 1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
+	sphere.pos = vec(1.0, -1.0, 1.0);
+	world_add_primitive(&world, &sphere, sizeof(sphere));
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	world.img_meta.samples = 50;

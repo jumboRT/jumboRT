@@ -23,6 +23,9 @@ struct s_opencl_ctx {
 	cl_mem				world_mem;
 	cl_mem				ctx_mem;
 	cl_mem				result_mem;
+	cl_mem				primitives_mem;
+	cl_mem				materials_mem;
+	cl_mem				vertices_mem;
 	t_context			ctx;
 	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
 };
@@ -46,7 +49,8 @@ const static char *g_source_files[] = {
 	"src/math/sqrt.c",
 	"src/math/sin.c",
 	"src/math/cos.c",
-	"src/math/tan.c"
+	"src/math/tan.c",
+	"src/world/intersect.c"
 };
 
 void
@@ -77,6 +81,37 @@ void
 		queue_send(&worker->queue, cl_ctx->result, sizeof(*cl_ctx->result) * (end - begin));
 	}
 	return (NULL);
+}
+
+void
+	work_create_buffers(t_work *work, struct s_opencl_ctx *cl_ctx)
+{
+	cl_int	status;
+
+	cl_ctx->world_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, sizeof(*work->state->world), work->state->world, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer world failed");
+	cl_ctx->ctx_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, sizeof(cl_ctx->ctx), &cl_ctx->ctx, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer ctx failed");
+	cl_ctx->result_mem = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer result failed");
+	cl_ctx->primitives_mem = NULL;
+	if (work->state->world->primitives_size != 0)
+	{
+		cl_ctx->primitives_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, work->state->world->primitives_size, work->state->world->primitives, &status);
+		rt_assert(status == CL_SUCCESS, "clCreateBuffer primitives failed");
+	}
+	cl_ctx->materials_mem = NULL;
+	if (work->state->world->materials_size != 0)
+	{
+		cl_ctx->materials_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, work->state->world->materials_size, work->state->world->materials, &status);
+		rt_assert(status == CL_SUCCESS, "clCreateBuffer materials failed");
+	}
+	cl_ctx->vertices_mem = NULL;
+	if (work->state->world->vertices_size != 0)
+	{
+		cl_ctx->vertices_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, work->state->world->vertices_size, work->state->world->vertices, &status);
+		rt_assert(status == CL_SUCCESS, "clCreateBuffer vertices failed");
+	}
 }
 
 /* TODO: free mallocs */
@@ -120,12 +155,7 @@ void
 	rt_assert(status == CL_SUCCESS, "clCreateContextFromType failed");
 	cl_ctx->command_queue = clCreateCommandQueueWithProperties(cl_ctx->context, device, 0, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
-	cl_ctx->world_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, sizeof(*work->state->world), work->state->world, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateBuffer world failed");
-	cl_ctx->ctx_mem = clCreateBuffer(cl_ctx->context, CL_MEM_USE_HOST_PTR, sizeof(cl_ctx->ctx), &cl_ctx->ctx, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateBuffer ctx failed");
-	cl_ctx->result_mem = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateBuffer result failed");
+	work_create_buffers(work, cl_ctx);
 	cl_ctx->program = clCreateProgramWithSource(cl_ctx->context, count, (const char**) strings, lengths, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateProgramWithSource failed");
 	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global", NULL, NULL);

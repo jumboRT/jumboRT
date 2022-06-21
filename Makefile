@@ -5,6 +5,7 @@ MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c
+WORLD_FILES				:= impl.c intersect.c
 BASE_FILES				:= main.c queue.c
 
 ifndef platform
@@ -20,6 +21,7 @@ FILE_NAMES				:= \
 	$(patsubst %.c,mt/%.c,$(MT_FILES)) \
 	$(patsubst %.c,work/%.c,$(WORK_FILES)) \
 	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
+	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang

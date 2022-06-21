@@ -49,7 +49,6 @@ static ssize_t
 	size_t		left;
 
 	buf_pos = data;
-	nwritten = 0;
 	left = size;
 	while (left > 0)
 	{

@@ -43,12 +43,10 @@ t_result
 	FLOAT		t;
 	t_vec		top;
 	t_vec		bot;
-	t_sphere	sphere_obj;
 	t_hit		hit;
 
-	sphere_obj = sphere(vec(1, 0, 0), 0.5);
 	ray = project(world, ctx, index);
-	if (ray_sphere_intersect(ray, sphere_obj, 0.001, &hit))
+	if (world_intersect(world, ray, &hit))
 	{
 		result.color = vec_scale(vec_add(hit.normal, vec(1, 1, 1)), 0.5);
 	}

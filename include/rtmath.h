@@ -1,6 +1,8 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
+# define RT_HUGE_VAL 1000000000.0
+
 # define RT_PI 3.14159
 # define RT_2PI 6.28319
 # if !defined FLOAT
@@ -11,6 +13,7 @@
 
 # if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
+typedef FLOAT				t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
 	t_vec vec;
@@ -31,11 +34,16 @@ typedef struct s_hit		t_hit;
 typedef struct s_quadratic	t_quadratic;
 
 # if !defined RT_VECTORIZE
-typedef struct s_vec {
+typedef struct __attribute__((aligned(16))) s_vec {
 	FLOAT x;
 	FLOAT y;
 	FLOAT z;
 }	t_vec;
+
+typedef struct s_vec2 {
+	FLOAT x;
+	FLOAT y;
+}	t_vec2;
 # endif
 
 struct s_ray {
@@ -43,7 +51,7 @@ struct s_ray {
 	t_vec	dir;
 };
 
-struct s_quadratic {
+struct __attribute__((aligned(16))) s_quadratic {
 	FLOAT	a;
 	FLOAT	b;
 	FLOAT	c;
@@ -101,6 +109,12 @@ t_vec	vec_x(FLOAT x) __attribute__ ((const));
 t_vec	vec_y(FLOAT y) __attribute__ ((const));
 t_vec	vec_z(FLOAT z) __attribute__ ((const));
 
+t_vec	vec2(FLOAT x, FLOAT y) __attribute__ ((const));
+t_vec	vec2_0(void) __attribute__ ((const));
+t_vec	vec2_x(FLOAT x) __attribute__ ((const));
+t_vec	vec2_y(FLOAT y) __attribute__ ((const));
+t_vec	vec2_z(FLOAT z) __attribute__ ((const));
+
 t_plane		plane(t_vec pos, t_vec normal)								__attribute__ ((const));
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2)						__attribute__ ((const));
 t_sphere	sphere(t_vec pos, FLOAT radius)								__attribute__ ((const));
@@ -123,12 +137,11 @@ t_vec	vec_norm2(t_vec v) __attribute__ ((const));
 t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max) __attribute__ ((const));
 
 t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));
-
 t_vec	ray_at(t_ray ray, FLOAT t) __attribute__ ((const));
 
 int		ray_plane_intersect(t_ray ray,
 			t_plane plane, FLOAT min, t_hit *hit)		__attribute__ ((const));
-int		ray_triange_intersect(t_ray ray,
+int		ray_triangle_intersect(t_ray ray,
 			t_triangle triangle, FLOAT min, t_hit *hit)	__attribute__ ((const));
 int		ray_sphere_intersect(t_ray ray,
 			t_sphere sphere, FLOAT min, t_hit *hit)		__attribute__ ((const));
