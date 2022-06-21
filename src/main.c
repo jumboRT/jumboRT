@@ -34,6 +34,7 @@ int
 	sphere.radius = 0.5;
 	sphere.pos = vec(1.0, 0.0, 0.0);
 	world_add_primitive(&world, &sphere, sizeof(sphere));
+	/*
 	sphere.pos = vec(1.0, 1.0, 0.0);
 	world_add_primitive(&world, &sphere, sizeof(sphere));
 	sphere.pos = vec(1.0, -1.0, 0.0);
@@ -50,6 +51,7 @@ int
 	world_add_primitive(&world, &sphere, sizeof(sphere));
 	sphere.pos = vec(1.0, -1.0, 1.0);
 	world_add_primitive(&world, &sphere, sizeof(sphere));
+	*/
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	world.img_meta.samples = 50;
