@@ -15,7 +15,7 @@ FLOAT
 FLOAT
 	rt_sqrt(FLOAT a)
 {
-	return sqrt(a);
+	return (sqrt(a));
 }
 
 #endif

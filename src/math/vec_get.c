@@ -22,4 +22,11 @@ FLOAT
 {
 	return (v.z);
 }
+
+__attribute__ ((const))
+FLOAT
+	z(t_vec v)
+{
+	return (0.0);
+}
 #endif

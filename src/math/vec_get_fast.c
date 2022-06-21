@@ -31,4 +31,14 @@ FLOAT
 	conv.vec = v;
 	return (conv.elem[2]);
 }
+
+__attribute__ ((const))
+FLOAT
+	w(t_vec v)
+{
+	t_vec_conv conv;
+	
+	conv.vec = v;
+	return (conv.elem[3]);
+}
 #endif

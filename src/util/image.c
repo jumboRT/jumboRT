@@ -5,7 +5,7 @@
 static size_t 
 	rt_ppm_write_header(char *header, const t_image *image)
 {
-	return (ft_sprintf(header, "P3\n%d\n%d\n255\n", image->width, image->height));
+	return (ft_sprintf(header,"P3\n%d\n%d\n255\n", (int) image->width, (int) image->height));
 }
 
 static size_t
@@ -56,8 +56,8 @@ size_t
 	size = (image->width * image->height) * 12 + 31;
 	*dest = rt_malloc(size);
 	offset = rt_ppm_write_header(*dest, image);
-	rt_ppm_write_data(*dest + offset, image);
-	return (size);
+	offset += rt_ppm_write_data(*dest + offset, image);
+	return (offset);
 }
 
 size_t

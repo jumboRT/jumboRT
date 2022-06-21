@@ -10,3 +10,4 @@
 /*.dSYM
 tags
 *.a
+/image.ppm

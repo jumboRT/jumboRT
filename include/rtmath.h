@@ -7,7 +7,7 @@
 #  define FLOAT float
 # endif
 
-//# define RT_VECTORIZE
+# define RT_VECTORIZE
 
 # if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
@@ -93,6 +93,7 @@ int		float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 FLOAT	x(t_vec v) __attribute__ ((const));
 FLOAT	y(t_vec v) __attribute__ ((const));
 FLOAT	z(t_vec v) __attribute__ ((const));
+FLOAT	w(t_vec v) __attribute__ ((const));
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z) __attribute__ ((const));
 t_vec	vec_0(void) __attribute__ ((const));

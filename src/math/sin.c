@@ -15,7 +15,7 @@ FLOAT
 FLOAT
 	rt_sin(FLOAT a)
 {
-	return sin(a);
+	return (sin(a));
 }
 
 #endif

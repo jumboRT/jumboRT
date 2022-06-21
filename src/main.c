@@ -12,10 +12,18 @@ int
 	t_world	world;
 	t_state	state;
 	t_work	work;
+	size_t	i;
 
 	image.width = 1920;
 	image.height = 1080;
 	image.data = rt_malloc(sizeof(*image.data) * image.width * image.height);
+	i = 0;
+	while (i < image.width * image.height)
+	{
+		image.data[i].samples = 0;
+		image.data[i].color = vec(0, 0, 0);
+		i += 1;
+	}
 	state.image = &image;
 	state.world = &world;
 	world.color = vec(1.0, 0.0, 0.0);
@@ -33,5 +41,6 @@ int
 		usleep(100000);
 	}
 	rt_write_ppm("image.ppm", &image);
+	work_destroy(&work);
 	return (EXIT_SUCCESS);
 }

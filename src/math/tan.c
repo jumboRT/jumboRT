@@ -15,7 +15,7 @@ FLOAT
 FLOAT
 	rt_tan(FLOAT a)
 {
-	return tan(a);
+	return (tan(a));
 }
 
 #endif

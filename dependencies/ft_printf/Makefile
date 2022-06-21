@@ -35,7 +35,7 @@ RESET			:="\033[0m"
 COMPILE_COLOR	:= $(GREEN)
 LINK_COLOR		:= $(CYAN)
 OBJECT_COLOR	:= $(RED)
-CLEAN_COLOR				:= $(PURPLE)
+CLEAN_COLOR		:= $(PURPLE)
 
 SILENT			:=
 ifndef verbose

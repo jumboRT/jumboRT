@@ -29,8 +29,9 @@ t_ray
 	(void) ctx;
 	meta = &world->img_meta;
 	index = index % (meta->width * meta->height);
-	u = (FLOAT) (uint64_t) (index % meta->width) / meta->height * 2 - 1;
-	v = (FLOAT) (uint64_t) (index / meta->width) / meta->height * 2 - 1;
+	u = (uint64_t) (index % meta->width) / (FLOAT) meta->width * 2 - 1;
+	v = (uint64_t) (index / meta->width) / (FLOAT) meta->height * 2 - 1;
+	u *= (FLOAT) meta->width / meta->height;
 	return (ray(vec(0, 0, 0), vec_norm(vec(1, u, -v))));
 }
 

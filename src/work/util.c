@@ -2,6 +2,9 @@
 
 #include "util.h"
 
+
+#include <stdio.h>
+
 void
 	work_add(t_work *work, t_start start, void *ctx)
 {
@@ -23,17 +26,21 @@ int
 	work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size)
 {
 	mutex_lock(&work->mtx);
-	if (work->stop)
-	{
-		work->stopped += 1;
-		cond_broadcast(&work->cnd);
-		mutex_unlock(&work->mtx);
-		return (0);
-	}
 	work->paused += 1;
 	cond_broadcast(&work->cnd);
-	while (work->pause || work->work_index >= work->work_size)
+	while (1)
+	{
+		if (work->stop)
+		{
+			work->stopped += 1;
+			cond_broadcast(&work->cnd);
+			mutex_unlock(&work->mtx);
+			return (0);
+		}
+		if (!work->pause && work->work_index < work->work_size)
+			break ;
 		cond_wait(&work->cnd, &work->mtx);
+	}
 	work->paused -= 1;
 	*begin = work->work_index;
 	*end = *begin + size;

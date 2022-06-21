@@ -15,7 +15,7 @@ FLOAT
 FLOAT
 	rt_cos(FLOAT a)
 {
-	return cos(a);
+	return (cos(a));
 }
 
 #endif

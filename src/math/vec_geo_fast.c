@@ -9,7 +9,7 @@ FLOAT
 	t_vec_conv	conv;
 
 	conv.vec = a * b;
-	return (conv.elem[0] + conv.elem[1] + conv.elem[3]);
+	return (conv.elem[0] + conv.elem[1] + conv.elem[2]);
 }
 
 __attribute__ ((const))

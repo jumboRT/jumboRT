@@ -7,9 +7,9 @@
 
 # include <stddef.h>
 
-typedef struct s_pixel		t_pixel;
-typedef struct s_image		t_image;
-typedef struct s_state		t_state;
+typedef struct s_pixel	t_pixel;
+typedef struct s_image	t_image;
+typedef struct s_state	t_state;
 
 struct s_pixel {
 	t_vec	color;
