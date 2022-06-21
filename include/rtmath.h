@@ -150,5 +150,5 @@ int		ray_cylinder_intersect(t_ray ray,
 int		ray_cone_intersect(t_ray ray,
 			t_cone cone, FLOAT min, t_hit *hit)			__attribute__ ((const));
 
-int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]) __attribute__ ((const));
+int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 #endif

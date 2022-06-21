@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 int
 	quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2])
 {
