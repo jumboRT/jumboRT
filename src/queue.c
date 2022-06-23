@@ -2,11 +2,6 @@
 
 #include "util.h"
 
-#include <libft.h>
-
-
-#include <string.h>
-
 void
 	queue_create(t_queue *queue)
 {
@@ -37,7 +32,7 @@ void
 	old_size = queue->size;
 	new_size = old_size + size;
 	queue->data = rt_reallog(queue->data, &queue->capacity, new_size);
-	memcpy((char *) queue->data + old_size, data, size);
+	rt_memcpy((char *) queue->data + old_size, data, size);
 	queue->size = new_size;
 	mutex_unlock(&queue->mtx);
 }
@@ -50,7 +45,7 @@ size_t
 	mutex_lock(&queue->mtx);
 	size = queue->size;
 	*data = rt_reallog(*data, capacity, size);
-	memcpy(*data, queue->data, size);
+	rt_memcpy(*data, queue->data, size);
 	queue->size = 0;
 	mutex_unlock(&queue->mtx);
 	cond_broadcast(&queue->cnd);

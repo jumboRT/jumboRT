@@ -1,11 +1,12 @@
 NAME					:= miniRT
 
-UTIL_FILES				:= util.c memory.c image.c writefile.c readfile.c
+UTIL_FILES				:= util.c memory.c image.c writefile.c readfile.c lib.c atof.c random.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c
-WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c
+WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
-							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c
+							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c
 WORLD_FILES				:= impl.c intersect.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c comment.c world.c
 BASE_FILES				:= main.c queue.c
 
 ifndef platform
@@ -22,6 +23,7 @@ FILE_NAMES				:= \
 	$(patsubst %.c,work/%.c,$(WORK_FILES)) \
 	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
 	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
+	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
@@ -47,7 +49,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT
+CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))

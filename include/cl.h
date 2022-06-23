@@ -1,6 +1,8 @@
 #ifndef CL_H
 # define CL_H
 
+# include "rtmath.h"
+
 # ifndef RT_OPENCL
 
 #  include <stdint.h>
@@ -19,5 +21,11 @@ typedef unsigned int	uint32_t;
 typedef unsigned long	uint64_t;
 
 # endif
+
+typedef uint64_t			t_seed;
+
+t_seed	rt_random(t_seed *seed);
+FLOAT	rt_random_float(t_seed *seed);
+FLOAT	rt_random_float_range(t_seed *seed, FLOAT min, FLOAT max);
 
 #endif

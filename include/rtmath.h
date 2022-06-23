@@ -9,7 +9,7 @@
 #  define FLOAT float
 # endif
 
-//# define RT_VECTORIZE
+# define RT_VECTORIZE
 
 # if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
@@ -103,17 +103,17 @@ FLOAT	y(t_vec v) __attribute__ ((const));
 FLOAT	z(t_vec v) __attribute__ ((const));
 FLOAT	w(t_vec v) __attribute__ ((const));
 
-t_vec	vec(FLOAT x, FLOAT y, FLOAT z) __attribute__ ((const));
-t_vec	vec_0(void) __attribute__ ((const));
-t_vec	vec_x(FLOAT x) __attribute__ ((const));
-t_vec	vec_y(FLOAT y) __attribute__ ((const));
-t_vec	vec_z(FLOAT z) __attribute__ ((const));
+t_vec	vec(FLOAT x, FLOAT y, FLOAT z)	__attribute__ ((const));
+t_vec	vec_0(void)						__attribute__ ((const));
+t_vec	vec_x(FLOAT x)					__attribute__ ((const));
+t_vec	vec_y(FLOAT y)					__attribute__ ((const));
+t_vec	vec_z(FLOAT z)					__attribute__ ((const));
 
-t_vec	vec2(FLOAT x, FLOAT y) __attribute__ ((const));
-t_vec	vec2_0(void) __attribute__ ((const));
-t_vec	vec2_x(FLOAT x) __attribute__ ((const));
-t_vec	vec2_y(FLOAT y) __attribute__ ((const));
-t_vec	vec2_z(FLOAT z) __attribute__ ((const));
+t_vec2	vec2(FLOAT x, FLOAT y)	__attribute__ ((const));
+t_vec	vec2_0(void)			__attribute__ ((const));
+t_vec	vec2_x(FLOAT x)			__attribute__ ((const));
+t_vec	vec2_y(FLOAT y)			__attribute__ ((const));
+t_vec	vec2_z(FLOAT z)			__attribute__ ((const));
 
 t_plane		plane(t_vec pos, t_vec normal)								__attribute__ ((const));
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2)						__attribute__ ((const));
@@ -121,16 +121,16 @@ t_sphere	sphere(t_vec pos, FLOAT radius)								__attribute__ ((const));
 t_cylinder	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius)	__attribute__ ((const));
 t_cone		cone(t_vec pos, FLOAT radius, FLOAT height)					__attribute__ ((const));
 
-FLOAT	vec_dot(t_vec a, t_vec b) __attribute__ ((const));
-FLOAT	vec_mag2(t_vec a) __attribute__ ((const));
-FLOAT	vec_mag(t_vec a) __attribute__ ((const));
+FLOAT	vec_dot(t_vec a, t_vec b)	__attribute__ ((const));
+FLOAT	vec_mag2(t_vec a)			__attribute__ ((const));
+FLOAT	vec_mag(t_vec a)			__attribute__ ((const));
 
-t_vec	vec_neg(t_vec v) __attribute__ ((const));
-t_vec	vec_scale(t_vec v, FLOAT s) __attribute__ ((const));
-t_vec	vec_cross(t_vec a, t_vec b) __attribute__ ((const));
-t_vec	vec_add(t_vec a, t_vec b) __attribute__ ((const));
-t_vec	vec_sub(t_vec a, t_vec b) __attribute__ ((const));
-t_vec	vec_norm(t_vec v) __attribute__ ((const));
+t_vec	vec_neg(t_vec v)			__attribute__ ((const));
+t_vec	vec_scale(t_vec v, FLOAT s)	__attribute__ ((const));
+t_vec	vec_cross(t_vec a, t_vec b)	__attribute__ ((const));
+t_vec	vec_add(t_vec a, t_vec b)	__attribute__ ((const));
+t_vec	vec_sub(t_vec a, t_vec b)	__attribute__ ((const));
+t_vec	vec_norm(t_vec v)			__attribute__ ((const));
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec	vec_norm2(t_vec v) __attribute__ ((const));
 

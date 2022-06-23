@@ -20,6 +20,7 @@ void
 	t_result	result;
 	t_context	ctx;
 
+	ctx_init(&ctx);
 	while (work->work_index < work->work_size)
 	{
 		result = work_compute(work->state->world, &ctx, work->work_index);
@@ -27,6 +28,7 @@ void
 		work->work_index += 1;
 		work->work_progress += 1;
 	}
+	ctx_destroy(&ctx);
 }
 
 #endif

@@ -28,17 +28,17 @@ __kernel void
 t_ray
 	project(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
+	GLOBAL t_camera		*cam;
 	GLOBAL t_image_meta	*meta;
-	FLOAT				u;
-	FLOAT				v;
+	t_vec				u;
+	t_vec				v;
 
 	(void) ctx;
+	cam = &world->camera;
 	meta = &world->img_meta;
-	index = index % (meta->width * meta->height);
-	u = (uint64_t) (index % meta->width) / (FLOAT) meta->width * 2 - 1;
-	v = (uint64_t) (index / meta->width) / (FLOAT) meta->height * 2 - 1;
-	u *= (FLOAT) meta->width / meta->height;
-	return (ray(vec(0, 0, 0), vec_norm(vec(1, u, -v))));
+	u = vec_scale(cam->u, rt_random_float(&ctx->seed) + index % meta->width);
+	v = vec_scale(cam->v, rt_random_float(&ctx->seed) + index / meta->width % meta->height);
+	return (ray(cam->org, vec_norm(vec_add(cam->base, vec_add(u, v)))));
 }
 
 t_result

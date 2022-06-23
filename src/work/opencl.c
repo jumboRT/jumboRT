@@ -31,15 +31,19 @@ struct s_opencl_ctx {
 	cl_mem				primitives_mem;
 	cl_mem				materials_mem;
 	cl_mem				vertices_mem;
+	cl_mem				accel_nodes_mem;
+	cl_mem				accel_indices_mem;
 	t_context			ctx;
 	t_result			result[RT_WORK_OPENCL_GLOBAL_SIZE];
 };
 
 const static char *g_source_files[] = {
+	"src/util/random.c",
 	"src/work/compute.c",
 	"src/math/plane.c",
 	"src/math/polynomial.c",
 	"src/math/sphere.c",
+	"src/math/triangle.c",
 	"src/math/ray_constr.c",
 	"src/math/vec_arith.c",
 	"src/math/vec_arith_fast.c",
@@ -107,6 +111,19 @@ void
 	rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel set_ptr_kernel failed");
 }
 
+cl_mem
+	work_copy_array(struct s_opencl_ctx *cl_ctx, size_t size, void *ptr)
+{
+	cl_int	status;
+	cl_mem	mem;
+
+	if (size == 0)
+		return (NULL);
+	mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, size, ptr, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer failed");
+	return (mem);
+}
+
 void
 	work_create_buffers(t_work *work, struct s_opencl_ctx *cl_ctx)
 {
@@ -118,27 +135,16 @@ void
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer ctx failed");
 	cl_ctx->result_mem = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result failed");
-	cl_ctx->primitives_mem = NULL;
-	if (work->state->world->primitives_size != 0)
-	{
-		cl_ctx->primitives_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, work->state->world->primitives_size, work->state->world->primitives, &status);
-		rt_assert(status == CL_SUCCESS, "clCreateBuffer primitives failed");
-	}
-	cl_ctx->materials_mem = NULL;
-	if (work->state->world->materials_size != 0)
-	{
-		cl_ctx->materials_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, work->state->world->materials_size, work->state->world->materials, &status);
-		rt_assert(status == CL_SUCCESS, "clCreateBuffer materials failed");
-	}
-	cl_ctx->vertices_mem = NULL;
-	if (work->state->world->vertices_size != 0)
-	{
-		cl_ctx->vertices_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, work->state->world->vertices_size, work->state->world->vertices, &status);
-		rt_assert(status == CL_SUCCESS, "clCreateBuffer vertices failed");
-	}
+	cl_ctx->primitives_mem = work_copy_array(cl_ctx, work->state->world->primitives_size, work->state->world->primitives);
+	cl_ctx->vertices_mem = work_copy_array(cl_ctx, work->state->world->vertices_size, work->state->world->vertices);
+	cl_ctx->materials_mem = work_copy_array(cl_ctx, work->state->world->materials_size, work->state->world->materials);
+	cl_ctx->accel_nodes_mem = work_copy_array(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes);
+	cl_ctx->accel_indices_mem = work_copy_array(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, primitives), cl_ctx->primitives_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, materials), cl_ctx->materials_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, vertices), cl_ctx->vertices_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, accel_nodes), cl_ctx->accel_nodes_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, accel_indices), cl_ctx->accel_indices_mem);
 }
 
 void
@@ -186,6 +192,7 @@ void
 	cl_int					status;
 
 	cl_ctx = rt_malloc(sizeof(*cl_ctx));
+	ctx_init(&cl_ctx->ctx);
 	props[0] = CL_CONTEXT_PLATFORM;
 	props[1] = (cl_context_properties) platform;
 	props[2] = 0;

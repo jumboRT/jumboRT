@@ -25,9 +25,9 @@ int
 	quadratic.c = vec_mag2(oc) - (sphere.radius * sphere.radius);
 	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
-	if (t[0] < min)
+	if (t[1] < t[0] && t[1] >= min)
 		t[0] = t[1];
-	if (t[0] < min)
+	else if (t[0] < min)
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);

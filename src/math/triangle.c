@@ -1,0 +1,46 @@
+#include "rtmath.h"
+
+__attribute__ ((const))
+t_triangle
+	triangle(t_vec v0, t_vec v1, t_vec v2)
+{
+	t_triangle	result;
+
+	result.vertices[0] = v0;
+	result.vertices[1] = v1;
+	result.vertices[2] = v2;
+	return (result);
+}
+
+int
+	ray_triangle_intersect(t_ray ray, t_triangle triangle, FLOAT min, t_hit *hit)
+{
+	t_vec	pos, normal;
+	t_vec	v0, v1, v2;
+	FLOAT	d00, d01, d11, d20, d21;
+	FLOAT	denom;
+	FLOAT	v, w;
+
+	normal = vec_norm2(vec_cross(
+				vec_sub(triangle.vertices[2], triangle.vertices[0]),
+				vec_sub(triangle.vertices[1], triangle.vertices[2])));
+	if (!ray_plane_intersect(ray, plane(triangle.vertices[2], normal), min, hit))
+		return (0);
+	pos = ray_at(ray, hit->t);
+	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
+	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
+	v2 = vec_sub(pos, triangle.vertices[0]);
+
+	d00 = vec_dot(v0, v0);
+	d01 = vec_dot(v0, v1);
+	d11 = vec_dot(v1, v1);
+	d20 = vec_dot(v2, v0);
+	d21 = vec_dot(v2, v1);
+
+	denom = 1.0 / ((d00 * d11) - (d01 * d01));
+	v = ((d11 * d20) - (d01 * d21)) * denom; 
+	w = ((d00 * d21) - (d01 * d20)) * denom;
+	hit->pos = pos;
+	hit->normal = normal;
+	return (v >= 0 && w >= 0 && v + w <= 1);
+}

@@ -13,17 +13,26 @@
 # include "cl.h"
 
 typedef struct s_image_meta		t_image_meta;
+typedef struct s_camera			t_camera;
 typedef struct s_world			t_world;
 typedef struct s_vertex			t_vertex;
 typedef struct s_primitive		t_primitive;
 typedef struct s_material		t_material;
 typedef struct s_shape_triangle	t_shape_triangle;
 typedef struct s_shape_sphere	t_shape_sphere;
+typedef struct s_accel_node		t_accel_node;
 
 struct s_image_meta {
 	uint64_t	width;
 	uint64_t	height;
 	uint64_t	samples;
+};
+
+struct s_camera {
+	t_vec	org;
+	t_vec	base;
+	t_vec	u;
+	t_vec	v;
 };
 
 struct s_vertex {
@@ -55,16 +64,45 @@ struct s_shape_sphere {
 	t_vec		pos;
 };
 
+struct s_accel_node {
+	union {
+		FLOAT		split;
+		uint32_t	one_primitive;
+		uint32_t	primitive_ioffset;
+	}	a;
+	union {
+		uint32_t	flags;
+		uint32_t	nprims;
+		uint32_t	above_child;
+	}	b;
+};
+
 struct s_world {
 	t_image_meta	img_meta;
+	t_camera		camera;
 	void			*primitives;
 	void			*materials;
 	t_vertex		*vertices;
+	t_accel_node	*accel_nodes;
+	uint32_t		*accel_indices;
 	uint64_t		primitives_size;
 	uint64_t		materials_size;
 	uint64_t		vertices_size;
+	uint64_t		accel_nodes_size;
+	uint64_t		accel_indices_size;
 };
 
-int	world_intersect(const t_world *world, t_ray ray, t_hit *hit);
+uint64_t	world_primitive_size(uint8_t shape_type);
+
+int			world_intersect(const t_world *world, t_ray ray, t_hit *hit);
+void		world_accel(t_world *world);
+void		leaf_create(t_accel_node *leaf, uint32_t *prim_indices, uint32_t nprim, uint32_t *indices);
+void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, FLOAT offset);
+
+FLOAT		split_pos(t_accel_node node);
+uint32_t	nprims(t_accel_node node);
+uint32_t	split_axis(t_accel_node node);
+uint32_t	is_leaf(t_accel_node node);
+uint32_t	above_child(t_accel_node node);
 
 #endif

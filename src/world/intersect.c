@@ -1,5 +1,9 @@
 #include "world.h"
 
+#ifndef ACCEL_NODE_STACK_SIZE
+# define ACCEL_NODE_STACK_SIZE 1024
+#endif
+
 static int
 	world_intersect_sphere(const void *ptr, t_ray ray, t_hit *hit)
 {
@@ -16,58 +20,73 @@ static int
 }
 
 static int
-	world_intersect_triangle(const void *ptr, t_ray ray, t_hit *hit)
+	world_intersect_triangle(const t_world *world, const void *ptr, t_ray ray, t_hit *hit)
 {
-	/*
 	const t_shape_triangle	*tr;
 
 	tr = (const t_shape_triangle *) ptr;
 	return (ray_triangle_intersect(
 				ray,
 				triangle(
-					vec_0(),
-					vec_0(),
-					vec_0()),
+					world->vertices[tr->a].pos,
+					world->vertices[tr->b].pos,
+					world->vertices[tr->c].pos),
 				RT_RAY_MIN,
 				hit));
-	*/
-	(void) ptr;
-	(void) ray;
-	(void) hit;
-	return (0);
 }
 
+static void
+	world_intersect_primitive(const t_world *world, const t_primitive *primitive, t_ray ray, t_hit *hit)
+{
+	t_hit	current_hit;
+
+	current_hit.t = RT_HUGE_VAL;
+	if (primitive->shape_type == RT_SHAPE_SPHERE)
+		world_intersect_sphere(primitive, ray, &current_hit);
+	else
+		world_intersect_triangle(world, primitive, ray, &current_hit);
+	if (current_hit.t < hit->t)
+		*hit = current_hit;
+}
+
+/*
 static int
 	world_intersect_primitives(const t_world *world, t_ray ray, t_hit *hit)
 {
 	uint64_t				index;
 	const char				*primitives;
 	const t_primitive		*primitive;
-	t_hit					current_hit;
 
 	index = 0;
 	primitives = (const char*) world->primitives;
 	hit->t = RT_HUGE_VAL;
-	while (index < world->primitives_size) {
+	while (index < world->primitives_size)
+	{
 		primitive = (const t_primitive *) (primitives + index);
-		if (primitive->shape_type == RT_SHAPE_SPHERE)
-		{
-			if (world_intersect_sphere(primitive, ray, &current_hit) && current_hit.t < hit->t)
-			{
-				*hit = current_hit;
-			}
-			index += (sizeof(t_shape_sphere) + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
-		}
-		else
-		{
-			if (world_intersect_triangle(primitive, ray, &current_hit) && current_hit.t < hit->t)
-			{
-				*hit = current_hit;
-			}
-			index += (sizeof(t_shape_triangle) + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
-		}
+		world_primitive_intersect(world, primitive, ray, hit);
+		index += world_primitive_size(primitive);
 	}
 	return (hit->t < RT_HUGE_VAL);
+}
+*/
+
+static int
+	world_intersect_primitives(const t_world *world, t_ray ray, t_hit *hit)
+{
+	uint32_t	node_stack[ACCEL_NODE_STACK_SIZE];
+	uint32_t	node_stack_index;
+	uint32_t	node;
+
+	hit->t = RT_HUGE_VAL;
+	node = 0;
+	while (1)
+	{
+		while (!is_leaf(world->accel_nodes[node]))
+		{
+			
+		}
+	}
+	return (0);
 }
 
 int

@@ -34,18 +34,21 @@ struct s_work {
 	size_t		capacity;
 };
 
-void		work_create(t_work *work, t_state *state);
-void		work_destroy(t_work *work);
-void		work_resume(t_work *work);
-void		work_pause(t_work *work);
-void		work_update(t_work *work);
+void	work_create(t_work *work, t_state *state);
+void	work_destroy(t_work *work);
+void	work_resume(t_work *work);
+void	work_pause(t_work *work);
+void	work_update(t_work *work);
 
-void		work_add(t_work *work, t_start start, void *ctx);
-int			work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size);
-void		work_done(t_work *work, t_result *results, size_t size);
+void	work_add(t_work *work, t_start start, void *ctx);
+int		work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size);
+void	work_done(t_work *work, t_result *results, size_t size);
 
-void		work_int_create(t_work *work);
-void		work_int_destroy(t_work *work);
-void		work_int_resume(t_work *work);
+void	work_int_create(t_work *work);
+void	work_int_destroy(t_work *work);
+void	work_int_resume(t_work *work);
+
+void	ctx_init(t_context *ctx);
+void	ctx_destroy(t_context *ctx);
 
 #endif
