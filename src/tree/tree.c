@@ -76,15 +76,15 @@ static int
 	dot = vec_dot(vec_sub(ray.pos, tree->plane_pos), tree->plane_dir);
 	if (dot > 0)
 	{
-		did_hit = tree_hit(ctx, tree->front, ray, &tmp, fmin(plane_t, max_t));
+		did_hit = tree_hit_int(ctx, tree->front, ray, &tmp, fmin(plane_t, max_t));
 		if ((!did_hit || tmp.t > plane_t) && plane_t < max_t)
-			did_hit = tree_hit(ctx, tree->back, ray, &tmp, max_t);
+			did_hit = tree_hit_int(ctx, tree->back, ray, &tmp, max_t);
 	}
 	else
 	{
-		did_hit = tree_hit(ctx, tree->back, ray, &tmp, fmin(plane_t, max_t));
+		did_hit = tree_hit_int(ctx, tree->back, ray, &tmp, fmin(plane_t, max_t));
 		if ((!did_hit || tmp.t > plane_t) && plane_t < max_t)
-			did_hit = tree_hit(ctx, tree->front, ray, &tmp, max_t);
+			did_hit = tree_hit_int(ctx, tree->front, ray, &tmp, max_t);
 	}
 	if (tmp.t < hit->t)
 		*hit = tmp;
