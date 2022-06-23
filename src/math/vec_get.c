@@ -22,4 +22,17 @@ FLOAT
 {
 	return (v.z);
 }
+
+__attribute__ ((const))
+FLOAT
+	xyz(t_vec v, int i)
+{
+	if (i == 0)
+		return (x(v));
+	else if (i == 1)
+		return (y(v));
+	else
+		return (z(v));
+}
+
 #endif

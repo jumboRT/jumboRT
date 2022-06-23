@@ -85,6 +85,7 @@ struct s_world {
 	t_vertex		*vertices;
 	t_accel_node	*accel_nodes;
 	uint32_t		*accel_indices;
+	uint32_t		primitives_count;
 	uint64_t		primitives_size;
 	uint64_t		materials_size;
 	uint64_t		vertices_size;
@@ -96,7 +97,7 @@ uint64_t	world_primitive_size(uint8_t shape_type);
 
 int			world_intersect(const t_world *world, t_ray ray, t_hit *hit);
 void		world_accel(t_world *world);
-void		leaf_create(t_accel_node *leaf, uint32_t *prim_indices, uint32_t nprim, uint32_t *indices);
+void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
 void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, FLOAT offset);
 
 FLOAT		split_pos(t_accel_node node);

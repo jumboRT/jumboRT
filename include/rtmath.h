@@ -33,6 +33,8 @@ typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
 
+typedef struct s_bounds		t_bounds;
+
 # if !defined RT_VECTORIZE
 typedef struct __attribute__((aligned(16))) s_vec {
 	FLOAT x;
@@ -49,6 +51,11 @@ typedef struct s_vec2 {
 struct s_ray {
 	t_vec	org;
 	t_vec	dir;
+};
+
+struct s_bounds {
+	t_vec	min;
+	t_vec	max;
 };
 
 struct __attribute__((aligned(16))) s_quadratic {
@@ -102,6 +109,7 @@ FLOAT	x(t_vec v) __attribute__ ((const));
 FLOAT	y(t_vec v) __attribute__ ((const));
 FLOAT	z(t_vec v) __attribute__ ((const));
 FLOAT	w(t_vec v) __attribute__ ((const));
+FLOAT	xyz(t_vec v, int i) __attribute__ ((const));
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z)	__attribute__ ((const));
 t_vec	vec_0(void)						__attribute__ ((const));

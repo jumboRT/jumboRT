@@ -73,17 +73,52 @@ static int
 static int
 	world_intersect_primitives(const t_world *world, t_ray ray, t_hit *hit)
 {
-	uint32_t	node_stack[ACCEL_NODE_STACK_SIZE];
-	uint32_t	node_stack_index;
-	uint32_t	node;
+	uint32_t			node_stack[ACCEL_NODE_STACK_SIZE];
+	uint32_t			node_stack_index;
+	const t_accel_node	*node;
+	const t_primitive	*primitive;
+	uint32_t			primitive_index;
 
 	hit->t = RT_HUGE_VAL;
-	node = 0;
+	node_stack_index = 0;
+	node = world->accel_nodes;
 	while (1)
 	{
-		while (!is_leaf(world->accel_nodes[node]))
+		while (!is_leaf(*node))
 		{
-			
+			if (xyz(ray.org, split_axis(*node)) < split_pos(*node))
+			{
+				if (xyz(ray.dir, split_axis(*node)) > 0)
+				{
+					node_stack[node_stack_index] = above_child(*node);
+					node_stack_index += 1;
+				}
+				node = node + 1;
+			}
+			else
+			{
+				if (xyz(ray.dir, split_axis(*node)) < 0)
+				{
+					node_stack[node_stack_index] = node - world->accel_nodes + 1;
+					node_stack_index += 1;
+				}
+				node = world->accel_nodes + above_child(*node);
+			}
+		}
+		if (nprims(*node) == 1)
+		{
+			primitive = (const t_primitive *) ((const char *) world->primitives + node->a.one_primitive * RT_PRIMITIVE_ALIGN);
+			world_intersect_primitive(world, primitive, ray, hit);
+		}
+		else
+		{
+			primitive_index = 0;
+			while (primitive_index < nprims(*node))
+			{
+				primitive = (const t_primitive *) ((const char *) world->primitives + world->accel_indices[primitive_index] * RT_PRIMITIVE_ALIGN);
+				world_intersect_primitive(world, primitive, ray, hit);
+				primitive_index += 1;
+			}
 		}
 	}
 	return (0);

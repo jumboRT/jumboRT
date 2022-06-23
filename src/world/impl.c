@@ -10,9 +10,14 @@ void
 	world->primitives = NULL;
 	world->materials = NULL;
 	world->vertices = NULL;
+	world->accel_nodes = NULL;
+	world->accel_indices = NULL;
+	world->primitives_count = 0;
 	world->primitives_size = 0;
 	world->materials_size = 0;
 	world->vertices_size = 0;
+	world->accel_nodes_size = 0;
+	world->accel_indices_size = 0;
 }
 
 void
@@ -40,6 +45,7 @@ uint32_t
 {
 	size_t	old_size;
 
+	world->primitives_count += 1;
 	old_size = world->primitives_size;
 	world->primitives_size += (size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 	world->primitives = rt_realloc(world->primitives, old_size, world->primitives_size);
