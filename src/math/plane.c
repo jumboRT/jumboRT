@@ -11,7 +11,6 @@ t_plane
 	return (result);
 }
 
-__attribute__ ((const))
 int
 	ray_plane_intersect(t_ray ray, t_plane plane, FLOAT min, t_hit *hit)
 {

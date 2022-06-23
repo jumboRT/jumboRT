@@ -31,30 +31,17 @@ int
 	world_create(&world);
 	sphere.base.shape_type = RT_SHAPE_SPHERE;
 	sphere.base.mat_index = 0;
-	sphere.radius = 0.5;
-	sphere.pos = vec(1.0, 0.0, 0.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	/*
-	sphere.pos = vec(1.0, 1.0, 0.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, -1.0, 0.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, 0.0, -1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, 1.0, -1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, -1.0, -1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, 0.0, 1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, 1.0, 1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	sphere.pos = vec(1.0, -1.0, 1.0);
-	world_add_primitive(&world, &sphere, sizeof(sphere));
-	*/
+	sphere.radius = 0.04;
+	i = 0;
+	while (i < 400)
+	{
+		sphere.pos = vec(1.0, i % 20 / 10.0 - 1, (size_t) (i / 20) / 10.0 - 1);
+		world_add_primitive(&world, &sphere, sizeof(sphere));
+		i += 1;
+	}
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 50;
+	world.img_meta.samples = 200;
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;
@@ -63,7 +50,7 @@ int
 	while (work.work_progress < work.work_size)
 	{
 		work_update(&work);
-		usleep(100000);
+		usleep(1000);
 	}
 	rt_write_ppm("image.ppm", &image);
 	work_destroy(&work);

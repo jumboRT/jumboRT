@@ -1,7 +1,5 @@
 #include "world.h"
 
-#include <stdio.h>
-
 static int
 	world_intersect_sphere(const void *ptr, t_ray ray, t_hit *hit)
 {

@@ -9,7 +9,7 @@
 #  define FLOAT float
 # endif
 
-# define RT_VECTORIZE
+//# define RT_VECTORIZE
 
 # if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
@@ -140,15 +140,15 @@ t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));
 t_vec	ray_at(t_ray ray, FLOAT t) __attribute__ ((const));
 
 int		ray_plane_intersect(t_ray ray,
-			t_plane plane, FLOAT min, t_hit *hit)		__attribute__ ((const));
+			t_plane plane, FLOAT min, t_hit *hit);
 int		ray_triangle_intersect(t_ray ray,
-			t_triangle triangle, FLOAT min, t_hit *hit)	__attribute__ ((const));
+			t_triangle triangle, FLOAT min, t_hit *hit);
 int		ray_sphere_intersect(t_ray ray,
-			t_sphere sphere, FLOAT min, t_hit *hit)		__attribute__ ((const));
+			t_sphere sphere, FLOAT min, t_hit *hit);
 int		ray_cylinder_intersect(t_ray ray,
-			t_cylinder cylinder, FLOAT min, t_hit *hit)	__attribute__ ((const));
+			t_cylinder cylinder, FLOAT min, t_hit *hit);
 int		ray_cone_intersect(t_ray ray,
-			t_cone cone, FLOAT min, t_hit *hit)			__attribute__ ((const));
+			t_cone cone, FLOAT min, t_hit *hit);
 
 int		quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 #endif

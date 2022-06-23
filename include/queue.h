@@ -6,6 +6,8 @@
 
 # include <stddef.h>
 
+# define RT_QUEUE_MAX 268435456
+
 typedef struct s_queue	t_queue;
 
 struct s_queue {
@@ -13,6 +15,7 @@ struct s_queue {
 	size_t	size;
 	size_t	capacity;
 	t_mutex	mtx;
+	t_cond	cnd;
 };
 
 void	queue_create(t_queue *queue);

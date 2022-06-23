@@ -12,7 +12,6 @@ t_sphere
 }
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
-__attribute__ ((const))
 int
 	ray_sphere_intersect(t_ray ray, t_sphere sphere, FLOAT min, t_hit *hit)
 {

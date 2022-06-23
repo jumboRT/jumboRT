@@ -3,6 +3,12 @@
 #ifdef RT_OPENCL
 
 __kernel void
+	set_ptr_kernel(GLOBAL void *dst, uint64_t offset, GLOBAL void *ptr)
+{
+	*(void **) ((char *) dst + offset) = ptr;
+}
+
+__kernel void
 	work_kernel(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t begin, uint64_t end, GLOBAL t_result *results)
 {
 	uint64_t	index;
