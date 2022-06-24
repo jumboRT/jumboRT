@@ -238,6 +238,7 @@ FLOAT
 	const t_edge	*current;
 	uint32_t		primitive_counts[2];
 
+	best_offset = RT_HUGE_VAL;
 	index = 0;
 	*best_cost = RT_HUGE_VAL;
 	primitive_counts[0] = 0;
@@ -248,7 +249,7 @@ FLOAT
 		if (current->type == EDGE_END)
 			primitive_counts[1] -= 1;
 		if (current->offset > xyz(total_bounds.min, axis)
-				&& current->offset < xyz(total_bounds.min, axis))
+				&& current->offset < xyz(total_bounds.max, axis))
 		{
 			current_cost = axis_cost_at_offset(axis, total_bounds, primitive_counts, current->offset);
 			if (current_cost < *best_cost)
@@ -355,6 +356,8 @@ void
 	int32_t		side;
 
 	index = 0;
+	vector_init(&sub_indices[0], sizeof(uint32_t));
+	vector_init(&sub_indices[1], sizeof(uint32_t));
 	while (index < vector_size(indices))
 	{
 		side = get_axis_side(world, axis, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
