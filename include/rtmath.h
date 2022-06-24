@@ -33,8 +33,6 @@ typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
 
-typedef struct s_bounds		t_bounds;
-
 # if !defined RT_VECTORIZE
 typedef struct __attribute__((aligned(16))) s_vec {
 	FLOAT x;
@@ -51,11 +49,6 @@ typedef struct s_vec2 {
 struct s_ray {
 	t_vec	org;
 	t_vec	dir;
-};
-
-struct s_bounds {
-	t_vec	min;
-	t_vec	max;
 };
 
 struct __attribute__((aligned(16))) s_quadratic {
@@ -102,6 +95,8 @@ FLOAT	rt_sqrt(FLOAT a);
 FLOAT	rt_sin(FLOAT a);
 FLOAT	rt_cos(FLOAT a);
 FLOAT	rt_tan(FLOAT a);
+FLOAT	rt_min(FLOAT a, FLOAT b);
+FLOAT	rt_max(FLOAT a, FLOAT b);
 
 int		float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 
@@ -142,6 +137,8 @@ t_vec	vec_norm(t_vec v)			__attribute__ ((const));
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec	vec_norm2(t_vec v) __attribute__ ((const));
 
+t_vec	vec_min(t_vec a, t_vec b) __attribute__ ((const));
+t_vec	vec_max(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max) __attribute__ ((const));
 
 t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));

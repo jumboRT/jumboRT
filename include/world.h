@@ -7,7 +7,13 @@
 # define RT_SHAPE_TRIANGLE 0
 # define RT_SHAPE_SPHERE 1
 
-# define RT_RAY_MIN 0.001
+/* TODO set these values to something good */
+# define RT_INTERSECT_COST 80
+# define RT_TRAVERSAL_COST 1
+# define RT_EMPTY_BONUS 1
+# define RT_MAX_PRIMITIVES 10
+
+/* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
 # include "cl.h"
@@ -21,6 +27,25 @@ typedef struct s_material		t_material;
 typedef struct s_shape_triangle	t_shape_triangle;
 typedef struct s_shape_sphere	t_shape_sphere;
 typedef struct s_accel_node		t_accel_node;
+typedef struct s_edge			t_edge;
+typedef	struct s_split_axis		t_split_axis;
+
+typedef enum e_edge_type {
+	EDGE_START,
+	EDGE_END
+}	t_edge_type;
+
+typedef enum e_axis {
+	AXIS_X = 0,
+	AXIS_Y = 1,
+	AXIS_Z = 2,
+	AXIS_NONE= 3
+}	t_axis;
+
+struct s_split_axis {
+	t_axis	axis;
+	FLOAT	offset;
+};
 
 struct s_image_meta {
 	uint64_t	width;
@@ -77,6 +102,11 @@ struct s_accel_node {
 	}	b;
 };
 
+struct s_edge {
+	FLOAT		offset;
+	t_edge_type	type;
+};
+
 struct s_world {
 	t_image_meta	img_meta;
 	t_camera		camera;
@@ -86,11 +116,20 @@ struct s_world {
 	t_accel_node	*accel_nodes;
 	uint32_t		*accel_indices;
 	uint32_t		primitives_count;
+	uint32_t		materials_count;
+	uint32_t		vertices_count;
+	uint32_t		accel_nodes_count;
+	uint32_t		accel_indices_count;
 	uint64_t		primitives_size;
 	uint64_t		materials_size;
 	uint64_t		vertices_size;
 	uint64_t		accel_nodes_size;
 	uint64_t		accel_indices_size;
+	uint64_t		primitives_capacity;
+	uint64_t		materials_capacity;
+	uint64_t		vertices_capacity;
+	uint64_t		accel_nodes_capacity;
+	uint64_t		accel_indices_capacity;
 };
 
 uint64_t	world_primitive_size(uint8_t shape_type);

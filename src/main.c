@@ -36,7 +36,7 @@ void
 	file = rt_readfile(filename, &error, NULL);
 	if (file == NULL)
 	{
-		ft_fprintf(STDERR_FILENO, "Error\n%s", error);
+		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
 		rt_free(error);
 		exit(EXIT_FAILURE);
 	}
@@ -49,7 +49,7 @@ void
 }
 
 int
-	main(void)
+	main(int argc, char **argv)
 {
 	t_image			image;
 	t_world			world;
@@ -72,8 +72,12 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 100;
-	world_load(&world, "scenes/monkey.rt");
+	world.img_meta.samples = 16;
+	if (argc == 1)
+		world_gen(&world);
+	else
+		world_load(&world, argv[1]);
+	world_accel(&world);
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

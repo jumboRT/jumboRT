@@ -36,22 +36,4 @@ t_vec
 	return (vec_scale(v, (FLOAT) 1.0 / len));
 }
 
-__attribute__ ((const))
-t_vec
-	vec_clamp(t_vec v, FLOAT min, FLOAT max)
-{
-	if (v.x < min)
-		v.x = min;
-	else if (v.x > max)
-		v.x = max;
-	if (v.y < min)
-		v.y = min;
-	else if (v.y > max)
-		v.y = max;
-	if (v.z < min)
-		v.z = min;
-	else if (v.z > max)
-		v.z = max;
-	return (v);
-}
 #endif
