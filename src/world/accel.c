@@ -161,9 +161,7 @@ FLOAT
 	total_bounds = get_total_bounds(world, indices, indices_count);
 	get_bounds_info(split_axis, world, indices, indices_count, sub_bounds, relative_area);
 	get_relative_area(total_bounds, sub_bounds, relative_area);
-	return (
-	uint64_t	index;
-			RT_TRAVERSAL_COST +
+	return (RT_TRAVERSAL_COST +
 			RT_INTERSECT_COST *
 			(1.0 - RT_EMPTY_BONUS) *
 			(relative_area[0] * primitive_count[0] + relative_area[1] * primitive_count[1]));
