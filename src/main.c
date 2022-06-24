@@ -48,6 +48,31 @@ void
 	rt_free(file);
 }
 
+void
+	dump_tree(t_world *world, uint32_t offset, int depth)
+{
+	int				i;
+	t_accel_node	*node;
+
+	i = 0;
+	while (i < depth)
+	{
+		ft_printf("  ");
+		i += 1;
+	}
+	node = &world->accel_nodes[offset];
+	if (is_leaf(*node))
+	{
+		ft_printf("leaf %d\n", (int) nprims(*node));
+	}
+	else
+	{
+		ft_printf("branch\n");
+		dump_tree(world, offset + 1, depth + 1);
+		dump_tree(world, above_child(*node), depth + 1);
+	}
+}
+
 int
 	main(int argc, char **argv)
 {
@@ -78,6 +103,8 @@ int
 	else
 		world_load(&world, argv[1]);
 	world_accel(&world);
+	printf("%d\n", (int) world.accel_nodes_count);
+	/* dump_tree(&world, 0, 0); */
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 void build_tree(
-			t_accel_node 	*node,
+			uint32_t		parent_offset,
 			t_world			*world,
 			t_vector		*indices,
 			uint32_t		depth);
@@ -363,11 +363,11 @@ void
 		side = get_axis_side(world, axis, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
 		if (side <= 0)
 		{
-			vector_push_back(&sub_indices[0], &indices[index]);
+			vector_push_back(&sub_indices[0], vector_at(indices, index));
 		}
 		if (side >= 0)
 		{
-			vector_push_back(&sub_indices[1], &indices[index]);
+			vector_push_back(&sub_indices[1], vector_at(indices, index));
 		}
 		++index;
 	}
@@ -375,10 +375,14 @@ void
 
 void
 	interior_node_init(
-			t_accel_node	*node,
+			uint32_t		offset,
+			t_world			*world,
 			t_split_axis	axis,
 			uint32_t		above_child)
 {
+	t_accel_node	*node;
+
+	node = world->accel_nodes + offset;
 	node->a.split = axis.offset;
 	node->b.flags = axis.axis;
 	node->b.above_child |= (above_child << 2);
@@ -405,12 +409,14 @@ uint32_t
 
 void
 	leaf_node_init(
-			t_accel_node	*node,
+			uint32_t		offset,
 			t_world			*world,
 			t_vector		*indices)
 {
-	uint32_t	primitive_count;
+	uint32_t		primitive_count;
+	t_accel_node	*node;
 
+	node = world->accel_nodes + offset;
 	primitive_count = vector_size(indices);
 	node->b.flags = 3;
 	node->b.nprims |= (primitive_count << 2);
@@ -427,7 +433,7 @@ void
 /* I'm pretty sure I will have mixed up index somewhere here in this file */
 void
 	create_and_add_interior_nodes(
-			t_accel_node	*node,
+			uint32_t		offset,
 			t_split_axis	best_axis,
 			t_world			*world,
 			t_vector		*indices,
@@ -440,14 +446,14 @@ void
 	split_primitives(world, best_axis, indices, sub_indices);
 	tmp_offset = world_add_accel_node(world, &child_node);
 	build_tree(
-			world->accel_nodes + tmp_offset, /* TODO check, this might be one past the element we want */
+			tmp_offset, /* TODO check, this might be one past the element we want */
 			world,
 			&sub_indices[0],
 			depth - 1);
 	tmp_offset = world_add_accel_node(world, &child_node);
-	interior_node_init(node, best_axis, tmp_offset);
+	interior_node_init(offset, world, best_axis, tmp_offset);
 	build_tree(
-			world->accel_nodes + tmp_offset, /* TODO check, this might be one past the element we want */
+			tmp_offset, /* TODO check, this might be one past the element we want */
 			world,
 			&sub_indices[1],
 			depth -1);
@@ -457,7 +463,7 @@ void
 
 uint32_t
 	try_create_and_add_interior_nodes(
-			t_accel_node	*node,
+			uint32_t		offset,
 			t_world			*world,
 			t_vector		*indices,
 			uint32_t		depth)
@@ -466,25 +472,25 @@ uint32_t
 
 	if (!find_best_axis(world, indices, &best_axis))
 		return (0);
-	create_and_add_interior_nodes(node, best_axis, world, indices, depth);
+	create_and_add_interior_nodes(offset, best_axis, world, indices, depth);
 	return (1);
 }
 
 void
 	build_tree(
-			t_accel_node 	*node,
-			t_world			*world,
-			t_vector		*indices,
-			uint32_t		depth)
+			uint32_t	parent_offset,
+			t_world		*world,
+			t_vector	*indices,
+			uint32_t	depth)
 {
 	if (vector_size(indices) <= RT_MAX_PRIMITIVES || depth == 0)
 	{
-		leaf_node_init(node, world, indices);
+		leaf_node_init(parent_offset, world, indices);
 		return ;
 	}
-	if (!try_create_and_add_interior_nodes(node, world, indices, depth))
+	if (!try_create_and_add_interior_nodes(parent_offset, world, indices, depth))
 	{
-		leaf_node_init(node, world, indices);
+		leaf_node_init(parent_offset, world, indices);
 		return ;
 	}
 }
@@ -492,6 +498,7 @@ void
 uint32_t
 	accel_get_max_depth(const t_world *world)
 {
+	return (8.0);
 	return (8.0 + 1.3 * log2(world->primitives_count));
 }
 
@@ -513,7 +520,7 @@ void
 		index += world_primitive_size(primitive->shape_type) / RT_PRIMITIVE_ALIGN;
 	}
 	build_tree(
-			world->accel_nodes,
+			0,
 			world,
 			&all_indices,
 		accel_get_max_depth(world));

@@ -25,7 +25,7 @@ size_t
 	size_t	i;
 
 	i = 0;
-	while (!ft_isspace(ctx->data[i]))
+	while (!ft_isspace(ctx->data[i]) && ctx->data[i] != '\0')
 		i += 1;
 	return (i);
 }
