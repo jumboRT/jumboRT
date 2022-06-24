@@ -7,6 +7,9 @@
 #include <math.h>
 #include <stddef.h>
 
+
+#include <stdio.h>
+
 void build_tree(
 			t_accel_node 	*node,
 			t_world			*world,
@@ -63,11 +66,12 @@ const t_primitive
 			const t_world	*world,
 			uint32_t		offset)
 {
-	rt_assert(offset < world->primitives_size, "out of bounds access in get_primitive");
+	rt_assert(offset * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive");
+	rt_assert((offset % RT_PRIMITIVE_ALIGN) == 0, "misaligned access in get_primitive");
 	return (
 			(const t_primitive *)
-			(const char *) world->primitives +
-			offset * RT_PRIMITIVE_ALIGN);
+			((const char *) world->primitives +
+			(offset * RT_PRIMITIVE_ALIGN)));
 }
 
 int32_t get_axis_side(
@@ -225,17 +229,17 @@ FLOAT
 	get_best_offset(
 			t_axis		axis,
 			t_vector	*edges,
-			t_bounds	total_bounds)
+			t_bounds	total_bounds,
+			FLOAT		*best_cost)
 {
 	uint64_t		index;
 	FLOAT			current_cost;
-	FLOAT			best_cost;
 	FLOAT			best_offset;
 	const t_edge	*current;
 	uint32_t		primitive_counts[2];
 
 	index = 0;
-	best_cost = RT_HUGE_VAL;
+	*best_cost = RT_HUGE_VAL;
 	primitive_counts[0] = 0;
 	primitive_counts[1] = vector_size(edges);
 	while (index < vector_size(edges))
@@ -247,9 +251,9 @@ FLOAT
 				&& current->offset < xyz(total_bounds.min, axis))
 		{
 			current_cost = axis_cost_at_offset(axis, total_bounds, primitive_counts, current->offset);
-			if (current_cost < best_cost)
+			if (current_cost < *best_cost)
 			{
-				best_cost = current_cost;
+				*best_cost = current_cost;
 				best_offset = current->offset;
 			}
 		}
@@ -318,6 +322,7 @@ int32_t
 	t_vector		edges;
 	t_axis			axis;
 	t_bounds		total_bounds;
+	FLOAT			current_offset;
 
 	axis = AXIS_X;
 	total_bounds = get_total_bounds(world, indices);
@@ -326,11 +331,12 @@ int32_t
 	{
 		edges = get_all_edges(world, indices, axis);
 		vector_sort(&edges, cmp_edge, &axis);
-		current_cost = get_best_offset(axis, &edges, total_bounds); 
+		current_offset = get_best_offset(axis, &edges, total_bounds, &current_cost); 
 		if (current_cost < best_cost)
 		{
 			best_cost = current_cost;
 			best_axis->axis = axis;
+			best_axis->offset = current_offset;
 		}
 		vector_destroy(&edges, NULL);
 		++axis;
@@ -388,7 +394,7 @@ uint32_t
 	index = 1;
 	while (index < vector_size(indices))
 	{
-		world_add_accel_index(world, (uint32_t *) vector_at(indices, 0));
+		world_add_accel_index(world, (uint32_t *) vector_at(indices, index));
 		index++;
 	}
 	return (first_index);
@@ -468,7 +474,7 @@ void
 			t_vector		*indices,
 			uint32_t		depth)
 {
-	if (vector_size(indices) <= RT_MAX_PRIMITIVES < depth == 0)
+	if (vector_size(indices) <= RT_MAX_PRIMITIVES || depth == 0)
 	{
 		leaf_node_init(node, world, indices);
 		return ;
@@ -497,7 +503,7 @@ void
 	index = 0;
 	vector_init(&all_indices, sizeof(uint32_t));
 	world_add_accel_node(world, &root);
-	while (index < world->primitives_count)
+	while (index < world->primitives_size / RT_PRIMITIVE_ALIGN)
 	{
 		primitive = get_primitive(world, index);
 		vector_push_back(&all_indices, &index);
