@@ -9,9 +9,9 @@
 
 /* TODO set these values to something good */
 # define RT_INTERSECT_COST 80
-# define RT_TRAVERSAL_COST 1
-# define RT_EMPTY_BONUS 1
-# define RT_MAX_PRIMITIVES 10
+# define RT_TRAVERSAL_COST 80
+# define RT_EMPTY_BONUS (FLOAT) 0.0
+# define RT_MAX_PRIMITIVES 20
 
 /* # define RT_RAY_MIN 0.001 */
 

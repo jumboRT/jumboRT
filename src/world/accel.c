@@ -47,8 +47,8 @@ t_bounds
 {
 	(void) world;
 	return (bounds(
-				vec_add(sphere->pos, vec(sphere->radius, sphere->radius, 0.0)),
-				vec_sub(sphere->pos, vec(sphere->radius, sphere->radius, 0.0))));
+				vec_sub(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius)),
+				vec_add(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius))));
 }
 
 t_bounds
@@ -88,9 +88,9 @@ int32_t get_axis_side(
 	max_offset = xyz(primitive_bounds.max, split_axis.axis);
 	min_offset = xyz(primitive_bounds.min, split_axis.axis);
 	axis_offset = split_axis.offset;
-	if (max_offset > axis_offset && min_offset > axis_offset)
+	if (max_offset >= axis_offset && min_offset >= axis_offset)
 		return (1); /* probably above, might be the wrong way around with below */
-	else if (max_offset < axis_offset && min_offset < axis_offset)
+	else if (max_offset <= axis_offset && min_offset <= axis_offset)
 		return (-1);
 	return (0); /* object is in the axis */
 }
@@ -144,8 +144,10 @@ t_bounds
 	uint64_t			index;
 	t_bounds			total_bounds;
 
-	index = 0;
-	total_bounds = bounds_0();
+	if (vector_size(indices) == 0)
+		return (bounds_0());
+	index = 1;
+	total_bounds = get_bounds(world, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
 	while (index < vector_size(indices))
 	{
 		primitive = get_primitive(world, *(uint32_t *) vector_at(indices, index));
@@ -153,19 +155,6 @@ t_bounds
 		index++;
 	}
 	return (total_bounds);
-}
-
-void
-	get_relative_area(
-			t_bounds	total_bounds,
-			t_bounds	sub_bounds[2],
-			FLOAT		relative_area[2])
-{
-	FLOAT	inv_total_sa;
-
-	inv_total_sa = 1.0 / bounds_surf(total_bounds);
-	relative_area[0] = bounds_surf(sub_bounds[0]) * inv_total_sa;
-	relative_area[1] = bounds_surf(sub_bounds[1]) * inv_total_sa;
 }
 
 /*
@@ -181,17 +170,20 @@ FLOAT
 	FLOAT	inv_total_sa;
 	FLOAT	below_chance;
 	FLOAT	above_chance;
+	FLOAT	cost;
 
 	inv_total_sa = 1.0 / total_sa;
 	below_chance = below_sa * inv_total_sa;
 	above_chance = above_sa * inv_total_sa;
+	
 
-	return (RT_TRAVERSAL_COST +
+
+	cost = (RT_TRAVERSAL_COST +
 			RT_INTERSECT_COST *
-			(1.0 - RT_EMPTY_BONUS) *
+			(1.0 - (RT_EMPTY_BONUS * (primitive_counts[0] == 0 || primitive_counts[1] == 1))) *
 			(below_chance * primitive_counts[0] +
 			 above_chance * primitive_counts[1]));
-
+	return (cost);
 }
 
 FLOAT
@@ -210,11 +202,11 @@ FLOAT
 	diagonal = vec_sub(total_bounds.max, total_bounds.min);
 	other_axis0 = (axis + 1) % 3;
 	other_axis1 = (axis + 2) % 3;
-	below_sa = 2.0 *
+	above_sa = 2.0 *
 		(xyz(diagonal, other_axis0) * xyz(diagonal, other_axis1) +
 		 (offset  - xyz(total_bounds.min, axis)) *
 		 (xyz(diagonal, other_axis0) + xyz(diagonal, other_axis1)));
-	above_sa = 2.0 *
+	below_sa = 2.0 *
 		(xyz(diagonal, other_axis0) * xyz(diagonal, other_axis1) +
 		 (xyz(total_bounds.max, axis) - offset) *
 		 (xyz(diagonal, other_axis0) + xyz(diagonal, other_axis1)));
@@ -238,11 +230,11 @@ FLOAT
 	const t_edge	*current;
 	uint32_t		primitive_counts[2];
 
-	best_offset = RT_HUGE_VAL;
+	best_offset = RT_HUGE_VAL; /* It doesn't really matter what this is initialized to */
 	index = 0;
 	*best_cost = RT_HUGE_VAL;
 	primitive_counts[0] = 0;
-	primitive_counts[1] = vector_size(edges);
+	primitive_counts[1] = vector_size(edges) / 2;
 	while (index < vector_size(edges))
 	{
 		current = vector_at(edges, index);
@@ -309,7 +301,7 @@ int32_t
 	(void) ctx_ptr;
 	edge0 = edge0_ptr;
 	edge1 = edge1_ptr;
-	return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
+	return ((edge0->offset < edge1->offset) - (edge0->offset > edge1->offset));
 }
 
 int32_t
@@ -342,6 +334,7 @@ int32_t
 		vector_destroy(&edges, NULL);
 		++axis;
 	}
+	/* fprintf(stderr, "best axis %d with cost %f and offset %f\n", (int) best_axis->axis, best_cost, best_axis->offset); */
 	return (best_cost < RT_HUGE_VAL);
 }
 
@@ -498,7 +491,8 @@ void
 uint32_t
 	accel_get_max_depth(const t_world *world)
 {
-	return (8.0);
+	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
+	return (1.0);
 	return (8.0 + 1.3 * log2(world->primitives_count));
 }
 
@@ -519,6 +513,7 @@ void
 		vector_push_back(&all_indices, &index);
 		index += world_primitive_size(primitive->shape_type) / RT_PRIMITIVE_ALIGN;
 	}
+	fprintf(stderr, "actual:%u vs vector%zu\n", world->primitives_count, vector_size(&all_indices));
 	build_tree(
 			0,
 			world,
