@@ -48,11 +48,23 @@ void
 	rt_free(file);
 }
 
+t_vec
+	vec_set(t_vec a, FLOAT v, int index)
+{
+	if (index == 0)
+		return (vec(v, y(a), z(a)));
+	else if (index == 1)
+		return (vec(x(a), v, z(a)));
+	else
+		return (vec(x(a), y(a), v));
+}
+
 void
-	dump_tree(t_world *world, uint32_t offset, int depth)
+	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
 {
 	int				i;
 	t_accel_node	*node;
+	t_vec			vec;
 
 	i = 0;
 	while (i < depth)
@@ -63,13 +75,15 @@ void
 	node = &world->accel_nodes[offset];
 	if (is_leaf(*node))
 	{
-		ft_printf("leaf %d\n", (int) nprims(*node));
+		printf("leaf %d (%f %f %f | %f %f %f)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max));
 	}
 	else
 	{
-		ft_printf("branch\n");
-		dump_tree(world, offset + 1, depth + 1);
-		dump_tree(world, above_child(*node), depth + 1);
+		printf("branch (%f %f %f | %f %f %f) (%f %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node));
+		vec = vec_set(min, split_pos(*node), split_axis(*node));
+		dump_tree(world, offset + 1, depth + 1, vec, max);
+		vec = vec_set(max, split_pos(*node), split_axis(*node));
+		dump_tree(world, above_child(*node), depth + 1, min, vec);
 	}
 }
 
@@ -97,14 +111,14 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 100;
+	world.img_meta.samples = 1;
 	if (argc == 1)
 		world_gen(&world);
 	else
 		world_load(&world, argv[1]);
 	world_accel(&world);
 	printf("%d\n", (int) world.accel_nodes_count);
-	dump_tree(&world, 0, 0);
+	dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL));
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

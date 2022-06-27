@@ -45,7 +45,8 @@ size_t
 	mutex_lock(&queue->mtx);
 	size = queue->size;
 	*data = rt_reallog(*data, capacity, size);
-	rt_memcpy(*data, queue->data, size);
+	if (size != 0)
+		rt_memcpy(*data, queue->data, size);
 	queue->size = 0;
 	mutex_unlock(&queue->mtx);
 	cond_broadcast(&queue->cnd);

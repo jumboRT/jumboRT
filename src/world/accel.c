@@ -144,6 +144,7 @@ t_bounds
 	uint64_t			index;
 	t_bounds			total_bounds;
 
+	rt_assert(vector_size(indices) != 0, "empty indices");
 	if (vector_size(indices) == 0)
 		return (bounds_0());
 	index = 1;
@@ -172,11 +173,13 @@ FLOAT
 	FLOAT	above_chance;
 	FLOAT	cost;
 
+	rt_assert(fabs(total_sa) >= 0.00001, "total sa almost zero");
+	rt_assert(fabs(below_sa) >= 0.00001, "below sa almost zero");
+	rt_assert(fabs(above_sa) >= 0.00001, "above sa almost zero");
+
 	inv_total_sa = 1.0 / total_sa;
 	below_chance = below_sa * inv_total_sa;
 	above_chance = above_sa * inv_total_sa;
-	
-
 
 	cost = (RT_TRAVERSAL_COST +
 			RT_INTERSECT_COST *
@@ -235,6 +238,7 @@ FLOAT
 	*best_cost = RT_HUGE_VAL;
 	primitive_counts[0] = 0;
 	primitive_counts[1] = vector_size(edges) / 2;
+	printf("total_bounds %f %f %f | %f %f %f\n", x(total_bounds.min), y(total_bounds.min), z(total_bounds.min), x(total_bounds.max), y(total_bounds.max), z(total_bounds.max));
 	while (index < vector_size(edges))
 	{
 		current = vector_at(edges, index);
@@ -492,7 +496,7 @@ uint32_t
 	accel_get_max_depth(const t_world *world)
 {
 	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
-	return (1.0);
+	return (4.0);
 	return (8.0 + 1.3 * log2(world->primitives_count));
 }
 

@@ -125,7 +125,7 @@ static int
 					plane_t = (split_t - org_t) / dir_t;
 					if (plane_t < max_t)
 					{
-						stack[istack].index = world->accel_nodes - node + 1;
+						stack[istack].index = node - world->accel_nodes + 1;
 						stack[istack].max = max_t;
 						istack += 1;
 						max_t = plane_t;

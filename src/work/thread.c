@@ -1,5 +1,7 @@
 #include "work.h"
 
+#include "util.h"
+
 #if defined RT_WORK_THREAD
 
 # ifndef RT_WORK_THREAD_COUNT
@@ -57,8 +59,8 @@ void
 	i = 0;
 	while (i < work->count)
 	{
-		ctx_destroy(work->workers[i].ctx);
-		rt_free(work->workers[i].ctx);
+		ctx_destroy(work->workers[i]->ctx);
+		rt_free(work->workers[i]->ctx);
 		i += 1;
 	}
 }
