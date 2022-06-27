@@ -5,7 +5,7 @@
 __kernel void
 	set_ptr_kernel(GLOBAL void *dst, uint64_t offset, GLOBAL void *ptr)
 {
-	*(void **) ((char *) dst + offset) = ptr;
+	*(GLOBAL void **) ((char *) dst + offset) = ptr;
 }
 
 __kernel void

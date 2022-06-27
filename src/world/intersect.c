@@ -25,7 +25,7 @@ static int
 }
 
 static int
-	world_intersect_triangle(const t_world *world, const void *ptr, t_ray ray, FLOAT min, t_hit *hit)
+	world_intersect_triangle(const GLOBAL t_world *world, const void *ptr, t_ray ray, FLOAT min, t_hit *hit)
 {
 	const t_shape_triangle	*tr;
 
@@ -41,7 +41,7 @@ static int
 }
 
 static void
-	world_intersect_primitive(const t_world *world, const t_primitive *primitive, t_ray ray, FLOAT min, t_hit *hit)
+	world_intersect_primitive(const GLOBAL t_world *world, const t_primitive *primitive, t_ray ray, FLOAT min, t_hit *hit)
 {
 	t_hit	current_hit;
 	int		did_hit;
@@ -56,7 +56,7 @@ static void
 }
 
 static int
-	world_intersect_primitives(const t_world *world, t_ray ray, t_hit *hit)
+	world_intersect_primitives(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
 	uint64_t				index;
 	const char				*primitives;
@@ -75,7 +75,7 @@ static int
 }
 
 static int
-	world_intersect_primitives2(const t_world *world, t_ray ray, t_hit *hit)
+	world_intersect_primitives2(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
 	struct s_stack_node	stack[ACCEL_NODE_STACK_SIZE];
 	uint32_t			istack;
@@ -156,7 +156,7 @@ static int
 }
 
 int
-	world_intersect(const t_world *world, t_ray ray, t_hit *hit)
+	world_intersect(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
 	return (world_intersect_primitives2(world, ray, hit));
 }

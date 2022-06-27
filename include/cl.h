@@ -24,8 +24,8 @@ typedef unsigned long	uint64_t;
 
 typedef uint64_t			t_seed;
 
-t_seed	rt_random(t_seed *seed);
-FLOAT	rt_random_float(t_seed *seed);
-FLOAT	rt_random_float_range(t_seed *seed, FLOAT min, FLOAT max);
+t_seed	rt_random(GLOBAL t_seed *seed);
+FLOAT	rt_random_float(GLOBAL t_seed *seed);
+FLOAT	rt_random_float_range(GLOBAL t_seed *seed, FLOAT min, FLOAT max);
 
 #endif
