@@ -7,12 +7,6 @@
 # define RT_SHAPE_TRIANGLE 0
 # define RT_SHAPE_SPHERE 1
 
-/* TODO set these values to something good */
-# define RT_INTERSECT_COST 80
-# define RT_TRAVERSAL_COST 80
-# define RT_EMPTY_BONUS (FLOAT) 0.0
-# define RT_MAX_PRIMITIVES 20
-
 /* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
@@ -27,25 +21,6 @@ typedef struct s_material		t_material;
 typedef struct s_shape_triangle	t_shape_triangle;
 typedef struct s_shape_sphere	t_shape_sphere;
 typedef struct s_accel_node		t_accel_node;
-typedef struct s_edge			t_edge;
-typedef	struct s_split_axis		t_split_axis;
-
-typedef enum e_edge_type {
-	EDGE_START,
-	EDGE_END
-}	t_edge_type;
-
-typedef enum e_axis {
-	AXIS_X = 0,
-	AXIS_Y = 1,
-	AXIS_Z = 2,
-	AXIS_NONE= 3
-}	t_axis;
-
-struct s_split_axis {
-	t_axis	axis;
-	FLOAT	offset;
-};
 
 struct s_image_meta {
 	uint64_t	width;
@@ -100,11 +75,6 @@ struct s_accel_node {
 		uint32_t	nprims;
 		uint32_t	above_child;
 	}	b;
-};
-
-struct s_edge {
-	FLOAT		offset;
-	t_edge_type	type;
 };
 
 struct s_world {

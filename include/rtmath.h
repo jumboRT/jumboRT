@@ -95,6 +95,7 @@ FLOAT	rt_sqrt(FLOAT a);
 FLOAT	rt_sin(FLOAT a);
 FLOAT	rt_cos(FLOAT a);
 FLOAT	rt_tan(FLOAT a);
+FLOAT	rt_abs(FLOAT a);
 FLOAT	rt_min(FLOAT a, FLOAT b);
 FLOAT	rt_max(FLOAT a, FLOAT b);
 

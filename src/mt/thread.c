@@ -17,4 +17,11 @@ void
 	*thr = 0;
 }
 
+void
+	thread_exit(void *retval)
+{
+	(void) retval;
+	rt_assert(0, "thread_exit called in single threaded program");
+}
+
 #endif

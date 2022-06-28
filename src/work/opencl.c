@@ -59,6 +59,9 @@ const static char *g_source_files[] = {
 	"src/math/sin.c",
 	"src/math/cos.c",
 	"src/math/tan.c",
+	"src/math/min.c",
+	"src/math/max.c",
+	"src/math/abs.c",
 	"src/world/intersect.c",
 	"src/world/primitive.c",
 	"src/world/node.c"

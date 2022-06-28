@@ -20,6 +20,7 @@ typedef void			*(*t_start)(void *arg);
 
 void	thread_create(t_thread *thr, t_start start, void *arg);
 void	thread_join(t_thread *thr);
+void	thread_exit(void *retval);
 
 void	mutex_init(t_mutex *mtx);
 void	mutex_destroy(t_mutex *mtx);

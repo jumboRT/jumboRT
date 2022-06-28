@@ -21,4 +21,10 @@ void
 	rt_assert(!ret, "thread join failed");
 }
 
+void
+	thread_exit(void *retval)
+{
+	pthread_exit(retval);
+}
+
 #endif

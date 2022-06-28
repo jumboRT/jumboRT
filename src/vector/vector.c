@@ -12,6 +12,15 @@ void
 }
 
 void
+	vector_view(t_vector *vec, t_vector *parent, size_t begin, size_t size)
+{
+	vec->data = (char *) parent->data + begin * parent->elem_size;
+	vec->size = size * parent->elem_size;
+	vec->capacity = 0;
+	vec->elem_size = parent->elem_size;
+}
+
+void
 	vector_destroy(t_vector *vec, t_destroy destroy)
 {
 	size_t	i;
@@ -29,7 +38,7 @@ void
 }
 
 void
-	vector_push_back(t_vector *vec, void *ptr)
+	vector_push_back(t_vector *vec, const void *ptr)
 {
 	size_t	index;
 

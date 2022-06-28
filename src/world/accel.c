@@ -149,7 +149,7 @@ t_bounds
 	if (vector_size(indices) == 0)
 		return (bounds_0());
 	index = 1;
-	total_bounds = get_bounds(world, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
+	total_bounds = get_bounds(world, get_primitive(world, *(uint32_t *) vector_at(indices, 0)));
 	while (index < vector_size(indices))
 	{
 		primitive = get_primitive(world, *(uint32_t *) vector_at(indices, index));
@@ -330,7 +330,7 @@ int32_t
 	{
 		edges = get_all_edges(world, indices, axis);
 		vector_sort(&edges, cmp_edge, &axis);
-		current_offset = get_best_offset(axis, &edges, total_bounds, &current_cost); 
+		current_offset = get_best_offset(axis, &edges, total_bounds, &current_cost);
 		if (current_cost < best_cost)
 		{
 			best_cost = current_cost;
@@ -507,7 +507,7 @@ uint32_t
 {
 	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
 	return (8.0 + 1.3 * log2(world->primitives_count));
-	return (4.0);
+	return (8.0);
 }
 
 void
