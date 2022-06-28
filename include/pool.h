@@ -30,6 +30,8 @@ struct s_pool {
 	int			stop;
 };
 
+/* TODO: s_task probably isn't necessary any more, just count the number of */
+/* done threads in s_jobs and use the pool's mtx and cnd for synchronization */
 struct s_task {
 	t_mutex	mtx;
 	t_cond	cnd;
