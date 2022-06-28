@@ -19,8 +19,10 @@ for line in lines:
 		c = int(line[3].split("/")[0]) - 1
 		faces.append((a, b, c))
 
+sys.stderr.write(f"{len(vertices)} vertices\n")
+sys.stderr.write(f"{len(faces)} triangles\n")
 sys.stdout.write(f"C 0,0,0 1,0,0 90\n")
 for vertex in vertices:
-    sys.stdout.write(f"v {vertex[0]},{vertex[1]},{vertex[2]}\n")
+    sys.stdout.write(f"v {vertex[0]:f},{vertex[1]:f},{vertex[2]:f}\n")
 for face in faces:
     sys.stdout.write(f"tr {face[0]} {face[1]} {face[2]}\n")

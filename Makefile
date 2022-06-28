@@ -106,7 +106,10 @@ ifeq ($(config), debug)
 	endif
 else ifeq ($(config), release)
 	CFLAGS		+= -g3 -O2
-	LFLAGS		+=
+	LFLAGS		+= -g3 -O2
+else ifeq ($(config), profile)
+	CFLAGS		+= -g3 -O2 -pg
+	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
 	CFLAGS		+= -g0 -Ofast -flto -march=native
 	LFLAGS		+= -g0 -Ofast -flto -march=native

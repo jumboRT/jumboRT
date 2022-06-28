@@ -29,7 +29,7 @@ void
 	aspect = (FLOAT) world->img_meta.width / world->img_meta.height;
 	world->camera.u = vec_norm(vec_cross(dir, vec(0, 0, 1)));
 	world->camera.v = vec_norm(vec_cross(dir, world->camera.u));
-	world->camera.u = vec_scale(world->camera.u, half * aspect);
+	world->camera.u = vec_scale(world->camera.u, half * -aspect);
 	world->camera.v = vec_scale(world->camera.v, half);
 	world->camera.base = vec_sub(dir, vec_add(world->camera.u, world->camera.v));
 	world->camera.u = vec_scale(world->camera.u, 2.0 / world->img_meta.width);

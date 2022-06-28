@@ -174,9 +174,11 @@ FLOAT
 	FLOAT	above_chance;
 	FLOAT	cost;
 
+/*
 	rt_assert(fabs(total_sa) >= 0.00001, "total sa almost zero");
 	rt_assert(fabs(below_sa) >= 0.00001, "below sa almost zero");
 	rt_assert(fabs(above_sa) >= 0.00001, "above sa almost zero");
+*/
 
 	inv_total_sa = 1.0 / total_sa;
 	below_chance = below_sa * inv_total_sa;
