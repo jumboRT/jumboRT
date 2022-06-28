@@ -105,6 +105,7 @@ FLOAT	y(t_vec v) __attribute__ ((const));
 FLOAT	z(t_vec v) __attribute__ ((const));
 FLOAT	w(t_vec v) __attribute__ ((const));
 FLOAT	xyz(t_vec v, int i) __attribute__ ((const));
+t_vec	vec_set(t_vec v, int axis, FLOAT val) __attribute__ ((const));
 
 t_vec	vec(FLOAT x, FLOAT y, FLOAT z)	__attribute__ ((const));
 t_vec	vec_0(void)						__attribute__ ((const));

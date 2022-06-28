@@ -14,7 +14,8 @@ void build_tree(
 			uint32_t		parent_offset,
 			t_world			*world,
 			t_vector		*indices,
-			uint32_t		depth);
+			uint32_t		depth,
+			const t_bounds	total_bounds);
 
 t_vec
 	get_vertex(
@@ -76,7 +77,7 @@ const t_primitive
 
 int32_t get_axis_side(
 			const t_world		*world,
-			t_split_axis		split_axis,
+			const t_split_axis	split_axis,
 			const t_primitive	*primitive)
 {
 	t_bounds	primitive_bounds;
@@ -163,9 +164,9 @@ t_bounds
  */
 FLOAT
 	calculate_cost(
-			FLOAT			total_sa,
-			FLOAT			below_sa,
-			FLOAT			above_sa,
+			const FLOAT		total_sa,
+			const FLOAT		below_sa,
+			const FLOAT		above_sa,
 			const uint32_t	primitive_counts[2])
 {
 	FLOAT	inv_total_sa;
@@ -192,7 +193,7 @@ FLOAT
 FLOAT
 	axis_cost_at_offset(
 			t_axis			axis,
-			t_bounds		total_bounds,
+			const t_bounds	total_bounds,
 			const uint32_t	primitive_counts[2],
 			FLOAT			offset)
 {
@@ -222,10 +223,10 @@ FLOAT
 
 FLOAT
 	get_best_offset(
-			t_axis		axis,
-			t_vector	*edges,
-			t_bounds	total_bounds,
-			FLOAT		*best_cost)
+			t_axis			axis,
+			t_vector		*edges,
+			const t_bounds	total_bounds,
+			FLOAT			*best_cost)
 {
 	uint64_t		index;
 	FLOAT			current_cost;
@@ -238,7 +239,7 @@ FLOAT
 	*best_cost = RT_HUGE_VAL;
 	primitive_counts[0] = 0;
 	primitive_counts[1] = vector_size(edges) / 2;
-	printf("total_bounds %f %f %f | %f %f %f\n", x(total_bounds.min), y(total_bounds.min), z(total_bounds.min), x(total_bounds.max), y(total_bounds.max), z(total_bounds.max));
+	/*printf("total_bounds %f %f %f | %f %f %f\n", x(total_bounds.min), y(total_bounds.min), z(total_bounds.min), x(total_bounds.max), y(total_bounds.max), z(total_bounds.max));*/
 	while (index < vector_size(edges))
 	{
 		current = vector_at(edges, index);
@@ -312,17 +313,16 @@ int32_t
 	find_best_axis(
 			const t_world	*world,
 			t_vector		*indices,
-			t_split_axis	*best_axis)
+			t_split_axis	*best_axis,
+			const t_bounds	total_bounds)
 {
 	FLOAT			best_cost;
 	FLOAT			current_cost;
 	t_vector		edges;
 	t_axis			axis;
-	t_bounds		total_bounds;
 	FLOAT			current_offset;
 
 	axis = AXIS_X;
-	total_bounds = get_total_bounds(world, indices);
 	best_cost = RT_HUGE_VAL;
 	while (axis < AXIS_NONE)
 	{
@@ -434,26 +434,32 @@ void
 			t_split_axis	best_axis,
 			t_world			*world,
 			t_vector		*indices,
-			uint32_t		depth)
+			uint32_t		depth,
+			const t_bounds	total_bounds)
 {
 	t_vector		sub_indices[2];
 	t_accel_node	child_node;
 	uint32_t		tmp_offset;
+	t_bounds		sub_bounds;
 
 	split_primitives(world, best_axis, indices, sub_indices);
 	tmp_offset = world_add_accel_node(world, &child_node);
+	sub_bounds = bounds(total_bounds.min, vec_set(total_bounds.max, best_axis.axis, best_axis.offset));
 	build_tree(
 			tmp_offset, /* TODO check, this might be one past the element we want */
 			world,
 			&sub_indices[0],
-			depth - 1);
+			depth - 1,
+			sub_bounds);
 	tmp_offset = world_add_accel_node(world, &child_node);
 	interior_node_init(offset, world, best_axis, tmp_offset);
+	sub_bounds = bounds(vec_set(total_bounds.min, best_axis.axis, best_axis.offset), total_bounds.max);
 	build_tree(
 			tmp_offset, /* TODO check, this might be one past the element we want */
 			world,
 			&sub_indices[1],
-			depth -1);
+			depth -1,
+			sub_bounds);
 	vector_destroy(&sub_indices[0], NULL);
 	vector_destroy(&sub_indices[1], NULL);
 }
@@ -463,29 +469,31 @@ uint32_t
 			uint32_t		offset,
 			t_world			*world,
 			t_vector		*indices,
-			uint32_t		depth)
+			uint32_t		depth,
+			const t_bounds	total_bounds)
 {
 	t_split_axis	best_axis;
 
-	if (!find_best_axis(world, indices, &best_axis))
+	if (!find_best_axis(world, indices, &best_axis, total_bounds))
 		return (0);
-	create_and_add_interior_nodes(offset, best_axis, world, indices, depth);
+	create_and_add_interior_nodes(offset, best_axis, world, indices, depth, total_bounds);
 	return (1);
 }
 
 void
 	build_tree(
-			uint32_t	parent_offset,
-			t_world		*world,
-			t_vector	*indices,
-			uint32_t	depth)
+			uint32_t		parent_offset,
+			t_world			*world,
+			t_vector		*indices,
+			uint32_t		depth,
+			const t_bounds	total_bounds)	
 {
 	if (vector_size(indices) <= RT_MAX_PRIMITIVES || depth == 0)
 	{
 		leaf_node_init(parent_offset, world, indices);
 		return ;
 	}
-	if (!try_create_and_add_interior_nodes(parent_offset, world, indices, depth))
+	if (!try_create_and_add_interior_nodes(parent_offset, world, indices, depth, total_bounds))
 	{
 		leaf_node_init(parent_offset, world, indices);
 		return ;
@@ -496,8 +504,8 @@ uint32_t
 	accel_get_max_depth(const t_world *world)
 {
 	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
-	return (4.0);
 	return (8.0 + 1.3 * log2(world->primitives_count));
+	return (4.0);
 }
 
 void
@@ -507,6 +515,7 @@ void
 	t_vector			all_indices;
 	uint64_t			index;
 	t_accel_node		root;
+	t_bounds			total_bounds;
 
 	index = 0;
 	vector_init(&all_indices, sizeof(uint32_t));
@@ -518,10 +527,11 @@ void
 		index += world_primitive_size(primitive->shape_type) / RT_PRIMITIVE_ALIGN;
 	}
 	fprintf(stderr, "actual:%u vs vector%zu\n", world->primitives_count, vector_size(&all_indices));
+	total_bounds = get_total_bounds(world, &all_indices);
 	build_tree(
 			0,
 			world,
 			&all_indices,
-		accel_get_max_depth(world));
+		accel_get_max_depth(world), total_bounds);
 	vector_destroy(&all_indices, NULL);
 }

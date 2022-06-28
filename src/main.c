@@ -48,17 +48,6 @@ void
 	rt_free(file);
 }
 
-t_vec
-	vec_set(t_vec a, FLOAT v, int index)
-{
-	if (index == 0)
-		return (vec(v, y(a), z(a)));
-	else if (index == 1)
-		return (vec(x(a), v, z(a)));
-	else
-		return (vec(x(a), y(a), v));
-}
-
 void
 	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
 {
@@ -75,14 +64,23 @@ void
 	node = &world->accel_nodes[offset];
 	if (is_leaf(*node))
 	{
+#ifdef RT_VERBOSE
 		printf("leaf %d (%f %f %f | %f %f %f)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max));
+#else
+
+		printf("leaf %d\n", (int) nprims(*node));
+#endif
 	}
 	else
 	{
+#ifdef RT_VERBOSE
 		printf("branch (%f %f %f | %f %f %f) (%f %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node));
-		vec = vec_set(min, split_pos(*node), split_axis(*node));
+#else
+		printf("branch\n");
+#endif
+		vec = vec_set(min, split_axis(*node), split_pos(*node));
 		dump_tree(world, offset + 1, depth + 1, vec, max);
-		vec = vec_set(max, split_pos(*node), split_axis(*node));
+		vec = vec_set(max, split_axis(*node), split_pos(*node));
 		dump_tree(world, above_child(*node), depth + 1, min, vec);
 	}
 }

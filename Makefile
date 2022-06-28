@@ -5,7 +5,7 @@ VECTOR_FILES			:= vector.c elem.c sort.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
-							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c
+							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c vec_set.c
 WORLD_FILES				:= impl.c intersect.c primitive.c accel.c node.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c comment.c world.c
 BASE_FILES				:= main.c
