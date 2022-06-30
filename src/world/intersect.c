@@ -158,5 +158,5 @@ static int
 int
 	world_intersect(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
-	return (world_intersect_primitives2(world, ray, hit));
+	return (world_intersect_primitives(world, ray, hit));
 }

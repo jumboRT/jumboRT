@@ -4,25 +4,56 @@ import sys
 lines = sys.stdin.readlines()
 vertices = []
 faces = []
+camera = ((0, 0, 0), (1, 0, 0), 90)
 
-for line in lines:
-	line = line.split(" ")
-	if line[0] == "v":
-		x = float(line[1])
-		z = float(line[2])
-		y = float(line[3])
-		vertices.append((x, y, z))
-	if line[0] == "f":
-		assert len(line) == 4
-		a = int(line[1].split("/")[0]) - 1
-		b = int(line[2].split("/")[0]) - 1
-		c = int(line[3].split("/")[0]) - 1
-		faces.append((a, b, c))
+def parse_vertex(line):
+    x = float(line[0])
+    y = float(line[1])
+    z = float(line[2])
+    return (x, y, z)
+
+def str_vertex(vertex):
+    return f"{vertex[0]:f},{vertex[1]:f},{vertex[2]:f}"
+
+def add_vertex(vertex):
+    try:
+        return vertices.index(vertex)
+    except ValueError:
+        vertices.append(vertex)
+        return len(vertices) - 1
+
+if sys.argv[1] == "joppe":
+    for line in lines:
+        line = line.split()
+        if len(line) == 0:
+            continue
+        if line[0] == "tr":
+            a = add_vertex(parse_vertex(line[1].split(",")))
+            b = add_vertex(parse_vertex(line[2].split(",")))
+            c = add_vertex(parse_vertex(line[3].split(",")))
+            faces.append((a, b, c))
+        if line[0] == "c":
+            position = parse_vertex(line[1].split(","))
+            rotation = parse_vertex(line[2].split(","))
+            fov = float(line[3])
+            camera = (position, rotation, fov)
+else:    
+    for line in lines:
+        line = line.split()
+        if line[0] == "v":
+            vertex = parse_vertex(line[1:])
+            vertices.append((x, y, z))
+        if line[0] == "f":
+            assert len(line) == 4
+            a = int(line[1].split("/")[0]) - 1
+            b = int(line[2].split("/")[0]) - 1
+            c = int(line[3].split("/")[0]) - 1
+            faces.append((a, b, c))
 
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
-sys.stdout.write(f"C 0,0,0 1,0,0 90\n")
+sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:f}\n")
 for vertex in vertices:
-    sys.stdout.write(f"v {vertex[0]:f},{vertex[1]:f},{vertex[2]:f}\n")
+    sys.stdout.write(f"v {str_vertex(vertex)}\n")
 for face in faces:
     sys.stdout.write(f"tr {face[0]} {face[1]} {face[2]}\n")
