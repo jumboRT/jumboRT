@@ -5,7 +5,7 @@
 __kernel void
 	set_ptr_kernel(GLOBAL void *dst, uint64_t offset, GLOBAL void *ptr)
 {
-	*(GLOBAL void **) ((char *) dst + offset) = ptr;
+	*(GLOBAL void *GLOBAL *) ((GLOBAL char *) dst + offset) = ptr;
 }
 
 __kernel void
@@ -25,7 +25,7 @@ __kernel void
 
 #endif
 
-t_ray
+static t_ray
 	project(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
 	GLOBAL t_camera		*cam;
