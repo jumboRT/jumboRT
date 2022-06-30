@@ -115,21 +115,14 @@ void
 	{
 		primitive = get_primitive(world, *(uint32_t *) vector_at(indices, index));
 		side = get_axis_side(world, split_axis, primitive);
-		if (side < 0)
+		if (side <= 0)
 		{
 			primitive_count[0] += 1;
 			sub_bounds[0] = bounds_max(sub_bounds[0], get_bounds(world, primitive));
 		}
-		else if (side > 0)
+		if (side >= 0)
 		{
 			primitive_count[1] += 1;
-			sub_bounds[1] = bounds_max(sub_bounds[1], get_bounds(world, primitive));
-		}
-		else
-		{
-			primitive_count[0] += 1;
-			primitive_count[1] += 1;
-			sub_bounds[0] = bounds_max(sub_bounds[0], get_bounds(world, primitive));
 			sub_bounds[1] = bounds_max(sub_bounds[1], get_bounds(world, primitive));
 		}
 		index++;
@@ -242,6 +235,7 @@ FLOAT
 	primitive_counts[0] = 0;
 	primitive_counts[1] = vector_size(edges) / 2;
 	/*printf("total_bounds %f %f %f | %f %f %f\n", x(total_bounds.min), y(total_bounds.min), z(total_bounds.min), x(total_bounds.max), y(total_bounds.max), z(total_bounds.max));*/
+	printf("start get_best_offset\n");
 	while (index < vector_size(edges))
 	{
 		current = vector_at(edges, index);
@@ -253,6 +247,7 @@ FLOAT
 			current_cost = axis_cost_at_offset(axis, total_bounds, primitive_counts, current->offset);
 			if (current_cost < *best_cost)
 			{
+				printf("get_best_offset counts %u %u %u\n", (unsigned) (vector_size(edges) / 2), primitive_counts[0], primitive_counts[1]);
 				*best_cost = current_cost;
 				best_offset = current->offset;
 			}
@@ -283,11 +278,6 @@ t_vector
 		current_bounds = get_bounds(world, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
 		bounds[0] = current_bounds.max;
 		bounds[1] = current_bounds.min;
-		if (xyz(current_bounds.min, axis) < xyz(current_bounds.max, axis))
-		{
-			bounds[1] = current_bounds.max;
-			bounds[0] = current_bounds.min;
-		}
 		edge.offset = xyz(bounds[0], axis);
 		edge.type = EDGE_END;
 		vector_push_back(&result, &edge);
@@ -308,7 +298,7 @@ int32_t
 	(void) ctx_ptr;
 	edge0 = edge0_ptr;
 	edge1 = edge1_ptr;
-	return ((edge0->offset < edge1->offset) - (edge0->offset > edge1->offset));
+	return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
 }
 
 int32_t
@@ -360,6 +350,7 @@ void
 	while (index < vector_size(indices))
 	{
 		side = get_axis_side(world, axis, get_primitive(world, *(uint32_t *) vector_at(indices, index)));
+
 		if (side <= 0)
 		{
 			vector_push_back(&sub_indices[0], vector_at(indices, index));
@@ -370,6 +361,7 @@ void
 		}
 		++index;
 	}
+	printf("split_primitives counts %u %u %u\n", (unsigned) vector_size(indices), (unsigned) vector_size(&sub_indices[0]), (unsigned) vector_size(&sub_indices[1]));
 }
 
 void

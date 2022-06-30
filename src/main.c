@@ -109,7 +109,7 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 200;
+	world.img_meta.samples = 50;
 	if (argc == 1)
 		world_gen(&world);
 	else

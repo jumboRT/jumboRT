@@ -10,7 +10,6 @@ const static t_directive	directives[] = {
 	{ "#", rt_exec_comment },
 };
 
-/* TODO: fix use of uninitialized value */
 void
 	rt_world(t_world *world, t_parse_ctx *ctx)
 {
