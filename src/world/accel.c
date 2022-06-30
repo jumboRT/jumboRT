@@ -305,6 +305,7 @@ int32_t
 	return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
 }
 
+/*
 struct s_find_best_axis_ctx {
 	const t_world	*world;
 	t_vector		*indices;
@@ -369,6 +370,40 @@ int32_t
 	}
 	best_axis->offset = results[0].offset;
 	return (results[0].cost < RT_HUGE_VAL);
+}
+*/
+
+int32_t
+	find_best_axis(
+			const t_world	*world,
+			t_vector		*indices,
+			t_split_axis	*best_axis,
+			const t_bounds	total_bounds)
+{
+	FLOAT			best_cost;
+	FLOAT			current_cost;
+	t_vector		edges;
+	t_axis			axis;
+	FLOAT			current_offset;
+
+	axis = AXIS_X;
+	best_cost = RT_HUGE_VAL;
+	while (axis < AXIS_NONE)
+	{
+		edges = get_all_edges(world, indices, axis);
+		vector_sort(&edges, cmp_edge, &axis);
+		current_offset = get_best_offset(axis, &edges, total_bounds, &current_cost);
+		if (current_cost < best_cost)
+		{
+			best_cost = current_cost;
+			best_axis->axis = axis;
+			best_axis->offset = current_offset;
+		}
+		vector_destroy(&edges, NULL);
+		++axis;
+	}
+	/* fprintf(stderr, "best axis %d with cost %f and offset %f\n", (int) best_axis->axis, best_cost, best_axis->offset); */
+	return (best_cost < RT_HUGE_VAL);
 }
 
 void
@@ -508,7 +543,7 @@ uint32_t
 {
 	t_split_axis	best_axis;
 
-	if (!find_best_axis(pool, world, indices, &best_axis, total_bounds))
+	if (!find_best_axis(world, indices, &best_axis, total_bounds))
 		return (0);
 	create_and_add_interior_nodes(pool, offset, best_axis, world, indices, depth, total_bounds);
 	return (1);
