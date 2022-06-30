@@ -48,6 +48,7 @@ void
 	rt_free(file);
 }
 
+#define RT_VERBOSE
 void
 	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
 {

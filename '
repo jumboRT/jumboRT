@@ -13,7 +13,7 @@
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
 # define RT_EMPTY_BONUS (FLOAT) 0.3
-# define RT_MAX_PRIMITIVES 20
+# define RT_MAX_PRIMITIVES 2
 
 # define ACCEL_BELOW 0
 # define ACCEL_ABOVE 1
@@ -43,7 +43,7 @@ struct s_split_axis {
 struct s_split {
 	FLOAT		offset;
 	FLOAT		cost;
-	uint32_t	prim_count[2];
+	t_vector	indices[2];
 	uint64_t	edge_count;
 	int32_t		axis;
 };
