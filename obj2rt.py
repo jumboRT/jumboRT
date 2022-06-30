@@ -6,11 +6,14 @@ vertices = []
 faces = []
 camera = ((0, 0, 0), (1, 0, 0), 90)
 
-def parse_vertex(line):
+def parse_vertex(line, swap_yz=False):
     x = float(line[0])
     y = float(line[1])
     z = float(line[2])
-    return (x, y, z)
+    if swap_yz:
+        return (x, z, y)
+    else:
+        return (x, y, z)
 
 def str_vertex(vertex):
     return f"{vertex[0]:f},{vertex[1]:f},{vertex[2]:f}"
@@ -22,22 +25,22 @@ def add_vertex(vertex):
         vertices.append(vertex)
         return len(vertices) - 1
 
-if sys.argv[1] == "joppe":
+if sys.argv[1] == "jkoers":
     for line in lines:
         line = line.split()
         if len(line) == 0:
             continue
         if line[0] == "tr":
-            a = add_vertex(parse_vertex(line[1].split(",")))
-            b = add_vertex(parse_vertex(line[2].split(",")))
-            c = add_vertex(parse_vertex(line[3].split(",")))
+            a = add_vertex(parse_vertex(line[1].split(","), True))
+            b = add_vertex(parse_vertex(line[2].split(","), True))
+            c = add_vertex(parse_vertex(line[3].split(","), True))
             faces.append((a, b, c))
         if line[0] == "c":
-            position = parse_vertex(line[1].split(","))
-            rotation = parse_vertex(line[2].split(","))
+            position = parse_vertex(line[1].split(","), True)
+            rotation = parse_vertex(line[2].split(","), True)
             fov = float(line[3])
             camera = (position, rotation, fov)
-else:    
+elif sys.argv[1] == "obj":    
     for line in lines:
         line = line.split()
         if line[0] == "v":
@@ -49,6 +52,9 @@ else:
             b = int(line[2].split("/")[0]) - 1
             c = int(line[3].split("/")[0]) - 1
             faces.append((a, b, c))
+else:
+    sys.stderr.write(f"invalid format {sys.argv[1]}\n")
+    sys.exit(1)
 
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")

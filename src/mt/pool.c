@@ -33,23 +33,23 @@ void
 }
 
 void
-	pool_wait(t_pool *pool, t_task *task)
+	pool_wait(t_pool *pool, t_jobs *jobs)
 {
 	(void) pool;
-	(void) task;
+	(void) jobs;
 }
 
 void
-	pool_run(t_pool *pool, t_jobs jobs)
+	pool_run(t_pool *pool, t_jobs *jobs)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < jobs.count)
+	while (i < jobs->count)
 	{
-		jobs.items[i].jobs = &jobs;
-		jobs.items[i].id = i;
-		pool_add(pool, pool_run_int, &jobs.items[i]);
+		jobs->items[i].jobs = jobs;
+		jobs->items[i].id = i;
+		pool_add(pool, pool_run_int, &jobs->items[i]);
 		i += 1;
 	}
 }
