@@ -10,11 +10,11 @@ struct s_stack_node {
 };
 
 static int
-	world_intersect_sphere(const void *ptr, t_ray ray, FLOAT min, t_hit *hit)
+	world_intersect_sphere(const GLOBAL void *ptr, t_ray ray, FLOAT min, t_hit *hit)
 {
-	const t_shape_sphere	*sp;
+	const GLOBAL t_shape_sphere	*sp;
 
-	sp = (const t_shape_sphere *) ptr;
+	sp = (const GLOBAL t_shape_sphere *) ptr;
 	return (ray_sphere_intersect(
 				ray,
 				sphere(
@@ -25,11 +25,11 @@ static int
 }
 
 static int
-	world_intersect_triangle(const GLOBAL t_world *world, const void *ptr, t_ray ray, FLOAT min, t_hit *hit)
+	world_intersect_triangle(const GLOBAL t_world *world, const GLOBAL void *ptr, t_ray ray, FLOAT min, t_hit *hit)
 {
-	const t_shape_triangle	*tr;
+	const GLOBAL t_shape_triangle	*tr;
 
-	tr = (const t_shape_triangle *) ptr;
+	tr = (const GLOBAL t_shape_triangle *) ptr;
 	return (ray_triangle_intersect(
 				ray,
 				triangle(
@@ -41,7 +41,7 @@ static int
 }
 
 static void
-	world_intersect_primitive(const GLOBAL t_world *world, const t_primitive *primitive, t_ray ray, FLOAT min, t_hit *hit)
+	world_intersect_primitive(const GLOBAL t_world *world, const GLOBAL t_primitive *primitive, t_ray ray, FLOAT min, t_hit *hit)
 {
 	t_hit	current_hit;
 	int		did_hit;
@@ -58,16 +58,16 @@ static void
 static int
 	world_intersect_primitives(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
-	uint64_t				index;
-	const char				*primitives;
-	const t_primitive		*primitive;
+	uint64_t					index;
+	const GLOBAL char			*primitives;
+	const GLOBAL t_primitive	*primitive;
 
 	index = 0;
-	primitives = (const char*) world->primitives;
+	primitives = (const GLOBAL char*) world->primitives;
 	hit->t = RT_HUGE_VAL;
 	while (index < world->primitives_size)
 	{
-		primitive = (const t_primitive *) (primitives + index);
+		primitive = (const GLOBAL t_primitive *) (primitives + index);
 		world_intersect_primitive(world, primitive, ray, 0.001, hit);
 		index += world_primitive_size(primitive->shape_type);
 	}
@@ -77,18 +77,18 @@ static int
 static int
 	world_intersect_primitives2(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
-	struct s_stack_node	stack[ACCEL_NODE_STACK_SIZE];
-	uint32_t			istack;
-	const t_accel_node	*node;
-	const t_primitive	*prim;
-	uint32_t			iprim;
-	const uint32_t		*prims;
-	FLOAT				org_t;
-	FLOAT				dir_t;
-	FLOAT				split_t;
-	FLOAT				min_t;
-	FLOAT				max_t;
-	FLOAT				plane_t;
+	struct s_stack_node			stack[ACCEL_NODE_STACK_SIZE];
+	uint32_t					istack;
+	const GLOBAL t_accel_node	*node;
+	const GLOBAL t_primitive	*prim;
+	uint32_t					iprim;
+	const GLOBAL uint32_t		*prims;
+	FLOAT						org_t;
+	FLOAT						dir_t;
+	FLOAT						split_t;
+	FLOAT						min_t;
+	FLOAT						max_t;
+	FLOAT						plane_t;
 
 	hit->t = RT_HUGE_VAL;
 	min_t = 0.001;
@@ -141,7 +141,7 @@ static int
 		iprim = 0;
 		while (iprim < nprims(*node))
 		{
-			prim = (const t_primitive *) ((const char *) world->primitives + prims[iprim] * RT_PRIMITIVE_ALIGN);
+			prim = (const GLOBAL t_primitive *) ((const GLOBAL char *) world->primitives + prims[iprim] * RT_PRIMITIVE_ALIGN);
 			world_intersect_primitive(world, prim, ray, min_t, hit);
 			iprim += 1;
 		}

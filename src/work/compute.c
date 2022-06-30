@@ -3,9 +3,18 @@
 #ifdef RT_OPENCL
 
 __kernel void
-	set_ptr_kernel(GLOBAL void *dst, uint64_t offset, GLOBAL void *ptr)
+	set_ptr_kernel(GLOBAL t_world *world, int offset, GLOBAL void *ptr)
 {
-	*(GLOBAL void *GLOBAL *) ((GLOBAL char *) dst + offset) = ptr;
+	if (offset == 0)
+		world->primitives = ptr;
+	if (offset == 1)
+		world->materials = ptr;
+	if (offset == 2)
+		world->vertices = ptr;
+	if (offset == 3)
+		world->accel_nodes = ptr;
+	if (offset == 4)
+		world->accel_indices = ptr;
 }
 
 __kernel void

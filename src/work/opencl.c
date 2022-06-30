@@ -98,7 +98,7 @@ void
 }
 
 void
-	work_set_ptr(struct s_opencl_ctx *cl_ctx, cl_mem dst, uint64_t offset, cl_mem ptr)
+	work_set_ptr(struct s_opencl_ctx *cl_ctx, cl_mem dst, cl_int offset, cl_mem ptr)
 {
 	size_t	global_work_size[1];
 	size_t	local_work_size[1];
@@ -145,11 +145,11 @@ void
 	cl_ctx->materials_mem = work_copy_array(cl_ctx, work->state->world->materials_size, work->state->world->materials);
 	cl_ctx->accel_nodes_mem = work_copy_array(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes);
 	cl_ctx->accel_indices_mem = work_copy_array(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, primitives), cl_ctx->primitives_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, materials), cl_ctx->materials_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, vertices), cl_ctx->vertices_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, accel_nodes), cl_ctx->accel_nodes_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, offsetof(t_world, accel_indices), cl_ctx->accel_indices_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 0, cl_ctx->primitives_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 1, cl_ctx->materials_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 2, cl_ctx->vertices_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 3, cl_ctx->accel_nodes_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 4, cl_ctx->accel_indices_mem);
 }
 
 void
