@@ -12,15 +12,14 @@ t_triangle
 	return (result);
 }
 
-/* TODO: see if this can be refactored using floats without causing rounding errors */
 int
 	ray_triangle_intersect(t_ray ray, t_triangle triangle, FLOAT min, t_hit *hit)
 {
 	t_vec	pos, normal;
 	t_vec	v0, v1, v2;
-	double	d00, d01, d11, d20, d21;
-	double	denom;
-	double	v, w;
+	FLOAT	d00, d01, d11, d20, d21;
+	FLOAT	denom;
+	FLOAT	v, w;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),
