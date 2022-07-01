@@ -282,6 +282,7 @@ t_vector
 			bounds[0] = current_bounds.min;
 			bounds[1] = current_bounds.max;
 		}
+		edge.index = *(uint32_t *) vector_at(indices, index);
 		edge.offset = xyz(bounds[0], axis);
 		edge.type = EDGE_END;
 		vector_push_back(&result, &edge);
@@ -302,10 +303,14 @@ int32_t
 	(void) ctx_ptr;
 	edge0 = edge0_ptr;
 	edge1 = edge1_ptr;
-	return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
+	if (edge0->offset != edge1->offset)
+		return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
+	else if (edge0->index != edge1->index)
+		return ((edge0->type == EDGE_START) - (edge1->type == EDGE_START));
+	else
+		return ((edge0->type == EDGE_END) - (edge1->type == EDGE_END));
 }
 
-/*
 struct s_find_best_axis_ctx {
 	const t_world	*world;
 	t_vector		*indices;
@@ -371,8 +376,8 @@ int32_t
 	best_axis->offset = results[0].offset;
 	return (results[0].cost < RT_HUGE_VAL);
 }
-*/
 
+/*
 int32_t
 	find_best_axis(
 			const t_world	*world,
@@ -405,6 +410,7 @@ int32_t
 	fprintf(stderr, "best axis %d with cost %f and offset %f\n", (int) best_axis->axis, best_cost, best_axis->offset);
 	return (best_cost < RT_HUGE_VAL);
 }
+*/
 
 void
 	split_primitives(
@@ -487,9 +493,7 @@ void
 	else if (primitive_count == 1)
 		node->a.one_primitive = *(uint32_t *) vector_at(indices, 0);
 	else
-	{
 		node->a.one_primitive = push_back_primitives(world, indices);
-	}
 }
 
 /* I'm pretty sure I will have mixed up index somewhere here in this file */
@@ -543,7 +547,7 @@ uint32_t
 {
 	t_split_axis	best_axis;
 
-	if (!find_best_axis(world, indices, &best_axis, total_bounds))
+	if (!find_best_axis(pool, world, indices, &best_axis, total_bounds))
 		return (0);
 	create_and_add_interior_nodes(pool, offset, best_axis, world, indices, depth, total_bounds);
 	return (1);
@@ -574,8 +578,8 @@ uint32_t
 	accel_get_max_depth(const t_world *world)
 {
 	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
+	return (4);
 	return (8.0 + 1.3 * log2(world->primitives_count));
-	return (8.0);
 }
 
 void

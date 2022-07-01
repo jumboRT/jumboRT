@@ -30,6 +30,7 @@ size_t	vector_size(t_vector *vec);
 void	*vector_at(t_vector *vec, size_t index);
 void	*vector_front(t_vector *vec);
 void	*vector_back(t_vector *vec);
+void	vector_swap(t_vector *vec, size_t a, size_t b);
 void	vector_sort(t_vector *vec, t_compare compare, void *ctx);
 
 #endif

@@ -22,7 +22,6 @@ void
 	pool_destroy(t_pool *pool)
 {
 	(void) pool;
-	(void) count;
 }
 
 void

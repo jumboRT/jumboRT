@@ -62,7 +62,7 @@ void
 	i = 0;
 	while (i < depth)
 	{
-		ft_printf("  ");
+		printf("  ");
 		i += 1;
 	}
 	node = &world->accel_nodes[offset];
