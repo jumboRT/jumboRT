@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+
+#include <stdio.h>
+
 void
 	world_gen(t_world *world)
 {
@@ -66,7 +69,7 @@ void
 	if (is_leaf(*node))
 	{
 #ifdef RT_VERBOSE
-		printf("leaf %d (%f %f %f | %f %f %f)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max));
+		printf("leaf %d (%f %f %f | %f %f %f), %d\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive);
 #else
 
 		printf("leaf %d\n", (int) nprims(*node));
@@ -117,7 +120,7 @@ int
 		world_load(&world, argv[1]);
 	world_accel(&world);
 	printf("%d\n", (int) world.accel_nodes_count);
-	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
+	dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL));
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

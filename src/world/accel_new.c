@@ -4,6 +4,9 @@
 #include "vector.h"
 #include <math.h>
 
+
+#include <stdio.h>
+
 void build_tree(t_node_info *info);
 
 t_vec get_vertex(const t_world *world, uint32_t index) {
@@ -210,7 +213,7 @@ int32_t find_best_split(t_node_info *info, t_split *out) {
 	jobs.items = items;
 	jobs.count = 3;
 	jobs.results = results;
-	pool_run(info->pool, jobs);
+	pool_run(info->pool, &jobs);
 
 	if (split_cmp(results[1], results[0]) < 0)
 		results[0] = results[1];
@@ -238,11 +241,15 @@ void filter_edges(const t_world *world, const t_split *split, t_vector *org_edge
 		edge = vector_at(org_edges, index);
 		prim_bounds = get_bounds(world, get_primitive(world, edge->index));
 		if (which == ACCEL_ABOVE) {
-			if (xyz(prim_bounds.max, split->axis) >= split->offset)
+			if (xyz(prim_bounds.min, split->axis) < split->offset) {
+				fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);
 				vector_push_back(new_edges, edge);
+			}
 		} else {
-			if (xyz(prim_bounds.min, split->axis) <= split->offset)
+			if (xyz(prim_bounds.max, split->axis) > split->offset) {
+				fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);
 				vector_push_back(new_edges, edge);
+			}
 		}
 		++index;
 	}
@@ -267,7 +274,6 @@ void create_interior_node_above(t_node_info *info, t_vector indices, const t_spl
 	vector_view(&child_info.edges[split->axis], &info->edges[split->axis], split->edge_count, vector_size(&info->edges[split->axis]) - split->edge_count);
 	filter_edges(info->world, split, &info->edges[other_axes[0]], &child_info.edges[other_axes[0]], ACCEL_ABOVE);
 	filter_edges(info->world, split, &info->edges[other_axes[1]], &child_info.edges[other_axes[1]], ACCEL_ABOVE);
-	interior_node_init(info, &child_info, split);
 	build_tree(&child_info);
 	vector_destroy(&child_info.edges[other_axes[0]], NULL);
 	vector_destroy(&child_info.edges[other_axes[1]], NULL);
@@ -292,11 +298,13 @@ void create_interior_node_below(t_node_info *info, t_vector indices, const t_spl
 	vector_view(&child_info.edges[split->axis], &info->edges[split->axis], 0, split->edge_count);
 	filter_edges(info->world, split, &info->edges[other_axes[0]], &child_info.edges[other_axes[0]], ACCEL_BELOW);
 	filter_edges(info->world, split, &info->edges[other_axes[1]], &child_info.edges[other_axes[1]], ACCEL_BELOW);
+	interior_node_init(info, &child_info, split);
 	build_tree(&child_info);
 	vector_destroy(&child_info.edges[other_axes[0]], NULL);
 	vector_destroy(&child_info.edges[other_axes[1]], NULL);
 }
 
+/*
 void split_indices(t_node_info *info, const t_split *split, t_vector out[2]) {
 	size_t			index;
 	t_edge_type		type;
@@ -306,13 +314,42 @@ void split_indices(t_node_info *info, const t_split *split, t_vector out[2]) {
 	type = EDGE_START;
 	vector_init(&out[0], sizeof(uint32_t));
 	vector_init(&out[1], sizeof(uint32_t));
-	while (index < vector_size(info->edges)) {
-		edge = vector_at(info->edges, index);
+	while (index < vector_size(&info->edges[split->axis])) {
+		edge = vector_at(&info->edges[split->axis], index);
 		if (edge->offset < split->offset)
 			type = EDGE_END;
-		if (edge->type == type)
-			vector_push_back(&out[type == EDGE_END], &edge->index);
+		if (edge->type == type) {
+			if (type != EDGE_END) {
+				fprintf(stderr, "above, offset: %f split:%f type:%d looking for:%d index:%d\n", edge->offset, split->offset, edge->type, type, edge->index);
+				vector_push_back(&out[ACCEL_ABOVE], &edge->index);
+			} else {
+				fprintf(stderr, "below, offset: %f split:%f type:%d looking for:%d index:%d\n", edge->offset, split->offset, edge->type, type, edge->index);
+				vector_push_back(&out[ACCEL_BELOW], &edge->index);
+			}
+		}
 		index++;
+	}
+}
+*/
+void split_indices(t_node_info *info, const t_split *split, t_vector out[2]) {
+	size_t			index;
+	t_vector		*edges;
+	const t_edge	*edge;
+
+	index = 0;
+	edges = &info->edges[split->axis];
+	vector_init(&out[0], sizeof(uint32_t));
+	vector_init(&out[1], sizeof(uint32_t));
+	while (index < vector_size(edges)) {
+		edge = vector_at(edges, index);
+		if (index < split->edge_count && edge->type == EDGE_START) {
+			fprintf(stderr, "below, offset: %f split:%f looking for:%d index:%d\n", edge->offset, split->offset, edge->type, edge->index);
+			vector_push_back(&out[ACCEL_BELOW], &edge->index);
+		} else if (index > split->edge_count && edge->type == EDGE_END) {
+			fprintf(stderr, "above, offset: %f split:%f looking for:%d index:%d\n", edge->offset, split->offset, edge->type, edge->index);
+			vector_push_back(&out[ACCEL_ABOVE], &edge->index);
+		}
+		++index;
 	}
 }
 
@@ -320,10 +357,10 @@ void create_and_add_interior_nodes(t_node_info *info, const t_split *split) {
 	t_vector	child_indices[2];
 
 	split_indices(info, split, child_indices);
-	create_interior_node_below(info, child_indices[ACCEL_BELOW], split);
-	vector_destroy(&child_indices[0], NULL);
 	create_interior_node_above(info, child_indices[ACCEL_ABOVE], split);
-	vector_destroy(&child_indices[1], NULL);
+	create_interior_node_below(info, child_indices[ACCEL_BELOW], split);
+	vector_destroy(&child_indices[ACCEL_BELOW], NULL);
+	vector_destroy(&child_indices[ACCEL_ABOVE], NULL);
 }
 
 int32_t try_create_and_add_interior_nodes(t_node_info *info) {

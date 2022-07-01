@@ -402,7 +402,7 @@ int32_t
 		vector_destroy(&edges, NULL);
 		++axis;
 	}
-	/* fprintf(stderr, "best axis %d with cost %f and offset %f\n", (int) best_axis->axis, best_cost, best_axis->offset); */
+	fprintf(stderr, "best axis %d with cost %f and offset %f\n", (int) best_axis->axis, best_cost, best_axis->offset);
 	return (best_cost < RT_HUGE_VAL);
 }
 

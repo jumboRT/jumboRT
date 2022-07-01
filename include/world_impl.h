@@ -13,7 +13,7 @@
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
 # define RT_EMPTY_BONUS (FLOAT) 0.3
-# define RT_MAX_PRIMITIVES 20
+# define RT_MAX_PRIMITIVES 1
 
 # define ACCEL_BELOW 0
 # define ACCEL_ABOVE 1
@@ -24,8 +24,8 @@ typedef struct s_split			t_split;
 typedef struct s_node_info		t_node_info;
 
 typedef enum e_edge_type {
-	EDGE_START,
-	EDGE_END
+	EDGE_START	= 0,
+	EDGE_END	= 1
 }	t_edge_type;
 
 typedef enum e_axis {
