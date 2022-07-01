@@ -40,7 +40,6 @@ t_bounds get_bounds(const t_world *world, const t_primitive *primitive) {
 
 const t_primitive *get_primitive(const t_world *world, uint32_t offset) {
 	rt_assert(offset * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive");
-	rt_assert((offset % RT_PRIMITIVE_ALIGN) == 0, "misaligned access in get_primitive"); /* TODO: this assert is bad */
 	return (
 			(const t_primitive *)
 			((const char *) world->primitives +
@@ -226,10 +225,31 @@ uint32_t new_node(t_world *world) {
 	return (world_add_accel_node(world, &node));
 }
 
+int32_t get_axis_side(
+			const t_world		*world,
+			const t_split		*split,
+			const t_primitive	*primitive)
+{
+	t_bounds	primitive_bounds;
+	FLOAT		max_offset;
+	FLOAT		min_offset;
+	FLOAT		axis_offset;
+
+	primitive_bounds = get_bounds(world, primitive);
+	max_offset = xyz(primitive_bounds.max, split->axis);
+	min_offset = xyz(primitive_bounds.min, split->axis);
+	axis_offset = split->offset;
+	if (max_offset >= axis_offset && min_offset >= axis_offset)
+		return (1); /* probably above, might be the wrong way around with below */
+	else if (max_offset <= axis_offset && min_offset <= axis_offset)
+		return (-1);
+	return (0); /* object is in the axis */
+}
+
 /* filter edges must be a pointer to two vectors of edges */
 void filter_edges(const t_world *world, const t_split *split, t_vector *org_edges, t_vector *new_edges, int32_t which) {
 	size_t			index;
-	t_bounds		prim_bounds;
+	int32_t			side;;
 	const t_edge	*edge;
 
 	rt_assert(which == ACCEL_ABOVE || which == ACCEL_BELOW, "invalid which in filter_edges");
@@ -237,14 +257,14 @@ void filter_edges(const t_world *world, const t_split *split, t_vector *org_edge
 	vector_init(new_edges, sizeof(*edge));
 	while (index < vector_size(org_edges)) {
 		edge = vector_at(org_edges, index);
-		prim_bounds = get_bounds(world, get_primitive(world, edge->index));
+		side = get_axis_side(world, split, get_primitive(world, edge->index));
 		if (which == ACCEL_BELOW) {
-			if (xyz(prim_bounds.min, split->axis) < split->offset) {
+			if (side <= 0) {
 				/*fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);*/
 				vector_push_back(new_edges, edge);
 			}
 		} else {
-			if (xyz(prim_bounds.max, split->axis) > split->offset) {
+			if (side >= 0) {
 				/*fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);*/
 				vector_push_back(new_edges, edge);
 			}
@@ -298,27 +318,6 @@ void create_interior_node_below(t_node_info *info, t_vector indices, const t_spl
 	vector_destroy(&child_info.edges[2], NULL);
 }
 
-int32_t get_axis_side(
-			const t_world		*world,
-			const t_split		*split,
-			const t_primitive	*primitive)
-{
-	t_bounds	primitive_bounds;
-	FLOAT		max_offset;
-	FLOAT		min_offset;
-	FLOAT		axis_offset;
-
-	primitive_bounds = get_bounds(world, primitive);
-	max_offset = xyz(primitive_bounds.max, split->axis);
-	min_offset = xyz(primitive_bounds.min, split->axis);
-	axis_offset = split->offset;
-	if (max_offset >= axis_offset && min_offset >= axis_offset)
-		return (1); /* probably above, might be the wrong way around with below */
-	else if (max_offset <= axis_offset && min_offset <= axis_offset)
-		return (-1);
-	return (0); /* object is in the axis */
-}
-
 void
 	split_indices(t_node_info *info, const t_split *split, t_vector sub_indices[2]) {
 	uint64_t	index;
@@ -363,8 +362,9 @@ int32_t try_create_and_add_interior_nodes(t_node_info *info) {
 }
 
 void build_tree(t_node_info *info) {
+	rt_assert(info->offset != 1627, "breakpoint");
 	/*fprintf(stderr, "x count: %zu, y count: %zu, z count: %zu\n", vector_size(&info->edges[0]), vector_size(&info->edges[1]), vector_size(&info->edges[2]));*/
-	if (info->depth == 0 || vector_size(&info->indices) < RT_MAX_PRIMITIVES)
+	if (info->depth == 0 || vector_size(&info->indices) <= RT_MAX_PRIMITIVES)
 	{
 		leaf_node_init(info);
 		return;
@@ -426,10 +426,10 @@ int32_t
 	edge1 = edge1_ptr;
 	if (edge0->offset != edge1->offset)
 		return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
-	else if (edge0->index != edge1->index)
-		return ((edge0->type == EDGE_START) - (edge1->type == EDGE_START));
+	else if (edge0->type != edge1->type)
+		return ((edge0->type > edge1->type) - (edge0->type < edge1->type));
 	else
-		return ((edge0->type == EDGE_END) - (edge1->type == EDGE_END));
+		return ((edge0->index > edge1->index) - (edge0->index < edge1->index));
 }
 
 void get_edges(const t_world *world, t_vector *indices, t_vector edges[3]) {
@@ -443,8 +443,8 @@ void get_edges(const t_world *world, t_vector *indices, t_vector edges[3]) {
 }
 
 uint32_t accel_max_depth(const t_world *world) {
-	return (4);
 	return (8.0 + 1.3 * log2(world->primitives_count));
+	return (16);
 }
 
 /* This function is only meant to be called for the root node */

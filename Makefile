@@ -6,7 +6,7 @@ MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c p
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c
-WORLD_FILES				:= impl.c intersect.c primitive.c accel_new.c node.c
+WORLD_FILES				:= impl.c intersect.c primitive.c accel.c node.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c comment.c world.c
 BASE_FILES				:= main.c
 
@@ -92,7 +92,7 @@ ifndef san
 endif 
 
 ifeq ($(config), debug)
-	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
+	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
@@ -111,8 +111,8 @@ else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -O2 -pg
 	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto -march=native
-	LFLAGS		+= -g0 -Ofast -flto -march=native
+	CFLAGS		+= -g0 -O3 -flto -march=native
+	LFLAGS		+= -g0 -O3 -flto -march=native
 else
 $(error "invalid config $(config"))
 endif

@@ -62,30 +62,32 @@ void
 	i = 0;
 	while (i < depth)
 	{
-		printf("  ");
+		fprintf(stderr, "  ");
 		i += 1;
 	}
 	node = &world->accel_nodes[offset];
 	if (is_leaf(*node))
 	{
 #ifdef RT_VERBOSE
-		printf("leaf %d (%f %f %f | %f %f %f), %d\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive);
+		if (nprims(*node) == 1)
+			fprintf(stderr, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
+		else
+			fprintf(stderr, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
 #else
-
-		printf("leaf %d\n", (int) nprims(*node));
+		fprintf(stderr, "leaf %d\n", (int) nprims(*node));
 #endif
 	}
 	else
 	{
 #ifdef RT_VERBOSE
-		printf("branch (%f %f %f | %f %f %f) (%f %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node));
+		fprintf(stderr, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
 #else
-		printf("branch\n");
+		fprintf(stderr, "branch\n");
 #endif
-		vec = vec_set(min, split_axis(*node), split_pos(*node));
-		dump_tree(world, offset + 1, depth + 1, vec, max);
 		vec = vec_set(max, split_axis(*node), split_pos(*node));
-		dump_tree(world, above_child(*node), depth + 1, min, vec);
+		dump_tree(world, offset + 1, depth + 1, min, vec);
+		vec = vec_set(min, split_axis(*node), split_pos(*node));
+		dump_tree(world, above_child(*node), depth + 1, vec, max);
 	}
 }
 
@@ -113,7 +115,7 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 50;
+	world.img_meta.samples = 1;
 	if (argc == 1)
 		world_gen(&world);
 	else
@@ -121,6 +123,7 @@ int
 	world_accel(&world);
 	printf("%d\n", (int) world.accel_nodes_count);
 	dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL));
+	return (EXIT_SUCCESS);
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

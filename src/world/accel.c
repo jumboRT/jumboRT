@@ -97,39 +97,6 @@ int32_t get_axis_side(
 	return (0); /* object is in the axis */
 }
 
-void
-	get_bounds_info(
-			t_split_axis	split_axis,
-			const t_world	*world,
-			t_vector		*indices,
-			t_bounds		sub_bounds[2],
-			uint32_t		primitive_count[2])
-{
-	uint64_t			index;
-	int32_t				side;
-	const t_primitive	*primitive;
-
-	sub_bounds[0] = bounds_0();
-	sub_bounds[1] = bounds_0();
-	index = 0;
-	while (index < vector_size(indices))
-	{
-		primitive = get_primitive(world, *(uint32_t *) vector_at(indices, index));
-		side = get_axis_side(world, split_axis, primitive);
-		if (side <= 0)
-		{
-			primitive_count[0] += 1;
-			sub_bounds[0] = bounds_max(sub_bounds[0], get_bounds(world, primitive));
-		}
-		if (side >= 0)
-		{
-			primitive_count[1] += 1;
-			sub_bounds[1] = bounds_max(sub_bounds[1], get_bounds(world, primitive));
-		}
-		index++;
-	}
-}
-
 t_bounds
 	get_total_bounds(
 			const t_world	*world,
@@ -180,7 +147,7 @@ FLOAT
 
 	cost = (RT_TRAVERSAL_COST +
 			RT_INTERSECT_COST *
-			(1.0 - (RT_EMPTY_BONUS * (primitive_counts[0] == 0 || primitive_counts[1] == 1))) *
+			(1.0 - (RT_EMPTY_BONUS * (primitive_counts[0] == 0 || primitive_counts[1] == 0))) *
 			(below_chance * primitive_counts[0] +
 			 above_chance * primitive_counts[1]));
 	return (cost);
@@ -305,10 +272,10 @@ int32_t
 	edge1 = edge1_ptr;
 	if (edge0->offset != edge1->offset)
 		return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
-	else if (edge0->index != edge1->index)
-		return ((edge0->type == EDGE_START) - (edge1->type == EDGE_START));
+	else if (edge0->type != edge1->type)
+		return ((edge0->type > edge1->type) - (edge0->type < edge1->type));
 	else
-		return ((edge0->type == EDGE_END) - (edge1->type == EDGE_END));
+		return ((edge0->index > edge1->index) - (edge0->index < edge1->index));
 }
 
 struct s_find_best_axis_ctx {
@@ -562,6 +529,7 @@ void
 			uint32_t		depth,
 			const t_bounds	total_bounds)	
 {
+	rt_assert(parent_offset != 1627, "breakpoint");
 	if (vector_size(indices) <= RT_MAX_PRIMITIVES || depth == 0)
 	{
 		leaf_node_init(parent_offset, world, indices);
@@ -578,8 +546,8 @@ uint32_t
 	accel_get_max_depth(const t_world *world)
 {
 	fprintf(stderr, "%f vs %f\n", 8.0 + 1.3 * log(world->primitives_count), 8.0 + 1.3 * log2(world->primitives_count));
-	return (4);
 	return (8.0 + 1.3 * log2(world->primitives_count));
+	return (16);
 }
 
 void
@@ -593,7 +561,7 @@ void
 	t_pool				pool;
 
 	index = 0;
-	pool_create(&pool, 3);
+	pool_create(&pool, 0);
 	vector_init(&all_indices, sizeof(uint32_t));
 	world_add_accel_node(world, &root);
 	while (index < world->primitives_size / RT_PRIMITIVE_ALIGN)

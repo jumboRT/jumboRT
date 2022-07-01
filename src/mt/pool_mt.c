@@ -38,8 +38,8 @@ static void
 	item->jobs->start(item->jobs->ctx, item->jobs->results, item->id);
 	mutex_lock(&item->jobs->pool->mtx);
 	item->jobs->done += 1;
-	mutex_unlock(&item->jobs->pool->mtx);
 	cond_broadcast(&item->jobs->pool->cnd);
+	mutex_unlock(&item->jobs->pool->mtx);
 }
 
 void
