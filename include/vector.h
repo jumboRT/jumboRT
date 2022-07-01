@@ -23,6 +23,7 @@ struct s_range {
 };
 
 void	vector_init(t_vector *vec, size_t elem_size);
+void	vector_init_capacity(t_vector *vec, size_t elem_size, size_t capacity);
 void	vector_view(t_vector *vec, t_vector *parent, size_t begin, size_t size);
 void	vector_destroy(t_vector *vec, t_destroy destroy);
 void	vector_push_back(t_vector *vec, const void *ptr);

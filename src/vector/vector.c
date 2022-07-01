@@ -12,6 +12,15 @@ void
 }
 
 void
+	vector_init_capacity(t_vector *vec, size_t elem_size, size_t capacity)
+{
+	vec->data = rt_malloc(capacity * elem_size);
+	vec->size = 0;
+	vec->capacity = capacity * elem_size;
+	vec->elem_size = elem_size;
+}
+
+void
 	vector_view(t_vector *vec, t_vector *parent, size_t begin, size_t size)
 {
 	vec->data = (char *) parent->data + begin * parent->elem_size;

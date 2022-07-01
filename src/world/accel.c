@@ -529,7 +529,6 @@ void
 			uint32_t		depth,
 			const t_bounds	total_bounds)	
 {
-	rt_assert(parent_offset != 1627, "breakpoint");
 	if (vector_size(indices) <= RT_MAX_PRIMITIVES || depth == 0)
 	{
 		leaf_node_init(parent_offset, world, indices);

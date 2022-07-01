@@ -62,7 +62,7 @@ void
 	i = 0;
 	while (i < depth)
 	{
-		fprintf(stderr, "  ");
+		fprintf(stdout, "  ");
 		i += 1;
 	}
 	node = &world->accel_nodes[offset];
@@ -70,19 +70,19 @@ void
 	{
 #ifdef RT_VERBOSE
 		if (nprims(*node) == 1)
-			fprintf(stderr, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
 		else
-			fprintf(stderr, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
 #else
-		fprintf(stderr, "leaf %d\n", (int) nprims(*node));
+		fprintf(stdout, "leaf %d\n", (int) nprims(*node));
 #endif
 	}
 	else
 	{
 #ifdef RT_VERBOSE
-		fprintf(stderr, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
+		fprintf(stdout, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
 #else
-		fprintf(stderr, "branch\n");
+		fprintf(stdout, "branch\n");
 #endif
 		vec = vec_set(max, split_axis(*node), split_pos(*node));
 		dump_tree(world, offset + 1, depth + 1, min, vec);
@@ -122,8 +122,7 @@ int
 		world_load(&world, argv[1]);
 	world_accel(&world);
 	printf("%d\n", (int) world.accel_nodes_count);
-	dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL));
-	return (EXIT_SUCCESS);
+	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;

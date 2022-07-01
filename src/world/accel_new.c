@@ -205,12 +205,21 @@ int32_t find_best_split(t_node_info *info, t_split *out) {
 	t_jobs_item	items[3];
 	t_split		results[3];
 
-	jobs.start = get_best_split_job;
-	jobs.ctx = info;
-	jobs.items = items;
-	jobs.count = 3;
-	jobs.results = results;
-	pool_run(info->pool, &jobs);
+	if (vector_size(&info->indices) >= 2000)
+	{
+		jobs.start = get_best_split_job;
+		jobs.ctx = info;
+		jobs.items = items;
+		jobs.count = 3;
+		jobs.results = results;
+		pool_run(info->pool, &jobs);
+	}
+	else
+	{
+		get_best_split_job(info, results, 0);
+		get_best_split_job(info, results, 1);
+		get_best_split_job(info, results, 2);
+	}
 
 	if (split_cmp(results[1], results[0]) < 0)
 		results[0] = results[1];
@@ -247,33 +256,28 @@ int32_t get_axis_side(
 }
 
 /* filter edges must be a pointer to two vectors of edges */
-void filter_edges(const t_world *world, const t_split *split, t_vector *org_edges, t_vector *new_edges, int32_t which) {
+void filter_edges(const t_world *world, const t_split *split, t_vector *org_edges, t_vector *new_edges, t_vector *indices) {
 	size_t			index;
 	int32_t			side;;
 	const t_edge	*edge;
 
-	rt_assert(which == ACCEL_ABOVE || which == ACCEL_BELOW, "invalid which in filter_edges");
 	index = 0;
-	vector_init(new_edges, sizeof(*edge));
+	vector_init_capacity(&new_edges[ACCEL_BELOW], sizeof(*edge), vector_size(&indices[ACCEL_BELOW]));
+	vector_init_capacity(&new_edges[ACCEL_ABOVE], sizeof(*edge), vector_size(&indices[ACCEL_ABOVE]));
 	while (index < vector_size(org_edges)) {
 		edge = vector_at(org_edges, index);
 		side = get_axis_side(world, split, get_primitive(world, edge->index));
-		if (which == ACCEL_BELOW) {
-			if (side <= 0) {
-				/*fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);*/
-				vector_push_back(new_edges, edge);
-			}
-		} else {
-			if (side >= 0) {
-				/*fprintf(stderr, "which:%d, split offset:%f axis:%d, min offset:%f max offset:%f index:%d\n", which, split->offset, split->axis, xyz(prim_bounds.min, split->axis), xyz(prim_bounds.max, split->axis), edge->index);*/
-				vector_push_back(new_edges, edge);
-			}
+		if (side <= 0) {
+			vector_push_back(&new_edges[ACCEL_BELOW], edge);
+		}
+		if (side >= 0) {
+			vector_push_back(&new_edges[ACCEL_ABOVE], edge);
 		}
 		++index;
 	}
 }
 
-void create_interior_node_above(t_node_info *info, t_vector indices, const t_split *split) {
+void create_interior_node_above(t_node_info *info, t_vector indices, const t_split *split, t_vector *edges) {
 	t_bounds	child_bounds;
 	t_node_info	child_info;
 	uint32_t	offset;
@@ -286,17 +290,14 @@ void create_interior_node_above(t_node_info *info, t_vector indices, const t_spl
 	child_info.bounds = child_bounds;
 	child_info.depth = info->depth - 1;
 	child_info.pool = info->pool;
-	filter_edges(info->world, split, &info->edges[0], &child_info.edges[0], ACCEL_ABOVE);
-	filter_edges(info->world, split, &info->edges[1], &child_info.edges[1], ACCEL_ABOVE);
-	filter_edges(info->world, split, &info->edges[2], &child_info.edges[2], ACCEL_ABOVE);
+	child_info.edges[0] = edges[0];
+	child_info.edges[1] = edges[2];
+	child_info.edges[2] = edges[4];
 	interior_node_init(info, &child_info, split);
 	build_tree(&child_info);
-	vector_destroy(&child_info.edges[0], NULL);
-	vector_destroy(&child_info.edges[1], NULL);
-	vector_destroy(&child_info.edges[2], NULL);
 }
 
-void create_interior_node_below(t_node_info *info, t_vector indices, const t_split *split) {
+void create_interior_node_below(t_node_info *info, t_vector indices, const t_split *split, t_vector *edges) {
 	t_bounds	child_bounds;
 	t_node_info	child_info;
 	uint32_t	offset;
@@ -309,13 +310,10 @@ void create_interior_node_below(t_node_info *info, t_vector indices, const t_spl
 	child_info.bounds = child_bounds;
 	child_info.depth = info->depth - 1;
 	child_info.pool = info->pool;
-	filter_edges(info->world, split, &info->edges[0], &child_info.edges[0], ACCEL_BELOW);
-	filter_edges(info->world, split, &info->edges[1], &child_info.edges[1], ACCEL_BELOW);
-	filter_edges(info->world, split, &info->edges[2], &child_info.edges[2], ACCEL_BELOW);
+	child_info.edges[0] = edges[0];
+	child_info.edges[1] = edges[2];
+	child_info.edges[2] = edges[4];
 	build_tree(&child_info);
-	vector_destroy(&child_info.edges[0], NULL);
-	vector_destroy(&child_info.edges[1], NULL);
-	vector_destroy(&child_info.edges[2], NULL);
 }
 
 void
@@ -324,8 +322,8 @@ void
 	int32_t		side;
 
 	index = 0;
-	vector_init(&sub_indices[ACCEL_BELOW], sizeof(uint32_t));
-	vector_init(&sub_indices[ACCEL_ABOVE], sizeof(uint32_t));
+	vector_init_capacity(&sub_indices[ACCEL_BELOW], sizeof(uint32_t), split->prim_count[ACCEL_BELOW]);
+	vector_init_capacity(&sub_indices[ACCEL_ABOVE], sizeof(uint32_t), split->prim_count[ACCEL_ABOVE]);
 	while (index < vector_size(&info->indices))
 	{
 		side = get_axis_side(info->world, split, get_primitive(info->world, *(uint32_t *) vector_at(&info->indices, index)));
@@ -344,12 +342,22 @@ void
 
 void create_and_add_interior_nodes(t_node_info *info, const t_split *split) {
 	t_vector	child_indices[2];
+	t_vector	child_edges[6];
 
 	split_indices(info, split, child_indices);
-	create_interior_node_below(info, child_indices[ACCEL_BELOW], split);
-	create_interior_node_above(info, child_indices[ACCEL_ABOVE], split);
+	filter_edges(info->world, split, &info->edges[0], child_edges + 0, child_indices);
+	filter_edges(info->world, split, &info->edges[1], child_edges + 2, child_indices);
+	filter_edges(info->world, split, &info->edges[2], child_edges + 4, child_indices);
+	create_interior_node_below(info, child_indices[ACCEL_BELOW], split, child_edges + 0);
+	create_interior_node_above(info, child_indices[ACCEL_ABOVE], split, child_edges + 1);
 	vector_destroy(&child_indices[ACCEL_BELOW], NULL);
 	vector_destroy(&child_indices[ACCEL_ABOVE], NULL);
+	vector_destroy(&child_edges[0], NULL);
+	vector_destroy(&child_edges[1], NULL);
+	vector_destroy(&child_edges[2], NULL);
+	vector_destroy(&child_edges[3], NULL);
+	vector_destroy(&child_edges[4], NULL);
+	vector_destroy(&child_edges[5], NULL);
 }
 
 int32_t try_create_and_add_interior_nodes(t_node_info *info) {
@@ -362,7 +370,6 @@ int32_t try_create_and_add_interior_nodes(t_node_info *info) {
 }
 
 void build_tree(t_node_info *info) {
-	rt_assert(info->offset != 1627, "breakpoint");
 	/*fprintf(stderr, "x count: %zu, y count: %zu, z count: %zu\n", vector_size(&info->edges[0]), vector_size(&info->edges[1]), vector_size(&info->edges[2]));*/
 	if (info->depth == 0 || vector_size(&info->indices) <= RT_MAX_PRIMITIVES)
 	{
@@ -382,7 +389,7 @@ t_vector get_indices(const t_world *const world) {
 	size_t				index;
 
 	index = 0;
-	vector_init(&indices, sizeof(uint32_t));
+	vector_init_capacity(&indices, sizeof(uint32_t), world->primitives_count);
 	while (index < world->primitives_size / RT_PRIMITIVE_ALIGN) {
 		primitive = get_primitive(world, index);
 		vector_push_back(&indices, &index);
@@ -432,10 +439,28 @@ int32_t
 		return ((edge0->index > edge1->index) - (edge0->index < edge1->index));
 }
 
+int32_t
+	cmp_edge2(const void *edge0_ptr, const void *edge1_ptr)
+{
+	const t_edge	*edge0; 
+	const t_edge	*edge1; 
+
+	edge0 = edge0_ptr;
+	edge1 = edge1_ptr;
+	if (edge0->offset != edge1->offset)
+		return ((edge0->offset > edge1->offset) - (edge0->offset < edge1->offset));
+	else if (edge0->type != edge1->type)
+		return ((edge0->type > edge1->type) - (edge0->type < edge1->type));
+	else
+		return ((edge0->index > edge1->index) - (edge0->index < edge1->index));
+}
+
+#include <stdlib.h>
+
 void get_edges(const t_world *world, t_vector *indices, t_vector edges[3]) {
-	vector_init(&edges[0], sizeof(t_edge));
-	vector_init(&edges[1], sizeof(t_edge));
-	vector_init(&edges[2], sizeof(t_edge));
+	vector_init_capacity(&edges[0], sizeof(t_edge), vector_size(indices) * 2);
+	vector_init_capacity(&edges[1], sizeof(t_edge), vector_size(indices) * 2);
+	vector_init_capacity(&edges[2], sizeof(t_edge), vector_size(indices) * 2);
 	add_edges(world, indices, edges);
 	vector_sort(&edges[0], cmp_edge, NULL);
 	vector_sort(&edges[1], cmp_edge, NULL);
