@@ -6,7 +6,7 @@ lines = sys.stdin.readlines()
 vertices = []
 faces = []
 camera = ((0, 0, 0), (1, 0, 0), 90)
-write_bb = ((0.785739, -0.908510, 0.038250), (1.072875, -0.509230, 0.311250))
+# write_bb = ((0.785739, -0.908510, 0.038250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.883179, -0.673730, 0.038250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.883179, -0.673730, 0.192250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.935566, -0.631730, 0.213250), (0.967875, -0.600230, 0.234250))
@@ -77,12 +77,12 @@ def intersect_bb(bb1, bb2):
                 return True
     return False
 
-new_faces = []
-for face in faces:
-    bb = make_bb([vertices[i] for i in face])
-    if intersect_bb(bb, write_bb):
-        new_faces.append(face)
-faces = new_faces
+# new_faces = []
+# for face in faces:
+#     bb = make_bb([vertices[i] for i in face])
+#     if intersect_bb(bb, write_bb):
+#         new_faces.append(face)
+# faces = new_faces
 
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
@@ -90,4 +90,4 @@ sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:
 for vertex in vertices:
     sys.stdout.write(f"v {str_vertex(vertex)}\n")
 for face in faces:
-    sys.stdout.write(f"tr {face[0]} {face[1]} {face[2]}\n")
+        sys.stdout.write(f"tr {face[0]} {face[1]} {face[2]}\n")

@@ -10,7 +10,7 @@
 void build_tree(t_node_info *info);
 
 t_vec get_vertex(const t_world *world, uint32_t index) {
-	rt_assert(index < world->vertices_count, "out of bounds access in get_vertex");
+	/* rt_assert(index < world->vertices_count, "out of bounds access in get_vertex"); */
 	return (world->vertices[index].pos);
 }
 
@@ -39,7 +39,7 @@ t_bounds get_bounds(const t_world *world, const t_primitive *primitive) {
 }
 
 const t_primitive *get_primitive(const t_world *world, uint32_t offset) {
-	rt_assert(offset * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive");
+	/* rt_assert(offset * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive"); */
 	return (
 			(const t_primitive *)
 			((const char *) world->primitives +
@@ -205,7 +205,7 @@ int32_t find_best_split(t_node_info *info, t_split *out) {
 	t_jobs_item	items[3];
 	t_split		results[3];
 
-	if (vector_size(&info->indices) >= 2000)
+	if (vector_size(&info->indices) >= 100 && 0)
 	{
 		jobs.start = get_best_split_job;
 		jobs.ctx = info;
