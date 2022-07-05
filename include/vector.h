@@ -5,33 +5,31 @@
 
 # include <stddef.h>
 
-typedef void			(*t_destroy)(void *ptr);
-typedef int				(*t_compare)(const void *a, const void *b, void *ctx);
+typedef struct s_view	t_view;
 typedef struct s_vector	t_vector;
-typedef struct s_range	t_range;
+typedef void			(*t_function)(void *element);
+typedef int				(*t_compare)(const void *lhs, const void *rhs);
 
-struct s_vector {
+struct s_view {
 	void	*data;
 	size_t	size;
-	size_t	capacity;
 	size_t	elem_size;
 };
 
-struct s_range {
-	size_t	min;
-	size_t	max;
+struct s_vector {
+	t_view	view;
+	size_t	capacity;
 };
 
-void	vector_init(t_vector *vec, size_t elem_size);
-void	vector_init_capacity(t_vector *vec, size_t elem_size, size_t capacity);
-void	vector_view(t_vector *vec, t_vector *parent, size_t begin, size_t size);
-void	vector_destroy(t_vector *vec, t_destroy destroy);
-void	vector_push_back(t_vector *vec, const void *ptr);
-size_t	vector_size(t_vector *vec);
-void	*vector_at(t_vector *vec, size_t index);
-void	*vector_front(t_vector *vec);
-void	*vector_back(t_vector *vec);
-void	vector_swap(t_vector *vec, size_t a, size_t b);
-void	vector_sort(t_vector *vec, t_compare compare, void *ctx);
+void	vector_create(t_vector *vector, size_t elem_size, size_t capacity);
+void	vector_destroy(t_vector *vector, t_function destroy);
+void	vector_push(t_vector *vector, void *element);
+
+t_view	view_view(t_view view, size_t index, size_t size);
+size_t	view_size(t_view view);
+void	*view_get(t_view view, size_t index);
+void	view_each(t_view view, t_function func);
+void	view_swap(t_view view, size_t a, size_t b);
+void	view_sort(t_view view, t_compare cmp);
 
 #endif

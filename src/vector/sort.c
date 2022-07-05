@@ -1,46 +1,43 @@
 #include "vector.h"
 
 static size_t
-	vector_sort_median(t_vector *vec, t_range range, t_compare compare, void *ctx)
+	median(t_view view, t_compare cmp)
 {
-	size_t	lo;
-	size_t	hi;
-	size_t	mi;
+	const size_t	bot = 0;
+	const size_t	top = view_size(view) - 1;
+	const size_t	mid = (bot + top) / 2;
 
-	lo = range.min;
-	hi = range.max - 1;
-	mi = (lo + hi) / 2;
-	if (compare(vector_at(vec, lo), vector_at(vec, mi), ctx) > 0)
-		vector_swap(vec, lo, mi);
-	if (compare(vector_at(vec, lo), vector_at(vec, hi), ctx) > 0)
-		vector_swap(vec, lo, hi);
-	if (compare(vector_at(vec, mi), vector_at(vec, hi), ctx) > 0)
-		vector_swap(vec, mi, hi);
-	return (mi);
+	if (cmp(view_get(view, bot), view_get(view, mid)) > 0)
+		view_swap(view, bot, mid);
+	if (cmp(view_get(view, bot), view_get(view, top)) > 0)
+		view_swap(view, bot, top);
+	if (cmp(view_get(view, mid), view_get(view, top)) > 0)
+		view_swap(view, mid, top);
+	return (mid);
 }
 
 static size_t
-	vector_partition(t_vector *vec, t_range range, t_compare compare, void *ctx)
+	partition(t_view view, t_compare cmp)
 {
 	size_t	p;
 	size_t	i;
 	size_t	j;
 	void	*pivot;
 
-	p = vector_sort_median(vec, range, compare, ctx);
-	vector_swap(vec, range.min, p);
-	i = range.min - 1;
-	j = range.max;
+	p = median(view, cmp);
+	view_swap(view, 0, p);
+	i = (size_t) 0 - 1;
+	j = view_size(view);
 	while (1)
 	{
-		pivot = vector_at(vec, p);
-		while (compare(vector_at(vec, ++i), pivot, ctx) < 0)
+		pivot = view_get(view, p);
+		while (cmp(view_get(view, ++i), pivot) < 0)
 			continue ;
-		while (compare(vector_at(vec, --j), pivot, ctx) > 0)
+		while (cmp(view_get(view, --j), pivot) > 0)
 			continue ;
 		if (i >= j)
 			return (j + 1);
-		vector_swap(vec, i, j);
+		view_swap(view, i, j);
 		if (i == p)
 			p = j;
 		else if (j == p)
@@ -48,40 +45,32 @@ static size_t
 	}
 }
 
-static void
-	vector_quicksort(t_vector *vec, t_range range, t_compare compare, void *ctx)
+void
+	view_sort(t_view view, t_compare cmp)
 {
 	size_t	mid;
-	t_range	tmp;
+	size_t	end;
 
-	if (range.min + 2 == range.max)
+	if (view_size(view) == 2)
 	{
-		if (compare(vector_at(vec, range.min), vector_at(vec, range.min + 1), ctx) > 0)
-			vector_swap(vec, range.min, range.min + 1);
+		if (cmp(view_get(view, 0), view_get(view, 1)) > 0)
+			view_swap(view, 0, 1);
 	}
-	else if (range.min + 3 == range.max)
+	else if (view_size(view) == 3)
 	{
-		vector_sort_median(vec, range, compare, ctx);
+		if (cmp(view_get(view, 0), view_get(view, 1)) > 0)
+			view_swap(view, 0, 1);
+		if (cmp(view_get(view, 0), view_get(view, 2)) > 0)
+			view_swap(view, 0, 2);
+		if (cmp(view_get(view, 1), view_get(view, 2)) > 0)
+			view_swap(view, 1, 2);
 	}
-	else if (range.min + 1 < range.max)
+	else if (view_size(view) >= 4)
 	{
-		mid = vector_partition(vec, range, compare, ctx);
-		tmp.min = range.min;
-		tmp.max = mid;
-		vector_quicksort(vec, tmp, compare, ctx);
-		tmp.min = mid;
-		tmp.max = range.max;
-		vector_quicksort(vec, tmp, compare, ctx);
+		mid = partition(view, cmp);
+		view_sort(view_view(view, 0, mid), cmp);
+		end = view_size(view) - mid;
+		view_sort(view_view(view, mid, end), cmp);
 	}
-}
-
-void
-	vector_sort(t_vector *vec, t_compare compare, void *ctx)
-{
-	t_range	range;
-
-	range.min = 0;
-	range.max = vector_size(vec);
-	vector_quicksort(vec, range, compare, ctx);
 }
 

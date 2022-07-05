@@ -6,40 +6,30 @@
 static void
 	*pool_create_int(void *ctx)
 {
-	t_pool_item	item;
+	t_task_item	item;
 	t_pool		*pool;
 	size_t		new_size;
 
 	pool = ctx;
+	mutex_lock(&pool->mtx);
 	while (1)
 	{
-		mutex_lock(&pool->mtx);
 		while (pool->size < sizeof(item) && !pool->stop)
 			cond_wait(&pool->cnd, &pool->mtx);
 		if (pool->stop)
-		{
-			mutex_unlock(&pool->mtx);
-			return (NULL);
-		}
+			break ;
 		new_size = pool->size - sizeof(item);
 		rt_memcpy(&item, (char *) pool->data + new_size, sizeof(item));
 		pool->size = new_size;
 		mutex_unlock(&pool->mtx);
-		item.start(item.ctx);
+		item.task->start(item.task->ctx, item.id);
+		mutex_lock(&pool->mtx);
+		item.task->done += 1;
+		if (item.task->done == item.task->count)
+			cond_broadcast(&pool->cnd);
 	}
-}
-
-static void
-	pool_run_int(void *ctx)
-{
-	t_jobs_item	*item;
-
-	item = ctx;
-	item->jobs->start(item->jobs->ctx, item->jobs->results, item->id);
-	mutex_lock(&item->jobs->pool->mtx);
-	item->jobs->done += 1;
-	cond_broadcast(&item->jobs->pool->cnd);
-	mutex_unlock(&item->jobs->pool->mtx);
+	mutex_unlock(&pool->mtx);
+	return (NULL);
 }
 
 void
@@ -85,14 +75,16 @@ void
 }
 
 void
-	pool_add(t_pool *pool, t_pool_start start, void *ctx)
+	pool_fork(t_pool *pool, t_task *task)
 {
-	t_pool_item	item;
+	t_task_item	item;
 	size_t		old_size;
 	size_t		new_size;
 
-	item.start = start;
-	item.ctx = ctx;
+	item.task = task;
+	item.id = pool->count;
+	pool->count += 1;
+
 	mutex_lock(&pool->mtx);
 	old_size = pool->size;
 	new_size = old_size + sizeof(item);
@@ -104,45 +96,12 @@ void
 }
 
 void
-	pool_wait(t_pool *pool, t_jobs *jobs)
+	pool_join(t_pool *pool, t_task *task)
 {
-	t_pool_item	item;
-	size_t		new_size;
-
-	while (1)
-	{
-		mutex_lock(&pool->mtx);
-		while (pool->size < sizeof(item) && jobs->done < jobs->count)
-			cond_wait(&pool->cnd, &pool->mtx);
-		if (jobs->done >= jobs->count)
-		{
-			mutex_unlock(&pool->mtx);
-			return ;
-		}
-		new_size = pool->size - sizeof(item);
-		rt_memcpy(&item, (char *) pool->data + new_size, sizeof(item));
-		pool->size = new_size;
-		mutex_unlock(&pool->mtx);
-		item.start(item.ctx);
-	}
-}
-
-void
-	pool_run(t_pool *pool, t_jobs *jobs)
-{
-	size_t	i;
-
-	jobs->pool = pool;
-	jobs->done = 0;
-	i = 0;
-	while (i < jobs->count)
-	{
-		jobs->items[i].jobs = jobs;
-		jobs->items[i].id = i;
-		pool_add(pool, pool_run_int, &jobs->items[i]);
-		i += 1;
-	}
-	pool_wait(pool, jobs);
+	mutex_lock(&pool->mtx);
+	while (task->done < task->count)
+		cond_wait(&pool->cnd, &pool->mtx);
+	mutex_unlock(&pool->mtx);
 }
 
 #endif

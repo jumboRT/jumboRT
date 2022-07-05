@@ -6,17 +6,10 @@
 
 # include <stddef.h>
 
-typedef struct s_pool_item	t_pool_item;
 typedef struct s_pool		t_pool;
-typedef struct s_jobs_item	t_jobs_item;
-typedef struct s_jobs		t_jobs;
-typedef void				(*t_pool_start)(void *ctx);
-typedef void				(*t_jobs_start)(void *ctx, void *result, size_t id);
-
-struct s_pool_item {
-	t_pool_start	start;
-	void			*ctx;
-};
+typedef struct s_task		t_task;
+typedef struct s_task_item	t_task_item;
+typedef void				(*t_pool_start)(void *ctx, size_t id);
 
 struct s_pool {
 	t_thread	*threads;
@@ -29,25 +22,22 @@ struct s_pool {
 	int			stop;
 };
 
-struct s_jobs_item {
-	t_jobs			*jobs;
-	size_t			id;
-};
-
-struct s_jobs {
-	t_jobs_start	start;
+struct s_task {
+	t_pool_start	start;
 	void			*ctx;
-	t_jobs_item		*items;
 	size_t			count;
-	void			*results;
-	t_pool			*pool;
 	size_t			done;
 };
 
+struct s_task_item {
+	t_task	*task;
+	size_t	id;
+};
+
+void	task_init(t_task *task, t_pool_start start, void *ctx);
 void	pool_create(t_pool *pool, size_t count);
 void	pool_destroy(t_pool *pool);
-void	pool_add(t_pool *pool, t_pool_start start, void *ctx);
-void	pool_wait(t_pool *pool, t_jobs *jobs);
-void	pool_run(t_pool *pool, t_jobs *jobs);
+void	pool_fork(t_pool *pool, t_task *task);
+void	pool_join(t_pool *pool, t_task *task);
 
 #endif

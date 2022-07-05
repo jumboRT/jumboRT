@@ -1,15 +1,15 @@
 #include "pool.h"
 
-#ifndef RT_MT
-
-static void
-	pool_run_int(void *ctx)
+void
+	task_init(t_task *task, t_pool_start start, void *ctx)
 {
-	t_jobs_item	*item;
-
-	item = ctx;
-	item->jobs->start(item->jobs->ctx, item->jobs->results, item->id);
+	task->start = start;
+	task->ctx = ctx;
+	task->count = 0;
+	task->done = 0;
 }
+
+#ifndef RT_MT
 
 void
 	pool_create(t_pool *pool, size_t count)
@@ -25,32 +25,18 @@ void
 }
 
 void
-	pool_add(t_pool *pool, t_pool_start start, void *ctx)
+	pool_fork(t_pool *pool, t_task *task)
 {
-	(void) pool;
-	start(ctx);
+	task->start(task->ctx, task->count);
+	task->count += 1;
+	task->done += 1;
 }
 
 void
-	pool_wait(t_pool *pool, t_jobs *jobs)
+	pool_wait(t_pool *pool, t_task *task)
 {
 	(void) pool;
-	(void) jobs;
-}
-
-void
-	pool_run(t_pool *pool, t_jobs *jobs)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < jobs->count)
-	{
-		jobs->items[i].jobs = jobs;
-		jobs->items[i].id = i;
-		pool_add(pool, pool_run_int, &jobs->items[i]);
-		i += 1;
-	}
+	(void) task;
 }
 
 #endif

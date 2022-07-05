@@ -3,57 +3,31 @@
 #include "util.h"
 
 void
-	vector_init(t_vector *vec, size_t elem_size)
+	vector_create(t_vector *vector, size_t elem_size, size_t capacity)
 {
-	vec->data = NULL;
-	vec->size = 0;
-	vec->capacity = 0;
-	vec->elem_size = elem_size;
+	vector->view.data = rt_malloc(elem_size * capacity);
+	vector->view.size = 0;
+	vector->view.elem_size = elem_size;
+	vector->capacity = capacity;
 }
 
 void
-	vector_init_capacity(t_vector *vec, size_t elem_size, size_t capacity)
+	vector_destroy(t_vector *vector, t_function destroy)
 {
-	vec->data = rt_malloc(capacity * elem_size);
-	vec->size = 0;
-	vec->capacity = capacity * elem_size;
-	vec->elem_size = elem_size;
+	view_each(vector->view, destroy);
+	rt_free(vector->view.data);
 }
 
 void
-	vector_view(t_vector *vec, t_vector *parent, size_t begin, size_t size)
-{
-	vec->data = (char *) parent->data + begin * parent->elem_size;
-	vec->size = size * parent->elem_size;
-	vec->capacity = 0;
-	vec->elem_size = parent->elem_size;
-}
-
-void
-	vector_destroy(t_vector *vec, t_destroy destroy)
-{
-	size_t	i;
-
-	if (destroy != NULL)
-	{
-		i = 0;
-		while (i < vector_size(vec))
-		{
-			destroy(vector_at(vec, i));
-			i += 1;
-		}
-	}
-	rt_free(vec->data);
-}
-
-void
-	vector_push_back(t_vector *vec, const void *ptr)
+	vector_push(t_vector *vector, void *element)
 {
 	size_t	index;
+	t_view	*view;
 
-	index = vector_size(vec);
-	vec->size += vec->elem_size;
-	vec->data = rt_reallog(vec->data, &vec->capacity, vec->size);
-	rt_memcpy(vector_at(vec, index), ptr, vec->elem_size);
+	view = &vector->view;
+	index = view_size(*view);
+	view->size += view->elem_size;
+	view->data = rt_reallog(view->data, &vector->capacity, view->size);
+	rt_memcpy(view_get(*view, index), element, view->elem_size);
 }
 
