@@ -82,8 +82,8 @@ void
 	size_t		new_size;
 
 	item.task = task;
-	item.id = pool->count;
-	pool->count += 1;
+	item.id = task->count;
+	task->count += 1;
 
 	mutex_lock(&pool->mtx);
 	old_size = pool->size;
