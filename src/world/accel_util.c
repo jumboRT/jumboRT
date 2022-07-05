@@ -63,14 +63,14 @@ static uint32_t push_back_indices(t_tree_info *tree_info, t_tree_edges *edges) {
 	size_t			index;
 	uint32_t		edge_type;
 
-	edge = &edges->edges[0][0];
-	first_offset = world_add_accel_index(tree_info->world, tree_info->prims[0].index);
+	edge = &edges->edges[AXIS_X][0];
+	first_offset = world_add_accel_index(tree_info->world, tree_info->prims[edge->index].index);
 	edge_type = edge->type;
 	index = 1;
 	while (index < edges->count) {
-		edge = &edges->edges[0][index];
+		edge = &edges->edges[AXIS_X][index];
 		if (edge->type == edge_type) {
-			world_add_accel_index(tree_info->world, tree_info->prims[index].index);
+			world_add_accel_index(tree_info->world, tree_info->prims[edge->index].index);
 		}
 		++index;
 	}
