@@ -9,7 +9,7 @@ SRC=\
 INC=\
 	ft_printf.h
 OBJ=$(SRC:.c=.o)
-CFLAGS=-Wall -Wextra -Werror -ansi -pedantic -O3
+CFLAGS=-Wall -Wextra -Werror -ansi -pedantic -Ofast -march=native
 NAME=libftprintf.a
 
 BLACK			:="\033[0;30m"

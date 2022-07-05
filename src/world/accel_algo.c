@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-void
+static void
 	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
 {
 	const t_edge	*edge;
@@ -34,7 +34,7 @@ void
 	}
 }
 
-int
+static int
 	world_best_split(t_node_info *node, t_split *split)
 {
 	split->cost = RT_HUGE_VAL;
@@ -45,13 +45,13 @@ int
 	return (split->cost < RT_HUGE_VAL);
 }
 
-void
+static void
 	world_split_edges(t_tree_info *tree, t_tree_edges *edges, t_split *split, uint8_t axis)
 {
-	size_t				index;
-	size_t				below;
-	const t_edge		*edge;
-	int					side;
+	size_t			index;
+	size_t			below;
+	const t_edge	*edge;
+	int				side;
 
 	index = 0;
 	below = 0;
@@ -71,10 +71,10 @@ void
 		}
 		index += 1;
 	}
-	edges->edges[axis].view.size = edges->edges[axis].view.elem_size * below;
+	edges->edges[axis].view.size = sizeof(t_edge) * below;
 }
 
-void
+static void
 	world_plant_tree(t_node_info *node)
 {
 	t_split		split;
@@ -113,7 +113,7 @@ void
 
 	world_add_accel_node(world, &root);
 	world_info_create(&tree, &node, world);
-	world_info_init(&tree, world);
+	world_info_init(&tree, &node, world);
 	world_plant_tree(&node);
 	world_info_destroy(&tree, &node);
 }

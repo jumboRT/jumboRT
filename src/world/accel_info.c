@@ -11,7 +11,6 @@ void
 	node->tree = tree;
 	node->offset = 0;
 	node->depth = world_max_depth(world);
-	node->bounds = world_bounds(world);
 	tree->world = world;
 	tree->edges = rt_malloc(sizeof(*tree->edges) * (node->depth + 1));
 	node->edges = tree->edges;
@@ -27,7 +26,7 @@ void
 	}
 }
 
-void
+static void
 	world_info_add_prim(t_tree_info *tree, t_prim_info prim, uint32_t index)
 {
 	t_edge	edge;
@@ -50,7 +49,7 @@ void
 	vector_push(&tree->prims, &prim);
 }
 
-int
+static int
 	world_info_edge_cmp(const void *a_ptr, const void *b_ptr)
 {
 	const t_edge	*const a = a_ptr;
@@ -58,14 +57,12 @@ int
 
 	if (a->offset != b->offset)
 		return ((a->offset > b->offset) - (a->offset < b->offset));
-	else if (a->type != b->type)
-		return ((a->type > b->type) - (a->type < b->type));
 	else
-		return ((a->index > b->index) - (a->index < b->index));
+		return ((a->type > b->type) - (a->type < b->type));
 }
 
 void
-	world_info_init(t_tree_info *tree, t_world *world)
+	world_info_init(t_tree_info *tree, t_node_info *node, t_world *world)
 {
 	size_t		offset;
 	uint32_t	index;
@@ -74,11 +71,13 @@ void
 
 	offset = 0;
 	index = 0;
+	node->bounds = bounds_0();
 	while (offset < world->primitives_size)
 	{
 		primitive = (t_primitive *) ((char *) world->primitives + offset);
 		prim.index = offset / RT_PRIMITIVE_ALIGN;
 		prim.bounds = get_bounds(world, primitive);
+		node->bounds = bounds_max(node->bounds, prim.bounds);
 		world_info_add_prim(tree, prim, index);
 		offset += world_primitive_size(primitive->shape_type);
 		index += 1;

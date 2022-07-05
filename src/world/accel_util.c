@@ -155,26 +155,6 @@ uint32_t	new_node(t_world *world) {
 	return (world_add_accel_node(world, &new_node));
 }
 
-/* TODO: don't use get_bounds() */
-t_bounds world_bounds(const t_world *world) {
-	t_bounds			result;
-	t_bounds			prim_bounds;
-	size_t				index;
-	const t_primitive	*primitive;
-
-	primitive = get_primitive_world(world, 0);
-	result = get_bounds(world, primitive);
-	index = world_primitive_size(primitive->shape_type) / RT_PRIMITIVE_ALIGN;
-	while (index < world->primitives_size / RT_PRIMITIVE_ALIGN) {
-		primitive = get_primitive_world(world, index);
-		prim_bounds = get_bounds(world, primitive);
-		result = bounds_max(result, prim_bounds);
-		index += world_primitive_size(primitive->shape_type) / RT_PRIMITIVE_ALIGN;
-	}
-	return (result);
-}
-
-/* TODO: don't use get_bounds() */
 int world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index) {
 	t_bounds	prim_bounds;
 	FLOAT		min_offset;

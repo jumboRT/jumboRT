@@ -25,7 +25,6 @@ static size_t
 	void	*pivot;
 
 	p = median(view, cmp);
-	view_swap(view, 0, p);
 	i = (size_t) 0 - 1;
 	j = view_size(view);
 	while (1)
@@ -65,7 +64,7 @@ void
 		if (cmp(view_get(view, 1), view_get(view, 2)) > 0)
 			view_swap(view, 1, 2);
 	}
-	else if (view_size(view) >= 4)
+	else if (view_size(view) >= 3)
 	{
 		mid = partition(view, cmp);
 		view_sort(view_view(view, 0, mid), cmp);

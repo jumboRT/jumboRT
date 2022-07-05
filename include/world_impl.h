@@ -77,12 +77,11 @@ uint32_t	world_add_accel_node(t_world *world, t_accel_node *accel_node);
 uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
 
 void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
-void		world_info_init(t_tree_info *tree, t_world *world);
+void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);
 
 /* voor daan */
 uint32_t	world_max_depth(const t_world *world);
-t_bounds	world_bounds(const t_world *world);
 uint32_t	new_node(t_world *world);
 int			world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index);
 
