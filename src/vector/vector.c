@@ -12,6 +12,21 @@ void
 }
 
 void
+	vector_clear(t_vector *vector)
+{
+	vector->view.size = 0;
+}
+
+void
+	vector_move(t_vector *vector, t_vector *other)
+{
+	*vector = *other;
+	other->view.data = NULL;
+	other->view.size = 0;
+	other->capacity = 0;
+}
+
+void
 	vector_destroy(t_vector *vector, t_function destroy)
 {
 	view_each(vector->view, destroy);
@@ -19,7 +34,7 @@ void
 }
 
 void
-	vector_push(t_vector *vector, void *element)
+	vector_push(t_vector *vector, const void *element)
 {
 	size_t	index;
 	t_view	*view;

@@ -17,50 +17,54 @@
 
 # define ACCEL_BELOW 0
 # define ACCEL_ABOVE 1
+# define EDGE_START 0
+# define EDGE_END 1
+# define AXIS_X 0
+# define AXIS_Y 1
+# define AXIS_Z 2
+# define AXIS_NONE 3
 
-typedef struct s_edge			t_edge;
-typedef	struct s_split_axis		t_split_axis;
-typedef struct s_split			t_split;
-typedef struct s_node_info		t_node_info;
+typedef struct s_prim_info	t_prim_info;
+typedef struct s_tree_edges	t_tree_edges;
+typedef struct s_tree_info	t_tree_info;
+typedef struct s_node_info	t_node_info;
+typedef struct s_split		t_split;
+typedef struct s_edge		t_edge;
 
-typedef enum e_edge_type {
-	EDGE_START	= 0,
-	EDGE_END	= 1
-}	t_edge_type;
+struct s_prim_info {
+	uint32_t	index;
+	t_bounds	bounds;
+};
 
-typedef enum e_axis {
-	AXIS_X = 0,
-	AXIS_Y = 1,
-	AXIS_Z = 2,
-	AXIS_NONE= 3
-}	t_axis;
+struct s_tree_edges {
+	t_vector	edges[3];
+};
 
-struct s_split_axis {
-	t_axis	axis;
-	FLOAT	offset;
+struct s_tree_info {
+	t_world			*world;
+	t_vector		prims;
+	t_tree_edges	*edges;
+};
+
+struct s_node_info {
+	t_tree_info		*tree;
+	uint32_t		offset;
+	uint32_t		depth;
+	t_tree_edges	*edges;
+	t_bounds		bounds;
 };
 
 struct s_split {
 	FLOAT		offset;
 	FLOAT		cost;
 	uint32_t	prim_count[2];
-	int32_t		axis;
-};
-
-struct s_node_info {
-	t_world		*world;
-	t_pool		*pool;
-	uint32_t	offset;
-	uint32_t	depth;
-	t_vector	indices;
-	t_bounds	bounds;
-	t_vector	edges[3];
+	uint8_t		axis;
 };
 
 struct s_edge {
 	FLOAT		offset;
-	uint32_t	index;
-	t_edge_type	type;
+	uint32_t	index : 31;
+	uint32_t	type : 1;
 };
 
 void		world_create(t_world *world);
@@ -70,6 +74,22 @@ uint32_t	world_add_material(t_world *world, void *material, size_t size);
 uint32_t	world_add_primitive(t_world *world, void *shape, size_t size);
 uint32_t	world_add_vertex(t_world *world, t_vertex *vertex);
 uint32_t	world_add_accel_node(t_world *world, t_accel_node *accel_node);
-uint32_t	world_add_accel_index(t_world *world, uint32_t *accel_index);
+uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
+
+void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
+void		world_info_init(t_tree_info *tree, t_world *world);
+void		world_info_destroy(t_tree_info *tree, t_node_info *node);
+
+/* voor daan */
+uint32_t	world_max_depth(const t_world *world);
+t_bounds	world_bounds(const t_world *world);
+uint32_t	new_node(t_world *world);
+int			world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index);
+
+const t_primitive	*get_primitive(const t_tree_info *info, size_t index);
+t_bounds			get_bounds(const t_world *world, const t_primitive *primitive);
+void				interior_node_init(t_node_info *parent_info, const t_node_info *above_info, const t_split *split);
+void				leaf_node_init(t_node_info *node_info);
+FLOAT				get_split_cost(const t_bounds bounds, const t_split *split);
 
 #endif

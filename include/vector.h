@@ -22,8 +22,10 @@ struct s_vector {
 };
 
 void	vector_create(t_vector *vector, size_t elem_size, size_t capacity);
+void	vector_clear(t_vector *vector);
+void	vector_move(t_vector *vector, t_vector *other);
 void	vector_destroy(t_vector *vector, t_function destroy);
-void	vector_push(t_vector *vector, void *element);
+void	vector_push(t_vector *vector, const void *element);
 
 t_view	view_view(t_view view, size_t index, size_t size);
 size_t	view_size(t_view view);

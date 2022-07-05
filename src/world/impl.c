@@ -103,15 +103,15 @@ uint32_t
 }
 
 uint32_t
-	world_add_accel_index(t_world *world, uint32_t *accel_index)
+	world_add_accel_index(t_world *world, uint32_t accel_index)
 {
 	size_t	old_size;
 
 	world->accel_indices_count += 1;
 	old_size = world->accel_indices_size;
-	world->accel_indices_size += sizeof(*accel_index);
+	world->accel_indices_size += sizeof(accel_index);
 	world->accel_indices = world_reallog(world->accel_indices, &world->accel_indices_capacity, world->accel_indices_size);
-	ft_memcpy((char *) world->accel_indices + old_size, accel_index, sizeof(*accel_index));
-	return (old_size / sizeof(*accel_index));
+	ft_memcpy((char *) world->accel_indices + old_size, &accel_index, sizeof(accel_index));
+	return (old_size / sizeof(accel_index));
 }
 

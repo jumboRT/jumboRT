@@ -69,7 +69,9 @@ void
 	if (is_leaf(*node))
 	{
 #ifdef RT_VERBOSE
-		if (nprims(*node) == 1)
+		if (nprims(*node) == 0)
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), none (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), offset);
+		else if (nprims(*node) == 1)
 			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
 		else
 			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
@@ -122,7 +124,7 @@ int
 		world_load(&world, argv[1]);
 	world_accel(&world);
 	printf("%d\n", (int) world.accel_nodes_count);
-	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
+	dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL));
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;
