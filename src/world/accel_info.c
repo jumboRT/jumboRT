@@ -6,7 +6,6 @@ void
 	world_info_create(t_tree_info *tree, t_node_info *node, t_world *world)
 {
 	size_t		i;
-	t_vector	*edges;
 
 	node->tree = tree;
 	node->offset = 0;
@@ -14,14 +13,14 @@ void
 	tree->world = world;
 	tree->edges = rt_malloc(sizeof(*tree->edges) * (node->depth + 1));
 	node->edges = tree->edges;
-	vector_create(&tree->prims, sizeof(t_prim_info), world->primitives_count);
+	tree->prims = rt_malloc(sizeof(t_prim_info) * world->primitives_count);
 	i = 0;
 	while (i < node->depth + 1)
 	{
-		edges = tree->edges[i].edges;
-		vector_create(&edges[AXIS_X], sizeof(t_edge), world->primitives_count * 2);
-		vector_create(&edges[AXIS_Y], sizeof(t_edge), world->primitives_count * 2);
-		vector_create(&edges[AXIS_Z], sizeof(t_edge), world->primitives_count * 2);
+		tree->edges[i].count = world->primitives_count * 2;
+		tree->edges[i].edges[AXIS_X] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
+		tree->edges[i].edges[AXIS_Y] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
+		tree->edges[i].edges[AXIS_Z] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
 		i += 1;
 	}
 }
@@ -34,19 +33,19 @@ static void
 	edge.index = index;
 	edge.type = EDGE_START;
 	edge.offset = x(prim.bounds.min);
-	vector_push(&tree->edges[0].edges[AXIS_X], &edge);
+	tree->edges[0].edges[AXIS_X][index * 2 + 0] = edge;
 	edge.offset = y(prim.bounds.min);
-	vector_push(&tree->edges[0].edges[AXIS_Y], &edge);
+	tree->edges[0].edges[AXIS_Y][index * 2 + 0] = edge;
 	edge.offset = z(prim.bounds.min);
-	vector_push(&tree->edges[0].edges[AXIS_Z], &edge);
+	tree->edges[0].edges[AXIS_Z][index * 2 + 0] = edge;
 	edge.type = EDGE_END;
 	edge.offset = x(prim.bounds.max);
-	vector_push(&tree->edges[0].edges[AXIS_X], &edge);
+	tree->edges[0].edges[AXIS_X][index * 2 + 1] = edge;
 	edge.offset = y(prim.bounds.max);
-	vector_push(&tree->edges[0].edges[AXIS_Y], &edge);
+	tree->edges[0].edges[AXIS_Y][index * 2 + 1] = edge;
 	edge.offset = z(prim.bounds.max);
-	vector_push(&tree->edges[0].edges[AXIS_Z], &edge);
-	vector_push(&tree->prims, &prim);
+	tree->edges[0].edges[AXIS_Z][index * 2 + 1] = edge;
+	tree->prims[index] = prim;
 }
 
 static int
@@ -55,10 +54,7 @@ static int
 	const t_edge	*const a = a_ptr;
 	const t_edge	*const b = b_ptr;
 
-	if (a->offset != b->offset)
-		return ((a->offset > b->offset) - (a->offset < b->offset));
-	else
-		return ((a->type > b->type) - (a->type < b->type));
+	return ((a->offset > b->offset) - (a->offset < b->offset));
 }
 
 void
@@ -82,27 +78,25 @@ void
 		offset += world_primitive_size(primitive->shape_type);
 		index += 1;
 	}
-	view_sort(tree->edges[0].edges[AXIS_X].view, world_info_edge_cmp);
-	view_sort(tree->edges[0].edges[AXIS_Y].view, world_info_edge_cmp);
-	view_sort(tree->edges[0].edges[AXIS_Z].view, world_info_edge_cmp);
+	view_sort_array(tree->edges[0].edges[AXIS_X], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
+	view_sort_array(tree->edges[0].edges[AXIS_Y], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
+	view_sort_array(tree->edges[0].edges[AXIS_Z], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
 }
 
 void
 	world_info_destroy(t_tree_info *tree, t_node_info *node)
 {
 	size_t		i;
-	t_vector	*edges;
 
 	i = 0;
 	while (i < node->depth + 1)
 	{
-		edges = tree->edges[i].edges;
-		vector_destroy(&edges[AXIS_X], NULL);
-		vector_destroy(&edges[AXIS_Y], NULL);
-		vector_destroy(&edges[AXIS_Z], NULL);
+		rt_free(tree->edges[i].edges[AXIS_X]);
+		rt_free(tree->edges[i].edges[AXIS_Y]);
+		rt_free(tree->edges[i].edges[AXIS_Z]);
 		i += 1;
 	}
-	vector_destroy(&tree->prims, NULL);
+	rt_free(tree->prims);
 	rt_free(tree->edges);
 }
 

@@ -6,72 +6,78 @@ static void
 	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
 {
 	const t_edge	*edge;
+	const t_edge	*end;
 	t_split			current;
-	size_t			index;
-	t_view			edges;
+	uint32_t		prim_count[2];
+	uint32_t		edge_count[2];
+	int				in_bounds;
 
-	index = 0;
-	edges = node->edges->edges[axis].view;
+	edge = node->edges->edges[axis];
+	end = edge + node->edges->count;
 	current.axis = axis;
-	current.prim_count[ACCEL_BELOW] = 0;
-	current.prim_count[ACCEL_ABOVE] = view_size(edges) / 2;
-	while (index < view_size(edges))
+	prim_count[ACCEL_BELOW] = 0;
+	prim_count[ACCEL_ABOVE] = node->edges->count / 2;
+	while (edge != end)
 	{
-		edge = view_get(edges, index);
-		if (edge->type == EDGE_END)
-			current.prim_count[ACCEL_ABOVE] -= 1;
-		if (edge->offset > xyz(node->bounds.min, axis)
-			&& edge->offset < xyz(node->bounds.max, axis))
+		current.offset = edge->offset;
+		edge_count[EDGE_START] = 0;
+		edge_count[EDGE_END] = 0;
+		while (1)
 		{
-			current.offset = edge->offset;
-			current.cost = get_split_cost(node->bounds, &current);
+			edge_count[edge->type] += 1;
+			edge += 1;
+			if (edge == end || edge->offset != current.offset)
+				break ;
+		}
+		in_bounds = (current.offset > xyz(node->bounds.min, axis)
+			&& current.offset < xyz(node->bounds.max, axis));
+		if (in_bounds && edge_count[EDGE_START] > 0)
+		{
+			current.cost = get_split_cost(node->bounds, &current, prim_count);
 			if (current.cost < best->cost)
 				*best = current;
 		}
-		if (edge->type == EDGE_START)
-			current.prim_count[ACCEL_BELOW] += 1;
-		index += 1;
+		prim_count[ACCEL_BELOW] += edge_count[EDGE_START];
+		prim_count[ACCEL_ABOVE] -= edge_count[EDGE_END];
+		if (in_bounds && edge_count[EDGE_END] > 0)
+		{
+			current.cost = get_split_cost(node->bounds, &current, prim_count);
+			if (current.cost < best->cost)
+				*best = current;
+		}
 	}
-}
-
-static int
-	world_best_split(t_node_info *node, t_split *split)
-{
-	split->cost = RT_HUGE_VAL;
-
-	world_best_split_axis(node, split, AXIS_X);
-	world_best_split_axis(node, split, AXIS_Y);
-	world_best_split_axis(node, split, AXIS_Z);
-	return (split->cost < RT_HUGE_VAL);
 }
 
 static void
-	world_split_edges(t_tree_info *tree, t_tree_edges *edges, t_split *split, uint8_t axis)
+	world_split_edges(t_node_info *node, t_split *split, uint8_t axis, size_t *counts)
 {
-	size_t			index;
-	size_t			below;
-	const t_edge	*edge;
-	int				side;
+	t_edge	*below;
+	t_edge	*above;
+	t_edge	*cur;
+	t_edge	*end;
+	int		side;
 
-	index = 0;
-	below = 0;
-	vector_clear(&(edges + 1)->edges[axis]);
-	while (index < view_size(edges->edges[axis].view))
+	below = node->edges[0].edges[axis];
+	above = node->edges[1].edges[axis];
+	cur = below;
+	end = below + node->edges[0].count;
+	while (cur != end)
 	{
-		edge = view_get(edges->edges[axis].view, index);
-		side = world_axis_side(tree, split, edge->index);
+		side = world_axis_side(node->tree, split, cur->index);
 		if (side <= 0)
 		{
-			vector_push(&(edges + 1)->edges[axis], edge);
+			*above = *cur;
+			above += 1;
 		}
 		if (side >= 0)
 		{
-			*(t_edge *) view_get(edges->edges[axis].view, below) = *edge;
+			*below = *cur;
 			below += 1;
 		}
-		index += 1;
+		cur += 1;
 	}
-	edges->edges[axis].view.size = sizeof(t_edge) * below;
+	counts[0] = below - node->edges[0].edges[axis];
+	counts[1] = above - node->edges[1].edges[axis];
 }
 
 static void
@@ -79,14 +85,21 @@ static void
 {
 	t_split		split;
 	t_node_info	child;
+	size_t		counts[2];
 
-	if (node->depth > 0 && view_size(node->edges->edges[0].view) > RT_MAX_PRIMITIVES * 2)
+	if (node->depth > 0 && node->edges->count > RT_MAX_PRIMITIVES * 2)
 	{
-		if (world_best_split(node, &split))
+		split.cost = RT_HUGE_VAL;
+		world_best_split_axis(node, &split, AXIS_X);
+		world_best_split_axis(node, &split, AXIS_Y);
+		world_best_split_axis(node, &split, AXIS_Z);
+		if (split.cost < RT_HUGE_VAL)
 		{
-			world_split_edges(node->tree, node->edges, &split, AXIS_X);
-			world_split_edges(node->tree, node->edges, &split, AXIS_Y);
-			world_split_edges(node->tree, node->edges, &split, AXIS_Z);
+			world_split_edges(node, &split, AXIS_X, counts);
+			world_split_edges(node, &split, AXIS_Y, counts);
+			world_split_edges(node, &split, AXIS_Z, counts);
+			node->edges[0].count = counts[0];
+			node->edges[1].count = counts[1];
 			child.tree = node->tree;
 			child.offset = new_node(node->tree->world);
 			child.depth = node->depth - 1;

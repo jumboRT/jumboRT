@@ -73,3 +73,13 @@ void
 	}
 }
 
+void
+	view_sort_array(void *data, size_t size, size_t elem_size, t_compare cmp)
+{
+	t_view	view;
+
+	view.data = data;
+	view.size = size * elem_size;
+	view.elem_size = elem_size;
+	view_sort(view, cmp);
+}

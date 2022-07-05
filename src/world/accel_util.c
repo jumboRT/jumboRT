@@ -2,10 +2,6 @@
 #include "util.h"
 #include <math.h>
 
-static inline const t_prim_info *get_prim_info(const t_tree_info *tree_info, uint32_t index) {
-	return (view_get(tree_info->prims.view, index));
-}
-
 static inline const t_primitive *get_primitive_world(const t_world *world, size_t index) {
 	rt_assert(index * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive_world");
 	return ((const t_primitive *)
@@ -13,8 +9,8 @@ static inline const t_primitive *get_primitive_world(const t_world *world, size_
 }
 
 const t_primitive *get_primitive(const t_tree_info *info, size_t index) {
-	rt_assert(index < view_size(info->prims.view), "out of bounds access in get_primitive");
-	return (get_primitive_world(info->world, ((const t_prim_info *) view_get(info->prims.view, index))->index));
+	rt_assert(index < info->world->primitives_count, "out of bounds access in get_primitive");
+	return (get_primitive_world(info->world, info->prims[index].index));
 }
 
 static inline t_vec get_vertex(const t_world *world, size_t index) {
@@ -61,20 +57,20 @@ void interior_node_init(t_node_info *parent_info, const t_node_info *above_info,
 	parent_node->b.above_child |= (above_info->offset << 2);
 }
 
-static uint32_t push_back_indices(t_tree_info *tree_info, t_view edges) {
+static uint32_t push_back_indices(t_tree_info *tree_info, t_tree_edges *edges) {
 	const t_edge	*edge;
 	uint32_t		first_offset;
 	size_t			index;
 	uint32_t		edge_type;
 
-	edge = view_get(edges, 0);
-	first_offset = world_add_accel_index(tree_info->world, get_prim_info(tree_info, edge->index)->index);
+	edge = &edges->edges[0][0];
+	first_offset = world_add_accel_index(tree_info->world, tree_info->prims[0].index);
 	edge_type = edge->type;
 	index = 1;
-	while (index < view_size(edges)) {
-		edge = view_get(edges, index);
+	while (index < edges->count) {
+		edge = &edges->edges[0][index];
 		if (edge->type == edge_type) {
-			world_add_accel_index(tree_info->world, get_prim_info(tree_info, edge->index)->index);
+			world_add_accel_index(tree_info->world, tree_info->prims[index].index);
 		}
 		++index;
 	}
@@ -84,10 +80,8 @@ static uint32_t push_back_indices(t_tree_info *tree_info, t_view edges) {
 void leaf_node_init(t_node_info *node_info) {
 	t_accel_node	*node;
 	size_t			primitive_count;
-	t_view			edges;
 
-	edges = node_info->edges->edges[0].view;
-	primitive_count = view_size(edges) / 2;
+	primitive_count = node_info->edges->count / 2;
 	rt_assert(primitive_count < (1 << 30), "too many primitives in leaf_node_init");
 	node = get_node(node_info);
 	node->b.flags = 3;
@@ -95,9 +89,9 @@ void leaf_node_init(t_node_info *node_info) {
 	if (primitive_count == 0) {
 		node->a.one_primitive = 0;
 	} else if (primitive_count == 1) {
-		node->a.one_primitive = get_prim_info(node_info->tree, ((const t_edge *) view_get(edges, 0))->index)->index;
+		node->a.one_primitive = node_info->tree->prims[node_info->edges->edges[0][0].index].index;
 	} else {
-		node->a.primitive_ioffset = push_back_indices(node_info->tree, edges);
+		node->a.primitive_ioffset = push_back_indices(node_info->tree, node_info->edges);
 	}
 }
 
@@ -136,13 +130,10 @@ static void get_surface_areas(const t_bounds bounds, const FLOAT offset, const i
 		 (xyz(diagonal, other_axis0) + xyz(diagonal, other_axis1)));
 }
 
-FLOAT get_split_cost(const t_bounds bounds, const t_split *split) {
+FLOAT get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]) {
 	FLOAT		surface_areas[2];
-	uint32_t	primitive_counts[2];
 
 	get_surface_areas(bounds, split->offset, split->axis, surface_areas);
-	primitive_counts[ACCEL_ABOVE] = split->prim_count[ACCEL_ABOVE];
-	primitive_counts[ACCEL_BELOW] = split->prim_count[ACCEL_BELOW];
 	return (calculate_cost(bounds_surf(bounds), surface_areas, primitive_counts));
 }
 
@@ -161,7 +152,7 @@ int world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t inde
 	FLOAT		max_offset;
 	FLOAT		axis_offset;
 
-	prim_bounds = get_prim_info(tree, index)->bounds;
+	prim_bounds = tree->prims[index].bounds;
 	max_offset = xyz(prim_bounds.max, split->axis);
 	min_offset = xyz(prim_bounds.min, split->axis);
 	axis_offset = split->offset;

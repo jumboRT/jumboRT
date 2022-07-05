@@ -49,6 +49,8 @@ if sys.argv[1] == "jkoers":
 elif sys.argv[1] == "obj":    
     for line in lines:
         line = line.split()
+        if len(line) == 0:
+            continue
         if line[0] == "v":
             vertex = parse_vertex(line[1:], True)
             vertices.append(vertex)

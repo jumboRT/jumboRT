@@ -37,12 +37,13 @@ struct s_prim_info {
 };
 
 struct s_tree_edges {
-	t_vector	edges[3];
+	t_edge	*edges[3];
+	size_t	count;
 };
 
 struct s_tree_info {
 	t_world			*world;
-	t_vector		prims;
+	t_prim_info		*prims;
 	t_tree_edges	*edges;
 };
 
@@ -57,7 +58,6 @@ struct s_node_info {
 struct s_split {
 	FLOAT		offset;
 	FLOAT		cost;
-	uint32_t	prim_count[2];
 	uint8_t		axis;
 };
 
@@ -89,6 +89,6 @@ const t_primitive	*get_primitive(const t_tree_info *info, size_t index);
 t_bounds			get_bounds(const t_world *world, const t_primitive *primitive);
 void				interior_node_init(t_node_info *parent_info, const t_node_info *above_info, const t_split *split);
 void				leaf_node_init(t_node_info *node_info);
-FLOAT				get_split_cost(const t_bounds bounds, const t_split *split);
+FLOAT				get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]);
 
 #endif
