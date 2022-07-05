@@ -1,6 +1,6 @@
 NAME					:= miniRT
 
-UTIL_FILES				:= util.c memory.c image.c writefile.c readfile.c lib.c atof.c random.c queue.c aabb.c
+UTIL_FILES				:= util.c memory.c image_bin.c writefile.c readfile.c lib.c atof.c random.c queue.c aabb.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
