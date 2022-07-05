@@ -2,6 +2,36 @@
 
 #include "util.h"
 
+/*
+ik heb deze functie erg geoptimized, dit is het idee:
+
+je krijgt in de gesorteerde lijst vaak meerdere edges met dezelfde offset
+direct na elkaar, EDGE_START komt dan altjid voor EDGE_END, bijvoorbeeld:
+INDEX |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9
+OFFSET| 0.1 | 0.1 | 0.2 | 0.2 | 0.3 | 0.3 | 0.3 | 0.4 | 0.4 | 0.4
+TYPE  |START|START|START| END |START|START| END | END | END | END
+               ^                       ^           ^     ^
+
+sommige van deze edges kunnen sowieso niet de beste zijn om op te splitten
+- elke START edge met dezelfde offset als de START edge direct ervoor
+    is slecht omdat de edge ervoor *altijd* beter is
+- elke END edge met dezelfde offset als de END edge direct erna
+    is slecht omdat de edge erna *altijd* beter is
+dus in een reeks van START en END edges met dezelfde offset kan alleen de
+eerste START edge of de laatste END edge de beste zijn.
+in het voorbeeld hierboven aangegeven welke edges er slecht zijn met een ^
+deze edges kunnen we overheen springen en callen dan nooit get_split_cost
+
+mijn implementatie werkt als volgt:
+
+- verzamel alle opeenvolgende edges met dezelfde offset in `edge_count`
+- als er >=1 START edges waren, probeer een split met oude `prim_count`
+    dit is hetzelfde als de eerste START edge van die offset
+- update `prim_count` afhankelijk van de `edge_count`
+- als er >=1 END edges waren, probeer een split met nieuwe `prim_count`
+    dit is hetzelfde als de laatste END edge van die offset
+- herhaal alles tot er geen edges meer over zijn
+*/
 static void
 	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
 {
