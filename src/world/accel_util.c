@@ -2,7 +2,7 @@
 #include "util.h"
 #include <math.h>
 
-static inline const t_prim_info *get_prim_info(t_tree_info *tree_info, uint32_t index) {
+static inline const t_prim_info *get_prim_info(const t_tree_info *tree_info, uint32_t index) {
 	return (view_get(tree_info->prims.view, index));
 }
 
@@ -181,7 +181,7 @@ int world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t inde
 	FLOAT		max_offset;
 	FLOAT		axis_offset;
 
-	prim_bounds = get_bounds(tree->world, get_primitive(tree, index));
+	prim_bounds = get_prim_info(tree, index)->bounds;
 	max_offset = xyz(prim_bounds.max, split->axis);
 	min_offset = xyz(prim_bounds.min, split->axis);
 	axis_offset = split->offset;
