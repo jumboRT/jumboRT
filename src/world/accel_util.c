@@ -3,13 +3,13 @@
 #include <math.h>
 
 static inline const t_primitive *get_primitive_world(const t_world *world, size_t index) {
-	rt_assert(index * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive_world");
+	/* rt_assert(index * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive_world"); */
 	return ((const t_primitive *)
 			((const char *) world->primitives + (index * RT_PRIMITIVE_ALIGN)));
 }
 
 const t_primitive *get_primitive(const t_tree_info *info, size_t index) {
-	rt_assert(index < info->world->primitives_count, "out of bounds access in get_primitive");
+	/* rt_assert(index < info->world->primitives_count, "out of bounds access in get_primitive"); */
 	return (get_primitive_world(info->world, info->prims[index].index));
 }
 
@@ -82,7 +82,7 @@ void leaf_node_init(t_node_info *node_info) {
 	size_t			primitive_count;
 
 	primitive_count = node_info->edges->count / 2;
-	rt_assert(primitive_count < (1 << 30), "too many primitives in leaf_node_init");
+	/* rt_assert(primitive_count < (1 << 30), "too many primitives in leaf_node_init"); */
 	node = get_node(node_info);
 	node->b.flags = 3;
 	node->b.nprims |= ((uint32_t) primitive_count) << 2;
