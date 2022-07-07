@@ -132,15 +132,5 @@ t_vec
 t_vec
 	rt_vec_norm(t_parse_ctx *ctx)
 {
-	FLOAT	x;
-	FLOAT	y;
-	FLOAT	z;
-
-	rt_skip(ctx, ft_isspace);
-	x = rt_float(ctx);
-	rt_expect(ctx, ',');
-	y = rt_float(ctx);
-	rt_expect(ctx, ',');
-	z = rt_float(ctx);
-	return (vec(x, y, z));
+	return (vec_norm(rt_vec(ctx)));
 }

@@ -5,9 +5,10 @@ VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
-							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c
-WORLD_FILES				:= impl.c intersect.c primitive.c accel_algo.c accel_info.c accel_util.c node.c
-PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c comment.c world.c
+							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
+							pow.c cylinder.c vec_rotate.c cone.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c
 BASE_FILES				:= main.c
 
 ifndef platform
@@ -143,10 +144,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(SILENT)$(CC) $(CFLAGS) -c -o $@ $< -MMD $(patsubst %,-I%,$(INC_DIR))
 
 $(LIBFT_LIB):
-	$(SILENT)${MAKE} -C $(LIBFT_DIR) bonus
+	$(SILENT)${MAKE} -C $(LIBFT_DIR) bonus config=$(config) san=$(san) CC=$(CC)
 
 $(FT_PRINTF_LIB):
-	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR)
+	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR)

@@ -9,43 +9,51 @@ void
 
 	node->tree = tree;
 	node->offset = 0;
-	node->depth = world_max_depth(world);
+	node->depth = world_max_depth(world->primitives_count);
+	node->bounds = bounds_0();
 	tree->world = world;
 	tree->edges = rt_malloc(sizeof(*tree->edges) * (node->depth + 1));
 	node->edges = tree->edges;
+	tree->prims_count = 0;
 	tree->prims = rt_malloc(sizeof(t_prim_info) * world->primitives_count);
 	i = 0;
 	while (i < node->depth + 1)
 	{
-		tree->edges[i].count = world->primitives_count * 2;
-		tree->edges[i].edges[AXIS_X] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
-		tree->edges[i].edges[AXIS_Y] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
-		tree->edges[i].edges[AXIS_Z] = rt_malloc(sizeof(t_edge) * tree->edges[i].count);
+		tree->edges[0].count = 0;
+		tree->edges[i].edges[AXIS_X] = rt_malloc(sizeof(t_edge)
+				* world->primitives_count * 2);
+		tree->edges[i].edges[AXIS_Y] = rt_malloc(sizeof(t_edge)
+				* world->primitives_count * 2);
+		tree->edges[i].edges[AXIS_Z] = rt_malloc(sizeof(t_edge)
+				* world->primitives_count * 2);
 		i += 1;
 	}
 }
 
 static void
-	world_info_add_prim(t_tree_info *tree, t_prim_info prim, uint32_t index)
+	world_info_add_prim(t_tree_info *tree, t_node_info *node, t_prim_info prim)
 {
 	t_edge	edge;
 
-	edge.index = index;
+	edge.index = tree->prims_count;
 	edge.type = EDGE_START;
+	tree->prims_count += 1;
+	tree->edges[0].count += 2;
 	edge.offset = x(prim.bounds.min);
-	tree->edges[0].edges[AXIS_X][index * 2 + 0] = edge;
+	tree->edges[0].edges[AXIS_X][edge.index * 2 + 0] = edge;
 	edge.offset = y(prim.bounds.min);
-	tree->edges[0].edges[AXIS_Y][index * 2 + 0] = edge;
+	tree->edges[0].edges[AXIS_Y][edge.index * 2 + 0] = edge;
 	edge.offset = z(prim.bounds.min);
-	tree->edges[0].edges[AXIS_Z][index * 2 + 0] = edge;
+	tree->edges[0].edges[AXIS_Z][edge.index * 2 + 0] = edge;
 	edge.type = EDGE_END;
 	edge.offset = x(prim.bounds.max);
-	tree->edges[0].edges[AXIS_X][index * 2 + 1] = edge;
+	tree->edges[0].edges[AXIS_X][edge.index * 2 + 1] = edge;
 	edge.offset = y(prim.bounds.max);
-	tree->edges[0].edges[AXIS_Y][index * 2 + 1] = edge;
+	tree->edges[0].edges[AXIS_Y][edge.index * 2 + 1] = edge;
 	edge.offset = z(prim.bounds.max);
-	tree->edges[0].edges[AXIS_Z][index * 2 + 1] = edge;
-	tree->prims[index] = prim;
+	tree->edges[0].edges[AXIS_Z][edge.index * 2 + 1] = edge;
+	tree->prims[edge.index] = prim;
+	node->bounds = bounds_max(node->bounds, prim.bounds);
 }
 
 static int
@@ -61,26 +69,30 @@ void
 	world_info_init(t_tree_info *tree, t_node_info *node, t_world *world)
 {
 	size_t		offset;
-	uint32_t	index;
 	t_primitive	*primitive;
 	t_prim_info	prim;
 
 	offset = 0;
-	index = 0;
-	node->bounds = bounds_0();
 	while (offset < world->primitives_size)
 	{
 		primitive = (t_primitive *) ((char *) world->primitives + offset);
-		prim.index = offset / RT_PRIMITIVE_ALIGN;
-		prim.bounds = get_bounds(world, primitive);
-		node->bounds = bounds_max(node->bounds, prim.bounds);
-		world_info_add_prim(tree, prim, index);
+		if (prim_is_infinite(primitive))
+			world_add_accel_degenerate(world, offset);
+		else
+		{
+			prim.index = offset / RT_PRIMITIVE_ALIGN;
+			prim.bounds = prim_bounds(primitive, world);
+			world_info_add_prim(tree, node, prim);
+		}
 		offset += world_primitive_size(primitive->shape_type);
-		index += 1;
 	}
-	view_sort_array(tree->edges[0].edges[AXIS_X], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
-	view_sort_array(tree->edges[0].edges[AXIS_Y], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
-	view_sort_array(tree->edges[0].edges[AXIS_Z], tree->edges[0].count, sizeof(t_edge), world_info_edge_cmp);
+	node->depth = world_max_depth(tree->prims_count);
+	view_sort_array(tree->edges[0].edges[AXIS_X], tree->edges[0].count,
+			sizeof(t_edge), world_info_edge_cmp);
+	view_sort_array(tree->edges[0].edges[AXIS_Y], tree->edges[0].count,
+			sizeof(t_edge), world_info_edge_cmp);
+	view_sort_array(tree->edges[0].edges[AXIS_Z], tree->edges[0].count,
+			sizeof(t_edge), world_info_edge_cmp);
 }
 
 void

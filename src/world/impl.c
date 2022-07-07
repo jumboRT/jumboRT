@@ -12,21 +12,25 @@ void
 	world->vertices = NULL;
 	world->accel_nodes = NULL;
 	world->accel_indices = NULL;
+	world->accel_degenerates = NULL;
 	world->primitives_count = 0;
 	world->materials_count = 0;
 	world->vertices_count = 0;
 	world->accel_nodes_count = 0;
 	world->accel_indices_count = 0;
+	world->accel_degenerates_count = 0;
 	world->primitives_size = 0;
 	world->materials_size = 0;
 	world->vertices_size = 0;
 	world->accel_nodes_size = 0;
 	world->accel_indices_size = 0;
+	world->accel_degenerates_size = 0;
 	world->primitives_capacity = 0;
 	world->materials_capacity = 0;
 	world->vertices_capacity = 0;
 	world->accel_nodes_capacity = 0;
 	world->accel_indices_capacity = 0;
+	world->accel_degenerates_capacity = 0;
 }
 
 void
@@ -113,5 +117,18 @@ uint32_t
 	world->accel_indices = world_reallog(world->accel_indices, &world->accel_indices_capacity, world->accel_indices_size);
 	ft_memcpy((char *) world->accel_indices + old_size, &accel_index, sizeof(accel_index));
 	return (old_size / sizeof(accel_index));
+}
+
+uint32_t
+	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate)
+{
+	size_t	old_size;
+
+	world->accel_degenerates_count += 1;
+	old_size = world->accel_degenerates_size;
+	world->accel_degenerates_size += sizeof(accel_degenerate);
+	world->accel_degenerates = world_reallog(world->accel_degenerates, &world->accel_degenerates_capacity, world->accel_degenerates_size);
+	ft_memcpy((char *) world->accel_degenerates + old_size, &accel_degenerate, sizeof(accel_degenerate));
+	return (old_size / sizeof(accel_degenerate));
 }
 

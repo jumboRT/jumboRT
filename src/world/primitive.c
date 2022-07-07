@@ -11,6 +11,12 @@ uint64_t
 {
 	if (shape_type == RT_SHAPE_SPHERE)
 		return (world_primitive_size_adjust(sizeof(t_shape_sphere)));
+	else if (shape_type == RT_SHAPE_PLANE)
+		return (world_primitive_size_adjust(sizeof(t_shape_plane)));
+	else if (shape_type == RT_SHAPE_CYLINDER)
+		return (world_primitive_size_adjust(sizeof(t_shape_cylinder)));
+	else if (shape_type == RT_SHAPE_CONE)
+		return (world_primitive_size_adjust(sizeof(t_shape_cone)));
 	else
 		return (world_primitive_size_adjust(sizeof(t_shape_triangle)));
 }

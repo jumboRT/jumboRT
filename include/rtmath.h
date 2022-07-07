@@ -72,17 +72,18 @@ struct s_sphere {
 	FLOAT	radius;
 };
 
-struct t_cylinder {
+struct s_cylinder {
 	t_vec	pos;
 	t_vec	dir;
 	FLOAT	height;
 	FLOAT	radius;
 };
 
-struct t_cone {
+struct s_cone {
 	t_vec	pos;
-	t_vec	height;
-	t_vec	radius;
+	t_vec	dir;
+	FLOAT	height;
+	FLOAT	angle;
 };
 
 struct s_hit {
@@ -95,9 +96,12 @@ FLOAT	rt_sqrt(FLOAT a);
 FLOAT	rt_sin(FLOAT a);
 FLOAT	rt_cos(FLOAT a);
 FLOAT	rt_tan(FLOAT a);
+FLOAT	rt_atan(FLOAT a);
+FLOAT	rt_atan2(FLOAT y, FLOAT x);
 FLOAT	rt_abs(FLOAT a);
 FLOAT	rt_min(FLOAT a, FLOAT b);
 FLOAT	rt_max(FLOAT a, FLOAT b);
+FLOAT	rt_pow(FLOAT x, FLOAT y);
 
 int		float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 
@@ -124,7 +128,7 @@ t_plane		plane(t_vec pos, t_vec normal)								__attribute__ ((const));
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2)						__attribute__ ((const));
 t_sphere	sphere(t_vec pos, FLOAT radius)								__attribute__ ((const));
 t_cylinder	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius)	__attribute__ ((const));
-t_cone		cone(t_vec pos, FLOAT radius, FLOAT height)					__attribute__ ((const));
+t_cone		cone(t_vec pos, t_vec dir, FLOAT height, FLOAT angle)		__attribute__ ((const)); 
 
 FLOAT	vec_dot(t_vec a, t_vec b)	__attribute__ ((const));
 FLOAT	vec_mag2(t_vec a)			__attribute__ ((const));
@@ -142,6 +146,11 @@ t_vec	vec_norm2(t_vec v) __attribute__ ((const));
 t_vec	vec_min(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_max(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max) __attribute__ ((const));
+
+t_vec	vec_rotate(t_vec axis, t_vec v, FLOAT angle);
+void	vec_angles(t_vec v, FLOAT *xr, FLOAT *yr);
+t_vec	vec_rotate_fwd(t_vec v, FLOAT xr, FLOAT yr);
+t_vec	vec_rotate_bwd(t_vec v, FLOAT xr, FLOAT yr);
 
 t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));
 t_vec	ray_at(t_ray ray, FLOAT t) __attribute__ ((const));

@@ -4,78 +4,53 @@
 # define ACCEL_NODE_STACK_SIZE 64
 #endif
 
+#ifndef ACCEL_USE_TREE
+# define ACCEL_USE_TREE 1
+#endif
+
 struct s_stack_node {
 	uint32_t	index;
 	FLOAT		max;
 };
 
-static int
-	world_intersect_sphere(const GLOBAL void *ptr, t_ray ray, FLOAT min, t_hit *hit)
-{
-	const GLOBAL t_shape_sphere	*sp;
-
-	sp = (const GLOBAL t_shape_sphere *) ptr;
-	return (ray_sphere_intersect(
-				ray,
-				sphere(
-					sp->pos,
-					sp->radius),
-				min,
-				hit));
-}
-
-static int
-	world_intersect_triangle(const GLOBAL t_world *world, const GLOBAL void *ptr, t_ray ray, FLOAT min, t_hit *hit)
-{
-	const GLOBAL t_shape_triangle	*tr;
-
-	tr = (const GLOBAL t_shape_triangle *) ptr;
-	return (ray_triangle_intersect(
-				ray,
-				triangle(
-					world->vertices[tr->a].pos,
-					world->vertices[tr->b].pos,
-					world->vertices[tr->c].pos),
-				min,
-				hit));
-}
-
 static void
-	world_intersect_primitive(const GLOBAL t_world *world, const GLOBAL t_primitive *primitive, t_ray ray, FLOAT min, t_hit *hit)
-{
-	t_hit	current_hit;
-	int		did_hit;
-
-	current_hit.t = RT_HUGE_VAL;
-	if (primitive->shape_type == RT_SHAPE_SPHERE)
-		did_hit = world_intersect_sphere(primitive, ray, min, &current_hit);
-	else
-		did_hit = world_intersect_triangle(world, primitive, ray, min, &current_hit);
-	if (did_hit && current_hit.t < hit->t)
-		*hit = current_hit;
-}
-
-static int
 	world_intersect_primitives(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
 	uint64_t					index;
 	const GLOBAL char			*primitives;
 	const GLOBAL t_primitive	*primitive;
+	t_hit						current;
 
 	index = 0;
 	primitives = (const GLOBAL char*) world->primitives;
-	hit->t = RT_HUGE_VAL;
 	while (index < world->primitives_size)
 	{
 		primitive = (const GLOBAL t_primitive *) (primitives + index);
-		world_intersect_primitive(world, primitive, ray, 0.001, hit);
+		if (prim_intersect(primitive, world, ray, 0.001, &current) && current.t < hit->t)
+			*hit = current;
 		index += world_primitive_size(primitive->shape_type);
 	}
-	return (hit->t < RT_HUGE_VAL);
 }
 
-static int
-	world_intersect_primitives2(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
+static void
+	world_intersect_degenerates(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
+{
+	uint32_t					index;
+	const GLOBAL t_primitive	*primitive;
+	t_hit						current;
+
+	index = 0;
+	while (index < world->accel_degenerates_count)
+	{
+		primitive = (const GLOBAL t_primitive *) ((const GLOBAL char *) world->primitives + world->accel_degenerates[index] * RT_PRIMITIVE_ALIGN);
+		if (prim_intersect(primitive, world, ray, 0.001, &current) && current.t < hit->t)
+			*hit = current;
+		index += 1;
+	}
+}
+
+static void
+	world_intersect_tree(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
 	struct s_stack_node			stack[ACCEL_NODE_STACK_SIZE];
 	uint32_t					istack;
@@ -89,8 +64,8 @@ static int
 	FLOAT						min_t;
 	FLOAT						max_t;
 	FLOAT						plane_t;
+	t_hit						current;
 
-	hit->t = RT_HUGE_VAL;
 	min_t = 0.001;
 	max_t = RT_HUGE_VAL;
 	istack = 0;
@@ -142,21 +117,29 @@ static int
 		while (iprim < nprims(*node))
 		{
 			prim = (const GLOBAL t_primitive *) ((const GLOBAL char *) world->primitives + prims[iprim] * RT_PRIMITIVE_ALIGN);
-			world_intersect_primitive(world, prim, ray, min_t, hit);
+			if (prim_intersect(prim, world, ray, min_t, &current) && current.t < hit->t)
+				*hit = current;
 			iprim += 1;
 		}
 		if (istack == 0)
-			return (hit->t < RT_HUGE_VAL);
+			return ;
 		min_t = max_t;
 		istack -= 1;
 		node = world->accel_nodes + stack[istack].index;
 		max_t = stack[istack].max;
 	}
-	return (1);
 }
 
 int
 	world_intersect(const GLOBAL t_world *world, t_ray ray, t_hit *hit)
 {
-	return (world_intersect_primitives2(world, ray, hit));
+	hit->t = RT_HUGE_VAL;
+	if (ACCEL_USE_TREE)
+	{
+		world_intersect_degenerates(world, ray, hit);
+		world_intersect_tree(world, ray, hit);
+	}
+	else
+		world_intersect_primitives(world, ray, hit);
+	return (hit->t < RT_HUGE_VAL);
 }

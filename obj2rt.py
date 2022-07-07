@@ -5,6 +5,7 @@ import math
 lines = sys.stdin.readlines()
 vertices = []
 faces = []
+planes = []
 camera = ((0, 0, 0), (1, 0, 0), 90)
 # write_bb = ((0.785739, -0.908510, 0.038250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.883179, -0.673730, 0.038250), (1.072875, -0.509230, 0.311250))
@@ -36,6 +37,10 @@ if sys.argv[1] == "jkoers":
         line = line.split()
         if len(line) == 0:
             continue
+        if line[0] == "pl":
+            position = parse_vertex(line[1].split(","), True)
+            rotation = parse_vertex(line[2].split(","), True)
+            planes.append((position, rotation))
         if line[0] == "tr":
             a = add_vertex(parse_vertex(line[1].split(","), True))
             b = add_vertex(parse_vertex(line[2].split(","), True))
@@ -89,6 +94,8 @@ def intersect_bb(bb1, bb2):
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
 sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:f}\n")
+for plane in planes:
+    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} 255,255,255\n")
 for vertex in vertices:
     sys.stdout.write(f"v {str_vertex(vertex)}\n")
 for face in faces:

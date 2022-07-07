@@ -10,20 +10,99 @@
 
 #include <stdio.h>
 
+#define GEN_MIN_SCALE 0.2
+#define GEN_MIN_ANGLE 0.25
+#define GEN_X_SIZE 4
+#define GEN_Y_SIZE 32
+#define GEN_Z_SIZE 18
+#define GEN_SCALE_FACTOR 4.0
+#define GEN_SCALE (GEN_SCALE_FACTOR / (GEN_X_SIZE + GEN_Y_SIZE + GEN_Z_SIZE))
+#define GEN_SPHERE_CHANCE (1.0 / 3)
+#define GEN_CYLINDER_CHANCE (1.0 / 3)
+#define GEN_CONE_CHANCE (1.0 / 3)
+
 void
-	world_gen(t_world *world)
+	world_gen_sphere(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
 {
 	t_shape_sphere	sphere;
-	size_t			i;
 
 	sphere.base.shape_type = RT_SHAPE_SPHERE;
 	sphere.base.mat_index = 0;
-	sphere.radius = 0.04;
+	sphere.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
+	sphere.pos = pos;
+	world_add_primitive(world, &sphere, sizeof(sphere));
+}
+
+void
+	world_gen_cylinder(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
+{
+	t_shape_cylinder	cylinder;
+
+	cylinder.base.shape_type = RT_SHAPE_CYLINDER;
+	cylinder.base.mat_index = 0;
+	cylinder.cylinder.dir = vec_norm(vec(
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1)));
+	cylinder.cylinder.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
+	cylinder.cylinder.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
+	cylinder.cylinder.pos = vec_sub(pos, vec_scale(cylinder.cylinder.dir, cylinder.cylinder.height / 2));
+	world_add_primitive(world, &cylinder, sizeof(cylinder));
+}
+
+void
+	world_gen_cone(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
+{
+	t_shape_cone	cone;
+
+	cone.base.shape_type = RT_SHAPE_CONE;
+	cone.base.mat_index = 0;
+	cone.cone.dir = vec_norm(vec(
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1)));
+	cone.cone.angle = rt_random_float_range(seed, RT_PI / 6 * GEN_MIN_ANGLE, RT_PI / 6);
+	cone.cone.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
+	cone.cone.pos = vec_sub(pos, vec_scale(cone.cone.dir, cone.cone.height / 2));
+	world_add_primitive(world, &cone, sizeof(cone));
+}
+
+void
+	world_gen(t_world *world)
+{
+	size_t	i;
+	t_seed	seed;
+	t_vec	pos;
+	FLOAT	type;
+
+	seed = 7549087012;
 	i = 0;
-	while (i < 400)
+	while (i < GEN_X_SIZE * GEN_Y_SIZE * GEN_Z_SIZE)
 	{
-		sphere.pos = vec(1.0, i % 20 / 10.0 - 1, (size_t) (i / 20) / 10.0 - 1);
-		world_add_primitive(world, &sphere, sizeof(sphere));
+		pos = vec(
+			+0.5 + (rt_random_float_range(&seed, 0, 1) + i % GEN_X_SIZE) / (FLOAT) GEN_Z_SIZE,
+			-(FLOAT) GEN_Y_SIZE / GEN_Z_SIZE / 2 + (rt_random_float_range(&seed, 0, 1) + i / GEN_X_SIZE % GEN_Y_SIZE) / (FLOAT) GEN_Z_SIZE,
+			-0.5 + (rt_random_float_range(&seed, 0, 1) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE);
+		pos = vec_scale(pos, 2);
+		type = rt_random_float_range(&seed, 0, 1);
+		if (type < GEN_SPHERE_CHANCE)
+			world_gen_sphere(world, &seed, pos, GEN_SCALE);
+		else
+		{
+			type -= GEN_SPHERE_CHANCE;
+			if (type < GEN_CYLINDER_CHANCE)
+				world_gen_cylinder(world, &seed, pos, GEN_SCALE);
+			else
+			{
+				type -= GEN_CYLINDER_CHANCE;
+				if (type < GEN_CONE_CHANCE)
+					world_gen_cone(world, &seed, pos, GEN_SCALE);
+				else
+				{
+					type -= GEN_CONE_CHANCE;
+				}
+			}
+		}
 		i += 1;
 	}
 	init_camera(world);
@@ -117,7 +196,7 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 1;
+	world.img_meta.samples = 16;
 	if (argc == 1)
 		world_gen(&world);
 	else

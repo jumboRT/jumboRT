@@ -5,6 +5,9 @@
 const static t_directive	directives[] = {
 	{ "C", rt_exec_camera },
 	{ "sp", rt_exec_sphere },
+	{ "pl", rt_exec_plane },
+	{ "cy", rt_exec_cylinder },
+	{ "co", rt_exec_cone },
 	{ "v", rt_exec_vertex },
 	{ "tr", rt_exec_triangle },
 	{ "#", rt_exec_comment },

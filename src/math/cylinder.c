@@ -1,0 +1,149 @@
+#include "rtmath.h"
+
+__attribute__ ((const))
+t_cylinder
+	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius)
+{
+	t_cylinder result;
+
+	result.pos = pos;
+	result.dir = dir;
+	result.height = height;
+	result.radius = radius;
+	return (result);
+}
+
+static int
+	ray_cylinder_intersect_parallel(t_ray relative_ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+{
+	if (vec_mag2(relative_ray.org) > cylinder.radius * cylinder.radius)
+		return (0);
+	if (z(relative_ray.org) < 0.0 && z(relative_ray.org) >= min)
+	{
+		hit->normal = vec_neg(cylinder.dir);
+		hit->t = -z(relative_ray.org);
+	}
+	else if (cylinder.height - z(relative_ray.org) >= min)
+	{
+		hit->normal = cylinder.dir;
+		hit->t = cylinder.height - z(relative_ray.org);
+	}
+	else
+		return (0);
+	return (1);
+}
+
+static int
+	between(FLOAT a, FLOAT b, FLOAT c)
+{
+	if (a < b && a > c)
+		return (1);
+	if (a > b && a < c)
+		return (1);
+	return (0);
+}
+
+static inline t_vec
+	cylinder_normal_at(FLOAT radius, t_vec relative_point)
+{
+	(void) radius;
+	return (vec_norm(
+				vec_sub(
+					relative_point,
+					vec_scale(vec_z(1.0), vec_dot(relative_point, vec_z(1.0))))));
+}
+
+static int
+	ray_infinite_cylinder_intersect(t_ray relative_ray, FLOAT radius, FLOAT intersections[2])
+{
+	t_quadratic	quadratic;
+
+	quadratic.a = rt_pow(x(relative_ray.dir), 2.0) + rt_pow(y(relative_ray.dir), 2.0);
+	quadratic.b = 2.0 *
+			(x(relative_ray.dir) * x(relative_ray.org) + y(relative_ray.dir) * y(relative_ray.org));
+	quadratic.c = rt_pow(x(relative_ray.org), 2.0) + rt_pow(y(relative_ray.org), 2.0) - (radius * radius);
+	if (quadratic_solve(&quadratic, intersections) == 0)
+		return (0);
+	return (1);
+}
+
+static int
+	ray_cylinder_intersect_normal(t_ray relative_ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+{
+	FLOAT	t_side[2];
+	FLOAT	z_side[2];
+	FLOAT	t_end[2];
+	FLOAT	height;
+	FLOAT	xr;
+	FLOAT	yr;
+
+	if (!ray_infinite_cylinder_intersect(relative_ray, cylinder.radius, t_side))
+		return (0);
+	height = cylinder.height;
+	z_side[0] = z(ray_at(relative_ray, t_side[0]));
+	z_side[1] = z(ray_at(relative_ray, t_side[1]));
+	t_end[0] = RT_HUGE_VAL;
+	t_end[1] = -RT_HUGE_VAL;
+	if (z(relative_ray.dir) != 0.0)
+	{
+		t_end[0] = (height - z(relative_ray.org)) / z(relative_ray.dir);
+		t_end[1] = (0.0 - z(relative_ray.org)) / z(relative_ray.dir);
+	}
+	hit->t = RT_HUGE_VAL;
+	if (t_end[0] < hit->t && t_end[0] >= min && between(height, z_side[0], z_side[1]))
+	{
+		hit->t = t_end[0];
+		hit->normal = cylinder.dir;
+	}
+	if (t_end[1] < hit->t && t_end[1] >= min && between(0.0, z_side[0], z_side[1]))
+	{
+		hit->t = t_end[1];
+		hit->normal = vec_neg(cylinder.dir);
+	}
+	if (t_side[0] < hit->t && t_side[0] >= min && between(z_side[0], height, 0.0))
+	{
+		hit->t = t_side[0];
+		vec_angles(cylinder.dir, &xr, &yr);
+		hit->normal = vec_scale(vec_rotate_fwd(vec_set(ray_at(relative_ray, hit->t), 2, 0), xr, yr), 1 / cylinder.radius);
+	}
+	if (t_side[1] < hit->t && t_side[1] >= min && between(z_side[1], height, 0.0))
+	{
+		hit->t = t_side[1];
+		vec_angles(cylinder.dir, &xr, &yr);
+		hit->normal = vec_scale(vec_rotate_fwd(vec_set(ray_at(relative_ray, hit->t), 2, 0), xr, yr), 1 / cylinder.radius);
+	}
+	if (hit->t < RT_HUGE_VAL)
+		return (1);
+	return (0);
+}
+
+int
+	ray_cylinder_intersect(t_ray ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+{
+	FLOAT	xr;
+	FLOAT	yr;
+	t_ray	relative_ray;
+
+	vec_angles(cylinder.dir, &xr, &yr);
+	relative_ray.org = vec_sub(ray.org, cylinder.pos);
+	relative_ray.dir = ray.dir;
+	relative_ray.org = vec_rotate_bwd(relative_ray.org, xr, yr);
+	relative_ray.dir = vec_rotate_bwd(relative_ray.dir, xr, yr);
+	if (vec_dot(relative_ray.dir, cylinder.dir) == 1.0)
+	{
+		if (ray_cylinder_intersect_parallel(relative_ray, cylinder, min, hit))
+		{
+			hit->pos = ray_at(ray, hit->t);
+			return (1);
+		}
+	}
+	else
+	{
+		if (ray_cylinder_intersect_normal(relative_ray, cylinder, min, hit))
+		{
+			hit->pos = ray_at(ray, hit->t);
+			return (1);
+		}
+	}
+	return (0);
+}

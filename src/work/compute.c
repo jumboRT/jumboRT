@@ -15,6 +15,8 @@ __kernel void
 		world->accel_nodes = ptr;
 	if (offset == 4)
 		world->accel_indices = ptr;
+	if (offset == 5)
+		world->accel_degenerates = ptr;
 }
 
 __kernel void

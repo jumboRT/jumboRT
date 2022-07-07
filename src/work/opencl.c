@@ -33,6 +33,7 @@ struct s_opencl_ctx {
 	cl_mem				vertices_mem;
 	cl_mem				accel_nodes_mem;
 	cl_mem				accel_indices_mem;
+	cl_mem				accel_degenerates_mem;
 	t_context			ctx;
 	t_result			result[RT_WORK_OPENCL_GLOBAL_SIZE];
 };
@@ -44,6 +45,8 @@ const static char *g_source_files[] = {
 	"src/math/polynomial.c",
 	"src/math/sphere.c",
 	"src/math/triangle.c",
+	"src/math/cylinder.c",
+	"src/math/cone.c",
 	"src/math/ray_constr.c",
 	"src/math/vec_arith.c",
 	"src/math/vec_arith_fast.c",
@@ -55,6 +58,8 @@ const static char *g_source_files[] = {
 	"src/math/vec_get_fast.c",
 	"src/math/vec_size.c",
 	"src/math/vec_size_fast.c",
+	"src/math/vec_rotate.c",
+	"src/math/vec_set.c",
 	"src/math/sqrt.c",
 	"src/math/sin.c",
 	"src/math/cos.c",
@@ -62,7 +67,9 @@ const static char *g_source_files[] = {
 	"src/math/min.c",
 	"src/math/max.c",
 	"src/math/abs.c",
+	"src/math/pow.c",
 	"src/world/intersect.c",
+	"src/world/intersect_prim.c",
 	"src/world/primitive.c",
 	"src/world/node.c"
 };
@@ -145,11 +152,13 @@ void
 	cl_ctx->materials_mem = work_copy_array(cl_ctx, work->state->world->materials_size, work->state->world->materials);
 	cl_ctx->accel_nodes_mem = work_copy_array(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes);
 	cl_ctx->accel_indices_mem = work_copy_array(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices);
+	cl_ctx->accel_degenerates_mem = work_copy_array(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 0, cl_ctx->primitives_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 1, cl_ctx->materials_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 2, cl_ctx->vertices_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 3, cl_ctx->accel_nodes_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 4, cl_ctx->accel_indices_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 5, cl_ctx->accel_degenerates_mem);
 }
 
 void

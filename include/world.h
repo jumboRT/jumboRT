@@ -4,13 +4,17 @@
 # define RT_PRIMITIVE_ALIGN 4
 # define RT_MATERIAL_ALIGN 4
 
-# define RT_SHAPE_TRIANGLE 0
-# define RT_SHAPE_SPHERE 1
+# define RT_SHAPE_TRIANGLE		0
+# define RT_SHAPE_SPHERE		1
+# define RT_SHAPE_PLANE			2
+# define RT_SHAPE_CYLINDER		3
+# define RT_SHAPE_CONE			4
 
 /* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
 # include "cl.h"
+# include "aabb.h"
 
 typedef struct s_image_meta		t_image_meta;
 typedef struct s_camera			t_camera;
@@ -20,6 +24,9 @@ typedef struct s_primitive		t_primitive;
 typedef struct s_material		t_material;
 typedef struct s_shape_triangle	t_shape_triangle;
 typedef struct s_shape_sphere	t_shape_sphere;
+typedef struct s_shape_plane	t_shape_plane;
+typedef struct s_shape_cylinder	t_shape_cylinder;
+typedef struct s_shape_cone	t_shape_cone;
 typedef struct s_accel_node		t_accel_node;
 
 struct s_image_meta {
@@ -64,6 +71,21 @@ struct s_shape_sphere {
 	t_vec		pos;
 };
 
+struct s_shape_plane {
+	t_primitive	base;
+	t_plane		plane;
+};
+
+struct s_shape_cylinder {
+	t_primitive	base;
+	t_cylinder	cylinder;
+};
+
+struct s_shape_cone {
+	t_primitive	base;
+	t_cone		cone;
+};
+
 struct s_accel_node {
 	union {
 		FLOAT		split;
@@ -85,24 +107,32 @@ struct s_world {
 	uint32_t			vertices_count;
 	uint32_t			accel_nodes_count;
 	uint32_t			accel_indices_count;
+	uint32_t			accel_degenerates_count;
 	uint64_t			primitives_size;
 	uint64_t			materials_size;
 	uint64_t			vertices_size;
 	uint64_t			accel_nodes_size;
 	uint64_t			accel_indices_size;
+	uint64_t			accel_degenerates_size;
 	uint64_t			primitives_capacity;
 	uint64_t			materials_capacity;
 	uint64_t			vertices_capacity;
 	uint64_t			accel_nodes_capacity;
 	uint64_t			accel_indices_capacity;
+	uint64_t			accel_degenerates_capacity;
 	GLOBAL void			*primitives;
 	GLOBAL void			*materials;
 	GLOBAL t_vertex		*vertices;
 	GLOBAL t_accel_node	*accel_nodes;
 	GLOBAL uint32_t		*accel_indices;
+	GLOBAL uint32_t		*accel_degenerates;
 };
 
 uint64_t	world_primitive_size(uint8_t shape_type);
+
+t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
+int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_hit *hit);
+int			prim_is_infinite(const GLOBAL t_primitive *prim);
 
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_hit *hit);
 void		world_accel(t_world *world);

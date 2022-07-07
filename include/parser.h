@@ -38,8 +38,11 @@ void			init_camera(t_world *world);
 
 void			rt_exec_camera(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_sphere(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_plane(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_vertex(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);

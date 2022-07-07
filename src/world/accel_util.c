@@ -2,6 +2,7 @@
 #include "util.h"
 #include <math.h>
 
+/* TODO: reuse this function in intersection code */
 static inline const t_primitive *get_primitive_world(const t_world *world, size_t index) {
 	/* rt_assert(index * RT_PRIMITIVE_ALIGN < world->primitives_size, "out of bounds access in get_primitive_world"); */
 	return ((const t_primitive *)
@@ -9,7 +10,7 @@ static inline const t_primitive *get_primitive_world(const t_world *world, size_
 }
 
 const t_primitive *get_primitive(const t_tree_info *info, size_t index) {
-	/* rt_assert(index < info->world->primitives_count, "out of bounds access in get_primitive"); */
+	/* rt_assert(index < info->prims_count, "out of bounds access in get_primitive"); */
 	return (get_primitive_world(info->world, info->prims[index].index));
 }
 
@@ -28,24 +29,68 @@ static inline t_bounds get_bounds_triangle(const t_world *world, const t_shape_t
 				vec_max(points[0], vec_max(points[1], points[2]))));
 }
 
+static t_bounds get_bounds_cylinder(const t_shape_cylinder *cylinder) {
+	FLOAT	radius;
+	FLOAT	dot;
+	t_vec	top;
+	t_vec	dif;
+	t_vec	box;
+
+	radius = cylinder->cylinder.radius;
+	dif = vec_scale(cylinder->cylinder.dir, cylinder->cylinder.height);
+	top = vec_add(cylinder->cylinder.pos, dif);
+	dot = cylinder->cylinder.height * cylinder->cylinder.height;
+	box = vec_scale(vec(
+			sqrt(1.0 - x(dif) * x(dif) / dot),
+			sqrt(1.0 - y(dif) * y(dif) / dot),
+			sqrt(1.0 - z(dif) * z(dif) / dot)), radius);
+	return (bounds(
+				vec_min(vec_sub(cylinder->cylinder.pos, box), vec_sub(top, box)),
+				vec_max(vec_add(cylinder->cylinder.pos, box), vec_add(top, box))));
+}
+
 static inline t_bounds get_bounds_sphere(const t_shape_sphere *sphere) {
 	return (bounds(
 				vec_sub(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius)),
 				vec_add(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius))));
 }
 
-static inline t_accel_node *get_node(t_node_info *node_info) {
-	return (node_info->tree->world->accel_nodes + node_info->offset);
+static t_bounds get_bounds_cone(const t_shape_cone *shape) {
+	FLOAT	radius;
+	FLOAT	dot;
+	t_vec	top;
+	t_vec	dif;
+	t_vec	box;
+
+	radius = tan(shape->cone.angle) * shape->cone.height;
+	dif = vec_scale(shape->cone.dir, shape->cone.height);
+	top = vec_add(shape->cone.pos, dif);
+	dot = shape->cone.height * shape->cone.height;
+	box = vec_scale(vec(
+			sqrt(1.0 - x(dif) * x(dif) / dot),
+			sqrt(1.0 - y(dif) * y(dif) / dot),
+			sqrt(1.0 - z(dif) * z(dif) / dot)), radius);
+	return (bounds(
+				vec_min(shape->cone.pos, vec_sub(top, box)),
+				vec_max(shape->cone.pos, vec_add(top, box))));
 }
 
-t_bounds get_bounds(const t_world *world, const t_primitive *primitive) {
+t_bounds prim_bounds(const t_primitive *primitive, const t_world *world) {
 	if (primitive->shape_type == RT_SHAPE_TRIANGLE) {
 		return (get_bounds_triangle(world, (const t_shape_triangle *) primitive));
 	} else if (primitive->shape_type == RT_SHAPE_SPHERE) {
 		return (get_bounds_sphere((const t_shape_sphere *) primitive));
+	} else if (primitive->shape_type == RT_SHAPE_CYLINDER) {
+		return (get_bounds_cylinder((const t_shape_cylinder *) primitive));
+	} else if (primitive->shape_type == RT_SHAPE_CONE) {
+		return (get_bounds_cone((const t_shape_cone *) primitive));
 	}
 	rt_assert(0, "unimplemented shape in get_bounds");
 	return (bounds_0());
+}
+
+static inline t_accel_node *get_node(t_node_info *node_info) {
+	return (node_info->tree->world->accel_nodes + node_info->offset);
 }
 
 void interior_node_init(t_node_info *parent_info, const t_node_info *above_info, const t_split *split) {
@@ -137,8 +182,8 @@ FLOAT get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t
 	return (calculate_cost(bounds_surf(bounds), surface_areas, primitive_counts));
 }
 
-uint32_t world_max_depth(const t_world *world) {
-	return (8.0 + 1.3 * log2(world->primitives_count));
+uint32_t world_max_depth(size_t prims_count) {
+	return (8.0 + 1.3 * log2((FLOAT) prims_count));
 }
 
 uint32_t	new_node(t_world *world) {

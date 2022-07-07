@@ -44,6 +44,7 @@ struct s_tree_edges {
 struct s_tree_info {
 	t_world			*world;
 	t_prim_info		*prims;
+	size_t			prims_count;
 	t_tree_edges	*edges;
 };
 
@@ -75,13 +76,14 @@ uint32_t	world_add_primitive(t_world *world, void *shape, size_t size);
 uint32_t	world_add_vertex(t_world *world, t_vertex *vertex);
 uint32_t	world_add_accel_node(t_world *world, t_accel_node *accel_node);
 uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
+uint32_t	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate);
 
 void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);
 
 /* voor daan */
-uint32_t	world_max_depth(const t_world *world);
+uint32_t	world_max_depth(size_t prims_count);
 uint32_t	new_node(t_world *world);
 int			world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index);
 
