@@ -5,6 +5,7 @@
 
 # include <stddef.h>
 # include <unistd.h>
+# include <stdint.h>
 
 # ifndef RT_BUFFER_SIZE
 #  define RT_BUFFER_SIZE 10240
@@ -30,5 +31,7 @@ size_t	rt_write_ppm(const char *path, const t_image *image);
 
 char	*rt_readfile(const char *path, char **error, size_t *size);
 ssize_t	rt_writefile(const char *path, char **error, const void *data, size_t size);
+
+uint32_t	rt_hash(const char *str);
 
 #endif

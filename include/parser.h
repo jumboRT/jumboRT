@@ -29,10 +29,14 @@ size_t			rt_idlen(t_parse_ctx *ctx);
 void			rt_idskip(t_parse_ctx *ctx, size_t len);
 
 FLOAT			rt_float(t_parse_ctx *ctx);
+int				rt_bool(t_parse_ctx *ctx);
 unsigned int	rt_uint(t_parse_ctx *ctx);
 t_vec			rt_color(t_parse_ctx *ctx);
 t_vec			rt_vec(t_parse_ctx *ctx);
 t_vec			rt_vec_norm(t_parse_ctx *ctx);
+char			*rt_keyword(t_parse_ctx *ctx, const char *prefix);
+FLOAT			rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max);
+void			rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape);
 
 void			init_camera(t_world *world);
 
@@ -43,6 +47,8 @@ void			rt_exec_vertex(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_material(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);

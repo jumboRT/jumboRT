@@ -7,10 +7,9 @@ void
 {
 	t_shape_plane	shape;
 
-	shape.base.shape_type = RT_SHAPE_PLANE;
-	shape.base.mat_index = 0;
+	shape.base.data = RT_SHAPE_PLANE;
 	shape.plane.pos = rt_vec(ctx);
 	shape.plane.normal = rt_vec_norm(ctx);
-	rt_color(ctx);
+	rt_material(ctx, world, &shape.base);
 	world_add_primitive(world, &shape, sizeof(shape));
 }

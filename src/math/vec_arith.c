@@ -36,4 +36,14 @@ t_vec
 	return (vec_add(a, vec_neg(b)));
 }
 
+__attribute__ ((const))
+t_vec
+	vec_mul(t_vec a, t_vec b)
+{
+	return (vec(
+			x(a) * x(b),
+			y(a) * y(b),
+			z(a) * z(b)));
+}
+
 #endif

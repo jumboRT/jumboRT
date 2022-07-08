@@ -33,4 +33,11 @@ t_vec
 	return (a - b);
 }
 
+__attribute__ ((const))
+t_vec
+	vec_mul(t_vec a, t_vec b)
+{
+	return (a * b);
+}
+
 #endif

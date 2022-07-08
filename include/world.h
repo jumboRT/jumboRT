@@ -2,7 +2,7 @@
 # define WORLD_H
 
 # define RT_PRIMITIVE_ALIGN 4
-# define RT_MATERIAL_ALIGN 4
+# define RT_MATERIAL_ALIGN sizeof(t_material)
 
 # define RT_SHAPE_TRIANGLE		0
 # define RT_SHAPE_SPHERE		1
@@ -16,6 +16,7 @@
 # include "cl.h"
 # include "aabb.h"
 
+typedef struct s_context		t_context;
 typedef struct s_image_meta		t_image_meta;
 typedef struct s_camera			t_camera;
 typedef struct s_world			t_world;
@@ -26,8 +27,13 @@ typedef struct s_shape_triangle	t_shape_triangle;
 typedef struct s_shape_sphere	t_shape_sphere;
 typedef struct s_shape_plane	t_shape_plane;
 typedef struct s_shape_cylinder	t_shape_cylinder;
-typedef struct s_shape_cone	t_shape_cone;
+typedef struct s_shape_cone		t_shape_cone;
 typedef struct s_accel_node		t_accel_node;
+typedef struct s_world_hit		t_world_hit;
+
+struct s_context {
+	t_seed		seed;
+};
 
 struct s_image_meta {
 	uint64_t	width;
@@ -50,12 +56,16 @@ struct s_vertex {
 };
 
 struct s_primitive {
-	uint16_t	mat_index;
-	uint8_t		shape_type;
+	uint32_t	data;
 };
 
 struct s_material {
-	uint8_t		mat_type;
+	t_vec		emission;
+	t_vec		albedo;
+	FLOAT		refractive_index;
+	FLOAT		density;
+	int32_t		reflective;
+	uint32_t	id;
 };
 
 struct s_shape_triangle {
@@ -99,6 +109,12 @@ struct s_accel_node {
 	}	b;
 };
 
+struct s_world_hit {
+	t_hit						hit;
+	t_vec						relative_normal;
+	const GLOBAL t_primitive	*prim;
+};
+
 struct s_world {
 	t_image_meta		img_meta;
 	t_camera			camera;
@@ -130,11 +146,20 @@ struct s_world {
 
 uint64_t	world_primitive_size(uint8_t shape_type);
 
+uint32_t					prim_type(const GLOBAL t_primitive *prim);
+uint32_t					prim_mat(const GLOBAL t_primitive *prim);
+const GLOBAL t_primitive	*get_prim_const(const GLOBAL t_world *world, uint32_t index);
+GLOBAL t_primitive			*get_prim(GLOBAL t_world *world, uint32_t index);
+const GLOBAL t_material		*get_mat_const(const GLOBAL t_world *world, uint32_t index);
+GLOBAL t_material			*get_mat(GLOBAL t_world *world, uint32_t index);
+t_vec						get_vertex(const t_world *world, uint32_t index);
+
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
-int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_hit *hit);
+int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
 
-int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_hit *hit);
+t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
+int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 void		world_accel(t_world *world);
 void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
 void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, FLOAT offset);

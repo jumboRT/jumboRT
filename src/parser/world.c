@@ -10,6 +10,8 @@ const static t_directive	directives[] = {
 	{ "co", rt_exec_cone },
 	{ "v", rt_exec_vertex },
 	{ "tr", rt_exec_triangle },
+	{ "L", rt_exec_light },
+	{ "ma", rt_exec_material },
 	{ "#", rt_exec_comment },
 };
 

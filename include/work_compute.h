@@ -4,12 +4,7 @@
 # include "world.h"
 # include "cl.h"
 
-typedef struct s_context	t_context;
 typedef struct s_result		t_result;
-
-struct s_context {
-	t_seed		seed;
-};
 
 struct s_result {
 	uint64_t	index;

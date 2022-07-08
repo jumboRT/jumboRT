@@ -59,17 +59,27 @@ static inline int
 }
 
 int
-	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_hit *hit)
+	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit)
 {
-	if (prim->shape_type == RT_SHAPE_SPHERE)
-		return (sphere_intersect(prim, ray, min, hit));
-	else if (prim->shape_type == RT_SHAPE_TRIANGLE)
-		return (triangle_intersect(world, prim, ray, min, hit));
-	else if (prim->shape_type == RT_SHAPE_PLANE)
-		return (plane_intersect(prim, ray, min, hit));
-	else if (prim->shape_type == RT_SHAPE_CYLINDER)
-		return (cylinder_intersect(prim, ray, min, hit));
-	else if (prim->shape_type == RT_SHAPE_CONE)
-		return (cone_intersect(prim, ray, min, hit));
-	return (0);
+	int	did_hit;
+
+	did_hit = 0;
+	if (prim_type(prim) == RT_SHAPE_SPHERE)
+		did_hit = sphere_intersect(prim, ray, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
+		did_hit = triangle_intersect(world, prim, ray, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_PLANE)
+		did_hit = plane_intersect(prim, ray, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_CYLINDER)
+		did_hit = cylinder_intersect(prim, ray, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_CONE)
+		did_hit = cone_intersect(prim, ray, min, &hit->hit);
+	if (did_hit)
+	{
+		hit->prim = prim;
+		hit->relative_normal = hit->hit.normal;
+		if (vec_dot(hit->relative_normal, ray.dir) > 0)
+			hit->relative_normal = vec_neg(hit->relative_normal);
+	}
+	return (did_hit);
 }

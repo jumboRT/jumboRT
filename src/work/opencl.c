@@ -34,7 +34,7 @@ struct s_opencl_ctx {
 	cl_mem				accel_nodes_mem;
 	cl_mem				accel_indices_mem;
 	cl_mem				accel_degenerates_mem;
-	t_context			ctx;
+	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
 	t_result			result[RT_WORK_OPENCL_GLOBAL_SIZE];
 };
 
@@ -71,7 +71,9 @@ const static char *g_source_files[] = {
 	"src/world/intersect.c",
 	"src/world/intersect_prim.c",
 	"src/world/primitive.c",
-	"src/world/node.c"
+	"src/world/node.c",
+	"src/world/common.c",
+	"src/world/trace.c"
 };
 
 void
@@ -143,7 +145,7 @@ void
 
 	cl_ctx->world_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, sizeof(*work->state->world), work->state->world, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer world failed");
-	cl_ctx->ctx_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, sizeof(cl_ctx->ctx), &cl_ctx->ctx, &status);
+	cl_ctx->ctx_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer ctx failed");
 	cl_ctx->result_mem = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result failed");
@@ -204,9 +206,15 @@ void
 	struct s_opencl_ctx		*cl_ctx;
 	cl_context_properties	props[3];
 	cl_int					status;
+	size_t					i;
 
 	cl_ctx = rt_malloc(sizeof(*cl_ctx));
-	ctx_init(&cl_ctx->ctx);
+	i = 0;
+	while (i < RT_WORK_OPENCL_GLOBAL_SIZE)
+	{
+		ctx_init(&cl_ctx->ctx[i]);
+		i += 1;
+	}
 	props[0] = CL_CONTEXT_PLATFORM;
 	props[1] = (cl_context_properties) platform;
 	props[2] = 0;

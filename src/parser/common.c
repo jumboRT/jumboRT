@@ -82,6 +82,19 @@ FLOAT
 	return (result);
 }
 
+FLOAT
+	rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max)
+{
+	FLOAT	result;
+
+	result = rt_float(ctx);
+	if (result < min || result > max)
+	{
+		rt_parse_error(ctx, "float out of range"); /* TODO print out range and value of float*/
+	}
+	return (result);
+}
+
 static FLOAT
 	rt_color_part(t_parse_ctx *ctx)
 {
@@ -107,8 +120,10 @@ t_vec
 	rt_skip(ctx, ft_isspace);
 	red = rt_color_part(ctx);
 	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
 	green = rt_color_part(ctx);
 	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
 	blue = rt_color_part(ctx);
 	return (vec(red, green, blue));
 }
@@ -123,8 +138,10 @@ t_vec
 	rt_skip(ctx, ft_isspace);
 	x = rt_float(ctx);
 	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
 	y = rt_float(ctx);
 	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
 	z = rt_float(ctx);
 	return (vec(x, y, z));
 }
@@ -133,4 +150,43 @@ t_vec
 	rt_vec_norm(t_parse_ctx *ctx)
 {
 	return (vec_norm(rt_vec(ctx)));
+}
+
+char
+	*rt_keyword(t_parse_ctx *ctx, const char *prefix)
+{
+	size_t	prefix_len;
+	size_t	id_len;
+	char	*result;
+
+	rt_skip(ctx, ft_isspace);
+	prefix_len = ft_strlen(prefix);
+	id_len = rt_idlen(ctx);
+	if (ft_strncmp(ctx->data, prefix, prefix_len))
+	{
+		rt_parse_error(ctx, "unexpected keyword %.*s, expected keyword"
+				"starting with: '%s'", id_len, ctx->data, prefix);
+	}
+	result = ft_strndup(ctx->data, id_len);
+	rt_idskip(ctx, id_len);
+	return (result);
+}
+
+int
+	rt_bool(t_parse_ctx *ctx)
+{
+	rt_skip(ctx, ft_isspace);
+	if (ft_strncmp(ctx->data, "true", 4) == 0)
+	{
+		rt_idskip(ctx, 4);
+		return (1);
+	}
+	else if (ft_strncmp(ctx->data, "false", 5) == 0)
+	{
+		rt_idskip(ctx, 5);
+		return (0);
+	}
+	rt_parse_error(ctx, "unexpected word %.*s, expected 'true' or 'false'",
+			rt_idlen(ctx), ctx->data);
+	return (0);
 }

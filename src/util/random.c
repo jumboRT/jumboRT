@@ -21,3 +21,32 @@ FLOAT
 	return (min + (max - min) * (rt_random_float(seed)));
 }
 
+t_vec
+	rt_random_in_sphere(GLOBAL t_seed *seed, FLOAT min, FLOAT max)
+{
+	t_vec	result;
+	FLOAT	len;
+
+	while (1)
+	{
+		result = vec(
+				rt_random_float_range(seed, -max, max),
+				rt_random_float_range(seed, -max, max),
+				rt_random_float_range(seed, -max, max));
+		len = vec_mag(result);
+		if (len >= min && len <= max)
+			return (result);
+	}
+}
+
+t_vec
+	rt_random_on_hemi(GLOBAL t_seed *seed, t_vec normal)
+{
+	t_vec	result;
+
+	result = vec_norm(rt_random_in_sphere(seed, 0.001, 1));
+	if (vec_dot(result, normal) < 0)
+		result = vec_neg(result);
+	return (result);
+}
+

@@ -7,12 +7,11 @@ void
 {
 	t_shape_cylinder	shape;
 
-	shape.base.shape_type = RT_SHAPE_CYLINDER;
-	shape.base.mat_index = 0;
+	shape.base.data = RT_SHAPE_CYLINDER;
 	shape.cylinder.pos = rt_vec(ctx);
 	shape.cylinder.dir = rt_vec_norm(ctx);
 	shape.cylinder.radius = rt_float(ctx) / 2;
 	shape.cylinder.height = rt_float(ctx);
-	rt_color(ctx);
+	rt_material(ctx, world, &shape.base);
 	world_add_primitive(world, &shape, sizeof(shape));
 }

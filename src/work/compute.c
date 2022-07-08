@@ -19,17 +19,20 @@ __kernel void
 		world->accel_degenerates = ptr;
 }
 
+/* TODO: synchronize or duplicate context */
 __kernel void
 	work_kernel(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t begin, uint64_t end, GLOBAL t_result *results)
 {
-	uint64_t	index;
-	uint64_t	size;
+	uint64_t			index;
+	uint64_t			size;
+	GLOBAL t_context	*my_ctx;
 
 	size = end - begin;
 	index = get_global_id(0);
+	my_ctx = &ctx[index];
 	while (index < size)
 	{
-		results[index] = work_compute(world, ctx, begin + index);
+		results[index] = work_compute(world, my_ctx, begin + index);
 		index += get_global_size(0);
 	}
 }
@@ -57,23 +60,9 @@ t_result
 {
 	t_result	result;
 	t_ray		ray;
-	FLOAT		t;
-	t_vec		top;
-	t_vec		bot;
-	t_hit		hit;
 
 	ray = project(world, ctx, index);
-	if (world_intersect(world, ray, &hit))
-	{
-		result.color = vec_scale(vec_add(hit.normal, vec(1, 1, 1)), 0.5);
-	}
-	else
-	{
-		t = z(ray.dir) * 0.5 + 0.5;
-		top = vec(0.5, 0.7, 1.0);
-		bot = vec(1.0, 1.0, 1.0);
-		result.color = vec_add(vec_scale(bot, 1 - t), vec_scale(top, t));
-	}
+	result.color = world_trace(world, ctx, ray, 8); // TODO: RT_MAX_DEPTH
 	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }

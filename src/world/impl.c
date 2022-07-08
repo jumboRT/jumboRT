@@ -132,3 +132,20 @@ uint32_t
 	return (old_size / sizeof(accel_degenerate));
 }
 
+int64_t
+	world_get_material(const t_world *world, uint32_t id)
+{
+	size_t				offset;
+	const t_material	*material;
+
+	offset = 0;
+	while (offset < world->materials_size)
+	{
+		material = (const t_material *) ((const char *) world->materials + offset);
+		if (material->id == id)
+			return (offset / RT_MATERIAL_ALIGN);
+		offset += sizeof(*material); /* TOOD do something like world_material_size */
+	}
+	return (-1);
+}
+

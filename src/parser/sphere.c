@@ -7,11 +7,10 @@ void
 {
 	t_shape_sphere	sphere;
 
-	sphere.base.shape_type = RT_SHAPE_SPHERE;
-	sphere.base.mat_index = 0;
+	sphere.base.data = RT_SHAPE_SPHERE;
 	sphere.pos = rt_vec(ctx);
 	sphere.radius = rt_float(ctx) / 2;
-	rt_color(ctx);
+	rt_material(ctx, world, &sphere.base);
 	world_add_primitive(world, &sphere, sizeof(sphere));
 }
 

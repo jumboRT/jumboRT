@@ -6,6 +6,7 @@ lines = sys.stdin.readlines()
 vertices = []
 faces = []
 planes = []
+lights = []
 camera = ((0, 0, 0), (1, 0, 0), 90)
 # write_bb = ((0.785739, -0.908510, 0.038250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.883179, -0.673730, 0.038250), (1.072875, -0.509230, 0.311250))
@@ -40,17 +41,24 @@ if sys.argv[1] == "jkoers":
         if line[0] == "pl":
             position = parse_vertex(line[1].split(","), True)
             rotation = parse_vertex(line[2].split(","), True)
-            planes.append((position, rotation))
+            color = tuple(map(int, line[3].split(",")))
+            planes.append((position, rotation, color))
         if line[0] == "tr":
             a = add_vertex(parse_vertex(line[1].split(","), True))
             b = add_vertex(parse_vertex(line[2].split(","), True))
             c = add_vertex(parse_vertex(line[3].split(","), True))
-            faces.append((a, b, c))
+            color = tuple(map(int, line[4].split(",")))
+            faces.append(((a, b, c), color))
         if line[0] == "c":
             position = parse_vertex(line[1].split(","), True)
             rotation = parse_vertex(line[2].split(","), True)
             fov = float(line[3])
             camera = (position, rotation, fov)
+        if line[0] == "l":
+            position = parse_vertex(line[1].split(","), True)
+            brightness = float(line[2])
+            color = tuple(map(int, line[3].split(",")))
+            lights.append((position, brightness, color))
 elif sys.argv[1] == "obj":    
     for line in lines:
         line = line.split()
@@ -64,7 +72,7 @@ elif sys.argv[1] == "obj":
             a = int(line[1].split("/")[0]) - 1
             b = int(line[2].split("/")[0]) - 1
             c = int(line[3].split("/")[0]) - 1
-            faces.append((a, b, c))
+            faces.append(((a, b, c), (255, 255, 255)))
 else:
     sys.stderr.write(f"invalid format {sys.argv[1]}\n")
     sys.exit(1)
@@ -95,8 +103,10 @@ sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
 sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:f}\n")
 for plane in planes:
-    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} 255,255,255\n")
+    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} {plane[2][0]},{plane[2][1]},{plane[2][2]}\n")
 for vertex in vertices:
     sys.stdout.write(f"v {str_vertex(vertex)}\n")
 for face in faces:
-        sys.stdout.write(f"tr {face[0]} {face[1]} {face[2]}\n")
+    sys.stdout.write(f"tr {face[0][0]} {face[0][1]} {face[0][2]} {face[1][0]},{face[1][1]},{face[1][2]}\n")
+for light in lights:
+    sys.stdout.write(f"L {str_vertex(light[0])} {light[1]:f} {light[2][0]},{light[2][1]},{light[2][2]}\n")

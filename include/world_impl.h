@@ -78,6 +78,8 @@ uint32_t	world_add_accel_node(t_world *world, t_accel_node *accel_node);
 uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
 uint32_t	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate);
 
+int64_t		world_get_material(const t_world *world, uint32_t index);
+
 void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);

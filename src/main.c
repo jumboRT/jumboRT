@@ -29,8 +29,7 @@ void
 {
 	t_shape_sphere	sphere;
 
-	sphere.base.shape_type = RT_SHAPE_SPHERE;
-	sphere.base.mat_index = 0;
+	sphere.base.data = RT_SHAPE_SPHERE;
 	sphere.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
 	sphere.pos = pos;
 	world_add_primitive(world, &sphere, sizeof(sphere));
@@ -41,8 +40,7 @@ void
 {
 	t_shape_cylinder	cylinder;
 
-	cylinder.base.shape_type = RT_SHAPE_CYLINDER;
-	cylinder.base.mat_index = 0;
+	cylinder.base.data = RT_SHAPE_CYLINDER;
 	cylinder.cylinder.dir = vec_norm(vec(
 				rt_random_float_range(seed, -1, 1),
 				rt_random_float_range(seed, -1, 1),
@@ -58,8 +56,7 @@ void
 {
 	t_shape_cone	cone;
 
-	cone.base.shape_type = RT_SHAPE_CONE;
-	cone.base.mat_index = 0;
+	cone.base.data = RT_SHAPE_CONE;
 	cone.cone.dir = vec_norm(vec(
 				rt_random_float_range(seed, -1, 1),
 				rt_random_float_range(seed, -1, 1),
@@ -211,7 +208,7 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 16;
+	world.img_meta.samples = 100;
 	if (argc == 1)
 		world_gen(&world);
 	else

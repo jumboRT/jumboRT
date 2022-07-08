@@ -141,6 +141,7 @@ t_vec	vec_scale(t_vec v, FLOAT s)	__attribute__ ((const));
 t_vec	vec_cross(t_vec a, t_vec b)	__attribute__ ((const));
 t_vec	vec_add(t_vec a, t_vec b)	__attribute__ ((const));
 t_vec	vec_sub(t_vec a, t_vec b)	__attribute__ ((const));
+t_vec	vec_mul(t_vec a, t_vec b)	__attribute__ ((const));
 t_vec	vec_norm(t_vec v)			__attribute__ ((const));
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec	vec_norm2(t_vec v) __attribute__ ((const));

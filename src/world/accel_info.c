@@ -84,7 +84,7 @@ void
 			prim.bounds = prim_bounds(primitive, world);
 			world_info_add_prim(tree, node, prim);
 		}
-		offset += world_primitive_size(primitive->shape_type);
+		offset += world_primitive_size(prim_type(primitive));
 	}
 	node->depth = world_max_depth(tree->prims_count);
 	view_sort_array(tree->edges[0].edges[AXIS_X], tree->edges[0].count,

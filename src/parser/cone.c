@@ -7,12 +7,11 @@ void
 {
 	t_shape_cone	shape;
 
-	shape.base.shape_type = RT_SHAPE_CONE;
-	shape.base.mat_index = 0;
+	shape.base.data = RT_SHAPE_CONE;
 	shape.cone.pos = rt_vec(ctx);
 	shape.cone.dir = rt_vec_norm(ctx);
 	shape.cone.angle = rt_float(ctx);
 	shape.cone.height = rt_float(ctx);
-	rt_color(ctx);
+	rt_material(ctx, world, &shape.base);
 	world_add_primitive(world, &shape, sizeof(shape));
 }
