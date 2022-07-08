@@ -12,14 +12,17 @@
 
 #define GEN_MIN_SCALE 0.2
 #define GEN_MIN_ANGLE 0.25
-#define GEN_X_SIZE 4
-#define GEN_Y_SIZE 32
-#define GEN_Z_SIZE 18
-#define GEN_SCALE_FACTOR 4.0
+#define GEN_X_SIZE 1
+#define GEN_Y_SIZE (320 / 4)
+#define GEN_Z_SIZE (180 / 4)
+#define GEN_X_RANGE 0
+#define GEN_Y_RANGE 0
+#define GEN_Z_RANGE 0
+#define GEN_SCALE_FACTOR 3.0
 #define GEN_SCALE (GEN_SCALE_FACTOR / (GEN_X_SIZE + GEN_Y_SIZE + GEN_Z_SIZE))
-#define GEN_SPHERE_CHANCE (1.0 / 3)
-#define GEN_CYLINDER_CHANCE (1.0 / 3)
-#define GEN_CONE_CHANCE (1.0 / 3)
+#define GEN_SPHERE_CHANCE (0.0 / 3)
+#define GEN_CYLINDER_CHANCE (3.0 / 3)
+#define GEN_CONE_CHANCE (0.0 / 3)
 
 void
 	world_gen_sphere(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
@@ -67,6 +70,18 @@ void
 	world_add_primitive(world, &cone, sizeof(cone));
 }
 
+FLOAT
+	world_gen_offset(t_seed *seed, int axis)
+{
+	if (axis == 0 && GEN_X_RANGE != 0)
+		return (rt_random_float_range(seed, 0, GEN_X_RANGE));
+	if (axis == 1 && GEN_Y_RANGE != 0)
+		return (rt_random_float_range(seed, 0, GEN_Y_RANGE));
+	if (axis == 2 && GEN_Z_RANGE != 0)
+		return (rt_random_float_range(seed, 0, GEN_Z_RANGE));
+	return (0);
+}
+
 void
 	world_gen(t_world *world)
 {
@@ -80,9 +95,9 @@ void
 	while (i < GEN_X_SIZE * GEN_Y_SIZE * GEN_Z_SIZE)
 	{
 		pos = vec(
-			+0.5 + (rt_random_float_range(&seed, 0, 1) + i % GEN_X_SIZE) / (FLOAT) GEN_Z_SIZE,
-			-(FLOAT) GEN_Y_SIZE / GEN_Z_SIZE / 2 + (rt_random_float_range(&seed, 0, 1) + i / GEN_X_SIZE % GEN_Y_SIZE) / (FLOAT) GEN_Z_SIZE,
-			-0.5 + (rt_random_float_range(&seed, 0, 1) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE);
+			+0.5 + (world_gen_offset(&seed, 0) + i % GEN_X_SIZE) / (FLOAT) GEN_Z_SIZE,
+			-(FLOAT) GEN_Y_SIZE / GEN_Z_SIZE / 2 + (world_gen_offset(&seed, 1) + i / GEN_X_SIZE % GEN_Y_SIZE) / (FLOAT) GEN_Z_SIZE,
+			-0.5 + (world_gen_offset(&seed, 2) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE);
 		pos = vec_scale(pos, 2);
 		type = rt_random_float_range(&seed, 0, 1);
 		if (type < GEN_SPHERE_CHANCE)

@@ -94,7 +94,9 @@ struct s_hit {
 
 FLOAT	rt_sqrt(FLOAT a);
 FLOAT	rt_sin(FLOAT a);
+FLOAT	rt_asin(FLOAT a);
 FLOAT	rt_cos(FLOAT a);
+FLOAT	rt_acos(FLOAT a);
 FLOAT	rt_tan(FLOAT a);
 FLOAT	rt_atan(FLOAT a);
 FLOAT	rt_atan2(FLOAT y, FLOAT x);
@@ -148,9 +150,7 @@ t_vec	vec_max(t_vec a, t_vec b) __attribute__ ((const));
 t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max) __attribute__ ((const));
 
 t_vec	vec_rotate(t_vec axis, t_vec v, FLOAT angle);
-void	vec_angles(t_vec v, FLOAT *xr, FLOAT *yr);
-t_vec	vec_rotate_fwd(t_vec v, FLOAT xr, FLOAT yr);
-t_vec	vec_rotate_bwd(t_vec v, FLOAT xr, FLOAT yr);
+void	vec_angles(t_vec basis, t_vec v, t_vec *out_vec, FLOAT *out_angle);
 
 t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));
 t_vec	ray_at(t_ray ray, FLOAT t) __attribute__ ((const));

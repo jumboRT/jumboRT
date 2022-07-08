@@ -43,16 +43,6 @@ static int
 	return (0);
 }
 
-static inline t_vec
-	cylinder_normal_at(FLOAT radius, t_vec relative_point)
-{
-	(void) radius;
-	return (vec_norm(
-				vec_sub(
-					relative_point,
-					vec_scale(vec_z(1.0), vec_dot(relative_point, vec_z(1.0))))));
-}
-
 static int
 	ray_infinite_cylinder_intersect(t_ray relative_ray, FLOAT radius, FLOAT intersections[2])
 {
@@ -74,8 +64,8 @@ static int
 	FLOAT	z_side[2];
 	FLOAT	t_end[2];
 	FLOAT	height;
-	FLOAT	xr;
-	FLOAT	yr;
+	t_vec	axis;
+	FLOAT	angle;
 
 	if (!ray_infinite_cylinder_intersect(relative_ray, cylinder.radius, t_side))
 		return (0);
@@ -103,14 +93,16 @@ static int
 	if (t_side[0] < hit->t && t_side[0] >= min && between(z_side[0], height, 0.0))
 	{
 		hit->t = t_side[0];
-		vec_angles(cylinder.dir, &xr, &yr);
-		hit->normal = vec_scale(vec_rotate_fwd(vec_set(ray_at(relative_ray, hit->t), 2, 0), xr, yr), 1 / cylinder.radius);
+		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
+		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
+		hit->normal = vec_rotate(axis, hit->normal, angle);
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min && between(z_side[1], height, 0.0))
 	{
 		hit->t = t_side[1];
-		vec_angles(cylinder.dir, &xr, &yr);
-		hit->normal = vec_scale(vec_rotate_fwd(vec_set(ray_at(relative_ray, hit->t), 2, 0), xr, yr), 1 / cylinder.radius);
+		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
+		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
+		hit->normal = vec_rotate(axis, hit->normal, angle);
 	}
 	if (hit->t < RT_HUGE_VAL)
 		return (1);
@@ -120,15 +112,13 @@ static int
 int
 	ray_cylinder_intersect(t_ray ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
 {
-	FLOAT	xr;
-	FLOAT	yr;
 	t_ray	relative_ray;
+	t_vec	axis;
+	FLOAT	angle;
 
-	vec_angles(cylinder.dir, &xr, &yr);
-	relative_ray.org = vec_sub(ray.org, cylinder.pos);
-	relative_ray.dir = ray.dir;
-	relative_ray.org = vec_rotate_bwd(relative_ray.org, xr, yr);
-	relative_ray.dir = vec_rotate_bwd(relative_ray.dir, xr, yr);
+	vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
+	relative_ray.org = vec_rotate(axis, vec_sub(ray.org, cylinder.pos), -angle);
+	relative_ray.dir = vec_rotate(axis, ray.dir, -angle);
 	if (vec_dot(relative_ray.dir, cylinder.dir) == 1.0)
 	{
 		if (ray_cylinder_intersect_parallel(relative_ray, cylinder, min, hit))

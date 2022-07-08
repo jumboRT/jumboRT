@@ -12,25 +12,9 @@ t_vec
 }
 
 void
-	vec_angles(t_vec v, FLOAT *xr, FLOAT *yr)
+	vec_angles(t_vec basis, t_vec v, t_vec *out_vec, FLOAT *out_angle)
 {
-	*xr = rt_atan2(z(v), y(v)) - RT_PI / 2;
-	*yr = rt_atan2(z(vec_rotate(vec_x(1), v, -*xr)), x(v)) - RT_PI / 2;
-}
-
-t_vec
-	vec_rotate_fwd(t_vec v, FLOAT xr, FLOAT yr)
-{
-	v = vec_rotate(vec_y(-1), v, yr);
-	v = vec_rotate(vec_x(1), v, xr);
-	return (v);
-}
-
-t_vec
-	vec_rotate_bwd(t_vec v, FLOAT xr, FLOAT yr)
-{
-	v = vec_rotate(vec_x(1), v, -xr);
-	v = vec_rotate(vec_y(-1), v, -yr);
-	return (v);
+	*out_vec = vec_norm(vec_cross(basis, v));
+	*out_angle = rt_acos(vec_dot(basis, v));
 }
 
