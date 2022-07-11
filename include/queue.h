@@ -6,7 +6,7 @@
 
 # include <stddef.h>
 
-# define RT_QUEUE_MAX 268435456
+# define RT_QUEUE_MAX (1ULL << 26)
 
 typedef struct s_queue	t_queue;
 

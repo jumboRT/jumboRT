@@ -215,8 +215,10 @@ cl_mem
 
 	if (size == 0)
 		return (NULL);
-	mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, size, ptr, &status);
+	mem = clCreateBuffer(cl_ctx->context, CL_MEM_READ_ONLY, size, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer failed");
+	status = clEnqueueWriteBuffer(cl_ctx->command_queue[0], mem, CL_TRUE, 0, size, ptr, 0, NULL, NULL);
+	rt_assert(status == CL_SUCCESS, "clEnqueueWriteBuffer failed");
 	return (mem);
 }
 
@@ -225,10 +227,8 @@ void
 {
 	cl_int	status;
 
-	cl_ctx->world_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, sizeof(*work->state->world), work->state->world, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateBuffer world failed");
-	cl_ctx->ctx_mem = clCreateBuffer(cl_ctx->context, CL_MEM_COPY_HOST_PTR, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateBuffer ctx failed");
+	cl_ctx->world_mem = work_copy_array(cl_ctx, sizeof(*work->state->world), work->state->world);
+	cl_ctx->ctx_mem = work_copy_array(cl_ctx, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx);
 	cl_ctx->result_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[0] failed");
 	cl_ctx->result_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);

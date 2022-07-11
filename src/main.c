@@ -224,7 +224,7 @@ int
 	while (work.work_progress < work.work_size)
 	{
 		work_update(&work);
-		usleep(1000);
+		usleep(10000);
 	}
 	rt_write_ppm("image.ppm", &image);
 	work_destroy(&work);
