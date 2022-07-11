@@ -65,6 +65,8 @@ static void
 	FLOAT						min_t;
 	FLOAT						max_t;
 	FLOAT						plane_t;
+	FLOAT						tmp;
+	uint32_t					next_child;
 	t_world_hit					current;
 
 	min_t = 0.001;
@@ -82,36 +84,28 @@ static void
 				org_t = xyz(ray.org, split_axis(*node));
 				dir_t = xyz(ray.dir, split_axis(*node));
 				split_t = split_pos(*node);
-				/* TODO: unify these branches */
 				if (org_t + dir_t * min_t < split_t)
 				{
-					if (dir_t > 0)
-					{
-						plane_t = (split_t - org_t) / dir_t;
-						if (plane_t < max_t)
-						{
-							stack[istack].index = above_child(*node);
-							stack[istack].max = max_t;
-							istack += 1;
-							max_t = plane_t;
-						}
-					}
+					next_child = above_child(*node);
 					node = node + 1;
+					tmp = dir_t;
 				}
 				else
 				{
-					if (dir_t < 0)
-					{
-						plane_t = (split_t - org_t) / dir_t;
-						if (plane_t < max_t)
-						{
-							stack[istack].index = node - world->accel_nodes + 1;
-							stack[istack].max = max_t;
-							istack += 1;
-							max_t = plane_t;
-						}
-					}
+					next_child = node - world->accel_nodes + 1;
 					node = world->accel_nodes + above_child(*node);
+					tmp = -dir_t;
+				}
+				if (tmp > 0)
+				{
+					plane_t = (split_t - org_t) / dir_t;
+					if (plane_t < max_t)
+					{
+						stack[istack].index = next_child;
+						stack[istack].max = max_t;
+						istack += 1;
+						max_t = plane_t;
+					}
 				}
 			}
 			if (nprims(*node) == 1)
