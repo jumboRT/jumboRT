@@ -1,6 +1,6 @@
 #include "rtmath.h"
 
-#if !defined RT_VECTORIZE
+#if defined RT_NO_INTRIN
 
 __attribute__ ((const))
 t_vec

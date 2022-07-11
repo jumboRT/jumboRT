@@ -1,6 +1,6 @@
 #include "rtmath.h"
 
-#if defined RT_NO_INTRIN
+#if defined RT_OPENCL
 
 __attribute__ ((const))
 FLOAT
@@ -21,6 +21,13 @@ FLOAT
 	z(t_vec v)
 {
 	return (v.z);
+}
+
+__attribute__ ((const))
+FLOAT
+	w(t_vec v)
+{
+	return (v.w);
 }
 
 __attribute__ ((const))

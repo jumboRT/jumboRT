@@ -1,16 +1,11 @@
 #include "rtmath.h"
 
-#if defined RT_NO_INTRIN
+#if defined RT_OPENCL
 
 t_vec
 	vec(FLOAT x, FLOAT y, FLOAT z)
 {
-	t_vec	result;
-
-	result.x = x;
-	result.y = y;
-	result.z = z;
-	return (result);
+	return ((x, y, z, 0.0));
 }
 	
 t_vec
@@ -36,4 +31,5 @@ t_vec
 {
 	return (vec(0.0, 0.0, z));
 }
+
 #endif
