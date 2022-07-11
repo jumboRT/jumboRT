@@ -16,7 +16,7 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
-#  define RT_WORK_OPENCL_LOCAL_SIZE 256
+#  define RT_WORK_OPENCL_LOCAL_SIZE 32
 # endif
 
 struct s_opencl_ctx {
