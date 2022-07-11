@@ -58,6 +58,7 @@ static void
 	const GLOBAL t_primitive	*prim;
 	uint32_t					iprim;
 	const GLOBAL uint32_t		*prims;
+	uint32_t					nprim;
 	FLOAT						org_t;
 	FLOAT						dir_t;
 	FLOAT						split_t;
@@ -70,63 +71,72 @@ static void
 	max_t = RT_HUGE_VAL;
 	istack = 0;
 	node = world->accel_nodes;
+	iprim = 0;
+	nprim = 0;
 	while (min_t < hit->hit.t)
 	{
-		while (!is_leaf(*node))
+		if (iprim >= nprim)
 		{
-			org_t = xyz(ray.org, split_axis(*node));
-			dir_t = xyz(ray.dir, split_axis(*node));
-			split_t = split_pos(*node);
-			/* TODO: unify these branches */
-			if (org_t + dir_t * min_t < split_t)
+			while (!is_leaf(*node))
 			{
-				if (dir_t > 0)
+				org_t = xyz(ray.org, split_axis(*node));
+				dir_t = xyz(ray.dir, split_axis(*node));
+				split_t = split_pos(*node);
+				/* TODO: unify these branches */
+				if (org_t + dir_t * min_t < split_t)
 				{
-					plane_t = (split_t - org_t) / dir_t;
-					if (plane_t < max_t)
+					if (dir_t > 0)
 					{
-						stack[istack].index = above_child(*node);
-						stack[istack].max = max_t;
-						istack += 1;
-						max_t = plane_t;
+						plane_t = (split_t - org_t) / dir_t;
+						if (plane_t < max_t)
+						{
+							stack[istack].index = above_child(*node);
+							stack[istack].max = max_t;
+							istack += 1;
+							max_t = plane_t;
+						}
 					}
+					node = node + 1;
 				}
-				node = node + 1;
+				else
+				{
+					if (dir_t < 0)
+					{
+						plane_t = (split_t - org_t) / dir_t;
+						if (plane_t < max_t)
+						{
+							stack[istack].index = node - world->accel_nodes + 1;
+							stack[istack].max = max_t;
+							istack += 1;
+							max_t = plane_t;
+						}
+					}
+					node = world->accel_nodes + above_child(*node);
+				}
 			}
+			if (nprims(*node) == 1)
+				prims = &node->a.one_primitive;
 			else
-			{
-				if (dir_t < 0)
-				{
-					plane_t = (split_t - org_t) / dir_t;
-					if (plane_t < max_t)
-					{
-						stack[istack].index = node - world->accel_nodes + 1;
-						stack[istack].max = max_t;
-						istack += 1;
-						max_t = plane_t;
-					}
-				}
-				node = world->accel_nodes + above_child(*node);
-			}
+				prims = world->accel_indices + node->a.primitive_ioffset;
+			iprim = 0;
+			nprim = nprims(*node);
 		}
-		if (nprims(*node) == 1)
-			prims = &node->a.one_primitive;
-		else
-			prims = world->accel_indices + node->a.primitive_ioffset;
-		iprim = 0;
-		while (iprim < nprims(*node))
+		if (iprim < nprim)
 		{
 			prim = get_prim_const(world, prims[iprim]);
 			if (prim_intersect(prim, world, ray, min_t, &current) && current.hit.t < hit->hit.t)
 				*hit = current;
 			iprim += 1;
 		}
-		if (istack == 0)
-			return ;
-		min_t = max_t;
-		istack -= 1;
-		node = world->accel_nodes + stack[istack].index;
-		max_t = stack[istack].max;
+		if (iprim >= nprim)
+		{
+			if (istack == 0)
+				return ;
+			min_t = max_t;
+			istack -= 1;
+			node = world->accel_nodes + stack[istack].index;
+			max_t = stack[istack].max;
+		}
 	}
 }
 
