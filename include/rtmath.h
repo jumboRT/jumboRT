@@ -1,27 +1,17 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
-
-/*
- * Math constants
- */
 # define RT_HUGE_VAL 1000000000.0
+
 # define RT_PI 3.14159
 # define RT_2PI 6.28319
-
 # if !defined FLOAT
 #  define FLOAT float
 # endif
 
-# if defined RT_OPENCL
-#	undef FLOAT
-#   undef RT_VECTORIZE
-#	define FLOAT float
+# define RT_VECTORIZE
 
-typedef float4				t_vec;
-typedef float2				t_vec2;
-
-#elif defined RT_VECTORIZE
+# if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
 typedef FLOAT				t_vec2 __attribute__ ((vector_size(8)));
 
@@ -29,18 +19,6 @@ typedef union u_vec_conv {
 	t_vec vec;
 	FLOAT elem[4];
 }	t_vec_conv;
-# else
-# define RT_NO_INTRIN
-typedef struct __attribute__((aligned(16))) s_vec {
-	FLOAT x;
-	FLOAT y;
-	FLOAT z;
-}	t_vec;
-
-typedef struct s_vec2 {
-	FLOAT x;
-	FLOAT y;
-}	t_vec2;
 # endif
 
 typedef struct s_ray		t_ray;
@@ -54,6 +32,19 @@ typedef struct s_cone		t_cone;
 typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
+
+# if !defined RT_VECTORIZE
+typedef struct __attribute__((aligned(16))) s_vec {
+	FLOAT x;
+	FLOAT y;
+	FLOAT z;
+}	t_vec;
+
+typedef struct s_vec2 {
+	FLOAT x;
+	FLOAT y;
+}	t_vec2;
+# endif
 
 struct s_ray {
 	t_vec	org;

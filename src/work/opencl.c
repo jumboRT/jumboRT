@@ -48,10 +48,15 @@ const static char *g_source_files[] = {
 	"src/math/cylinder.c",
 	"src/math/cone.c",
 	"src/math/ray_constr.c",
-	"src/math/vec_arith_cl.c",
+	"src/math/vec_arith.c",
+	"src/math/vec_arith_fast.c",
+	"src/math/vec_constr.c",
 	"src/math/vec_constr_fast.c",
+	"src/math/vec_geo.c",
 	"src/math/vec_geo_fast.c",
+	"src/math/vec_get.c",
 	"src/math/vec_get_fast.c",
+	"src/math/vec_size.c",
 	"src/math/vec_size_fast.c",
 	"src/math/vec_rotate.c",
 	"src/math/vec_set.c",
@@ -182,7 +187,7 @@ void
 	}
 	cl_ctx->program = clCreateProgramWithSource(cl_ctx->context, count, (const char**) strings, lengths, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateProgramWithSource failed");
-	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D RT_VECTORIZE -D GLOBAL=__global", NULL, NULL);
+	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global", NULL, NULL);
 	if (status != CL_SUCCESS)
 	{
 		status = clGetProgramBuildInfo(cl_ctx->program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
