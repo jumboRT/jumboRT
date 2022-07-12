@@ -4,8 +4,10 @@
 # include "rtmath.h"
 # include "world.h"
 # include "cl.h"
+# include "gfx.h"
 
 # include <stddef.h>
+# include <signal.h>
 
 typedef struct s_pixel	t_pixel;
 typedef struct s_image	t_image;
@@ -25,6 +27,8 @@ struct s_image {
 struct s_state {
 	t_image	*image;
 	t_world	*world;
+	t_win	win;
+	sig_atomic_t should_exit;
 };
 
 #endif

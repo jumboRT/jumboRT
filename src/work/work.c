@@ -38,8 +38,8 @@ void
 	i = 0;
 	while (i < work->count)
 	{
-		queue_destroy(&work->workers[i]->queue);
 		thread_join(&work->workers[i]->thread);
+		queue_destroy(&work->workers[i]->queue);
 		i += 1;
 	}
 	work_int_destroy(work);

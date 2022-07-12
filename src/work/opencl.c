@@ -150,6 +150,7 @@ void
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
 		while (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_GLOBAL_SIZE))
 		{
+			printf("start\n");
 			id = 1 - id;
 			status = clSetKernelArg(cl_ctx->work_kernel, 2, sizeof(begin), &begin);
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 2 failed");
@@ -174,6 +175,7 @@ void
 			rt_assert(status == CL_SUCCESS, "clSetEventCallback work_kernel failed");
 			status = clReleaseEvent(read_event);
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
+			printf("end\n");
 		}
 		status = clReleaseEvent(kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");

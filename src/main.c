@@ -2,6 +2,7 @@
 #include "util.h"
 #include "world_impl.h"
 #include "parser.h"
+#include "keycode.h"
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -184,6 +185,64 @@ void
 	}
 }
 
+__attribute__((noreturn))
+int
+	rt_exit(t_work *work)
+{
+	fprintf(stderr, "destroying work...");
+	work_destroy(work);
+	fprintf(stderr, "OK!\n");
+	exit(EXIT_SUCCESS);
+}
+
+int
+	rt_key_down(int keycode, void *ctx)
+{
+	t_work *work;
+
+	work = ctx;
+	if (keycode == RT_KEY_ESC || keycode == RT_KEY_Q)
+		rt_exit(work);
+	return (0);
+}
+
+int
+	rt_loop(void *ctx)
+{
+	t_work	*work;
+
+	work = ctx;
+	if (work->state->should_exit)
+		rt_exit(work);
+	work_update(work);
+	win_put(&work->state->win, work->state->image);
+	/*printf("\3302k\n"):*/
+	usleep(10000);
+	return (0);
+}
+
+static void
+	sigint_handler(int sig, siginfo_t *info, void *ctx)
+{
+	t_work	*work;
+
+	(void) sig;
+	(void) info;
+	work = ctx;
+	work->state->should_exit = 1;
+}
+
+static void
+	setup_sighandlers(void)
+{
+	struct sigaction	action;
+
+	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty set");
+	action.sa_sigaction = sigint_handler;
+	action.sa_flags = SA_NODEFER | SA_RESTART | SA_SIGINFO;
+	// rt_assert(sigaction(SIGINT, &action, 
+}
+
 int
 	main(int argc, char **argv)
 {
@@ -205,6 +264,7 @@ int
 	}
 	state.image = &image;
 	state.world = &world;
+	state.should_exit = 0;
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
@@ -221,6 +281,10 @@ int
 	work.work_index = 0;
 	work.work_progress = 0;
 	work_resume(&work);
+	win_create(&state.win, image.width, image.height);
+	win_event_hook(&state.win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, &work);
+	win_event_hook(&state.win, RT_WIN_EVENT_CLOSE, rt_exit, &work);
+	win_start(rt_loop, &work);
 	while (work.work_progress < work.work_size)
 	{
 		work_update(&work);

@@ -74,12 +74,9 @@ int
 		did_hit = cylinder_intersect(prim, ray, min, &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		did_hit = cone_intersect(prim, ray, min, &hit->hit);
-	if (did_hit)
-	{
-		hit->prim = prim;
-		hit->relative_normal = hit->hit.normal;
-		if (vec_dot(hit->relative_normal, ray.dir) > 0)
-			hit->relative_normal = vec_neg(hit->relative_normal);
-	}
+	hit->prim = prim;
+	hit->relative_normal = hit->hit.normal;
+	if (vec_dot(hit->relative_normal, ray.dir) > 0)
+		hit->relative_normal = vec_neg(hit->relative_normal);
 	return (did_hit);
 }
