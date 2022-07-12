@@ -286,12 +286,43 @@ void
 	}
 }
 
+#ifdef RT_LINUX
+
+cl_command_queue
+	work_create_queue(cl_context context, cl_device device, cl_command_queue_properties props)
+{
+	cl_int				status;
+	cl_command_queue	result;
+	cl_queue_properties	queue_props[3];
+
+	queue_props[0] = CL_QUEUE_PROPERTIES;
+	queue_props[1] = props;
+	queue_props[2] = 0;
+	result = clCreateCommandQueueWithProperties(context, device, queue_props, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
+	return (result);
+}
+
+#else
+
+cl_command_queue
+	work_create_queue(cl_context context, cl_device_id device, cl_command_queue_properties props)
+{
+	cl_int				status;
+	cl_command_queue	result;
+
+	result = clCreateCommandQueue(context, device, 0, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
+	return (result);
+}
+
+#endif
+
 void
 	work_setup(t_work *work, cl_platform_id platform, cl_device_id device)
 {
 	struct s_opencl_ctx		*cl_ctx;
 	cl_context_properties	context_props[3];
-	cl_queue_properties		queue_props[3];
 	cl_int					status;
 	size_t					i;
 
@@ -302,18 +333,13 @@ void
 		ctx_init(&cl_ctx->ctx[i]);
 		i += 1;
 	}
-	queue_props[0] = CL_QUEUE_PROPERTIES;
-	queue_props[1] = CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
-	queue_props[2] = 0;
 	context_props[0] = CL_CONTEXT_PLATFORM;
 	context_props[1] = (cl_context_properties) platform;
 	context_props[2] = 0;
 	cl_ctx->context = clCreateContextFromType(context_props, CL_DEVICE_TYPE_DEFAULT, NULL, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateContextFromType failed");
-	cl_ctx->command_queue[0] = clCreateCommandQueueWithProperties(cl_ctx->context, device, queue_props, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
-	cl_ctx->command_queue[1] = clCreateCommandQueueWithProperties(cl_ctx->context, device, queue_props, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
+	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
+	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
 	work_create_program(cl_ctx, device);
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");

@@ -11,12 +11,11 @@
 #  define RT_WIN_EVENT_BUTTON_MASK ButtonPressMask
 #  define RT_WIN_EVENT_CLOSE 17
 # else
-#  error "keycodes for max are currently not implemented"
-#  define RT_WIN_EVENT_KEY_DOWN
-#  define RT_WIN_EVENT_KEY_MASK
-#  define RT_WIN_EVENT_BUTTON_DOWN
-#  define RT_WIN_EVENT_BUTTON_MASK
-#  define RT_WIN_EVENT_CLOSE
+#  define RT_WIN_EVENT_KEY_DOWN 2
+#  define RT_WIN_EVENT_KEY_MASK 0
+#  define RT_WIN_EVENT_BUTTON_DOWN 0
+#  define RT_WIN_EVENT_BUTTON_MASK 0
+#  define RT_WIN_EVENT_CLOSE 17
 # endif
 
 typedef struct s_win t_win;

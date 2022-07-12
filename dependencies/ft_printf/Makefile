@@ -59,7 +59,7 @@ else ifeq ($(config), release)
 else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto -march=native
+	CFLAGS		+= -g0 -Ofast -march=native
 else
 $(error "invalid config $(config"))
 endif
