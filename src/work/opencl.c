@@ -387,11 +387,11 @@ void
 }
 
 void
-	work_int_destroy(t_work *work)
+    work_release_buffers(t_work *work)
 {
 	size_t				i;
 	size_t				j;
-	struct s_opencl_ctx	*cl_ctx;
+	struct s_opencl_ctx		*cl_ctx;
 	cl_int				status;
 
 	i = 0;
@@ -432,9 +432,16 @@ void
 }
 
 void
+	work_int_destroy(t_work *work)
+{
+	work_release_buffers(work);
+}
+
+void
 	work_int_resume(t_work *work)
 {
-	(void) work;
+	work_release_buffers(work);
+	work_int_create(work);
 }
 
 #endif

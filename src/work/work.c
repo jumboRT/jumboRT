@@ -52,11 +52,11 @@ void
 void
 	work_resume(t_work *work)
 {
+	work_int_resume(work);
 	mutex_lock(&work->mtx);
 	work->pause = 0;
 	cond_broadcast(&work->cnd);
 	mutex_unlock(&work->mtx);
-	work_int_resume(work);
 }
 
 void
