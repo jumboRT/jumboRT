@@ -205,6 +205,7 @@ int
 	t_work *work;
 	t_camera *camera;
 	t_vec dir;
+	t_vec org;
 
 	work = ctx;
 	if (keycode == RT_KEY_ESC || keycode == RT_KEY_Q)
@@ -215,18 +216,41 @@ int
 		work_reset(work);
 		work_resume(work);
 	}
-	/*
+	camera = &work->state->world->camera;
+	org = camera->org;
+	dir = work->state->world->camera.dir;
 	if (keycode == RT_KEY_A)
 	{
-		camera = &work->state->world->camera;
-		dir = work->state->world->camera.dir;
-		vec_rotate(vec_z(1.0), dir, RT_PI / 16);
+		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 6);
 		work_pause(work);
-		camera_set(work->state->world, camera, dir, camera->org, 90);
+		camera_set(work->state->world, camera, dir, org, 90);
 		work_reset(work);
 		work_resume(work);
 	}
-	*/
+	if (keycode == RT_KEY_D)
+	{
+		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 6);
+		work_pause(work);
+		camera_set(work->state->world, camera, dir, org, 90);
+		work_reset(work);
+		work_resume(work);
+	}
+	if (keycode == RT_KEY_DOWN)
+	{
+		org = vec_add(org, vec_neg(dir));	    
+		work_pause(work);
+		camera_set(work->state->world, camera, dir, org, 90);
+		work_reset(work);
+		work_resume(work);
+	}
+	if (keycode == RT_KEY_UP)
+	{
+		org = vec_add(org, dir);	    
+		work_pause(work);
+		camera_set(work->state->world, camera, dir, org, 90);
+		work_reset(work);
+		work_resume(work);
+	}
 	return (0);
 }
 

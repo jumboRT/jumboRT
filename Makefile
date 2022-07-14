@@ -33,7 +33,7 @@ FILE_NAMES				:= \
 
 CC						:= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -pedantic 
+CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic
 LFLAGS					:= -Wall -Wextra
 
 SRC_DIR					:= src
