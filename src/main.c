@@ -306,13 +306,15 @@ static void
 static void
 	main_image(t_work *work, const char *image_file)
 {
+	setup_sighandlers();
+	thread_create(&work->state->work_thread, rt_work_start, work);
 	work_resume(work);
-	while (work->work_progress < work->work_size)
-	{
-		work_update(work);
+	while (work->work_progress < work->work_size && !should_exit(0))
 		usleep(10000);
-	}
+	mutex_lock(&work->state->mtx);
 	rt_write_ppm(image_file, work->state->image);
+	mutex_unlock(&work->state->mtx);
+	rt_exit(work);
 }
 
 int
