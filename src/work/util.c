@@ -67,3 +67,18 @@ void
 	}
 }
 
+void
+	work_reset(t_work *work)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < work->state->image->width * work->state->image->height)
+	{
+		work->state->image->data[i].samples = 0;
+		work->state->image->data[i].color = vec(0, 0, 0);
+		i += 1;
+	}
+	work->work_index = 0;
+	work->work_progress = 0;
+}

@@ -209,6 +209,7 @@ int
 	if (keycode == RT_KEY_R)
 	{
 		work_pause(work);
+		work_reset(work);
 		work_resume(work);
 	}
 	return (0);
@@ -243,7 +244,6 @@ static void
 	t_work *work;
 
 	work = arg;
-	work_resume(work);
 	while (1)
 	{
 		mutex_lock(&work->state->mtx);
@@ -307,18 +307,10 @@ int
 	t_world			world;
 	t_state			state;
 	t_work			work;
-	size_t			i;
 
 	image.width = 1920;
 	image.height = 1080;
 	image.data = rt_malloc(sizeof(*image.data) * image.width * image.height);
-	i = 0;
-	while (i < image.width * image.height)
-	{
-		image.data[i].samples = 0;
-		image.data[i].color = vec(0, 0, 0);
-		i += 1;
-	}
 	state.image = &image;
 	state.world = &world;
 	state.should_exit = 0;
@@ -336,8 +328,7 @@ int
 	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
-	work.work_index = 0;
-	work.work_progress = 0;
+	work_reset(&work);
 	if (1)
 		main_window(&work);
 	else

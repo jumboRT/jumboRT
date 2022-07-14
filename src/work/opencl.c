@@ -387,40 +387,18 @@ void
 }
 
 void
-    work_release_buffers(t_work *work)
+    work_release_buffers(struct s_opencl_ctx *cl_ctx)
 {
-	size_t				i;
-	struct s_opencl_ctx		*cl_ctx;
-	cl_int				status;
-
-	i = 0;
-	while (i < work->count)
-	{
-		cl_ctx = work->workers[i]->ctx;
-<<<<<<< HEAD
-		status = clReleaseMemObject(cl_ctx->world_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->ctx_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->result_mem[0]);
-
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->result_mem[1]);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->primitives_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->materials_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->vertices_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->accel_nodes_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->accel_indices_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		status = clReleaseMemObject(cl_ctx->accel_degenerates_mem);
-		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
-		i += 1;
-	}
+	work_destroy_array(cl_ctx->world_mem);
+	work_destroy_array(cl_ctx->ctx_mem);
+	work_destroy_array(cl_ctx->result_mem[0]);
+	work_destroy_array(cl_ctx->result_mem[1]);
+	work_destroy_array(cl_ctx->primitives_mem);
+	work_destroy_array(cl_ctx->materials_mem);
+	work_destroy_array(cl_ctx->vertices_mem);
+	work_destroy_array(cl_ctx->accel_nodes_mem);
+	work_destroy_array(cl_ctx->accel_indices_mem);
+	work_destroy_array(cl_ctx->accel_degenerates_mem);
 }
 
 void
@@ -432,7 +410,6 @@ void
 	cl_int				status;
 
 	i = 0;
-	work_release_buffers(work);
 	while (i < work->count)
 	{
 		cl_ctx = work->workers[i]->ctx;
@@ -448,17 +425,7 @@ void
 		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
 		status = clReleaseKernel(cl_ctx->set_ptr_kernel);
 		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
-
-		work_destroy_array(cl_ctx->world_mem);
-		work_destroy_array(cl_ctx->ctx_mem);
-		work_destroy_array(cl_ctx->result_mem[0]);
-		work_destroy_array(cl_ctx->result_mem[1]);
-		work_destroy_array(cl_ctx->primitives_mem);
-		work_destroy_array(cl_ctx->materials_mem);
-		work_destroy_array(cl_ctx->vertices_mem);
-		work_destroy_array(cl_ctx->accel_nodes_mem);
-		work_destroy_array(cl_ctx->accel_indices_mem);
-		work_destroy_array(cl_ctx->accel_degenerates_mem);
+		work_release_buffers(cl_ctx);
 		j = 0;
 		while (j < RT_WORK_OPENCL_GLOBAL_SIZE)
 		{
@@ -473,14 +440,14 @@ void
 void
 	work_int_resume(t_work *work)
 {
-	size_t		    i;
+	size_t				i;
 	struct s_opencl_ctx *cl_ctx;
 
 	i = 0;
-	work_release_buffers(work);
 	while (i < work->count)
 	{
 		cl_ctx = work->workers[i]->ctx;
+		work_release_buffers(cl_ctx);
 		work_create_buffers(work, cl_ctx);
 		i += 1;
 	}
