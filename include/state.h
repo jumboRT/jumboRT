@@ -23,10 +23,11 @@ struct s_state {
 	t_image			*image;
 	t_world			*world;
 	t_win			win;
-	t_mutex			mtx;
 	int				stop_update;
 	sig_atomic_t	should_exit;
 	t_thread		work_thread;
+	t_mutex			mtx;
+	t_cond			cnd;
 };
 
 void	parse_options(t_options *opts, int argc, char **argv);

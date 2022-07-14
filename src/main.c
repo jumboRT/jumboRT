@@ -199,6 +199,23 @@ int
 	exit(EXIT_SUCCESS);
 }
 
+void
+	rt_work_lock(t_work *work)
+{
+	work_pause(work);
+	mutex_lock(&work->state->mtx);
+	while (work->work_progress < work->work_index)
+		cond_wait(&work->state->cnd, &work->state->mtx);
+	work_reset(work);
+	mutex_unlock(&work->state->mtx);
+}
+
+void
+	rt_work_unlock(t_work *work)
+{
+	work_resume(work);
+}
+
 int
 	rt_key_down(int keycode, void *ctx)
 {
@@ -212,9 +229,8 @@ int
 		rt_exit(work);
 	if (keycode == RT_KEY_R)
 	{
-		work_pause(work);
-		work_reset(work);
-		work_resume(work);
+		rt_work_lock(work);
+		rt_work_unlock(work);
 	}
 	camera = &work->state->world->camera;
 	org = camera->org;
@@ -222,34 +238,30 @@ int
 	if (keycode == RT_KEY_A)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 6);
-		work_pause(work);
+		rt_work_lock(work);
 		camera_set(work->state->world, camera, dir, org, 90);
-		work_reset(work);
-		work_resume(work);
+		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_D)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 6);
-		work_pause(work);
+		rt_work_lock(work);
 		camera_set(work->state->world, camera, dir, org, 90);
-		work_reset(work);
-		work_resume(work);
+		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_DOWN)
 	{
 		org = vec_add(org, vec_neg(dir));	    
-		work_pause(work);
+		rt_work_lock(work);
 		camera_set(work->state->world, camera, dir, org, 90);
-		work_reset(work);
-		work_resume(work);
+		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_UP)
 	{
 		org = vec_add(org, dir);	    
-		work_pause(work);
+		rt_work_lock(work);
 		camera_set(work->state->world, camera, dir, org, 90);
-		work_reset(work);
-		work_resume(work);
+		rt_work_unlock(work);
 	}
 	return (0);
 }
@@ -276,7 +288,6 @@ int
 	return (0);
 }
 
-/* TODO: when we are gonna change the camera this should not stop immediately when the image is done rendering */
 static void
 	*rt_work_start(void *arg)
 {
@@ -292,6 +303,7 @@ static void
 			return (NULL);
 		}
 		work_update(work);
+		cond_broadcast(&work->state->cnd);
 		mutex_unlock(&work->state->mtx);
 		usleep(10000);
 	}
@@ -333,8 +345,17 @@ static void
 	setup_sighandlers();
 	thread_create(&work->state->work_thread, rt_work_start, work);
 	work_resume(work);
-	while (work->work_progress < work->work_size && !should_exit(0))
+	while (1)
+	{
+		mutex_lock(&work->state->mtx);
+		if (work->work_progress >= work->work_size || should_exit(0))
+		{
+			mutex_unlock(&work->state->mtx);
+			break ;
+		}
+		mutex_unlock(&work->state->mtx);
 		usleep(10000);
+	}
 	mutex_lock(&work->state->mtx);
 	rt_write_ppm(image_file, work->state->image);
 	mutex_unlock(&work->state->mtx);
@@ -362,6 +383,7 @@ int
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	world.img_meta.samples = 10000;
+	cond_init(&state.cnd);
 	mutex_init(&state.mtx);
 	world_load(&world, options.scene_file);
 	world_accel(&world);
