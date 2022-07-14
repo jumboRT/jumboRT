@@ -1,5 +1,6 @@
 #include "work.h"
 #include "util.h"
+#include "world.h"
 #include "world_impl.h"
 #include "parser.h"
 #include "keycode.h"
@@ -202,6 +203,8 @@ int
 	rt_key_down(int keycode, void *ctx)
 {
 	t_work *work;
+	t_camera *camera;
+	t_vec dir;
 
 	work = ctx;
 	if (keycode == RT_KEY_ESC || keycode == RT_KEY_Q)
@@ -212,6 +215,18 @@ int
 		work_reset(work);
 		work_resume(work);
 	}
+	/*
+	if (keycode == RT_KEY_A)
+	{
+		camera = &work->state->world->camera;
+		dir = work->state->world->camera.dir;
+		vec_rotate(vec_z(1.0), dir, RT_PI / 16);
+		work_pause(work);
+		camera_set(work->state->world, camera, dir, camera->org, 90);
+		work_reset(work);
+		work_resume(work);
+	}
+	*/
 	return (0);
 }
 
@@ -318,7 +333,7 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 100;
+	world.img_meta.samples = 10000;
 	mutex_init(&state.mtx);
 	if (argc == 1)
 		world_gen(&world);

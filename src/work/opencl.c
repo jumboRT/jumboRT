@@ -375,9 +375,9 @@ void
 void
 	work_int_create(t_work *work)
 {
-	cl_platform_id			platform;
-	cl_device_id			device;
-	cl_int					status;
+	cl_platform_id	platform;
+	cl_device_id	device;
+	cl_int			status;
 
 	status = clGetPlatformIDs(1, &platform, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
@@ -406,7 +406,7 @@ void
 {
 	size_t				i;
 	size_t				j;
-	struct s_opencl_ctx		*cl_ctx;
+	struct s_opencl_ctx	*cl_ctx;
 	cl_int				status;
 
 	i = 0;

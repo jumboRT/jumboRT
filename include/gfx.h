@@ -2,6 +2,7 @@
 # define GFX_H
 
 # include "rtmath.h"
+# include "image.h"
 
 # ifdef RT_LINUX
 #  include <X11/Xlib.h>
@@ -19,7 +20,6 @@
 # endif
 
 typedef struct s_win t_win;
-typedef struct s_image t_image;
 
 struct s_win {
 	void	*handle;

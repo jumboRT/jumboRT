@@ -44,6 +44,7 @@ struct s_image_meta {
 struct s_camera {
 	t_vec	org;
 	t_vec	base;
+	t_vec	dir;
 	t_vec	u;
 	t_vec	v;
 };

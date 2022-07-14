@@ -9,6 +9,7 @@ void
 	FLOAT	half;
 	FLOAT	aspect;
 
+	camera->dir = dir;
 	camera->org = org;
 	half = tan(fov / 360 * RT_PI);
 	aspect = (FLOAT) world->img_meta.width / world->img_meta.height;

@@ -19,6 +19,13 @@ void
 void
 	rt_exec_camera(t_world *world, t_parse_ctx *ctx)
 {
-	camera_set(world, &world->camera, rt_vec(ctx), rt_vec_norm(ctx), rt_float(ctx));
+	t_vec pos;
+	t_vec dir;
+	FLOAT fov;
+
+	pos = rt_vec(ctx);
+	dir = rt_vec_norm(ctx);
+	fov = rt_float(ctx);
+	camera_set(world, &world->camera, pos, dir, fov);
 }
 

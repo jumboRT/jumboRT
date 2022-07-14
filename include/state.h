@@ -6,23 +6,17 @@
 # include "cl.h"
 # include "gfx.h"
 # include "mt.h"
+# include "image.h"
 
 # include <stddef.h>
 # include <signal.h>
 
-typedef struct s_pixel	t_pixel;
-typedef struct s_image	t_image;
-typedef struct s_state	t_state;
+typedef struct s_state		t_state;
+typedef struct s_options	t_options;
 
-struct s_pixel {
-	t_vec	color;
-	size_t	samples;
-};
-
-struct s_image {
-	t_pixel	*data;
-	size_t	width;
-	size_t	height;
+struct s_options {
+	const char	*scene_file;
+	const char	*image_file;
 };
 
 struct s_state {
@@ -34,5 +28,7 @@ struct s_state {
 	sig_atomic_t	should_exit;
 	t_thread		work_thread;
 };
+
+void	parse_options(t_options *opts, int argc, char **argv);
 
 #endif
