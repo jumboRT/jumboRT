@@ -150,7 +150,6 @@ void
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
 		while (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_GLOBAL_SIZE))
 		{
-			printf("start\n");
 			id = 1 - id;
 			status = clSetKernelArg(cl_ctx->work_kernel, 2, sizeof(begin), &begin);
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 2 failed");
@@ -175,7 +174,6 @@ void
 			rt_assert(status == CL_SUCCESS, "clSetEventCallback work_kernel failed");
 			status = clReleaseEvent(read_event);
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
-			printf("end\n");
 		}
 		status = clReleaseEvent(kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
@@ -284,12 +282,20 @@ void
 		ft_printf("%s\n", str);
 		rt_assert(0, "clBuildProgram failed");
 	}
+	i = 0;
+	while (i < count)
+	{
+		rt_free(strings[i]);
+		i += 1;
+	}
+	rt_free(strings);
+	rt_free(lengths);
 }
 
 #ifdef RT_LINUX
 
 cl_command_queue
-	work_create_queue(cl_context context, cl_device device, cl_command_queue_properties props)
+	work_create_queue(cl_context context, cl_device_id device, cl_command_queue_properties props)
 {
 	cl_int				status;
 	cl_command_queue	result;
@@ -353,7 +359,6 @@ void
 	work_add(work, work_start, cl_ctx);
 }
 
-/* TODO: free mallocs */
 void
 	work_int_create(t_work *work)
 {
@@ -361,7 +366,9 @@ void
 	cl_device_id			device;
 	cl_int					status;
 
+	printf("doing first opencl call\n");
 	status = clGetPlatformIDs(1, &platform, NULL);
+	printf("got past first opencl call\n");
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
@@ -371,8 +378,56 @@ void
 void
 	work_int_destroy(t_work *work)
 {
-	/* TODO */
-	(void) work;
+	size_t				i;
+	size_t				j;
+	struct s_opencl_ctx	*cl_ctx;
+	cl_int				status;
+
+	i = 0;
+	while (i < work->count)
+	{
+		cl_ctx = work->workers[i]->ctx;
+		status = clReleaseContext(cl_ctx->context);
+		rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
+		status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
+		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+		status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
+		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+		status = clReleaseProgram(cl_ctx->program);
+		rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
+		status = clReleaseKernel(cl_ctx->work_kernel);
+		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
+		status = clReleaseKernel(cl_ctx->set_ptr_kernel);
+		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
+		status = clReleaseMemObject(cl_ctx->world_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->ctx_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->result_mem[0]);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->result_mem[1]);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->primitives_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->materials_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->vertices_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->accel_nodes_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->accel_indices_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		status = clReleaseMemObject(cl_ctx->accel_degenerates_mem);
+		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		j = 0;
+		while (j < RT_WORK_OPENCL_GLOBAL_SIZE)
+		{
+			ctx_destroy(&cl_ctx->ctx[j]);
+			j += 1;
+		}
+		i += 1;
+	}
+	rt_free(cl_ctx);
 }
 
 void

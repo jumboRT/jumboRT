@@ -206,41 +206,62 @@ int
 	return (0);
 }
 
+sig_atomic_t should_exit(sig_atomic_t incr)
+{
+	static sig_atomic_t	val = 0;
+
+	val += incr;
+	return val;
+}
+
 int
 	rt_loop(void *ctx)
 {
 	t_work	*work;
 
 	work = ctx;
-	if (work->state->should_exit)
+	if (should_exit(0))
 		rt_exit(work);
-	work_update(work);
+	mutex_lock(&work->state->mtx);
 	win_put(&work->state->win, work->state->image);
-	/*printf("\3302k\n"):*/
-	usleep(10000);
+	mutex_unlock(&work->state->mtx);
 	return (0);
 }
 
+/* TODO: when we are gonna change the camera this should not stop immediately when the image is done rendering */
 static void
-	sigint_handler(int sig, siginfo_t *info, void *ctx)
+	*rt_work_start(void *arg)
 {
-	t_work	*work;
+	t_work *work;
 
-	(void) sig;
-	(void) info;
-	work = ctx;
-	work->state->should_exit = 1;
+	work = arg;
+	work_resume(work);
+	while (work->work_progress < work->work_size)
+	{
+		mutex_lock(&work->state->mtx);
+		work_update(work);
+		mutex_unlock(&work->state->mtx);
+		usleep(10000);
+	}
+	return (NULL);
 }
 
 static void
-	setup_sighandlers(void)
+	sigint_handler(int sig)
+{
+	(void) sig;
+	should_exit(1);
+}
+
+static void
+	setup_sighandlers()
 {
 	struct sigaction	action;
 
-	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty set");
-	action.sa_sigaction = sigint_handler;
-	action.sa_flags = SA_NODEFER | SA_RESTART | SA_SIGINFO;
-	// rt_assert(sigaction(SIGINT, &action, 
+	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty sa_mask");
+	action.sa_handler = sigint_handler;
+	action.sa_flags = SA_NODEFER | SA_RESTART;
+	rt_assert(sigaction(SIGINT, &action, NULL) != -1, "failed to install signal handler");
 }
 
 int
@@ -251,6 +272,7 @@ int
 	t_state			state;
 	t_work			work;
 	size_t			i;
+	t_thread		work_thread;
 
 	image.width = 1920;
 	image.height = 1080;
@@ -269,6 +291,7 @@ int
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	world.img_meta.samples = 100;
+	mutex_init(&state.mtx);
 	if (argc == 1)
 		world_gen(&world);
 	else
@@ -280,16 +303,12 @@ int
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;
 	work.work_progress = 0;
-	work_resume(&work);
+	setup_sighandlers();
+	thread_create(&work_thread, rt_work_start, &work);
 	win_create(&state.win, image.width, image.height);
 	win_event_hook(&state.win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, &work);
 	win_event_hook(&state.win, RT_WIN_EVENT_CLOSE, rt_exit, &work);
 	win_start(rt_loop, &work);
-	while (work.work_progress < work.work_size)
-	{
-		work_update(&work);
-		usleep(10000);
-	}
 	rt_write_ppm("image.ppm", &image);
 	work_destroy(&work);
 	return (EXIT_SUCCESS);

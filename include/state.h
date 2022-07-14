@@ -5,6 +5,7 @@
 # include "world.h"
 # include "cl.h"
 # include "gfx.h"
+# include "mt.h"
 
 # include <stddef.h>
 # include <signal.h>
@@ -28,6 +29,7 @@ struct s_state {
 	t_image	*image;
 	t_world	*world;
 	t_win	win;
+	t_mutex	mtx;
 	sig_atomic_t should_exit;
 };
 
