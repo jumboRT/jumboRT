@@ -203,6 +203,11 @@ int
 	work = ctx;
 	if (keycode == RT_KEY_ESC || keycode == RT_KEY_Q)
 		rt_exit(work);
+	if (keycode == RT_KEY_R)
+	{
+		work_pause(work);
+		work_resume(work);
+	}
 	return (0);
 }
 
@@ -236,7 +241,7 @@ static void
 
 	work = arg;
 	work_resume(work);
-	while (work->work_progress < work->work_size)
+	while (1)
 	{
 		mutex_lock(&work->state->mtx);
 		work_update(work);

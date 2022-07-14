@@ -50,10 +50,10 @@ static int to_color(unsigned char r, unsigned char g, unsigned char b)
 
 	a = 255;
 	return (
-			(a << 24) |
-			(r << 16) |
-			(g <<  8) |
-			(b));
+			((unsigned int) a << 24) |
+			((unsigned int) r << 16) |
+			((unsigned int) g <<  8) |
+			((unsigned int) b));
 }
 
 static int color_at(const t_image *img, size_t index)
