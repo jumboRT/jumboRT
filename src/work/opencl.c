@@ -177,6 +177,8 @@ void
 		}
 		status = clReleaseEvent(kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
+		status = clWaitForEvents(1, &cb_ctx[id].event);
+		rt_assert(status == CL_SUCCESS, "clWaitForEvents work_kernel failed");
 		status = clReleaseEvent(cb_ctx[id].event);
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
 	}
@@ -366,9 +368,7 @@ void
 	cl_device_id			device;
 	cl_int					status;
 
-	printf("doing first opencl call\n");
 	status = clGetPlatformIDs(1, &platform, NULL);
-	printf("got past first opencl call\n");
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");

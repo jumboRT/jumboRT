@@ -189,9 +189,12 @@ __attribute__((noreturn))
 int
 	rt_exit(t_work *work)
 {
-	fprintf(stderr, "destroying work...");
+	work_pause(work);
+	mutex_lock(&work->mtx);
+	work->state->stop_update = 1;
+	mutex_unlock(&work->mtx);
+	thread_join(&work->state->work_thread);
 	work_destroy(work);
-	fprintf(stderr, "OK!\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -235,15 +238,18 @@ static void
 	t_work *work;
 
 	work = arg;
-	work_resume(work);
-	while (work->work_progress < work->work_size)
+	while (1)
 	{
 		mutex_lock(&work->state->mtx);
+		if (work->state->stop_update)
+		{
+			mutex_unlock(&work->state->mtx);
+			return (NULL);
+		}
 		work_update(work);
 		mutex_unlock(&work->state->mtx);
 		usleep(10000);
 	}
-	return (NULL);
 }
 
 static void
@@ -254,7 +260,7 @@ static void
 }
 
 static void
-	setup_sighandlers()
+	setup_sighandlers(void)
 {
 	struct sigaction	action;
 
@@ -262,6 +268,30 @@ static void
 	action.sa_handler = sigint_handler;
 	action.sa_flags = SA_NODEFER | SA_RESTART;
 	rt_assert(sigaction(SIGINT, &action, NULL) != -1, "failed to install signal handler");
+}
+
+static void
+	main_window(t_work *work)
+{
+	setup_sighandlers();
+	thread_create(&work->state->work_thread, rt_work_start, work);
+	work_resume(work);
+	win_create(&work->state->win, work->state->image->width, work->state->image->height);
+	win_event_hook(&work->state->win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, work);
+	win_event_hook(&work->state->win, RT_WIN_EVENT_CLOSE, rt_exit, work);
+	win_start(rt_loop, &work);
+}
+
+static void
+	main_image(t_work *work)
+{
+	work_resume(work);
+	while (work->work_progress < work->work_size)
+	{
+		work_update(work);
+		usleep(10000);
+	}
+	rt_write_ppm("image.ppm", work->state->image);
 }
 
 int
@@ -272,7 +302,6 @@ int
 	t_state			state;
 	t_work			work;
 	size_t			i;
-	t_thread		work_thread;
 
 	image.width = 1920;
 	image.height = 1080;
@@ -287,6 +316,7 @@ int
 	state.image = &image;
 	state.world = &world;
 	state.should_exit = 0;
+	state.stop_update = 0;
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
@@ -297,19 +327,15 @@ int
 	else
 		world_load(&world, argv[1]);
 	world_accel(&world);
-	printf("%d\n", (int) world.accel_nodes_count);
 	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work.work_index = 0;
 	work.work_progress = 0;
-	setup_sighandlers();
-	thread_create(&work_thread, rt_work_start, &work);
-	win_create(&state.win, image.width, image.height);
-	win_event_hook(&state.win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, &work);
-	win_event_hook(&state.win, RT_WIN_EVENT_CLOSE, rt_exit, &work);
-	win_start(rt_loop, &work);
-	rt_write_ppm("image.ppm", &image);
+	if (1)
+		main_window(&work);
+	else
+		main_image(&work);
 	work_destroy(&work);
 	return (EXIT_SUCCESS);
 }

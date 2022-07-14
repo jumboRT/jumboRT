@@ -26,11 +26,13 @@ struct s_image {
 };
 
 struct s_state {
-	t_image	*image;
-	t_world	*world;
-	t_win	win;
-	t_mutex	mtx;
-	sig_atomic_t should_exit;
+	t_image			*image;
+	t_world			*world;
+	t_win			win;
+	t_mutex			mtx;
+	int				stop_update;
+	sig_atomic_t	should_exit;
+	t_thread		work_thread;
 };
 
 #endif
