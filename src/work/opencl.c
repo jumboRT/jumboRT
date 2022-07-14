@@ -379,7 +379,6 @@ void
     work_release_buffers(t_work *work)
 {
 	size_t				i;
-	size_t				j;
 	struct s_opencl_ctx		*cl_ctx;
 	cl_int				status;
 
@@ -387,18 +386,6 @@ void
 	while (i < work->count)
 	{
 		cl_ctx = work->workers[i]->ctx;
-		status = clReleaseContext(cl_ctx->context);
-		rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
-		status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
-		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
-		status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
-		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
-		status = clReleaseProgram(cl_ctx->program);
-		rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
-		status = clReleaseKernel(cl_ctx->work_kernel);
-		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
-		status = clReleaseKernel(cl_ctx->set_ptr_kernel);
-		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
 		status = clReleaseMemObject(cl_ctx->world_mem);
 		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
 		status = clReleaseMemObject(cl_ctx->ctx_mem);
@@ -420,6 +407,35 @@ void
 		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
 		status = clReleaseMemObject(cl_ctx->accel_degenerates_mem);
 		rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
+		i += 1;
+	}
+}
+
+void
+	work_int_destroy(t_work *work)
+{
+	size_t				i;
+	size_t				j;
+	struct s_opencl_ctx		*cl_ctx;
+	cl_int				status;
+
+	i = 0;
+	work_release_buffers(work);
+	while (i < work->count)
+	{
+		cl_ctx = work->workers[i]->ctx;
+		status = clReleaseContext(cl_ctx->context);
+		rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
+		status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
+		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+		status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
+		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+		status = clReleaseProgram(cl_ctx->program);
+		rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
+		status = clReleaseKernel(cl_ctx->work_kernel);
+		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
+		status = clReleaseKernel(cl_ctx->set_ptr_kernel);
+		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
 		j = 0;
 		while (j < RT_WORK_OPENCL_GLOBAL_SIZE)
 		{
@@ -432,16 +448,19 @@ void
 }
 
 void
-	work_int_destroy(t_work *work)
-{
-	work_release_buffers(work);
-}
-
-void
 	work_int_resume(t_work *work)
 {
+	size_t		    i;
+	struct s_opencl_ctx *cl_ctx;
+
+	i = 0;
 	work_release_buffers(work);
-	work_int_create(work);
+	while (i < work->count)
+	{
+		cl_ctx = work->workers[i]->ctx;
+		work_create_buffers(work, cl_ctx);
+		i += 1;
+	}
 }
 
 #endif
