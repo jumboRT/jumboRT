@@ -10,7 +10,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c
 GFX_FILES				:= win.c
-BASE_FILES				:= main.c
+BASE_FILES				:= main.c options.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)

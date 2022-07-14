@@ -304,7 +304,7 @@ static void
 }
 
 static void
-	main_image(t_work *work)
+	main_image(t_work *work, const char *image_file)
 {
 	work_resume(work);
 	while (work->work_progress < work->work_size)
@@ -312,17 +312,19 @@ static void
 		work_update(work);
 		usleep(10000);
 	}
-	rt_write_ppm("image.ppm", work->state->image);
+	rt_write_ppm(image_file, work->state->image);
 }
 
 int
 	main(int argc, char **argv)
 {
-	t_image			image;
-	t_world			world;
-	t_state			state;
-	t_work			work;
+	t_image		image;
+	t_world		world;
+	t_state		state;
+	t_work		work;
+	t_options	options;
 
+	parse_options(&options, argc, argv);
 	image.width = 1920;
 	image.height = 1080;
 	image.data = rt_malloc(sizeof(*image.data) * image.width * image.height);
@@ -335,19 +337,16 @@ int
 	world.img_meta.height = image.height;
 	world.img_meta.samples = 10000;
 	mutex_init(&state.mtx);
-	if (argc == 1)
-		world_gen(&world);
-	else
-		world_load(&world, argv[1]);
+	world_load(&world, options.scene_file);
 	world_accel(&world);
 	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
 	work_create(&work, &state);
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work_reset(&work);
-	if (1)
+	if (options.image_file == NULL)
 		main_window(&work);
 	else
-		main_image(&work);
+		main_image(&work, options.image_file);
 	work_destroy(&work);
 	return (EXIT_SUCCESS);
 }
