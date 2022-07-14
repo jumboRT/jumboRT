@@ -279,7 +279,7 @@ static void
 	win_create(&work->state->win, work->state->image->width, work->state->image->height);
 	win_event_hook(&work->state->win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, work);
 	win_event_hook(&work->state->win, RT_WIN_EVENT_CLOSE, rt_exit, work);
-	win_start(rt_loop, &work);
+	win_start(rt_loop, work);
 }
 
 static void
