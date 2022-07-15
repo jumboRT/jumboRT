@@ -12,3 +12,4 @@ tags
 *.a
 /image.ppm
 /image.png
+kernel.bin
