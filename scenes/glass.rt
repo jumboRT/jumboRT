@@ -1,9 +1,9 @@
 C 0,0,0 1,0,0 90
 
 mat_beg mat_glass
-    albedo 191,191,191
+    albedo 255,255,255
     refractive 1.5
-    fuzzy 0.1
+    fuzzy 0
 mat_end
 
 mat_beg mat_gold
@@ -19,6 +19,7 @@ pl 0,0,10 0,0,-1 mat_light
 sp 1,0,0 0.5 191,63,63
 # sp 1,0,0 0.5 mat_silver
 sp 1,-0.5,0 0.5 mat_glass
+sp 1,-0.5,0 -0.4 mat_glass
 sp 1,0.5,0 0.5 mat_gold
 sp 1,0,-50.25 100 191,191,0
 # sp 1,0,-50.25 100 mat_light
