@@ -36,6 +36,7 @@ void
 	{
 		material.emission = vec(0, 0, 0);
 		material.albedo = rt_color(ctx);
+		material.reflective = 0;
 		shape->data |= world_add_material(world, &material, sizeof(material)) << 8;
 	}
 }
