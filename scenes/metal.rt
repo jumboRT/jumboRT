@@ -1,8 +1,18 @@
 C 0,0,0 1,0,0 90
 
-ma mat_light 255,255,255 0,0,0 0 false 0
-ma mat_gold 0,0,0 191,191,191 0 true 0
-ma mat_silver 0,0,0 191,127,63 0 true 0
+mat_beg mat_gold
+albedo 191,191,191
+fuzzi 1
+mat_end
+
+mat_beg mat_silver
+albedo 191,127,63
+fuzzi 1
+mat_end
+
+mat_beg mat_light
+emission 255,255,255
+mat_end
 
 pl 0,0,10 0,0,-1 mat_light
 sp 1,0,0 0.5 191,63,63

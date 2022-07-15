@@ -18,6 +18,7 @@ struct s_parse_ctx {
 	const char	*filename;
 	int			line;
 	int			column;
+	t_material	*mat;
 };
 
 void			rt_parse_error(t_parse_ctx *ctx, const char *fmt, ...);
@@ -48,7 +49,14 @@ void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_material(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_albedo(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_refractive(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_fuzzi(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_density(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);
