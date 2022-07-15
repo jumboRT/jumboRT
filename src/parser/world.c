@@ -11,7 +11,13 @@ const static t_directive	directives[] = {
 	{ "v", rt_exec_vertex },
 	{ "tr", rt_exec_triangle },
 	{ "L", rt_exec_light },
-	{ "ma", rt_exec_material },
+	{ "mat_beg", rt_exec_mat_beg },
+	{ "emission", rt_exec_emission },
+	{ "albedo", rt_exec_albedo },
+	{ "refractive", rt_exec_refractive },
+	{ "fuzzi", rt_exec_fuzzi },
+	{ "density", rt_exec_density },
+	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };
 

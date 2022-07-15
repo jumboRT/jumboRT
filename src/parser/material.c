@@ -36,23 +36,79 @@ void
 	{
 		material.emission = vec(0, 0, 0);
 		material.albedo = rt_color(ctx);
+		material.reflective = 0;
 		shape->data |= world_add_material(world, &material, sizeof(material)) << 8;
 	}
 }
 
 void
-	rt_exec_material(t_world *world, t_parse_ctx *ctx)
+	rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx)
 {
 	t_material		material;
 	char			*keyword;
 
 	keyword = rt_keyword(ctx, "mat_");
 	material.id = rt_hash(keyword);
-	material.emission = rt_color(ctx);
-	material.albedo = rt_color(ctx);
-	material.refractive_index = rt_float(ctx);
-	material.reflective = rt_bool(ctx);
-	material.density = rt_float(ctx);
-	world_add_material(world, &material, sizeof(material));
+	material.emission = vec(0, 0, 0);
+	material.albedo = vec(0, 0, 0);
+	material.refractive_index = 0;
+	material.reflective = 0;
+	material.density = 0;
+	ctx->mat = get_mat(world, world_add_material(world, &material, sizeof(material)));
 	rt_free(keyword);
+}
+
+void
+	rt_exec_emission(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->emission = rt_color(ctx);
+}
+
+void
+	rt_exec_albedo(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->albedo = rt_color(ctx);
+}
+
+void
+	rt_exec_refractive(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->refractive_index = rt_float(ctx);
+}
+
+void
+	rt_exec_density(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->density = rt_float(ctx);
+}
+
+void
+	rt_exec_fuzzi(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->reflective = 1;
+	rt_float(ctx);
+}
+
+void
+	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat = NULL;
 }

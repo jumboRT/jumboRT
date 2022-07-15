@@ -1,0 +1,21 @@
+C 0,0,0 1,0,0 90
+
+mat_beg mat_gold
+    albedo 191,191,191
+    fuzzi 1
+mat_end
+
+mat_beg mat_silver
+    albedo 191,127,63
+    fuzzi 1
+mat_end
+
+mat_beg mat_light
+emission 255,255,255
+mat_end
+
+pl 0,0,10 0,0,-1 mat_light
+sp 1,0,0 0.5 191,63,63
+sp 1,-0.5,0 0.5 mat_gold
+sp 1,0.5,0 0.5 mat_silver
+sp 1,0,-50.25 100 191,191,0
