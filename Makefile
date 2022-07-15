@@ -91,7 +91,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT -DRT_USE_LIBC
+CFLAGS          		+= -DRT_WORK_THREAD -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
@@ -151,8 +151,8 @@ else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -O2 -pg
 	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto -march=native
-	LFLAGS		+= -g0 -Ofast -flto -march=native
+	CFLAGS		+= -g3 -Ofast -flto -march=native
+	LFLAGS		+= -g3 -Ofast -flto -march=native
 else
 $(error "invalid config $(config"))
 endif
