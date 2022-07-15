@@ -13,6 +13,8 @@
 #  define RT_KEY_DOWN 65364
 #  define RT_KEY_LEFT 65361
 #  define RT_KEY_RIGHT 65363
+#  define RT_KEY_SPACE 32
+#  define RT_KEY_SHIFT 65505
 # else
 #  define RT_KEY_ESC 53
 #  define RT_KEY_Q 12
