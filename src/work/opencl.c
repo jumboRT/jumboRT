@@ -220,6 +220,10 @@ void
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 3, cl_ctx->accel_nodes_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 4, cl_ctx->accel_indices_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 5, cl_ctx->accel_degenerates_mem);
+	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
+	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
+	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
+	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 1 failed");
 }
 
 void
@@ -309,12 +313,17 @@ void
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");
 	cl_ctx->set_ptr_kernel = clCreateKernel(cl_ctx->program, "set_ptr_kernel", &status);
-	work_create_buffers(work, cl_ctx);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel set_ptr_kernel failed");
-	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
-	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
-	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
-	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 1 failed");
+	cl_ctx->world_mem = NULL;
+	cl_ctx->ctx_mem = NULL;
+	cl_ctx->result_mem[0] = NULL;
+	cl_ctx->result_mem[1] = NULL;
+	cl_ctx->primitives_mem = NULL;
+	cl_ctx->materials_mem = NULL;
+	cl_ctx->vertices_mem = NULL;
+	cl_ctx->accel_nodes_mem = NULL;
+	cl_ctx->accel_indices_mem = NULL;
+	cl_ctx->accel_degenerates_mem = NULL;
 	work_add(work, work_start, cl_ctx);
 }
 

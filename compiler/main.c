@@ -5,7 +5,7 @@
 #include <errno.h>
 
 #define READ_SIZE 1024
-#define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global"
+#define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
 
 void
 	read_file(char **str, size_t *len, char *file)
