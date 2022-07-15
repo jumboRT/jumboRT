@@ -47,44 +47,6 @@ struct s_opencl_callback_ctx {
 	size_t				size;
 };
 
-const static char *g_source_files[] = {
-	"src/util/random.c",
-	"src/work/compute.c",
-	"src/math/plane.c",
-	"src/math/polynomial.c",
-	"src/math/sphere.c",
-	"src/math/triangle.c",
-	"src/math/cylinder.c",
-	"src/math/cone.c",
-	"src/math/ray_constr.c",
-	"src/math/vec_arith.c",
-	"src/math/vec_arith_fast.c",
-	"src/math/vec_constr.c",
-	"src/math/vec_constr_fast.c",
-	"src/math/vec_geo.c",
-	"src/math/vec_geo_fast.c",
-	"src/math/vec_get.c",
-	"src/math/vec_get_fast.c",
-	"src/math/vec_size.c",
-	"src/math/vec_size_fast.c",
-	"src/math/vec_rotate.c",
-	"src/math/vec_set.c",
-	"src/math/sqrt.c",
-	"src/math/sin.c",
-	"src/math/cos.c",
-	"src/math/tan.c",
-	"src/math/min.c",
-	"src/math/max.c",
-	"src/math/abs.c",
-	"src/math/pow.c",
-	"src/world/intersect.c",
-	"src/world/intersect_prim.c",
-	"src/world/primitive.c",
-	"src/world/node.c",
-	"src/world/common.c",
-	"src/world/trace.c"
-};
-
 void
 	work_callback(cl_event event, cl_int event_command_status, void *user_data)
 {
@@ -263,27 +225,18 @@ void
 void
 	work_create_program(struct s_opencl_ctx *cl_ctx, cl_device_id device)
 {
-	char	**strings;
-	size_t	*lengths;
-	size_t	i;
+	char	*string;
+	size_t	length;
+	cl_int	bin_status;
 	cl_int	status;
 	char	*error;
-	size_t	count;
 	char	*str;
 	size_t	size;
 
-	count = sizeof(g_source_files) / sizeof(*g_source_files);
-	strings = rt_malloc(sizeof(*strings) * count);
-	lengths = rt_malloc(sizeof(*lengths) * count);
-	i = 0;
-	while (i < count)
-	{
-		strings[i] = rt_readfile(g_source_files[i], &error, &lengths[i]);
-		rt_assert(strings[i] != NULL, error);
-		i += 1;
-	}
-	cl_ctx->program = clCreateProgramWithSource(cl_ctx->context, count, (const char**) strings, lengths, &status);
-	rt_assert(status == CL_SUCCESS, "clCreateProgramWithSource failed");
+	string = rt_readfile("kernel.bin", &error, &length);
+	rt_assert(string != NULL, error);
+	cl_ctx->program = clCreateProgramWithBinary(cl_ctx->context, 1, &device, &length, (const unsigned char **) &string, &bin_status, &status);
+	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS, "clCreateProgramWithBinary failed");
 	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global", NULL, NULL);
 	if (status != CL_SUCCESS)
 	{
@@ -295,14 +248,7 @@ void
 		ft_printf("%s\n", str);
 		rt_assert(0, "clBuildProgram failed");
 	}
-	i = 0;
-	while (i < count)
-	{
-		rt_free(strings[i]);
-		i += 1;
-	}
-	rt_free(strings);
-	rt_free(lengths);
+	rt_free(string);
 }
 
 #ifdef RT_LINUX

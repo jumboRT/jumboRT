@@ -293,6 +293,20 @@ int
 	    camera_set(work->state->world, camera, org, dir, 90);
 	    rt_work_unlock(work);
 	}
+	if (keycode == RT_KEY_SPACE)
+	{
+	    org = vec_add(org, vec_z(1.0));
+	    rt_work_lock(work);
+	    camera_set(work->state->world, camera, org, dir, 90);
+	    rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_SHIFT)
+	{
+	    org = vec_add(org, vec_z(-1.0));
+	    rt_work_lock(work);
+	    camera_set(work->state->world, camera, org, dir, 90);
+	    rt_work_unlock(work);
+	}
 	return (0);
 }
 

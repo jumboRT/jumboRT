@@ -12,6 +12,43 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c 
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c
 
+OPENCL_FILES			:= \
+	src/util/random.c \
+	src/work/compute.c \
+	src/math/plane.c \
+	src/math/polynomial.c \
+	src/math/sphere.c \
+	src/math/triangle.c \
+	src/math/cylinder.c \
+	src/math/cone.c \
+	src/math/ray_constr.c \
+	src/math/vec_arith.c \
+	src/math/vec_arith_fast.c \
+	src/math/vec_constr.c \
+	src/math/vec_constr_fast.c \
+	src/math/vec_geo.c \
+	src/math/vec_geo_fast.c \
+	src/math/vec_get.c \
+	src/math/vec_get_fast.c \
+	src/math/vec_size.c \
+	src/math/vec_size_fast.c \
+	src/math/vec_rotate.c \
+	src/math/vec_set.c \
+	src/math/sqrt.c \
+	src/math/sin.c \
+	src/math/cos.c \
+	src/math/tan.c \
+	src/math/min.c \
+	src/math/max.c \
+	src/math/abs.c \
+	src/math/pow.c \
+	src/world/intersect.c \
+	src/world/intersect_prim.c \
+	src/world/primitive.c \
+	src/world/node.c \
+	src/world/common.c \
+	src/world/trace.c
+
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
 		platform = linux
@@ -136,7 +173,7 @@ else
 	CFLAGS		+= -DRT_LINUX
 endif
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
+$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
 
@@ -154,6 +191,14 @@ $(FT_PRINTF_LIB):
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR)
 
+# TODO: unhardcode these files
+compile: compiler/main.c
+	$(SILENT)$(CC) compiler/main.c -o compile -lOpenCL -Og -g
+
+kernel.bin: $(OPENCL_FILES) compile
+	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
+	$(SILENT)sh -c "until ./compile $(OPENCL_FILES); do sleep 1; done"
+
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
 	$(SILENT)rm -rf build
@@ -164,7 +209,7 @@ clean:
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
 	$(SILENT)rm -f $(NAME)
-	$(SILENT)rm -f crash
+	$(SILENT)rm -f compile kernel.bin
 
 re: fclean
 	$(MAKE) all
