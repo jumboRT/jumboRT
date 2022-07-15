@@ -15,7 +15,7 @@ const static t_directive	directives[] = {
 	{ "emission", rt_exec_emission },
 	{ "albedo", rt_exec_albedo },
 	{ "refractive", rt_exec_refractive },
-	{ "fuzzi", rt_exec_fuzzi },
+	{ "fuzzy", rt_exec_fuzzy },
 	{ "density", rt_exec_density },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
