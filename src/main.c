@@ -119,7 +119,7 @@ void
 		}
 		i += 1;
 	}
-	init_camera(world);
+	camera_set(world, &world->camera, vec(0, 0, 0), vec(1, 0, 0), 90);
 }
 
 void
@@ -140,7 +140,10 @@ void
 	ctx.filename = filename;
 	ctx.line = 1;
 	ctx.column = 1;
+	ctx.mat = NULL;
+	vector_create(&ctx.materials, sizeof(t_mat_entry), 0);
 	rt_world(world, &ctx);
+	vector_destroy(&ctx.materials, NULL);
 	rt_free(file);
 }
 

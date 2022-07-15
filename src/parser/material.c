@@ -21,24 +21,18 @@ void
 {
 	char		*keyword;
 	int64_t		mat_index;
-	t_material	material;
 
 	if (has_prefix(ctx, "mat_"))
 	{
 		keyword = rt_keyword(ctx, "mat_");
-		mat_index = world_get_material(world, rt_hash(keyword));
-		if (mat_index < 0)
-			rt_parse_error(ctx, "undefined material %s", keyword);
+		mat_index = mat_by_name(world, ctx, keyword);
 		shape->data |= (uint32_t) mat_index << 8;
 		rt_free(keyword);
 	}
 	else
 	{
-		material.emission = vec(0, 0, 0);
-		material.albedo = rt_color(ctx);
-		material.reflective = 0;
-		material.refractive = 0;
-		shape->data |= world_add_material(world, &material, sizeof(material)) << 8;
+		mat_index = mat_by_color(world, ctx, rt_color(ctx));
+		shape->data |= (uint32_t) mat_index << 8;
 	}
 }
 
@@ -47,6 +41,7 @@ void
 {
 	t_material		material;
 	char			*keyword;
+	uint32_t		mat_index;
 
 	keyword = rt_keyword(ctx, "mat_");
 	material.id = rt_hash(keyword);
@@ -56,7 +51,9 @@ void
 	material.refractive_index = 1;
 	material.reflective = 0;
 	material.density = 0;
-	ctx->mat = get_mat(world, world_add_material(world, &material, sizeof(material)));
+	mat_index = world_add_material(world, &material, sizeof(material));
+	ctx->mat = get_mat(world, mat_index);
+	mat_add(ctx, keyword, mat_index);
 	rt_free(keyword);
 }
 
