@@ -51,7 +51,8 @@ void
 	material.id = rt_hash(keyword);
 	material.emission = vec(0, 0, 0);
 	material.albedo = vec(0, 0, 0);
-	material.refractive_index = 0;
+	material.refractive = 0;
+	material.refractive_index = 1;
 	material.reflective = 0;
 	material.density = 0;
 	ctx->mat = get_mat(world, world_add_material(world, &material, sizeof(material)));
@@ -82,6 +83,7 @@ void
 	(void) world;
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->refractive = 1;
 	ctx->mat->refractive_index = rt_float(ctx);
 }
 
