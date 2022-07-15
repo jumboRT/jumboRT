@@ -33,6 +33,8 @@ typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
 
+/* TODO: make all the attributes conditional */
+
 # if !defined RT_VECTORIZE
 typedef struct __attribute__((aligned(16))) s_vec {
 	FLOAT x;
@@ -152,6 +154,8 @@ t_vec	vec_clamp(t_vec v, FLOAT min, FLOAT max) __attribute__ ((const));
 
 t_vec	vec_rotate(t_vec axis, t_vec v, FLOAT angle);
 void	vec_angles(t_vec basis, t_vec v, t_vec *out_vec, FLOAT *out_angle);
+
+int		vec_eq(t_vec a, t_vec b) __attribute__ ((const));
 
 t_ray	ray(t_vec org, t_vec dir) __attribute__ ((const));
 t_vec	ray_at(t_ray ray, FLOAT t) __attribute__ ((const));

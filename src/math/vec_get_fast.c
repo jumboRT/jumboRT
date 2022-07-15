@@ -54,4 +54,11 @@ FLOAT
 		return (z(v));
 }
 
+__attribute__ ((const))
+int
+	vec_eq(t_vec a, t_vec b)
+{
+	return (x(a) == x(b) && y(a) == y(b) && z(a) == z(b));
+}
+
 #endif
