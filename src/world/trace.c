@@ -5,6 +5,9 @@ t_vec
 {
 	t_vec	reflected;
 	FLOAT	cos_theta;
+	FLOAT	sin_theta;
+	FLOAT	r0;
+	FLOAT	reflectance;
 	FLOAT	rr;
 	t_vec	out_perp;
 	t_vec	out_parallel;
@@ -12,14 +15,21 @@ t_vec
 	if (mat->refractive)
 	{
 	    rr = mat->refractive_index;
-	    if (vec_dot(hit.relative_normal, hit.hit.normal) > 0)
+	    if (vec_dot(ray_in.dir, hit.hit.normal) < 0)
 		rr = 1.0 / rr;
-	    cos_theta = rt_min(vec_dot(ray_in.dir, hit.relative_normal), 1.0);
-	    out_perp = vec_scale(vec_add(ray_in.dir, vec_scale(hit.relative_normal, cos_theta)), rr);
-	    out_parallel = vec_scale(hit.relative_normal, -rt_sqrt(rt_abs(1.0 - vec_mag2(out_perp))));
-	    return (vec_add(out_perp, out_parallel));
+	    cos_theta = rt_min(vec_dot(vec_neg(ray_in.dir), hit.relative_normal), 1.0);
+	    sin_theta = rt_sqrt(1.0 - (cos_theta * cos_theta));
+	    r0 = (1.0 - rr) / (1 + rr);
+	    r0 = r0 * r0;
+	    reflectance = r0 + ((1.0 - r0) * rt_pow(1.0 - cos_theta, 5));
+	    if (sin_theta * rr <= 1.0 && reflectance <= rt_random_float(&ctx->seed))
+	    {
+		out_perp = vec_scale(vec_add(ray_in.dir, vec_scale(hit.relative_normal, cos_theta)), rr);
+		out_parallel = vec_scale(hit.relative_normal, -rt_sqrt(rt_abs(1.0 - vec_mag2(out_perp))));
+		return (vec_norm(vec_add(out_perp, out_parallel)));
+	    }
 	}
-	else if (mat->reflective) {
+	if (mat->reflective || mat->refractive) {
 	    reflected = vec_sub(ray_in.dir, vec_scale(hit.relative_normal, 2.0 * vec_dot(ray_in.dir, hit.relative_normal)));
 	    return (vec_norm(reflected + rt_random_in_sphere(&ctx->seed, 0.0, mat->fuzzy)));
 	}
