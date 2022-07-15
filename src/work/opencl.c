@@ -12,11 +12,15 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_GLOBAL_SIZE
-#  define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 20)
+#  define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 16)
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
 #  define RT_WORK_OPENCL_LOCAL_SIZE 32
+# endif
+
+# ifndef RT_WORK_OPENCL_CHUNK_SIZE
+#  define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 20)
 # endif
 
 struct s_opencl_ctx {
@@ -35,7 +39,7 @@ struct s_opencl_ctx {
 	cl_mem				accel_indices_mem;
 	cl_mem				accel_degenerates_mem;
 	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
-	t_result			result[RT_WORK_OPENCL_GLOBAL_SIZE];
+	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
 	int					id;
 };
 
@@ -90,7 +94,7 @@ void
 	cb_ctx[1].worker = worker;
 	cb_ctx[1].cl_ctx = cl_ctx;
 	cb_ctx[1].id = 1;
-	if (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_GLOBAL_SIZE))
+	if (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_CHUNK_SIZE))
 	{
 		id = 0;
 		status = clSetKernelArg(cl_ctx->work_kernel, 2, sizeof(begin), &begin);
@@ -102,7 +106,7 @@ void
 		cb_ctx[id].size = end - begin;
 		status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 0, NULL, &kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
-		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
+		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 		rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
 		cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 		rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
@@ -110,7 +114,7 @@ void
 		rt_assert(status == CL_SUCCESS, "clSetEventCallback work_kernel failed");
 		status = clReleaseEvent(read_event);
 		rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
-		while (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_GLOBAL_SIZE))
+		while (work_sync(worker->work, &begin, &end, RT_WORK_OPENCL_CHUNK_SIZE))
 		{
 			id = 1 - id;
 			status = clSetKernelArg(cl_ctx->work_kernel, 2, sizeof(begin), &begin);
@@ -128,7 +132,7 @@ void
 			rt_assert(status == CL_SUCCESS, "clWaitForEvents work_kernel failed");
 			status = clReleaseEvent(cb_ctx[1 - id].event);
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
-			status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
+			status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 			rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
 			cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 			rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
@@ -204,9 +208,9 @@ void
 
 	cl_ctx->world_mem = work_copy_array(cl_ctx, sizeof(*work->state->world), work->state->world);
 	cl_ctx->ctx_mem = work_copy_array(cl_ctx, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx);
-	cl_ctx->result_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);
+	cl_ctx->result_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[0] failed");
-	cl_ctx->result_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_GLOBAL_SIZE, NULL, &status);
+	cl_ctx->result_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[1] failed");
 	cl_ctx->primitives_mem = work_copy_array(cl_ctx, work->state->world->primitives_size, work->state->world->primitives);
 	cl_ctx->vertices_mem = work_copy_array(cl_ctx, work->state->world->vertices_size, work->state->world->vertices);
