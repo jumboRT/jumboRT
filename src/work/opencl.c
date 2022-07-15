@@ -16,7 +16,7 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
-#  define RT_WORK_OPENCL_LOCAL_SIZE 32
+#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
 # endif
 
 # ifndef RT_WORK_OPENCL_CHUNK_SIZE
