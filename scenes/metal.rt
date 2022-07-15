@@ -1,13 +1,13 @@
 C 0,0,0 1,0,0 90
 
 mat_beg mat_gold
-albedo 191,191,191
-fuzzi 1
+    albedo 191,191,191
+    fuzzi 1
 mat_end
 
 mat_beg mat_silver
-albedo 191,127,63
-fuzzi 1
+    albedo 191,127,63
+    fuzzi 1
 mat_end
 
 mat_beg mat_light

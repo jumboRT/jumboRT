@@ -50,7 +50,7 @@ void
 	keyword = rt_keyword(ctx, "mat_");
 	material.id = rt_hash(keyword);
 	material.emission = vec(0, 0, 0);
-	material.albedo = vec(1, 0, 1);
+	material.albedo = vec(0, 0, 0);
 	material.refractive_index = 0;
 	material.reflective = 0;
 	material.density = 0;
