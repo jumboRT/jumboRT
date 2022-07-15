@@ -91,7 +91,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_WORK_THREAD -DRT_MT -DRT_USE_LIBC
+CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
