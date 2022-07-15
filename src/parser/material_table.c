@@ -10,7 +10,7 @@ void
 	t_mat_entry	new_entry;
 
 	new_entry.index = index;
-	new_entry.name = name;
+	new_entry.name = ft_strdup(name);
 	vector_push(&ctx->materials, &new_entry);
 }
 
