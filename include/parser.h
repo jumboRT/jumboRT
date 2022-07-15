@@ -65,7 +65,7 @@ void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_albedo(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_refractive(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_fuzzi(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_fuzzy(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_density(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);

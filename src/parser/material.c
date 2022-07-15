@@ -93,13 +93,13 @@ void
 }
 
 void
-	rt_exec_fuzzi(t_world *world, t_parse_ctx *ctx)
+	rt_exec_fuzzy(t_world *world, t_parse_ctx *ctx)
 {
 	(void) world;
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->reflective = 1;
-	rt_float(ctx);
+	ctx->mat->fuzzy = rt_float(ctx);
 }
 
 void

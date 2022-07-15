@@ -65,6 +65,7 @@ struct s_material {
 	t_vec		albedo;
 	FLOAT		refractive_index;
 	FLOAT		density;
+	FLOAT		fuzzy;
 	int32_t		reflective;
 	uint32_t	id;
 };
