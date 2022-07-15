@@ -37,14 +37,15 @@ typedef struct s_quadratic	t_quadratic;
 
 # if !defined RT_VECTORIZE
 typedef struct __attribute__((aligned(16))) s_vec {
-	FLOAT x;
-	FLOAT y;
-	FLOAT z;
+	FLOAT	x;
+	FLOAT	y;
+	FLOAT	z;
+	FLOAT	w;
 }	t_vec;
 
 typedef struct s_vec2 {
-	FLOAT x;
-	FLOAT y;
+	FLOAT	x;
+	FLOAT	y;
 }	t_vec2;
 # endif
 

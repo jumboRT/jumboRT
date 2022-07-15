@@ -4,6 +4,7 @@
 #include "world_impl.h"
 #include "parser.h"
 #include "keycode.h"
+#include "perf.h"
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -389,8 +390,11 @@ static void
 static void
 	main_image(t_work *work, const char *image_file)
 {
+	t_perf	perf;
+
 	setup_sighandlers();
 	thread_create(&work->state->work_thread, rt_work_start, work);
+	perf_start(&perf);
 	work_resume(work);
 	while (1)
 	{
@@ -403,9 +407,11 @@ static void
 		mutex_unlock(&work->state->mtx);
 		usleep(10000);
 	}
+	perf_split(&perf, "draw image");
 	mutex_lock(&work->state->mtx);
 	rt_write_ppm(image_file, work->state->image);
 	mutex_unlock(&work->state->mtx);
+	perf_split(&perf, "save image");
 	rt_exit(work);
 }
 
@@ -417,6 +423,7 @@ int
 	t_state		state;
 	t_work		work;
 	t_options	options;
+	t_perf		perf;
 
 	parse_options(&options, argc, argv);
 	image.width = 1920;
@@ -429,13 +436,16 @@ int
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = 10000;
+	world.img_meta.samples = options.samples;
 	cond_init(&state.cnd);
 	mutex_init(&state.mtx);
+	perf_start(&perf);
 	world_load(&world, options.scene_file);
+	perf_split(&perf, "load world");
 	world_accel(&world);
-	/* dump_tree(&world, 0, 0, vec(-RT_HUGE_VAL, -RT_HUGE_VAL, -RT_HUGE_VAL), vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL)); */
+	perf_split(&perf, "build tree");
 	work_create(&work, &state);
+	perf_split(&perf, "init device");
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work_reset(&work);
 	if (options.image_file == NULL)

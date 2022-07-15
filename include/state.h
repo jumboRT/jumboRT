@@ -17,6 +17,8 @@ typedef struct s_options	t_options;
 struct s_options {
 	const char	*scene_file;
 	const char	*image_file;
+	size_t		samples;
+	int			samples_set;
 };
 
 struct s_state {
