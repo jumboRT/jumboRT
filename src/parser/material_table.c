@@ -52,6 +52,7 @@ uint32_t
 	material.emission = vec(0, 0, 0);
 	material.albedo = color;
 	material.reflective = 0;
+	material.refractive = 0;
 	new_entry.index = world_add_material(world, &material, sizeof(material));
 	new_entry.name = NULL;
 	new_entry.color = color;

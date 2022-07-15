@@ -67,6 +67,7 @@ struct s_material {
 	FLOAT		density;
 	FLOAT		fuzzy;
 	int32_t		reflective;
+	int32_t		refractive;
 	uint32_t	id;
 };
 
