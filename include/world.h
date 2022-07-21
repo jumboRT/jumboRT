@@ -15,6 +15,7 @@
 # include "rtmath.h"
 # include "cl.h"
 # include "aabb.h"
+# include "tex.h"
 
 typedef struct s_context		t_context;
 typedef struct s_image_meta		t_image_meta;
@@ -58,6 +59,12 @@ struct s_vertex {
 
 struct s_primitive {
 	uint32_t	data;
+};
+
+struct s_tex {
+	uint64_t    offset;
+	uint64_t    width;
+	uint64_t    height;	
 };
 
 struct s_material {
@@ -133,18 +140,24 @@ struct s_world {
 	uint64_t			accel_nodes_size;
 	uint64_t			accel_indices_size;
 	uint64_t			accel_degenerates_size;
+	uint64_t			textures_size;
+	uint64_t			texture_data_size;
 	uint64_t			primitives_capacity;
 	uint64_t			materials_capacity;
 	uint64_t			vertices_capacity;
 	uint64_t			accel_nodes_capacity;
 	uint64_t			accel_indices_capacity;
 	uint64_t			accel_degenerates_capacity;
+	uint64_t			textures_capacity;
+	uint64_t			texture_data_capacity;
 	GLOBAL void			*primitives;
 	GLOBAL void			*materials;
 	GLOBAL t_vertex		*vertices;
 	GLOBAL t_accel_node	*accel_nodes;
 	GLOBAL uint32_t		*accel_indices;
 	GLOBAL uint32_t		*accel_degenerates;
+	GLOBAL t_tex		*textures;
+	GLOBAL unsigned char	*texture_data;
 };
 
 uint64_t	world_primitive_size(uint8_t shape_type);
@@ -155,11 +168,14 @@ const GLOBAL t_primitive	*get_prim_const(const GLOBAL t_world *world, uint32_t i
 GLOBAL t_primitive			*get_prim(GLOBAL t_world *world, uint32_t index);
 const GLOBAL t_material		*get_mat_const(const GLOBAL t_world *world, uint32_t index);
 GLOBAL t_material			*get_mat(GLOBAL t_world *world, uint32_t index);
+const GLOBAL unsigned char	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index);
+const GLOBAL t_tex		*get_tex(const GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
+t_vec    tex_sample(const GLOBAL t_world world, const GLOBAL t_tex *tex, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);

@@ -92,6 +92,7 @@ struct s_cone {
 struct s_hit {
 	t_vec	pos;
 	t_vec	normal;
+	t_vec2	uv;
 	FLOAT	t;
 };
 
@@ -128,6 +129,9 @@ t_vec	vec2_0(void)			__attribute__ ((const));
 t_vec	vec2_x(FLOAT x)			__attribute__ ((const));
 t_vec	vec2_y(FLOAT y)			__attribute__ ((const));
 t_vec	vec2_z(FLOAT z)			__attribute__ ((const));
+
+FLOAT	u(t_vec2 v) __attribute__ ((const));
+FLOAT	v(t_vec2 v) __attribute__ ((const));
 
 t_plane		plane(t_vec pos, t_vec normal)								__attribute__ ((const));
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2)						__attribute__ ((const));

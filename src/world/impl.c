@@ -132,6 +132,30 @@ uint32_t
 	return (old_size / sizeof(accel_degenerate));
 }
 
+uint32_t
+	world_add_tex(t_world *world, const t_tex *tex)
+{
+	size_t	old_size;
+
+	world->textures_count += 1;
+	old_size = world->textures_size;
+	world->textures_size += sizeof(*vertex);
+	world->textures = world_reallog(world->textures, &world->textures_capacity, world->textures_size);
+	ft_memcpy((char *) world->vertices + old_size, vertex, sizeof(*vertex));
+	return (old_size / sizeof(*tex));
+}
+
+uint64_t
+	world_alloc_tex_data(t_world *world, size_t size)
+{
+	size_t	old_size;
+
+	old_size = world->texture_data_size;
+	world->texture_data_size += sizeof(*world->texture_data) * size;
+	world->texture_data = world_reallog(world->texture_data, &world->texture_data_capacity, world->texture_data_size);
+	return (old_size);
+}
+
 int64_t
 	world_get_material(const t_world *world, uint32_t id)
 {
