@@ -113,6 +113,7 @@ FLOAT	rt_abs(FLOAT a);
 FLOAT	rt_min(FLOAT a, FLOAT b);
 FLOAT	rt_max(FLOAT a, FLOAT b);
 FLOAT	rt_pow(FLOAT x, FLOAT y);
+FLOAT	rt_mod(FLOAT a, FLOAT b);
 
 int float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 

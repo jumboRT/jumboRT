@@ -8,12 +8,9 @@ t_vec
 	const unsigned char	*pixels;
 	unsigned char		colors[3];
 
+	uv = vec2(rt_mod(rt_mod(u(uv), 1.0) + 1.0, 1.0), rt_mod(rt_mod(v(uv), 1.0) + 1.0, 1.0));
 	x = (uint64_t)(u(uv) * tex->width);
 	y = (uint64_t)(v(uv) * tex->height);
-	if (x >= tex->width)
-		x = tex->width - 1;
-	if (y >= tex->height)
-		y = tex->height - 1;
 	pixels = get_tex_data_const(world, tex->offset);
 	colors[0] = pixels[(y * tex->width + x) * 3 + 0];
 	colors[1] = pixels[(y * tex->width + x) * 3 + 1];

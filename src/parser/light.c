@@ -7,16 +7,13 @@ void
 {
 	t_shape_sphere	sphere;
 	t_material		material;
-	FLOAT			intensity;
-	t_vec			color;
 
 	sphere.base.data = RT_SHAPE_SPHERE;
 	sphere.pos = rt_vec(ctx);
 	sphere.radius = 1.0;
-	intensity = rt_float_range(ctx, 0.0, 1.0) * 256.0;
-	color = rt_color(ctx);
 	material_init(&material);
-	material.emission = vec_scale(color, intensity);
+	material.brightness = rt_float_range(ctx, 0.0, 1.0) * 256;
+	material.emission = rt_color(ctx);
 	material.albedo = vec(0.0, 0.0, 0.0);
 	material.reflective = 0;
 	material.refractive = 0;

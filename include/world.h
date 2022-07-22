@@ -76,6 +76,7 @@ struct s_material {
 	FLOAT		refractive_index;
 	FLOAT		density;
 	FLOAT		fuzzy;
+	FLOAT		brightness;
 	int32_t		reflective;
 	int32_t		refractive;
 	int32_t		has_texture;

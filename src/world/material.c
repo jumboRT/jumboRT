@@ -11,6 +11,7 @@ void
 	mat->refractive_index = 1;
 	mat->reflective = 0;
 	mat->density = 0;
+	mat->brightness = 1.0;
 	mat->has_texture = 0;
 	mat->id = UINT_MAX;
 }

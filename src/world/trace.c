@@ -46,9 +46,9 @@ t_vec get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_ve
 
 t_vec get_emission(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
 	if (mat->has_texture & RT_TEX_EMISSION_BIT) {
-		return tex_sample(world, get_tex(world, mat->tex_emission_offset), uv);
+		return vec_scale(tex_sample(world, get_tex(world, mat->tex_emission_offset), uv), mat->brightness);
 	}
-	return mat->emission;
+	return vec_scale(mat->emission, mat->brightness);
 }
 
 t_vec

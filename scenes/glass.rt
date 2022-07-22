@@ -31,3 +31,15 @@ sp 1,-0.5,0 -0.48 mat_glass
 sp 1,0.5,0 0.5 mat_gold
 sp 1,0,-50.25 100 255,255,255
 # sp 1,0,-50.25 100 mat_light
+
+mat_beg mat_triangle
+	emission tex_checker
+mat_end
+
+vt -1,-1,0 0,0
+vt -1,1,0 1,0
+vt 1,-1,0 0,1
+vt 1,1,0 1,1
+
+tr 0 1 2 mat_triangle
+tr 3 2 1 mat_triangle

@@ -35,7 +35,7 @@ uint32_t
 	while (i < view_size(ctx->materials.view))
 	{
 		entry = view_get(ctx->materials.view, i);
-		if (ft_strcmp(entry->name, name) == 0)
+		if (entry->name != NULL && ft_strcmp(entry->name, name) == 0)
 			return (entry->index);
 		i += 1;
 	}
@@ -54,7 +54,7 @@ uint32_t
 	while (i < view_size(ctx->textures.view))
 	{
 		entry = view_get(ctx->textures.view, i);
-		if (ft_strcmp(entry->name, name) == 0)
+		if (entry->name != NULL && ft_strcmp(entry->name, name) == 0)
 			return (entry->index);
 		i += 1;
 	}
