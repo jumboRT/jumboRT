@@ -38,6 +38,8 @@ struct s_opencl_ctx {
 	cl_mem				accel_nodes_mem;
 	cl_mem				accel_indices_mem;
 	cl_mem				accel_degenerates_mem;
+	cl_mem				texture_data_mem;
+	cl_mem				textures_mem;
 	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
 	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
 	int					id;
@@ -218,12 +220,16 @@ void
 	cl_ctx->accel_nodes_mem = work_copy_array(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes);
 	cl_ctx->accel_indices_mem = work_copy_array(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices);
 	cl_ctx->accel_degenerates_mem = work_copy_array(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates);
+	cl_ctx->texture_data_mem = work_copy_array(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data);
+	cl_ctx->textures_mem = work_copy_array(cl_ctx, work->state->world->textures_size, work->state->world->textures);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 0, cl_ctx->primitives_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 1, cl_ctx->materials_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 2, cl_ctx->vertices_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 3, cl_ctx->accel_nodes_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 4, cl_ctx->accel_indices_mem);
 	work_set_ptr(cl_ctx, cl_ctx->world_mem, 5, cl_ctx->accel_degenerates_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 6, cl_ctx->texture_data_mem);
+	work_set_ptr(cl_ctx, cl_ctx->world_mem, 7, cl_ctx->textures_mem);
 	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
 	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
 	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
@@ -328,6 +334,8 @@ void
 	cl_ctx->accel_nodes_mem = NULL;
 	cl_ctx->accel_indices_mem = NULL;
 	cl_ctx->accel_degenerates_mem = NULL;
+	cl_ctx->texture_data_mem = NULL;
+	cl_ctx->textures_mem = NULL;
 	work_add(work, work_start, cl_ctx);
 }
 
@@ -358,6 +366,8 @@ void
 	work_destroy_array(cl_ctx->accel_nodes_mem);
 	work_destroy_array(cl_ctx->accel_indices_mem);
 	work_destroy_array(cl_ctx->accel_degenerates_mem);
+	work_destroy_array(cl_ctx->texture_data_mem);
+	work_destroy_array(cl_ctx->textures_mem);
 }
 
 void

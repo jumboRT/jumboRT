@@ -24,6 +24,7 @@ void
 	vector_create(&ctx->textures, sizeof(t_tex_entry), 0);
 }
 
+/* TODO: free individual materials */
 void
 	parser_destroy(t_parse_ctx *ctx)
 {

@@ -5,37 +5,26 @@
 #include <libft.h>
 
 void
+	*world_zero(uint32_t *count, uint64_t *size, uint64_t *capacity)
+{
+	if (count != NULL)
+		*count = 0;
+	*size = 0;
+	*capacity = 0;
+	return (NULL);
+}
+
+void
 	world_create(t_world *world)
 {
-	world->primitives = NULL;
-	world->materials = NULL;
-	world->vertices = NULL;
-	world->accel_nodes = NULL;
-	world->accel_indices = NULL;
-	world->accel_degenerates = NULL;
-	world->primitives_count = 0;
-	world->materials_count = 0;
-	world->vertices_count = 0;
-	world->textures_count = 0;
-	world->accel_nodes_count = 0;
-	world->accel_indices_count = 0;
-	world->accel_degenerates_count = 0;
-	world->primitives_size = 0;
-	world->materials_size = 0;
-	world->vertices_size = 0;
-	world->accel_nodes_size = 0;
-	world->accel_indices_size = 0;
-	world->accel_degenerates_size = 0;
-	world->textures_size = 0;
-	world->texture_data_size = 0;
-	world->primitives_capacity = 0;
-	world->materials_capacity = 0;
-	world->vertices_capacity = 0;
-	world->accel_nodes_capacity = 0;
-	world->accel_indices_capacity = 0;
-	world->accel_degenerates_capacity = 0;
-	world->textures_capacity = 0;
-	world->texture_data_capacity = 0;
+	world->primitives = world_zero(&world->primitives_count, &world->primitives_size, &world->primitives_capacity);
+	world->materials = world_zero(&world->materials_count, &world->materials_size, &world->materials_capacity);
+	world->vertices = world_zero(&world->vertices_count, &world->vertices_size, &world->vertices_capacity);
+	world->accel_nodes = world_zero(&world->accel_nodes_count, &world->accel_nodes_size, &world->accel_nodes_capacity);
+	world->accel_indices = world_zero(&world->accel_indices_count, &world->accel_indices_size, &world->accel_indices_capacity);
+	world->accel_degenerates = world_zero(&world->accel_degenerates_count, &world->accel_degenerates_size, &world->accel_degenerates_capacity);
+	world->textures = world_zero(&world->textures_count, &world->textures_size, &world->textures_capacity);
+	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
 }
 
 void

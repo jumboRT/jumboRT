@@ -6,7 +6,7 @@ MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c p
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
-							pow.c cylinder.c vec_rotate.c cone.c
+							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
 GFX_FILES				:= win.c
@@ -32,6 +32,8 @@ OPENCL_FILES			:= \
 	src/math/vec_get_fast.c \
 	src/math/vec_size.c \
 	src/math/vec_size_fast.c \
+	src/math/vec2.c \
+	src/math/vec2_fast.c \
 	src/math/vec_rotate.c \
 	src/math/vec_set.c \
 	src/math/sqrt.c \
@@ -166,8 +168,8 @@ else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -O2 -pg
 	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto -march=native
-	LFLAGS		+= -g0 -Ofast -flto -march=native
+	CFLAGS		+= -g3 -Ofast -flto -march=native
+	LFLAGS		+= -g3 -Ofast -flto -march=native
 else
 $(error "invalid config $(config"))
 endif

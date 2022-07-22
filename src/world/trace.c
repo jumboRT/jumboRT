@@ -31,7 +31,8 @@ t_vec
 	}
 	if (mat->reflective || mat->refractive) {
 		reflected = vec_sub(ray_in.dir, vec_scale(hit.relative_normal, 2.0 * vec_dot(ray_in.dir, hit.relative_normal)));
-		return (vec_norm(reflected + rt_random_in_sphere(&ctx->seed, 0.0, mat->fuzzy)));
+		/* TODO: fuzzy is unset for refractive materials, but it's used here anyways */
+		return (vec_norm(vec_add(reflected, rt_random_in_sphere(&ctx->seed, 0.0, mat->fuzzy))));
 	}
 	return (rt_random_on_hemi(&ctx->seed, hit.relative_normal));
 }

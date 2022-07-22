@@ -13,16 +13,6 @@ t_vec
 	conv.elem[3] = 0.0;
 	return (conv.vec);
 }
-
-t_vec2
-	vec2(FLOAT x, FLOAT y)
-{
-	t_vec2_conv	conv;
-
-	conv.elem[0] = x;
-	conv.elem[1] = y;
-	return (conv.vec);
-}
 	
 t_vec
 	vec_0(void)

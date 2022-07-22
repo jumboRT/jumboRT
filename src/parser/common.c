@@ -146,6 +146,20 @@ t_vec
 	return (vec(x, y, z));
 }
 
+t_vec2
+	rt_vec2(t_parse_ctx *ctx)
+{
+	FLOAT	x;
+	FLOAT	y;
+
+	rt_skip(ctx, ft_isspace);
+	x = rt_float(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	y = rt_float(ctx);
+	return (vec2(x, y));
+}
+
 t_vec
 	rt_vec_norm(t_parse_ctx *ctx)
 {

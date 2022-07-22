@@ -17,6 +17,10 @@ __kernel void
 		world->accel_indices = ptr;
 	if (offset == 5)
 		world->accel_degenerates = ptr;
+	if (offset == 6)
+		world->texture_data = ptr;
+	if (offset == 7)
+		world->textures = ptr;
 }
 
 /* TODO: synchronize or duplicate context */
@@ -62,7 +66,7 @@ t_result
 	t_ray		ray;
 
 	ray = project(world, ctx, index);
-	result.color = world_trace(world, ctx, ray, 8); // TODO: RT_MAX_DEPTH
+	result.color = world_trace(world, ctx, ray, 64); // TODO: RT_MAX_DEPTH
 	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }

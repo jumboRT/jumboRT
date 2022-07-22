@@ -19,6 +19,7 @@ void
 	content = rt_readfile(path, &error, &size);
 	rt_assert(content != NULL, error);
 	world_load_ppm(world, &tex, (unsigned char *) content, size);	
+	tex_add(ctx, keyword, world_add_tex(world, &tex));
 	rt_free(keyword);
 	rt_free(path);
 	rt_free(content);

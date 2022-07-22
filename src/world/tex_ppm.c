@@ -45,10 +45,10 @@ void
 		x = 0;
 		while (x < tex->width)
 		{
-			pixels[y * tex->width + x + 0] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 0, 1);
-			pixels[y * tex->width + x + 1] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 1, 1);
-			pixels[y * tex->width + x + 2] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 2, 1);
-			x += 3;
+			pixels[(y * tex->width + x) * 3 + 2] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 0, 1);
+			pixels[(y * tex->width + x) * 3 + 1] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 1, 1);
+			pixels[(y * tex->width + x) * 3 + 0] = (unsigned char) tex_read(file + offset + y * row_size + x * bpp / 8 + 2, 1);
+			x += 1;
 		}
 		y += 1;
 	}

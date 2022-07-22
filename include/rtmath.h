@@ -133,7 +133,6 @@ t_vec2	vec2(FLOAT x, FLOAT y) __attribute__ ((const));
 t_vec	vec2_0(void) __attribute__ ((const));
 t_vec	vec2_x(FLOAT x) __attribute__ ((const));
 t_vec	vec2_y(FLOAT y) __attribute__ ((const));
-t_vec	vec2_z(FLOAT z) __attribute__ ((const));
 
 FLOAT	u(t_vec2 v) __attribute__ ((const));
 FLOAT	v(t_vec2 v) __attribute__ ((const));

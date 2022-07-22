@@ -18,6 +18,8 @@ void
 	material_init(&material);
 	material.emission = vec_scale(color, intensity);
 	material.albedo = vec(0.0, 0.0, 0.0);
+	material.reflective = 0;
+	material.refractive = 0;
 	sphere.base.data |= world_add_material(world, &material, sizeof(material)) << 8;
 	world_add_primitive(world, &sphere, sizeof(sphere));
 }
