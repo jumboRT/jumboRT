@@ -19,7 +19,7 @@ mat_end
 
 mat_beg mat_middle
 #	sp 1,0,0 0.5 191,63,63
-	tex tex_checker
+	albedo tex_checker
 mat_end
 
 pl 0,0,10 0,0,-1 mat_light

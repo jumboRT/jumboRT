@@ -64,10 +64,22 @@ void
 void
 	rt_exec_albedo(t_world *world, t_parse_ctx *ctx)
 {
-	(void) world;
+	char	*keyword;
+
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	ctx->mat->albedo = rt_color(ctx);
+	if (has_prefix(ctx, "tex_"))
+	{
+		keyword = rt_keyword(ctx, "tex_");
+		ctx->mat->has_texture = 1;
+		ctx->mat->tex_offset = tex_by_name(world, ctx, keyword);
+		rt_free(keyword);
+	}
+	else
+	{
+		ctx->mat->albedo = rt_color(ctx);
+	}
+
 }
 
 void
@@ -99,19 +111,6 @@ void
 	ctx->mat->reflective = 1;
 	ctx->mat->fuzzy = rt_float(ctx);
 }
-
-void
-	rt_exec_tex(t_world *world, t_parse_ctx *ctx)
-{
-	char		*keyword;
-
-	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	keyword = rt_keyword(ctx, "tex_");
-	ctx->mat->has_texture = 1;
-	ctx->mat->tex_offset = tex_by_name(world, ctx, keyword);
-}
-
 
 void
 	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)
