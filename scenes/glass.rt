@@ -1,5 +1,7 @@
 C 0,0,0 1,0,0 90
 
+tex_def tex_checker assets/checker.bmp
+
 mat_beg mat_glass
     albedo 255,255,255
     refractive 1.5
