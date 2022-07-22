@@ -49,8 +49,8 @@ int
 	if (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1)
 	{
 		hit->uv = vec2(
-				vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)),
-				vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)));
+				vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
+				vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)));
 		return (1);
 	}
 	return (0);

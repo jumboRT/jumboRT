@@ -125,7 +125,7 @@ t_vec
 	rt_expect(ctx, ',');
 	rt_skip(ctx, ft_isspace);
 	blue = rt_color_part(ctx);
-	return (vec(red, green, blue));
+	return (vec(red, green, blue, 1.0));
 }
 
 t_vec
@@ -143,7 +143,7 @@ t_vec
 	rt_expect(ctx, ',');
 	rt_skip(ctx, ft_isspace);
 	z = rt_float(ctx);
-	return (vec(x, y, z));
+	return (vec(x, y, z, 0.0));
 }
 
 t_vec2

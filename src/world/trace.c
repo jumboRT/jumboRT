@@ -57,17 +57,26 @@ t_vec
 	t_vec					head;
 	t_vec					tail;
 	t_world_hit				hit;
+	t_vec					albedo;
 	const GLOBAL t_material	*mat;
 
-	head = vec(1, 1, 1);
-	tail = vec(0, 0, 0);
+	head = vec(1, 1, 1, 1);
+	tail = vec(0, 0, 0, 0);
 	while (depth > 0 && world_intersect(world, ray, &hit))
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
-		tail = vec_add(tail, vec_mul(head, get_emission(world, mat, hit.hit.uv)));
-		head = vec_mul(head, get_albedo(world, mat, hit.hit.uv));
-		ray.org = hit.hit.pos;
-		ray.dir = ray_scatter(mat, ctx, ray, hit);
+		albedo = get_albedo(world, mat, hit.hit.uv);
+		if (rt_random_float(&ctx->seed) <= w(albedo))
+		{
+			tail = vec_add(tail, vec_mul(head, get_emission(world, mat, hit.hit.uv)));
+			head = vec_mul(head, albedo);
+			ray.org = hit.hit.pos;
+			ray.dir = ray_scatter(mat, ctx, ray, hit);
+		}
+		else
+		{
+			ray.org = hit.hit.pos;
+		}
 		depth -= 1;
 	}
 	return (tail);

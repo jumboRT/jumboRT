@@ -6,7 +6,7 @@ t_vec
 	uint64_t			x;
 	uint64_t			y;
 	const unsigned char	*pixels;
-	unsigned char		colors[3];
+	unsigned char		colors[4];
 
 	uv = vec2(rt_mod(rt_mod(u(uv), 1.0) + 1.0, 1.0), rt_mod(rt_mod(v(uv), 1.0) + 1.0, 1.0));
 	x = (uint64_t)(u(uv) * tex->width);
@@ -15,5 +15,6 @@ t_vec
 	colors[0] = pixels[(y * tex->width + x) * 3 + 0];
 	colors[1] = pixels[(y * tex->width + x) * 3 + 1];
 	colors[2] = pixels[(y * tex->width + x) * 3 + 2];
-	return (vec_scale(vec(colors[0], colors[1], colors[2]), 1.0 / 255));
+	colors[3] = pixels[(y * tex->width + x) * 3 + 3];
+	return (vec_scale(vec(colors[0], colors[1], colors[2], colors[3]), 1.0 / 255));
 }

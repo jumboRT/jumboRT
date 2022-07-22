@@ -3,6 +3,7 @@ import sys
 import math
 import os.path
 import PIL.Image
+import subprocess
 
 vertices = []
 faces = []
@@ -41,15 +42,17 @@ def add_vertex(vertex):
     except ValueError:
         vertices.append(vertex)
         return len(vertices) - 1
-
+# magick checker.bmp -colorspace sRGB -depth 32 -alpha Set result.bmp 
 def add_texture(path):
     filename = os.path.splitext(path)[0] + ".bmp"
     for texture in textures:
         if texture[1] == filename:
             return texture[0]
-    image = PIL.Image.open(path)
-    image.save(filename)
-    image.close()
+#    image = PIL.Image.open(path)
+#    image.save(filename)
+#    image.close()
+    args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', '-flip', filename]
+    subprocess.call(args);
     name = f"tex_{filename}"
     textures.append((name, filename))
     return name

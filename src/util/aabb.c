@@ -17,7 +17,7 @@ t_bounds
 {
 	t_vec	min;
 
-	min = vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL);
+	min = vec(RT_HUGE_VAL, RT_HUGE_VAL, RT_HUGE_VAL, 0.0);
 	return (bounds(min, vec_neg(min)));
 }
 

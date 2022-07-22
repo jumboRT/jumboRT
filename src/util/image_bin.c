@@ -13,7 +13,7 @@ static size_t
 {
 	t_vec	final_color;
 
-	final_color = vec(1.0, 0.0, 1.0);
+	final_color = vec(1.0, 0.0, 1.0, 1.0);
 	if (pixel->samples != 0)
 		final_color = vec_scale(pixel->color, 1.0 / pixel->samples);
 	final_color = vec_clamp(vec_scale(final_color, 255.0), 0, 255.0);
