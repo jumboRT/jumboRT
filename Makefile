@@ -91,7 +91,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT -DRT_USE_LIBC
+CFLAGS          		+= -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
@@ -130,6 +130,20 @@ endif
 ifndef san
 	san := address
 endif 
+
+ifndef renderer
+	renderer := cl
+endif
+
+ifeq ($(renderer), cl)
+	CFLAGS		+= -DRT_WORK_OPENCL
+else ifeq ($(renderer), thread)
+	CFLAGS		+= -DRT_WORK_THREAD
+else ifeq ($(renderer), single)
+	CFLAGS		+= -DRT_WORK_SINGLE
+else
+$(error "invalid renderer $(renderer)")
+endif
 
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE
