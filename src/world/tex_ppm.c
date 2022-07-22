@@ -38,7 +38,7 @@ void
 	if (size < offset + tex->height * row_size || tex->width == 0 || tex->height == 0)
 		rt_assert(0, "bad image");
 	tex->offset = world_alloc_tex_data(world, tex->width * 3 * tex->height);
-	pixels = get_tex_data(world, offset);
+	pixels = get_tex_data(world, tex->offset);
 	y = 0;
 	while (y < tex->height)
 	{
