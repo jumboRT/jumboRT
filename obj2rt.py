@@ -3,10 +3,15 @@ import sys
 import math
 
 lines = sys.stdin.readlines()
+
 vertices = []
 faces = []
 planes = []
+cylinders = []
+spheres = []
 lights = []
+materials = []
+
 camera = ((0, 0, 0), (1, 0, 0), 90)
 # write_bb = ((0.785739, -0.908510, 0.038250), (1.072875, -0.509230, 0.311250))
 # write_bb = ((0.883179, -0.673730, 0.038250), (1.072875, -0.509230, 0.311250))
@@ -26,6 +31,14 @@ def parse_vertex(line, swap_yz=False):
 def str_vertex(vertex):
     return f"{vertex[0]:f},{vertex[1]:f},{vertex[2]:f}"
 
+def str_color(color):
+    return f"{color[0]},{color[1]},{color[2]}"
+
+def str_material(material):
+    if type(material) is str:
+        return material
+    return str_color(material)
+
 def add_vertex(vertex):
     try:
         return vertices.index(vertex)
@@ -33,7 +46,25 @@ def add_vertex(vertex):
         vertices.append(vertex)
         return len(vertices) - 1
 
-if sys.argv[1] == "jkoers":
+def mjoosten_material(color, name):
+    full_name = f"mat_mjoosten_{color[0]:02x}{color[1]:02x}{color[2]:02x}_{name}"
+    for material in materials:
+        if material[0] == full_name:
+            return full_name
+    if name == "mirror":
+        materials.append((full_name, (255, 255, 255), 0, None))
+    elif name == "glass":
+        materials.append((full_name, (255, 255, 255), None, 1.5))
+    elif name == "metal":
+        materials.append((full_name, color, 0.1, None))
+    else:
+        assert False
+    return full_name
+
+if len(sys.argv) < 2:
+    sys.stderr.write(f"no format specified\n")
+    sys.exit(1)
+elif sys.argv[1] == "jkoers":
     for line in lines:
         line = line.split()
         if len(line) == 0:
@@ -59,6 +90,44 @@ if sys.argv[1] == "jkoers":
             brightness = float(line[2])
             color = tuple(map(int, line[3].split(",")))
             lights.append((position, brightness, color))
+elif sys.argv[1] == "mjoosten":
+    for line in lines:
+        line = line.split()
+        if len(line) == 0:
+            continue
+        if line[0] == "C":
+            position = parse_vertex(line[1].split(","), True)
+            rotation = parse_vertex(line[2].split(","), True)
+            fov = float(line[3])
+            camera = (position, rotation, fov)
+        if line[0] == "L":
+            position = parse_vertex(line[1].split(","), True)
+            brightness = float(line[2])
+            color = tuple(map(int, line[3].split(",")))
+            lights.append((position, brightness, color))
+        if line[0] == "pl":
+            position = parse_vertex(line[1].split(","), True)
+            rotation = parse_vertex(line[2].split(","), True)
+            material = tuple(map(int, line[3].split(",")))
+            if len(line) >= 5:
+                material = mjoosten_material(material, line[4])
+            planes.append((position, rotation, material))
+        if line[0] == "cy":
+            position = parse_vertex(line[1].split(","), True)
+            rotation = parse_vertex(line[2].split(","), True)
+            diameter = float(line[3])
+            height = float(line[4])
+            material = tuple(map(int, line[5].split(",")))
+            if len(line) >= 7:
+                material = mjoosten_material(material, line[6])
+            cylinders.append((position, rotation, diameter, height, material))
+        if line[0] == "sp":
+            position = parse_vertex(line[1].split(","), True)
+            diameter = float(line[2])
+            material = tuple(map(int, line[3].split(",")))
+            if len(line) >= 5:
+                material = mjoosten_material(material, line[4])
+            spheres.append((position, diameter, material))
 elif sys.argv[1] == "obj":    
     for line in lines:
         line = line.split()
@@ -102,11 +171,23 @@ def intersect_bb(bb1, bb2):
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
 sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:f}\n")
+for material in materials:
+    sys.stdout.write(f"mat_beg {material[0]}\n")
+    sys.stdout.write(f"    albedo {str_color(material[1])}\n")
+    if material[2] is not None:
+        sys.stdout.write(f"    fuzzy {material[2]:f}\n")
+    if material[3] is not None:
+        sys.stdout.write(f"    refractive {material[3]:f}\n")
+    sys.stdout.write(f"mat_end\n")
 for plane in planes:
-    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} {plane[2][0]},{plane[2][1]},{plane[2][2]}\n")
+    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} {str_material(plane[2])}\n")
+for cylinder in cylinders:
+    sys.stdout.write(f"cy {str_vertex(cylinder[0])} {str_vertex(cylinder[1])} {cylinder[2]:f} {cylinder[3]:f} {str_material(cylinder[4])}\n")
+for sphere in spheres:
+    sys.stdout.write(f"sp {str_vertex(sphere[0])} {sphere[1]:f} {str_material(sphere[2])}\n")
 for vertex in vertices:
     sys.stdout.write(f"v {str_vertex(vertex)}\n")
 for face in faces:
-    sys.stdout.write(f"tr {face[0][0]} {face[0][1]} {face[0][2]} {face[1][0]},{face[1][1]},{face[1][2]}\n")
+    sys.stdout.write(f"tr {face[0][0]} {face[0][1]} {face[0][2]} {str_material(face[1])}\n")
 for light in lights:
-    sys.stdout.write(f"L {str_vertex(light[0])} {light[1]:f} {light[2][0]},{light[2][1]},{light[2][2]}\n")
+    sys.stdout.write(f"L {str_vertex(light[0])} {light[1]:f} {str_color(light[2])}\n")

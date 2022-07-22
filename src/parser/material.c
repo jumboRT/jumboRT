@@ -51,6 +51,7 @@ void
 	material.refractive_index = 1;
 	material.reflective = 0;
 	material.density = 0;
+	material.fuzzy = 0;
 	mat_index = world_add_material(world, &material, sizeof(material));
 	ctx->mat = get_mat(world, mat_index);
 	mat_add(ctx, keyword, mat_index);

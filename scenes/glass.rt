@@ -19,7 +19,7 @@ pl 0,0,10 0,0,-1 mat_light
 sp 1,0,0 0.5 191,63,63
 # sp 1,0,0 0.5 mat_silver
 sp 1,-0.5,0 0.5 mat_glass
-sp 1,-0.5,0 -0.4 mat_glass
+sp 1,-0.5,0 -0.48 mat_glass
 sp 1,0.5,0 0.5 mat_gold
 sp 1,0,-50.25 100 191,191,0
 # sp 1,0,-50.25 100 mat_light

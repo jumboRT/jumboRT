@@ -77,7 +77,7 @@ void
 	{
 		primitive = (t_primitive *) ((char *) world->primitives + offset);
 		if (prim_is_infinite(primitive))
-			world_add_accel_degenerate(world, offset);
+			world_add_accel_degenerate(world, offset / RT_PRIMITIVE_ALIGN);
 		else
 		{
 			prim.index = offset / RT_PRIMITIVE_ALIGN;

@@ -345,7 +345,7 @@ static void
 	while (1)
 	{
 		mutex_lock(&work->state->mtx);
-		if (work->state->stop_update)
+		if (work->state->stop_update && work->work_progress >= work->work_index)
 		{
 			mutex_unlock(&work->state->mtx);
 			return (NULL);
