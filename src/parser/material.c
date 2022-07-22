@@ -101,15 +101,15 @@ void
 }
 
 void
-	rt_tex(t_parse_ctx *ctx, t_world *world, t_material *material)
+	rt_exec_tex(t_world *world, t_parse_ctx *ctx)
 {
 	char		*keyword;
 
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	keyword = rt_keyword(ctx, "tex_");
-	material->has_texture = 1;
-	material->tex_offset = tex_by_name(world, ctx, keyword);
+	ctx->mat->has_texture = 1;
+	ctx->mat->tex_offset = tex_by_name(world, ctx, keyword);
 }
 
 

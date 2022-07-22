@@ -37,6 +37,12 @@ GLOBAL t_material
 	return ((GLOBAL t_material *) ((GLOBAL char *) world->materials + (uint64_t) index * RT_MATERIAL_ALIGN));
 }
 
+GLOBAL unsigned char
+	*get_tex_data(GLOBAL t_world *world, uint32_t index)
+{
+	return (world->texture_data + index);
+}
+
 const GLOBAL unsigned char
 	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index)
 {

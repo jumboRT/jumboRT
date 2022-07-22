@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include "util.h"
 #include "world_impl.h"
 
 void
@@ -17,8 +18,8 @@ void
 	path = rt_word(ctx);
 	content = rt_readfile(path, &error, &size);
 	rt_assert(content != NULL, error);
-	world_load_ppm(world, &tex, content, size);	
-	free(keyword);
-	free(path);
-	free(content);
+	world_load_ppm(world, &tex, (unsigned char *) content, size);	
+	rt_free(keyword);
+	rt_free(path);
+	rt_free(content);
 }

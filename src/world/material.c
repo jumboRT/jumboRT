@@ -14,3 +14,11 @@ void
 	mat->has_texture = 0;
 	mat->id = UINT_MAX;
 }
+
+void
+	texture_init(t_tex *tex)
+{
+	tex->width = ULONG_MAX;
+	tex->height = ULONG_MAX;
+	tex->offset = UINT_MAX;
+}

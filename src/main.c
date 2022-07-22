@@ -126,26 +126,11 @@ void
 void
 	world_load(t_world *world, const char *filename)
 {
-	char		*file;
 	t_parse_ctx	ctx;
-	char		*error;
 
-	file = rt_readfile(filename, &error, NULL);
-	if (file == NULL)
-	{
-		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
-		rt_free(error);
-		exit(EXIT_FAILURE);
-	}
-	ctx.data = file;
-	ctx.filename = filename;
-	ctx.line = 1;
-	ctx.column = 1;
-	ctx.mat = NULL;
-	vector_create(&ctx.materials, sizeof(t_mat_entry), 0);
+	parser_init(&ctx, filename);
 	rt_world(world, &ctx);
-	vector_destroy(&ctx.materials, NULL);
-	rt_free(file);
+	parser_destroy(&ctx);
 }
 
 #define RT_VERBOSE

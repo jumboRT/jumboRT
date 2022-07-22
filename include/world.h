@@ -171,6 +171,7 @@ const GLOBAL t_primitive	*get_prim_const(const GLOBAL t_world *world, uint32_t i
 GLOBAL t_primitive			*get_prim(GLOBAL t_world *world, uint32_t index);
 const GLOBAL t_material		*get_mat_const(const GLOBAL t_world *world, uint32_t index);
 GLOBAL t_material			*get_mat(GLOBAL t_world *world, uint32_t index);
+GLOBAL unsigned char		*get_tex_data(GLOBAL t_world *world, uint32_t index);
 const GLOBAL unsigned char	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index);
 const GLOBAL t_tex		*get_tex(const GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);

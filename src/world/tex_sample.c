@@ -5,7 +5,6 @@ t_vec
 {
 	uint64_t		x;
 	uint64_t		y;
-	t_vec			result;
 	const unsigned char	*pixels;
 	unsigned char		colors[3];
 

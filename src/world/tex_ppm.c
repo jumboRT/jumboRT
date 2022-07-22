@@ -1,11 +1,11 @@
-#include "tex.h"
+#include "world_impl.h"
 
 #include "util.h"
 #include <libft.h>
 #include <ft_printf.h>
 
 static unsigned long
-	tex_read(unsigned char *file, size_t n)
+	tex_read(const unsigned char *file, size_t n)
 {
 	unsigned long	result;
 	size_t			i;
@@ -23,7 +23,6 @@ static unsigned long
 void
 	world_load_ppm(t_world *world, t_tex *tex, const unsigned char *file, size_t size)
 {
-	unsigned char	*file;
 	unsigned char	*pixels;
 	size_t			offset;
 	size_t			bpp;
@@ -38,9 +37,8 @@ void
 	row_size = (bpp * tex->width + 31) / 32 * 4;
 	if (size < offset + tex->height * row_size || tex->width == 0 || tex->height == 0)
 		rt_assert(0, "bad image");
-	tex->name = ft_strdup(name);
 	tex->offset = world_alloc_tex_data(world, tex->width * 3 * tex->height);
-	pixels = world_get_tex_data(world, offset);
+	pixels = get_tex_data(world, offset);
 	y = 0;
 	while (y < tex->height)
 	{
@@ -54,10 +52,4 @@ void
 		}
 		y += 1;
 	}
-}
-
-void
-	tex_destroy(t_tex *tex)
-{
-	rt_free(tex->pixels);
 }
