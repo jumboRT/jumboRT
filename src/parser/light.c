@@ -14,7 +14,7 @@ void
 	material_init(&material);
 	material.brightness = rt_float_range(ctx, 0.0, 1.0) * 256;
 	material.emission = rt_color(ctx);
-	material.albedo = vec(0.0, 0.0, 0.0);
+	material.albedo = vec(0.0, 0.0, 0.0, 0.0);
 	material.reflective = 0;
 	material.refractive = 0;
 	sphere.base.data |= world_add_material(world, &material, sizeof(material)) << 8;

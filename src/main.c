@@ -47,7 +47,8 @@ void
 	cylinder.cylinder.dir = vec_norm(vec(
 				rt_random_float_range(seed, -1, 1),
 				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1)));
+				rt_random_float_range(seed, -1, 1),
+				0.0));
 	cylinder.cylinder.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
 	cylinder.cylinder.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
 	cylinder.cylinder.pos = vec_sub(pos, vec_scale(cylinder.cylinder.dir, cylinder.cylinder.height / 2));
@@ -63,7 +64,8 @@ void
 	cone.cone.dir = vec_norm(vec(
 				rt_random_float_range(seed, -1, 1),
 				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1)));
+				rt_random_float_range(seed, -1, 1),
+				0.0));
 	cone.cone.angle = rt_random_float_range(seed, RT_PI / 6 * GEN_MIN_ANGLE, RT_PI / 6);
 	cone.cone.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
 	cone.cone.pos = vec_sub(pos, vec_scale(cone.cone.dir, cone.cone.height / 2));
@@ -97,7 +99,8 @@ void
 		pos = vec(
 			+0.5 + (world_gen_offset(&seed, 0) + i % GEN_X_SIZE) / (FLOAT) GEN_Z_SIZE,
 			-(FLOAT) GEN_Y_SIZE / GEN_Z_SIZE / 2 + (world_gen_offset(&seed, 1) + i / GEN_X_SIZE % GEN_Y_SIZE) / (FLOAT) GEN_Z_SIZE,
-			-0.5 + (world_gen_offset(&seed, 2) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE);
+			-0.5 + (world_gen_offset(&seed, 2) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE,
+			0.0);
 		pos = vec_scale(pos, 2);
 		type = rt_random_float_range(&seed, 0, 1);
 		if (type < GEN_SPHERE_CHANCE)
@@ -120,7 +123,7 @@ void
 		}
 		i += 1;
 	}
-	camera_set(world, &world->camera, vec(0, 0, 0), vec(1, 0, 0), 90);
+	camera_set(world, &world->camera, vec(0, 0, 0, 0), vec(1, 0, 0, 0), 90);
 }
 
 void

@@ -15,7 +15,7 @@ t_vec
 {
 	t_vec	b;
 
-	b = vec(s, s, s);
+	b = vec(s, s, s, s);
 	return (v * b);
 }
 

@@ -44,11 +44,8 @@ void win_event_hook(t_win *win, int event, int (*callback)(), void *ctx)
 		mlx_hook(win->handle, event, 0, callback, ctx);
 }
 
-static int to_color(unsigned char r, unsigned char g, unsigned char b)
+static int to_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-	unsigned char a;
-
-	a = 255;
 	return (
 			((unsigned int) a << 24) |
 			((unsigned int) r << 16) |
@@ -62,14 +59,15 @@ static int color_at(const t_image *img, size_t index)
 	t_vec	final_color;
 
 	pixel = img->data[index];
-	final_color = vec(1.0, 0.0, 1.0);
+	final_color = vec(1.0, 0.0, 1.0, 1.0);
 	if (pixel.samples != 0)
 		final_color = vec_scale(pixel.color, 1.0 / pixel.samples);
 	final_color = vec_clamp(vec_scale(final_color, 255.0), 0, 255.0);
 	return (to_color(
 				(unsigned char) x(final_color),
 				(unsigned char) y(final_color),
-				(unsigned char) z(final_color)));
+				(unsigned char) z(final_color),
+				(unsigned char) w(final_color)));
 }
 
 void win_put(t_win *win, const t_image *img)

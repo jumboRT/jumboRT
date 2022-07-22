@@ -13,7 +13,7 @@ void
 	camera->org = org;
 	half = tan(fov / 360 * RT_PI);
 	aspect = (FLOAT) world->img_meta.width / world->img_meta.height;
-	camera->u = vec_norm(vec_cross(dir, vec(0, 0, 1)));
+	camera->u = vec_norm(vec_cross(dir, vec(0, 0, 1, 0)));
 	camera->v = vec_norm(vec_cross(dir, camera->u));
 	camera->u = vec_scale(camera->u, -half);
 	camera->v = vec_scale(camera->v, half / aspect);

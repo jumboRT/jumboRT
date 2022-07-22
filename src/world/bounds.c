@@ -29,7 +29,8 @@ static t_bounds get_bounds_cylinder(const t_shape_cylinder *cylinder) {
 	box = vec_scale(vec(
 			sqrt(1.0 - x(dif) * x(dif) / dot),
 			sqrt(1.0 - y(dif) * y(dif) / dot),
-			sqrt(1.0 - z(dif) * z(dif) / dot)), radius);
+			sqrt(1.0 - z(dif) * z(dif) / dot),
+			0.0), radius);
 	return (bounds(
 				vec_min(vec_sub(cylinder->cylinder.pos, box), vec_sub(top, box)),
 				vec_max(vec_add(cylinder->cylinder.pos, box), vec_add(top, box))));
@@ -37,8 +38,8 @@ static t_bounds get_bounds_cylinder(const t_shape_cylinder *cylinder) {
 
 static inline t_bounds get_bounds_sphere(const t_shape_sphere *sphere) {
 	return (bounds(
-				vec_sub(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius)),
-				vec_add(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius))));
+				vec_sub(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius, 0.0)),
+				vec_add(sphere->pos, vec(sphere->radius, sphere->radius, sphere->radius, 0.0))));
 }
 
 static t_bounds get_bounds_cone(const t_shape_cone *shape) {
@@ -55,7 +56,8 @@ static t_bounds get_bounds_cone(const t_shape_cone *shape) {
 	box = vec_scale(vec(
 			sqrt(1.0 - x(dif) * x(dif) / dot),
 			sqrt(1.0 - y(dif) * y(dif) / dot),
-			sqrt(1.0 - z(dif) * z(dif) / dot)), radius);
+			sqrt(1.0 - z(dif) * z(dif) / dot),
+			0.0), radius);
 	return (bounds(
 				vec_min(shape->cone.pos, vec_sub(top, box)),
 				vec_max(shape->cone.pos, vec_add(top, box))));

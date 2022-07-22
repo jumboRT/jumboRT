@@ -19,6 +19,7 @@ t_vec
 	return (vec(
 			(y(a) * z(b)) - (z(a) * y(b)),
 			(z(a) * x(b)) - (x(a) * z(b)),
-			(x(a) * y(b)) - (y(a) * x(b))));
+			(x(a) * y(b)) - (y(a) * x(b)),
+			0.0));
 }
 #endif

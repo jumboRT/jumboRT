@@ -32,7 +32,8 @@ t_vec
 		result = vec(
 				rt_random_float_range(seed, -max, max),
 				rt_random_float_range(seed, -max, max),
-				rt_random_float_range(seed, -max, max));
+				rt_random_float_range(seed, -max, max),
+				0.0);
 		len = vec_mag(result);
 		if (len >= min && len <= max)
 			return (result);
