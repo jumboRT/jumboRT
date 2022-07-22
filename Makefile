@@ -135,7 +135,7 @@ ifndef san
 endif 
 
 ifndef renderer
-	renderer := cl
+	renderer := thread
 endif
 
 ifeq ($(renderer), cl)

@@ -80,6 +80,7 @@ struct s_material {
 	int32_t		refractive;
 	int32_t		has_texture;
 	uint32_t	tex_albedo_offset;
+	uint32_t	tex_emission_offset;
 	uint32_t	id;
 };
 

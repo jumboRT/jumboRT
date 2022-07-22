@@ -19,14 +19,15 @@ mat_end
 
 mat_beg mat_middle
 #	sp 1,0,0 0.5 191,63,63
-	albedo tex_checker
+#	albedo tex_checker
+	emission tex_checker
 mat_end
 
-pl 0,0,10 0,0,-1 mat_light
+# pl 0,0,10 0,0,-1 mat_light
 sp 1,0,0 0.5 mat_middle
 # sp 1,0,0 0.5 mat_silver
 sp 1,-0.5,0 0.5 mat_glass
 sp 1,-0.5,0 -0.48 mat_glass
 sp 1,0.5,0 0.5 mat_gold
-sp 1,0,-50.25 100 191,191,0
+sp 1,0,-50.25 100 255,255,255
 # sp 1,0,-50.25 100 mat_light

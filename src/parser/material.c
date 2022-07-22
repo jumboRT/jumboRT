@@ -55,10 +55,21 @@ void
 void
 	rt_exec_emission(t_world *world, t_parse_ctx *ctx)
 {
-	(void) world;
+	char	*keyword;
+
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	ctx->mat->emission = rt_color(ctx);
+	if (has_prefix(ctx, "tex_"))
+	{
+		keyword = rt_keyword(ctx, "tex_");
+		ctx->mat->has_texture |= RT_TEX_EMISSION_BIT;
+		ctx->mat->tex_emission_offset = tex_by_name(world, ctx, keyword);
+		rt_free(keyword);
+	}
+	else
+	{
+		ctx->mat->emission = rt_color(ctx);
+	}
 }
 
 void

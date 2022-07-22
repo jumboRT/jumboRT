@@ -44,6 +44,13 @@ t_vec get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_ve
 	return mat->albedo;
 }
 
+t_vec get_emission(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
+	if (mat->has_texture & RT_TEX_EMISSION_BIT) {
+		return tex_sample(world, get_tex(world, mat->tex_emission_offset), uv);
+	}
+	return mat->emission;
+}
+
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
 {
@@ -57,7 +64,7 @@ t_vec
 	while (depth > 0 && world_intersect(world, ray, &hit))
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
-		tail = vec_add(tail, vec_mul(head, mat->emission));
+		tail = vec_add(tail, vec_mul(head, get_emission(world, mat, hit.hit.uv)));
 		head = vec_mul(head, get_albedo(world, mat, hit.hit.uv));
 		ray.org = hit.hit.pos;
 		ray.dir = ray_scatter(mat, ctx, ray, hit);
