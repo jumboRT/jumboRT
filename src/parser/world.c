@@ -21,7 +21,6 @@ const static t_directive	directives[] = {
 	{ "refractive", rt_exec_refractive },
 	{ "fuzzy", rt_exec_fuzzy },
 	{ "density", rt_exec_density },
-	{ "tex", rt_exec_tex },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };
