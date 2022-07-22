@@ -72,7 +72,7 @@ struct s_plane {
 
 struct s_triangle {
 	t_vec	vertices[3];
-	t_vec	normal;
+	t_vec2	uvs[3];
 };
 
 struct s_sphere {
@@ -138,7 +138,7 @@ FLOAT	u(t_vec2 v) __attribute__ ((const));
 FLOAT	v(t_vec2 v) __attribute__ ((const));
 
 t_plane		plane(t_vec pos, t_vec normal) __attribute__ ((const));
-t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2) __attribute__ ((const));
+t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2) __attribute__ ((const));
 t_sphere	sphere(t_vec pos, FLOAT radius) __attribute__ ((const));
 t_cylinder	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius) __attribute__ ((const));
 t_cone		cone(t_vec pos, t_vec dir, FLOAT height, FLOAT angle) __attribute__ ((const)); 

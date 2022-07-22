@@ -2,13 +2,16 @@
 
 __attribute__ ((const))
 t_triangle
-	triangle(t_vec v0, t_vec v1, t_vec v2)
+	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2)
 {
 	t_triangle	result;
 
 	result.vertices[0] = v0;
 	result.vertices[1] = v1;
 	result.vertices[2] = v2;
+	result.uvs[0] = uv0;
+	result.uvs[1] = uv1;
+	result.uvs[2] = uv2;
 	return (result);
 }
 
@@ -19,7 +22,7 @@ int
 	t_vec	v0, v1, v2;
 	FLOAT	d00, d01, d11, d20, d21;
 	FLOAT	denom;
-	FLOAT	v, w;
+	FLOAT	bc_u, bc_v, bc_w;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),
@@ -38,9 +41,13 @@ int
 	d21 = vec_dot(v2, v1);
 
 	denom = 1.0 / ((d00 * d11) - (d01 * d01));
-	v = ((d11 * d20) - (d01 * d21)) * denom; 
-	w = ((d00 * d21) - (d01 * d20)) * denom;
+	bc_v = ((d11 * d20) - (d01 * d21)) * denom; 
+	bc_w = ((d00 * d21) - (d01 * d20)) * denom;
+	bc_u = 1 - bc_v - bc_w;
 	hit->pos = pos;
 	hit->normal = normal;
-	return (v >= 0 && w >= 0 && v + w <= 1);
+	hit->uv = vec2(
+			vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)),
+			vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)));
+	return (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1);
 }

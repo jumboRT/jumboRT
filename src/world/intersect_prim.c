@@ -26,7 +26,10 @@ static inline int
 				triangle(
 					world->vertices[tr->a].pos,
 					world->vertices[tr->b].pos,
-					world->vertices[tr->c].pos),
+					world->vertices[tr->c].pos,
+					world->vertices[tr->a].uv,
+					world->vertices[tr->b].uv,
+					world->vertices[tr->c].uv),
 				min,
 				hit));
 }

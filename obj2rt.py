@@ -252,7 +252,7 @@ for texture in textures:
 for material in materials:
     sys.stdout.write(f"mat_beg {material[0]}\n")
     if type(material[1]) is str:
-        sys.stdout.write(f"    albedo_tex {material[1]}\n")
+        sys.stdout.write(f"    albedo {material[1]}\n")
     else:
         sys.stdout.write(f"    albedo {str_color(material[1])}\n")
     if material[2] is not None:
@@ -260,7 +260,7 @@ for material in materials:
     if material[3] is not None:
         sys.stdout.write(f"    refractive {material[3]:f}\n")
     if type(material[4]) is str:
-        sys.stdout.write(f"    emission_tex {material[4]}\n")
+        sys.stdout.write(f"    emission {material[4]}\n")
     else:
         sys.stdout.write(f"    emission {str_color(material[4])}\n")
     sys.stdout.write(f"mat_end\n")
