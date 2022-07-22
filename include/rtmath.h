@@ -19,6 +19,11 @@ typedef union u_vec_conv {
 	t_vec vec;
 	FLOAT elem[4];
 }	t_vec_conv;
+
+typedef union u_vec2_conv {
+	t_vec2 vec;
+	FLOAT elem[2];
+}	t_vec2_conv;
 # endif
 
 typedef struct s_ray		t_ray;
@@ -127,7 +132,6 @@ t_vec2	vec2(FLOAT x, FLOAT y)	__attribute__ ((const));
 t_vec	vec2_0(void)			__attribute__ ((const));
 t_vec	vec2_x(FLOAT x)			__attribute__ ((const));
 t_vec	vec2_y(FLOAT y)			__attribute__ ((const));
-t_vec	vec2_z(FLOAT z)			__attribute__ ((const));
 
 t_plane		plane(t_vec pos, t_vec normal)								__attribute__ ((const));
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2)						__attribute__ ((const));
