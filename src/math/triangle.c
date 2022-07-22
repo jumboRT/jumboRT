@@ -46,8 +46,12 @@ int
 	bc_u = 1 - bc_v - bc_w;
 	hit->pos = pos;
 	hit->normal = normal;
-	hit->uv = vec2(
-			vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)),
-			vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)));
-	return (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1);
+	if (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1)
+	{
+		hit->uv = vec2(
+				vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)),
+				vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2])), vec(bc_u, bc_v, bc_w)));
+		return (1);
+	}
+	return (0);
 }

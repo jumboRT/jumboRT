@@ -14,7 +14,6 @@ t_vec
 		x = tex->width - 1;
 	if (y >= tex->height)
 		y = tex->height - 1;
-	y = tex->height - 1 - y;
 	pixels = get_tex_data_const(world, tex->offset);
 	colors[0] = pixels[(y * tex->width + x) * 3 + 0];
 	colors[1] = pixels[(y * tex->width + x) * 3 + 1];

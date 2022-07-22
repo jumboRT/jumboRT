@@ -47,6 +47,18 @@ def add_vertex(vertex):
         vertices.append(vertex)
         return len(vertices) - 1
 
+def add_texture(path):
+    filename = os.path.splitext(path)[0] + ".bmp"
+    for texture in textures:
+        if texture[1] == filename:
+            return texture[0]
+    image = PIL.Image.open(path)
+    image.save(filename)
+    image.close()
+    name = f"tex_{filename}"
+    textures.append((name, filename))
+    return name
+
 def mjoosten_material(color, name):
     full_name = f"mat_mjoosten_{color[0]:02x}{color[1]:02x}{color[2]:02x}_{name}"
     for material in materials:
@@ -61,13 +73,6 @@ def mjoosten_material(color, name):
     else:
         assert False
     return full_name
-
-def convert_image(filename):
-    image = PIL.Image.open(filename)
-    filename = os.path.splitext(filename)[0] + ".bmp"
-    image.save(filename)
-    image.close()
-    return filename
 
 def load_jkoers(filename):
     with open(filename) as file:
@@ -198,15 +203,13 @@ def load_obj(filename):
                             materials[-1] = tuple(mat)
                         if line[0] == "map_Ka":
                             mat = list(materials[-1])
-                            path = convert_image(os.path.join(os.path.dirname(filename), line[1]))
-                            textures.append((f"tex_{path}", path))
-                            mat[4] = f"tex_{path}"
+                            path = os.path.join(os.path.dirname(filename), line[1])
+                            mat[4] = add_texture(path)
                             materials[-1] = tuple(mat)
                         if line[0] == "map_Kd":
                             mat = list(materials[-1])
-                            path = convert_image(os.path.join(os.path.dirname(filename), line[1]))
-                            textures.append((f"tex_{path}", path))
-                            mat[1] = f"tex_{path}"
+                            path = os.path.join(os.path.dirname(filename), line[1])
+                            mat[1] = add_texture(path)
                             materials[-1] = tuple(mat)
 
 if len(sys.argv) < 3:
