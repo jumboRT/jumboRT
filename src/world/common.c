@@ -37,6 +37,18 @@ GLOBAL t_material
 	return ((GLOBAL t_material *) ((GLOBAL char *) world->materials + (uint64_t) index * RT_MATERIAL_ALIGN));
 }
 
+const GLOBAL unsigned char
+	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index)
+{
+	return (world->texture_data + index);
+}
+
+const GLOBAL t_tex
+	*get_tex(const GLOBAL t_world *world, uint32_t index)
+{
+	return (world->textures + index);
+}
+
 t_vec
 	get_vertex(const t_world *world, uint32_t index)
 {

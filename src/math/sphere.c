@@ -18,7 +18,7 @@ static t_vec2
 	/* TODO Check if better to multiply by constant
 	 * 1.0 / RT_2PI instead of dividing*/
 	return (vec2(
-		    0.5 + (rt_atan2(x(point), y(point)) / RT_2PI)
+		    0.5 + (rt_atan2(x(point), y(point)) / RT_2PI),
 		    0.5 + (rt_asin(-z(point) / RT_2PI))));
 }
 

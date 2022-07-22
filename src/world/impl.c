@@ -16,6 +16,7 @@ void
 	world->primitives_count = 0;
 	world->materials_count = 0;
 	world->vertices_count = 0;
+	world->textures_count = 0;
 	world->accel_nodes_count = 0;
 	world->accel_indices_count = 0;
 	world->accel_degenerates_count = 0;
@@ -25,12 +26,16 @@ void
 	world->accel_nodes_size = 0;
 	world->accel_indices_size = 0;
 	world->accel_degenerates_size = 0;
+	world->textures_size = 0;
+	world->texture_data_size = 0;
 	world->primitives_capacity = 0;
 	world->materials_capacity = 0;
 	world->vertices_capacity = 0;
 	world->accel_nodes_capacity = 0;
 	world->accel_indices_capacity = 0;
 	world->accel_degenerates_capacity = 0;
+	world->textures_capacity = 0;
+	world->texture_data_capacity = 0;
 }
 
 void
@@ -139,13 +144,13 @@ uint32_t
 
 	world->textures_count += 1;
 	old_size = world->textures_size;
-	world->textures_size += sizeof(*vertex);
+	world->textures_size += sizeof(*tex);
 	world->textures = world_reallog(world->textures, &world->textures_capacity, world->textures_size);
-	ft_memcpy((char *) world->vertices + old_size, vertex, sizeof(*vertex));
+	ft_memcpy((char *) world->textures + old_size, tex, sizeof(*tex));
 	return (old_size / sizeof(*tex));
 }
 
-uint64_t
+uint32_t
 	world_alloc_tex_data(t_world *world, size_t size)
 {
 	size_t	old_size;

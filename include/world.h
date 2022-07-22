@@ -15,7 +15,6 @@
 # include "rtmath.h"
 # include "cl.h"
 # include "aabb.h"
-# include "tex.h"
 
 typedef struct s_context		t_context;
 typedef struct s_image_meta		t_image_meta;
@@ -31,6 +30,7 @@ typedef struct s_shape_cylinder	t_shape_cylinder;
 typedef struct s_shape_cone		t_shape_cone;
 typedef struct s_accel_node		t_accel_node;
 typedef struct s_world_hit		t_world_hit;
+typedef struct s_tex			t_tex;
 
 struct s_context {
 	t_seed		seed;
@@ -62,9 +62,9 @@ struct s_primitive {
 };
 
 struct s_tex {
-	uint64_t    offset;
-	uint64_t    width;
-	uint64_t    height;	
+	uint64_t	width;
+	uint64_t	height;	
+	uint32_t	offset;	
 };
 
 struct s_material {
@@ -75,6 +75,8 @@ struct s_material {
 	FLOAT		fuzzy;
 	int32_t		reflective;
 	int32_t		refractive;
+	int32_t		has_texture;
+	uint32_t	tex_offset;
 	uint32_t	id;
 };
 
@@ -134,6 +136,7 @@ struct s_world {
 	uint32_t			accel_nodes_count;
 	uint32_t			accel_indices_count;
 	uint32_t			accel_degenerates_count;
+	uint32_t			textures_count;
 	uint64_t			primitives_size;
 	uint64_t			materials_size;
 	uint64_t			vertices_size;
@@ -171,11 +174,12 @@ GLOBAL t_material			*get_mat(GLOBAL t_world *world, uint32_t index);
 const GLOBAL unsigned char	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index);
 const GLOBAL t_tex		*get_tex(const GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
+t_vec				get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
-t_vec    tex_sample(const GLOBAL t_world world, const GLOBAL t_tex *tex, t_vec2 uv);
+t_vec    tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);

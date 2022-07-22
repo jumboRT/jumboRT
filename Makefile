@@ -7,7 +7,7 @@ WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 							pow.c cylinder.c vec_rotate.c cone.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
@@ -47,7 +47,8 @@ OPENCL_FILES			:= \
 	src/world/primitive.c \
 	src/world/node.c \
 	src/world/common.c \
-	src/world/trace.c
+	src/world/trace.c \
+	src/world/tex_sample.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -91,7 +92,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_WORK_OPENCL -DRT_MT -DRT_USE_LIBC
+CFLAGS          		+= -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
@@ -130,6 +131,20 @@ endif
 ifndef san
 	san := address
 endif 
+
+ifndef renderer
+	renderer := cl
+endif
+
+ifeq ($(renderer), cl)
+	CFLAGS		+= -DRT_WORK_OPENCL
+else ifeq ($(renderer), thread)
+	CFLAGS		+= -DRT_WORK_THREAD
+else ifeq ($(renderer), single)
+	CFLAGS		+= -DRT_WORK_SINGLE
+else
+$(error "invalid renderer $(renderer)")
+endif
 
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE

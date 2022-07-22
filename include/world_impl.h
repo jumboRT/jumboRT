@@ -88,6 +88,8 @@ void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);
 
+void		material_init(t_material *mat);
+
 /* voor daan */
 uint32_t	world_max_depth(size_t prims_count);
 uint32_t	new_node(t_world *world);

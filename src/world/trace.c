@@ -36,6 +36,13 @@ t_vec
 	return (rt_random_on_hemi(&ctx->seed, hit.relative_normal));
 }
 
+t_vec get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
+	if (mat->has_texture) {
+		return tex_sample(world, get_tex(world, mat->tex_offset), uv);
+	}
+	return mat->albedo;
+}
+
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
 {
@@ -50,7 +57,7 @@ t_vec
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
 		tail = vec_add(tail, vec_mul(head, mat->emission));
-		head = vec_mul(head, mat->albedo);
+		head = vec_mul(head, get_albedo(world, mat, hit.hit.uv));
 		ray.org = hit.hit.pos;
 		ray.dir = ray_scatter(mat, ctx, ray, hit);
 		depth -= 1;

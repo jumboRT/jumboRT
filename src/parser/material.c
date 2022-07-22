@@ -43,14 +43,9 @@ void
 	char			*keyword;
 	uint32_t		mat_index;
 
+	material_init(&material);
 	keyword = rt_keyword(ctx, "mat_");
 	material.id = rt_hash(keyword);
-	material.emission = vec(0, 0, 0);
-	material.albedo = vec(0, 0, 0);
-	material.refractive = 0;
-	material.refractive_index = 1;
-	material.reflective = 0;
-	material.density = 0;
 	mat_index = world_add_material(world, &material, sizeof(material));
 	ctx->mat = get_mat(world, mat_index);
 	mat_add(ctx, keyword, mat_index);

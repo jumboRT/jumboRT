@@ -44,6 +44,26 @@ FLOAT
 
 __attribute__ ((const))
 FLOAT
+	u(t_vec2 v)
+{
+	t_vec2_conv	conv;
+
+	conv.vec = v;
+	return (conv.elem[0]);
+}
+
+__attribute__ ((const))
+FLOAT
+	v(t_vec2 v)
+{
+	t_vec2_conv	conv;
+
+	conv.vec = v;
+	return (conv.elem[1]);
+}
+
+__attribute__ ((const))
+FLOAT
 	xyz(t_vec v, int i)
 {
 	if (i == 0)
