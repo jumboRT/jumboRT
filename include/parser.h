@@ -51,6 +51,7 @@ t_vec			rt_vec_norm(t_parse_ctx *ctx);
 char			*rt_keyword(t_parse_ctx *ctx, const char *prefix);
 FLOAT			rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max);
 void			rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape);
+void			rt_tex(t_parse_ctx *ctx, t_world *world, t_material *material);
 
 void			rt_exec_camera(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_sphere(t_world *world, t_parse_ctx *ctx);
@@ -62,6 +63,7 @@ void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_albedo(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_refractive(t_world *world, t_parse_ctx *ctx);

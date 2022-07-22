@@ -15,6 +15,7 @@ void
 	sphere.radius = 1.0;
 	intensity = rt_float_range(ctx, 0.0, 1.0) * 256.0;
 	color = rt_color(ctx);
+	material_init(&material);
 	material.emission = vec_scale(color, intensity);
 	material.albedo = vec(0.0, 0.0, 0.0);
 	sphere.base.data |= world_add_material(world, &material, sizeof(material)) << 8;
