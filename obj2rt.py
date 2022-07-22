@@ -160,22 +160,31 @@ def load_obj(filename):
                 normal = parse_vertex(line[1:], True)
                 obj_norm.append(normal)
             if line[0] == "f":
-                assert len(line) == 4
+                assert len(line) == 4 or len(line) == 5
                 indices = []
                 for v in line[1:]:
                     v = v.split("/")
                     if len(v) == 1:
                         vertex = obj_vert[int(v[0]) - 1]
+                    if len(v) == 2:
+                        vertex = obj_vert[int(v[0]) - 1] + obj_vtex[int(v[1]) - 1]
                     if len(v) == 3:
                         vertex = obj_vert[int(v[0]) - 1] + obj_vtex[int(v[1]) - 1] + obj_norm[int(v[2]) - 1]
                     if vertex not in vertex_map:
                         vertex_map[vertex] = len(vertices)
                         vertices.append(vertex)
                     indices.append(vertex_map[vertex])
-                if cur_mat is None:
-                    faces.append((tuple(indices), (255, 255, 255)))
+                result = []
+                if len(indices) == 3:
+                    result.append(tuple(indices))
                 else:
-                    faces.append((tuple(indices), cur_mat))
+                    result.append((indices[0], indices[1], indices[2]))
+                    result.append((indices[0], indices[2], indices[3]))
+                for face in result:
+                    if cur_mat is None:
+                        faces.append((face, (255, 255, 255)))
+                    else:
+                        faces.append((face, cur_mat))
             if line[0] == "usemtl":
                 cur_mat = f"mat_{line[1]}"
             if line[0] == "mtllib":
@@ -249,6 +258,8 @@ for sphere in spheres:
 for vertex in vertices:
     if len(vertex) == 3:
         sys.stdout.write(f"v {str_vertex(vertex)}\n")
+    elif len(vertex) == 5:
+        sys.stdout.write(f"vt {str_vertex(vertex)} {vertex[3]:f},{vertex[4]:f}\n")
     elif len(vertex) == 8:
         sys.stdout.write(f"vtn {str_vertex(vertex[0:3])} {vertex[3]:f},{vertex[4]:f} {str_vertex(vertex[5:8])}\n")
 for face in faces:
