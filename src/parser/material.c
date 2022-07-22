@@ -71,8 +71,8 @@ void
 	if (has_prefix(ctx, "tex_"))
 	{
 		keyword = rt_keyword(ctx, "tex_");
-		ctx->mat->has_texture = 1;
-		ctx->mat->tex_offset = tex_by_name(world, ctx, keyword);
+		ctx->mat->has_texture |= RT_TEX_ALBEDO_BIT;
+		ctx->mat->tex_albedo_offset = tex_by_name(world, ctx, keyword);
 		rt_free(keyword);
 	}
 	else

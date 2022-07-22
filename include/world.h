@@ -10,6 +10,9 @@
 # define RT_SHAPE_CYLINDER		3
 # define RT_SHAPE_CONE			4
 
+# define RT_TEX_ALBEDO_BIT		0x1
+# define RT_TEX_EMISSION_BIT		0x2
+
 /* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
@@ -76,7 +79,7 @@ struct s_material {
 	int32_t		reflective;
 	int32_t		refractive;
 	int32_t		has_texture;
-	uint32_t	tex_offset;
+	uint32_t	tex_albedo_offset;
 	uint32_t	id;
 };
 

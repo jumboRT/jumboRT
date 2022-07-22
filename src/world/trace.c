@@ -38,8 +38,8 @@ t_vec
 }
 
 t_vec get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
-	if (mat->has_texture) {
-		return tex_sample(world, get_tex(world, mat->tex_offset), uv);
+	if (mat->has_texture & RT_TEX_ALBEDO_BIT) {
+		return tex_sample(world, get_tex(world, mat->tex_albedo_offset), uv);
 	}
 	return mat->albedo;
 }
