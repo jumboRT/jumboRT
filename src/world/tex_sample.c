@@ -12,9 +12,9 @@ t_vec
 	x = (uint64_t)(u(uv) * tex->width);
 	y = (uint64_t)(v(uv) * tex->height);
 	pixels = get_tex_data_const(world, tex->offset);
-	colors[0] = pixels[(y * tex->width + x) * 3 + 0];
-	colors[1] = pixels[(y * tex->width + x) * 3 + 1];
-	colors[2] = pixels[(y * tex->width + x) * 3 + 2];
-	colors[3] = pixels[(y * tex->width + x) * 3 + 3];
+	colors[0] = pixels[(y * tex->width + x) * 4 + 0];
+	colors[1] = pixels[(y * tex->width + x) * 4 + 1];
+	colors[2] = pixels[(y * tex->width + x) * 4 + 2];
+	colors[3] = pixels[(y * tex->width + x) * 4 + 3];
 	return (vec_scale(vec(colors[0], colors[1], colors[2], colors[3]), 1.0 / 255));
 }

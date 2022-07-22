@@ -51,7 +51,7 @@ def add_texture(path):
 #    image = PIL.Image.open(path)
 #    image.save(filename)
 #    image.close()
-    args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', '-flip', filename]
+    args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', filename]
     subprocess.call(args);
     name = f"tex_{filename}"
     textures.append((name, filename))
