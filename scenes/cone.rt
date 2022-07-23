@@ -1,3 +1,3 @@
-C 0,0,0 1,0,0 90
-co 4,0,1 -0.6,-2,-1 0.785 1 191,63,63
-sp 1,0,-51 100 191,191,0
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c08bb577aaf0c9c00862fd07d935e988d44f5aa03735d8856b003c5512a0764
+size 80

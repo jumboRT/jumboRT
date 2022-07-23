@@ -231,28 +231,28 @@ int
 	left = vec_norm(vec_cross(dir, vec_z(1.0)));
 	if (keycode == RT_KEY_LEFT)
 	{
-		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 6);
+		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 12);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, 90); /* TODO: use correct fov */
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_RIGHT)
 	{
-		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 6);
+		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 12);
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, 90);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_UP)
 	{
-		dir = vec_rotate(left, dir, RT_PI / 6);
+		dir = vec_rotate(left, dir, RT_PI / 12);
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, 90);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_DOWN)
 	{
-		dir = vec_rotate(left, dir, -RT_PI / 6);
+		dir = vec_rotate(left, dir, -RT_PI / 12);
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, 90);
 		rt_work_unlock(work);

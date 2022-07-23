@@ -25,8 +25,16 @@ def parse_vertex(line, swap_yz=False):
     else:
         return (x, y, z)
 
+def str_float(f):
+    decimals = 0
+    result = "0"
+    while float(result) != f:
+        result = f"{f:.{decimals}f}"
+        decimals += 1
+    return result
+
 def str_vertex(vertex):
-    return f"{vertex[0]:f},{vertex[1]:f},{vertex[2]:f}"
+    return f"{str_float(vertex[0])},{str_float(vertex[1])},{str_float(vertex[2])}"
 
 def str_color(color):
     return f"{color[0]},{color[1]},{color[2]}"
@@ -42,15 +50,12 @@ def add_vertex(vertex):
     except ValueError:
         vertices.append(vertex)
         return len(vertices) - 1
-# magick checker.bmp -colorspace sRGB -depth 32 -alpha Set result.bmp 
+
 def add_texture(path):
     filename = os.path.splitext(path)[0] + ".bmp"
     for texture in textures:
         if texture[1] == filename:
             return texture[0]
-#    image = PIL.Image.open(path)
-#    image.save(filename)
-#    image.close()
     args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', filename]
     subprocess.call(args);
     name = f"tex_{filename}"
@@ -234,7 +239,7 @@ else:
 
 sys.stderr.write(f"{len(vertices)} vertices\n")
 sys.stderr.write(f"{len(faces)} triangles\n")
-sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {camera[2]:f}\n")
+sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {str_float(camera[2])}\n")
 for texture in textures:
     sys.stdout.write(f"tex_def {texture[0]} {texture[1]}\n")
 for material in materials:
@@ -244,9 +249,9 @@ for material in materials:
     else:
         sys.stdout.write(f"    albedo {str_color(material[1])}\n")
     if material[2] is not None:
-        sys.stdout.write(f"    fuzzy {material[2]:f}\n")
+        sys.stdout.write(f"    fuzzy {str_float(material[2])}\n")
     if material[3] is not None:
-        sys.stdout.write(f"    refractive {material[3]:f}\n")
+        sys.stdout.write(f"    refractive {str_float(material[3])}\n")
     if type(material[4]) is str:
         sys.stdout.write(f"    emission {material[4]}\n")
     else:
@@ -255,17 +260,17 @@ for material in materials:
 for plane in planes:
     sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} {str_material(plane[2])}\n")
 for cylinder in cylinders:
-    sys.stdout.write(f"cy {str_vertex(cylinder[0])} {str_vertex(cylinder[1])} {cylinder[2]:f} {cylinder[3]:f} {str_material(cylinder[4])}\n")
+    sys.stdout.write(f"cy {str_vertex(cylinder[0])} {str_vertex(cylinder[1])} {str_float(cylinder[2])} {str_float(cylinder[3])} {str_material(cylinder[4])}\n")
 for sphere in spheres:
-    sys.stdout.write(f"sp {str_vertex(sphere[0])} {sphere[1]:f} {str_material(sphere[2])}\n")
+    sys.stdout.write(f"sp {str_vertex(sphere[0])} {str_float(sphere[1])} {str_material(sphere[2])}\n")
 for vertex in vertices:
     if len(vertex) == 3:
         sys.stdout.write(f"v {str_vertex(vertex)}\n")
     elif len(vertex) == 5:
-        sys.stdout.write(f"vt {str_vertex(vertex)} {vertex[3]:f},{vertex[4]:f}\n")
+        sys.stdout.write(f"vt {str_vertex(vertex)} {str_float(vertex[3])},{str_float(vertex[4])}\n")
     elif len(vertex) == 8:
-        sys.stdout.write(f"vtn {str_vertex(vertex[0:3])} {vertex[3]:f},{vertex[4]:f} {str_vertex(vertex[5:8])}\n")
+        sys.stdout.write(f"vtn {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])} {str_vertex(vertex[5:8])}\n")
 for face in faces:
     sys.stdout.write(f"tr {face[0][0]} {face[0][1]} {face[0][2]} {str_material(face[1])}\n")
 for light in lights:
-    sys.stdout.write(f"L {str_vertex(light[0])} {light[1]:f} {str_color(light[2])}\n")
+    sys.stdout.write(f"L {str_vertex(light[0])} {str_float(light[1])} {str_color(light[2])}\n")

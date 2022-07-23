@@ -123,7 +123,7 @@ static void
 		{
 			if (istack == 0)
 				return ;
-			min_t = max_t;
+			min_t = rt_max(min_t, max_t - 0.001);
 			istack -= 1;
 			node = world->accel_nodes + stack[istack].index;
 			max_t = stack[istack].max;

@@ -66,6 +66,7 @@ t_vec
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
 		albedo = get_albedo(world, mat, hit.hit.uv);
+		/* TODO: don't use albedo alpha to determine emission */
 		if (rt_random_float(&ctx->seed) <= w(albedo))
 		{
 			tail = vec_add(tail, vec_mul(head, get_emission(world, mat, hit.hit.uv)));
