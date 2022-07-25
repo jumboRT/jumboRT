@@ -67,7 +67,7 @@ static int color_at(const t_image *img, size_t index)
 				(unsigned char) x(final_color),
 				(unsigned char) y(final_color),
 				(unsigned char) z(final_color),
-				(unsigned char) w(final_color)));
+				(unsigned char) 0));
 }
 
 void win_put(t_win *win, const t_image *img)

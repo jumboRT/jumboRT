@@ -1,8 +1,13 @@
-#include <CL/cl.h>
 #include <assert.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+
+# ifdef RT_LINUX
+#  include <CL/cl.h>
+# else
+#  include <OpenCL/cl.h>
+# endif
 
 #define READ_SIZE 1024
 #define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
@@ -30,6 +35,8 @@ void
 			break ;
 	}
 	close(fd);
+	*str = realloc(*str, *len + 1);
+	(*str)[*len] = '\0';
 }
 
 void

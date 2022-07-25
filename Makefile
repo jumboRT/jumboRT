@@ -211,7 +211,7 @@ $(MLX_LIB):
 
 # TODO: unhardcode these files
 compile: compiler/main.c
-	$(SILENT)$(CC) compiler/main.c -o compile -lOpenCL -Og -g
+	$(SILENT)$(CC) $(CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
 
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n

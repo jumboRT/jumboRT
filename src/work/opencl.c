@@ -290,7 +290,7 @@ cl_command_queue
 	cl_int				status;
 	cl_command_queue	result;
 
-	result = clCreateCommandQueue(context, device, 0, &status);
+	result = clCreateCommandQueue(context, device, props, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
 	return (result);
 }

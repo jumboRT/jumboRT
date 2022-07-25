@@ -27,6 +27,8 @@
 #  define RT_KEY_DOWN 125
 #  define RT_KEY_LEFT 123
 #  define RT_KEY_RIGHT 124
+#  define RT_KEY_SPACE 49
+#  define RT_KEY_SHIFT 56
 # endif
 
 #endif
