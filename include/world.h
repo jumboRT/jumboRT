@@ -1,8 +1,8 @@
 #ifndef WORLD_H
 # define WORLD_H
 
-# define RT_PRIMITIVE_ALIGN 4
-# define RT_MATERIAL_ALIGN sizeof(t_material)
+# define RT_PRIMITIVE_ALIGN 16
+# define RT_SHADER_ALIGN 16
 
 # define RT_SHAPE_TRIANGLE		0
 # define RT_SHAPE_SPHERE		1
@@ -10,8 +10,14 @@
 # define RT_SHAPE_CYLINDER		3
 # define RT_SHAPE_CONE			4
 
-# define RT_TEX_ALBEDO_BIT		0x1
-# define RT_TEX_EMISSION_BIT	0x2
+# define RT_TEX_COLOR			0
+# define RT_TEX_TEXTURE			1
+
+# define RT_SHADER_DIFFUSE		0
+# define RT_SHADER_EMISSION		1
+# define RT_SHADER_SPECULAR		2
+# define RT_SHADER_REFRACTIVE	3
+# define RT_SHADER_MIX			4
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -25,7 +31,6 @@ typedef struct s_camera				t_camera;
 typedef struct s_world				t_world;
 typedef struct s_vertex				t_vertex;
 typedef struct s_primitive			t_primitive;
-typedef struct s_material			t_material;
 typedef struct s_shape_triangle		t_shape_triangle;
 typedef struct s_shape_sphere		t_shape_sphere;
 typedef struct s_shape_plane		t_shape_plane;
@@ -34,11 +39,12 @@ typedef struct s_shape_cone			t_shape_cone;
 typedef struct s_accel_node			t_accel_node;
 typedef struct s_world_hit			t_world_hit;
 typedef struct s_tex				t_tex;
-typedef struct s_sampler			t_sampler;
-typedef struct s_bsdf				t_bsdf;
-typedef struct s_diffuse_bsdf		t_diffuse_bsdf;
-typedef struct s_reflective_bsdf	t_reflective_bsdf;
-typedef struct s_refractive_bsdf	t_refractuvebsdf;
+typedef struct s_shader				t_shader;
+typedef struct s_shader_diffuse		t_shader_diffuse;
+typedef struct s_shader_emission	t_shader_emission;
+typedef struct s_shader_specular	t_shader_specular;
+typedef struct s_shader_refractive	t_shader_refractive;
+typedef struct s_shader_mix			t_shader_mix;
 
 struct s_context {
 	t_seed		seed;
@@ -70,16 +76,14 @@ struct s_primitive {
 };
 
 struct s_tex {
-	uint64_t	width;
-	uint64_t	height;	
-	uint32_t	offset;	
-};
-
-struct s_sampler {
-	uint32_t	use_tex;
+	uint32_t	type;
 	union {
-		t_vec		color;
-		uint32_t	texture;
+		t_vec	color;
+		struct {
+			uint64_t	width;
+			uint64_t	height;	
+			uint32_t	offset;	
+		}	tex;
 	}	a;
 };
 
@@ -89,26 +93,27 @@ struct s_bsdf {
 
 struct s_diffuse_bsdf {
 	t_bsdf		base;
-	t_sampler	color;
+	uint32_t	tex;
 };
 
-struct s_reflective_bsdf {
+struct s_specular_bsdf {
 	t_bsdf		base;
-	t_sampler	color;
+	uint32_t	tex;
 	FLOAT		fuzzy;
 };
 
 struct s_refractive_bsdf {
 	t_bsdf		base;
-	t_vec		refractive_spectrum;
+	uint32_t	tex;
+	FLOAT		refractive_index;
 };
 
 struct s_material {
-	t_sampler	emission;
+	uint32_t	emission;
 	FLOAT		brightness;
 	uint32_t	flags;
-	uint32_t	bsdfi;
-	uint32_t	bsdfn;
+	uint32_t	bsdf_begin;
+	uint32_t	bsdf_end;
 };
 
 struct s_shape_triangle {
@@ -159,42 +164,52 @@ struct s_world_hit {
 };
 
 struct s_world {
-	t_image_meta		img_meta;
-	t_camera			camera;
-	uint32_t			primitives_count;
-	uint32_t			materials_count;
-	uint32_t			vertices_count;
-	uint32_t			accel_nodes_count;
-	uint32_t			accel_indices_count;
-	uint32_t			accel_degenerates_count;
-	uint32_t			textures_count;
-	uint64_t			primitives_size;
-	uint64_t			materials_size;
-	uint64_t			vertices_size;
-	uint64_t			accel_nodes_size;
-	uint64_t			accel_indices_size;
-	uint64_t			accel_degenerates_size;
-	uint64_t			textures_size;
-	uint64_t			texture_data_size;
-	uint64_t			primitives_capacity;
-	uint64_t			materials_capacity;
-	uint64_t			vertices_capacity;
-	uint64_t			accel_nodes_capacity;
-	uint64_t			accel_indices_capacity;
-	uint64_t			accel_degenerates_capacity;
-	uint64_t			textures_capacity;
-	uint64_t			texture_data_capacity;
-	GLOBAL void			*primitives;
-	GLOBAL void			*materials;
-	GLOBAL t_vertex		*vertices;
-	GLOBAL t_accel_node	*accel_nodes;
-	GLOBAL uint32_t		*accel_indices;
-	GLOBAL uint32_t		*accel_degenerates;
-	GLOBAL t_tex		*textures;
+	t_image_meta			img_meta;
+	t_camera				camera;
+	uint32_t				primitives_count;
+	uint32_t				materials_count;
+	uint32_t				vertices_count;
+	uint32_t				accel_nodes_count;
+	uint32_t				accel_indices_count;
+	uint32_t				accel_degenerates_count;
+	uint32_t				textures_count;
+	uint32_t				bsdfs_count;
+	uint64_t				primitives_size;
+	uint64_t				materials_size;
+	uint64_t				vertices_size;
+	uint64_t				accel_nodes_size;
+	uint64_t				accel_indices_size;
+	uint64_t				accel_degenerates_size;
+	uint64_t				textures_size;
+	uint64_t				texture_data_size;
+	uint64_t				bsdfs_size;
+	uint64_t				primitives_capacity;
+	uint64_t				materials_capacity;
+	uint64_t				vertices_capacity;
+	uint64_t				accel_nodes_capacity;
+	uint64_t				accel_indices_capacity;
+	uint64_t				accel_degenerates_capacity;
+	uint64_t				textures_capacity;
+	uint64_t				texture_data_capacity;
+	uint64_t				bsdfs_capacity;
+	GLOBAL void				*primitives;
+	GLOBAL void				*materials;
+	GLOBAL t_vertex			*vertices;
+	GLOBAL t_accel_node		*accel_nodes;
+	GLOBAL uint32_t			*accel_indices;
+	GLOBAL uint32_t			*accel_degenerates;
+	GLOBAL t_tex			*textures;
 	GLOBAL unsigned char	*texture_data;
+	GLOBAL void				*bsdfs;
 };
 
 uint64_t	world_primitive_size(uint8_t shape_type);
+uint64_t	world_bsdf_size(uint32_t bsdf_type);
+
+t_vec		f_bxdf_diffuse(t_diffuse_bsdf bsdf, t_vec wo, t_vec wi);
+t_vec		f_bxdf_specular(t_specular_bsdf bsdf, t_vec wo, t_vec wi);
+t_vec		f_bxdf_refractive(t_refractive_bsdf bsdf, t_vec wo, t_vec wi);
+t_vec		f_bsdf(const GLOBAL t_world *world, uint32_t bsdf, t_vec wo, t_vec wi);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);
@@ -204,14 +219,16 @@ const GLOBAL t_material		*get_mat_const(const GLOBAL t_world *world, uint32_t in
 GLOBAL t_material			*get_mat(GLOBAL t_world *world, uint32_t index);
 GLOBAL unsigned char		*get_tex_data(GLOBAL t_world *world, uint32_t index);
 const GLOBAL unsigned char	*get_tex_data_const(const GLOBAL t_world *world, uint32_t index);
-const GLOBAL t_tex		*get_tex(const GLOBAL t_world *world, uint32_t index);
+const GLOBAL t_tex			*get_tex(const GLOBAL t_world *world, uint32_t index);
+const GLOBAL t_bsdf			*get_bsdf_const(const GLOBAL t_world *world, uint32_t index);
+GLOBAL t_bsdf				*get_bsdf(GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
-t_vec				get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
+t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
-t_vec    tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv);
+t_vec		tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
@@ -228,3 +245,4 @@ uint32_t	is_leaf(t_accel_node node);
 uint32_t	above_child(t_accel_node node);
 
 #endif
+

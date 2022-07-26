@@ -61,3 +61,15 @@ t_vec
 	return (world->vertices[index].pos);
 }
 
+const GLOBAL t_bsdf
+	*get_bsdf_const(const GLOBAL t_world *world, uint32_t index)
+{
+	return ((const GLOBAL t_bsdf *) ((const GLOBAL char *) world->bsdfs + (uint64_t) index * RT_BSDF_ALIGN));
+}
+
+GLOBAL t_bsdf
+	*get_bsdf(GLOBAL t_world *world, uint32_t index)
+{
+	return ((GLOBAL t_bsdf *) ((GLOBAL char *) world->bsdfs + (uint64_t) index * RT_BSDF_ALIGN));
+}
+

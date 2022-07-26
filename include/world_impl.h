@@ -79,6 +79,7 @@ uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
 uint32_t	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate);
 uint32_t	world_add_tex(t_world *world, const t_tex *tex);
 uint32_t	world_alloc_tex_data(t_world *world, size_t size);
+uint32_t	world_add_bsdf(t_world *world, void *bsdf, size_t size);
 
 void		world_load_ppm(t_world *world, t_tex *tex, const unsigned char *data, size_t len);
 
