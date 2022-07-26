@@ -208,7 +208,7 @@ void
 {
 	cl_int	status;
 
-	cl_ctx->world_mem = work_copy_array(cl_ctx, sizeof(*work->state->world), work->state->world);
+	cl_ctx->world_mem = work_copy_array(cl_ctx, offsetof(t_world, primitives), work->state->world);
 	cl_ctx->ctx_mem = work_copy_array(cl_ctx, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx);
 	cl_ctx->result_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[0] failed");
