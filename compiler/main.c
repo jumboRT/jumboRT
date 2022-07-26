@@ -46,7 +46,7 @@ void
 	ssize_t	n;
 	size_t	i;
 
-	fd = open(file, O_WRONLY | O_CREAT);
+	fd = open(file, O_WRONLY | O_CREAT, 0660);
 	assert(fd >= 0);
 	i = 0;
 	while (1)

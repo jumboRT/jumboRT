@@ -187,7 +187,7 @@ ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
 	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
 else
-	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL
+	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	CFLAGS		+= -DRT_LINUX
 endif
 
