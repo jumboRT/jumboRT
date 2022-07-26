@@ -104,7 +104,7 @@ struct s_refractive_bsdf {
 };
 
 struct s_material {
-	t_vec		emission;
+	t_sampler	emission;
 	FLOAT		brightness;
 	uint32_t	flags;
 	uint32_t	bsdfi;
