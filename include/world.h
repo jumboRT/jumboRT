@@ -11,7 +11,7 @@
 # define RT_SHAPE_CONE			4
 
 # define RT_TEX_ALBEDO_BIT		0x1
-# define RT_TEX_EMISSION_BIT		0x2
+# define RT_TEX_EMISSION_BIT	0x2
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -19,21 +19,26 @@
 # include "cl.h"
 # include "aabb.h"
 
-typedef struct s_context		t_context;
-typedef struct s_image_meta		t_image_meta;
-typedef struct s_camera			t_camera;
-typedef struct s_world			t_world;
-typedef struct s_vertex			t_vertex;
-typedef struct s_primitive		t_primitive;
-typedef struct s_material		t_material;
-typedef struct s_shape_triangle	t_shape_triangle;
-typedef struct s_shape_sphere	t_shape_sphere;
-typedef struct s_shape_plane	t_shape_plane;
-typedef struct s_shape_cylinder	t_shape_cylinder;
-typedef struct s_shape_cone		t_shape_cone;
-typedef struct s_accel_node		t_accel_node;
-typedef struct s_world_hit		t_world_hit;
-typedef struct s_tex			t_tex;
+typedef struct s_context			t_context;
+typedef struct s_image_meta			t_image_meta;
+typedef struct s_camera				t_camera;
+typedef struct s_world				t_world;
+typedef struct s_vertex				t_vertex;
+typedef struct s_primitive			t_primitive;
+typedef struct s_material			t_material;
+typedef struct s_shape_triangle		t_shape_triangle;
+typedef struct s_shape_sphere		t_shape_sphere;
+typedef struct s_shape_plane		t_shape_plane;
+typedef struct s_shape_cylinder		t_shape_cylinder;
+typedef struct s_shape_cone			t_shape_cone;
+typedef struct s_accel_node			t_accel_node;
+typedef struct s_world_hit			t_world_hit;
+typedef struct s_tex				t_tex;
+typedef struct s_sampler			t_sampler;
+typedef struct s_bsdf				t_bsdf;
+typedef struct s_diffuse_bsdf		t_diffuse_bsdf;
+typedef struct s_reflective_bsdf	t_reflective_bsdf;
+typedef struct s_refractive_bsdf	t_refractuvebsdf;
 
 struct s_context {
 	t_seed		seed;
@@ -70,20 +75,40 @@ struct s_tex {
 	uint32_t	offset;	
 };
 
+struct s_sampler {
+	uint32_t	use_tex;
+	union {
+		t_vec		color;
+		uint32_t	texture;
+	}	a;
+};
+
+struct s_bsdf {
+	uint32_t	type;
+};
+
+struct s_diffuse_bsdf {
+	t_bsdf		base;
+	t_sampler	color;
+};
+
+struct s_reflective_bsdf {
+	t_bsdf		base;
+	t_sampler	color;
+	FLOAT		fuzzy;
+};
+
+struct s_refractive_bsdf {
+	t_bsdf		base;
+	t_vec		refractive_spectrum;
+};
+
 struct s_material {
 	t_vec		emission;
-	t_vec		albedo;
-	FLOAT		refractive_index;
-	FLOAT		density;
-	FLOAT		fuzzy;
 	FLOAT		brightness;
-	int32_t		reflective;
-	int32_t		refractive;
-	int32_t		has_texture;
-	uint32_t	tex_albedo_offset;
-	uint32_t	tex_emission_offset;
-	uint32_t	id;
-	uint32_t	is_smooth;
+	uint32_t	flags;
+	uint32_t	bsdfi;
+	uint32_t	bsdfn;
 };
 
 struct s_shape_triangle {
