@@ -22,6 +22,7 @@ const static t_directive	directives[] = {
 	{ "fuzzy", rt_exec_fuzzy },
 	{ "density", rt_exec_density },
 	{ "brightness", rt_exec_brightness },
+	{ "smooth", rt_exec_smooth },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };

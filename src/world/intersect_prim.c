@@ -29,9 +29,13 @@ static inline int
 					world->vertices[tr->c].pos,
 					world->vertices[tr->a].uv,
 					world->vertices[tr->b].uv,
-					world->vertices[tr->c].uv),
+					world->vertices[tr->c].uv,
+					world->vertices[tr->a].normal,
+					world->vertices[tr->b].normal,
+					world->vertices[tr->c].normal),
 				min,
-				hit));
+				hit,
+				get_mat_const(world, prim_mat(&tr->base))->is_smooth));
 }
 
 static inline int

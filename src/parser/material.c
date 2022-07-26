@@ -133,6 +133,15 @@ void
 }
 
 void
+	rt_exec_smooth(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->is_smooth = 1;
+}
+
+void
 	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)
 {
 	(void) world;

@@ -177,7 +177,10 @@ def load_obj(filename):
                     if len(v) == 2:
                         vertex = obj_vert[int(v[0]) - 1] + obj_vtex[int(v[1]) - 1]
                     if len(v) == 3:
-                        vertex = obj_vert[int(v[0]) - 1] + obj_vtex[int(v[1]) - 1] + obj_norm[int(v[2]) - 1]
+                        if v[1] != "":
+                            vertex = obj_vert[int(v[0]) - 1] + obj_vtex[int(v[1]) - 1] + obj_norm[int(v[2]) - 1]
+                        else:
+                            vertex = obj_vert[int(v[0]) - 1] + (0, 0) + obj_norm[int(v[2]) - 1]
                     if vertex not in vertex_map:
                         vertex_map[vertex] = len(vertices)
                         vertices.append(vertex)

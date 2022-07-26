@@ -83,6 +83,7 @@ struct s_material {
 	uint32_t	tex_albedo_offset;
 	uint32_t	tex_emission_offset;
 	uint32_t	id;
+	uint32_t	is_smooth;
 };
 
 struct s_shape_triangle {

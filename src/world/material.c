@@ -14,6 +14,7 @@ void
 	mat->brightness = 1.0;
 	mat->has_texture = 0;
 	mat->id = UINT_MAX;
+	mat->is_smooth = 0;
 }
 
 void

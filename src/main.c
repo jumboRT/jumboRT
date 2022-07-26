@@ -414,8 +414,8 @@ int
 	t_perf		perf;
 
 	parse_options(&options, argc, argv);
-	image.width = 1920;
-	image.height = 1080;
+	image.width = options.width;
+	image.height = options.height;
 	image.data = rt_malloc(sizeof(*image.data) * image.width * image.height);
 	state.image = &image;
 	state.world = &world;
