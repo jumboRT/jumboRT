@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 # define WORLD_H
 
-# define RT_PRIMITIVE_ALIGN 4
+# define RT_PRIMITIVE_ALIGN 16
 # define RT_MATERIAL_ALIGN sizeof(t_material)
 
 # define RT_SHAPE_TRIANGLE		0

@@ -171,6 +171,7 @@ int
 	cl_platform_id			platform;
 	cl_device_id			device;
 
+	setenv("CUDA_CACHE_DISABLE", "1", 1);
 	status = clGetPlatformIDs(1, &platform, NULL);
 	assert(status == CL_SUCCESS);
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);

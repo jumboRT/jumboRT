@@ -186,9 +186,11 @@ endif
 ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
 	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
+	COMPILER_CFLAGS	+= -DRT_MACOS
 else
 	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	CFLAGS		+= -DRT_LINUX
+	COMPILER_CFLAGS	+= -DRT_LINUX
 endif
 
 $(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
@@ -211,7 +213,7 @@ $(MLX_LIB):
 
 # TODO: unhardcode these files
 compile: compiler/main.c
-	$(SILENT)$(CC) $(CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
+	$(SILENT)$(CC) $(COMPILER_CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
 
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
