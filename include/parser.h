@@ -1,60 +1,97 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "gfx.h"
-# include "scene.h"
+# include "world.h"
+# include "vector.h"
 
-typedef t_entity				*(*t_parse_proc)(t_scene *scene, const char **line, char **error);
-typedef t_material				*(*t_material_parse_proc)(t_scene *scene, const char **line, char **error);
-typedef t_texture				*(*t_texture_parse_proc)(t_scene *scene, const char **line, char **error);
-typedef struct s_entry			t_entry;
-typedef struct s_material_entry	t_material_entry;
-typedef struct s_texture_entry	t_texture_entry;
+# include <stddef.h>
 
-struct s_entry {
-	const char		*identifier;
-	t_parse_proc	proc;
+typedef struct s_directive	t_directive;
+typedef struct s_mat_entry	t_mat_entry;
+typedef struct s_mat_entry	t_tex_entry;
+typedef struct s_parse_ctx	t_parse_ctx;
+
+struct s_directive {
+	const char	*name;
+	void		(*exec)(t_world *world, t_parse_ctx *ctx);
 };
 
-struct s_material_entry {
-	const char				*identifier;
-	t_material_parse_proc	proc;
+struct s_mat_entry {
+	uint32_t	index;
+	const char	*name;
+	t_vec		color;
 };
 
-struct s_texture_entry {
-	const char				*identifier;
-	t_texture_parse_proc	proc;
+struct s_tex_entry {
+	uint32_t	index;
+	const char	*name;
 };
 
-int			rt_scene(t_scene *scene, const char *file, char **error);
+struct s_parse_ctx {
+	char		*begin;
+	char		*data;
+	const char	*filename;
+	int			line;
+	int			column;
+	t_material	*mat;
+	t_vector	materials;
+	t_vector	textures;
+};
 
-t_entity	*rt_ambient_light(t_scene *scene, const char **line, char **error);
-t_entity	*rt_triangle(t_scene *scene, const char **line, char **error);
-t_entity	*rt_camera(t_scene *scene, const char **line, char **error);
-t_entity	*rt_light(t_scene *scene, const char **line, char **error);
-t_entity	*rt_sphere(t_scene *scene, const char **line, char **error);
-t_entity	*rt_cone(t_scene *scene, const char **line, char **error);
-t_entity	*rt_plane(t_scene *scene, const char **line, char **error);
-t_entity	*rt_cylinder(t_scene *scene, const char **line, char **error);
-t_entity	*rt_entity(t_scene *scene, const char **line, char **error);
-t_material	*rt_lambertian(t_scene *scene, const char **line, char **error);
-t_material	*rt_metal(t_scene *scene, const char **line, char **error);
-t_material	*rt_dielectric(t_scene *scene, const char **line, char **error);
-t_material	*rt_emitter(t_scene *scene, const char **line, char **error);
-t_material	*rt_material(t_scene *scene, const char **line, char **error);
-t_texture	*rt_image_texture(t_scene *scene, const char **line, char **error);
-t_texture	*rt_color_texture(t_scene *scene, const char **line, char **error);
-t_texture	*rt_texture(t_scene *scene, const char **line, char **error);
-int			rt_space(const char *line, char **error);
-size_t		rt_wordlen(const char *str);
+void			parser_init(t_parse_ctx *ctx, const char *filename);
+void			parser_destroy(t_parse_ctx *ctx);
+void			mat_add(t_parse_ctx *ctx, const char *name, uint32_t index);
+void			tex_add(t_parse_ctx *ctx, const char *name, uint32_t index);
+uint32_t		mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
+uint32_t		mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
+uint32_t		tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
 
-const char		*rt_norm_vec(const char *line, char **error, t_vec *dst);
-const char		*rt_next_word(const char *line);
-const char		*rt_end(const char *line, char **error);
-const char		*rt_expect_char(const char *line, char **error, char c);
-const char		*rt_color(const char *line, char **error, t_vec *dst);
-const char		*rt_pos(const char *line, char **error, t_vec *dst);
-const char		*rt_uint(const char *line, char **error, unsigned int *dst);
-const char		*rt_skip(const char *line, int (*skip_char)(int));
-const char		*rt_float(const char *line, char **error, FLOAT *dst);
+void			rt_parse_error(t_parse_ctx *ctx, const char *fmt, ...);
+void			rt_advance(t_parse_ctx *ctx);
+
+void			rt_skip(t_parse_ctx *ctx, int (*pred)(int));
+void			rt_expect(t_parse_ctx *ctx, int ch);
+size_t			rt_idlen(t_parse_ctx *ctx);
+void			rt_idskip(t_parse_ctx *ctx, size_t len);
+
+FLOAT			rt_float(t_parse_ctx *ctx);
+int				rt_bool(t_parse_ctx *ctx);
+unsigned int	rt_uint(t_parse_ctx *ctx);
+t_vec			rt_color(t_parse_ctx *ctx);
+t_vec			rt_vec(t_parse_ctx *ctx);
+t_vec2			rt_vec2(t_parse_ctx *ctx);
+t_vec			rt_vec_norm(t_parse_ctx *ctx);
+char			*rt_word(t_parse_ctx *ctx);
+char			*rt_keyword(t_parse_ctx *ctx, const char *prefix);
+FLOAT			rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max);
+void			rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape);
+void			rt_tex(t_parse_ctx *ctx, t_world *world, t_material *material);
+
+void			rt_exec_camera(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_sphere(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_plane(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_vertex(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_vertex_texture(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_vertex_normal(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_vertex_texture_normal(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_albedo(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_refractive(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_fuzzy(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_density(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_brightness(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_tex(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_smooth(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
+
+void			rt_world(t_world *world, t_parse_ctx *ctx);
+
 #endif

@@ -1,3 +1,4 @@
+
 #include <libft.h>
 
 #include "rtmath.h"
@@ -60,17 +61,3 @@ int
 	return (!isinf(*dst));
 }
 
-/*
-int
-	main(int argc, char **argv)
-{
-	FLOAT	result;
-	int		valid;
-
-	if (argc != 2)
-		return 1;
-	valid = rt_atof(argv[1], &result);
-	fprintf(stdout, "'%s' valid?:%d FLOAT:'%.10f'\n", argv[1], valid, result);
-	return 0;
-}
-*/

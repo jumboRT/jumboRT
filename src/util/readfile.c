@@ -100,3 +100,4 @@ char
 	}
 	return (rt_readfile_fd(fd, error, size));
 }
+

@@ -1,25 +1,19 @@
 #include "parser.h"
 
-#include "util.h"
-#include <libft.h>
-#include <ft_printf.h>
+#include <math.h>
 
-t_entity
-	*rt_camera(t_scene *scene, const char **line, char **error)
+/* TODO: check for multiple cameras */
+/* TODO: check FOV in range */
+void
+	rt_exec_camera(t_world *world, t_parse_ctx *ctx)
 {
-	t_camera	camera;
+	t_vec pos;
+	t_vec dir;
+	FLOAT fov;
 
-	(void) scene;
-	*line = rt_pos(*line, error, &camera.pos);
-	*line = rt_norm_vec(*line, error, &camera.dir);
-	*line = rt_float(*line, error, &camera.fov);
-	if (*line == NULL)
-		return (NULL);
-	if (camera.fov < 0 || camera.fov > 180)
-	{
-		ft_asprintf(error, "Fov of camera must be in range [0-180]\n");
-		return (NULL);
-	}
-	camera.base.vt = camera_vt();
-	return (rt_memdup(&camera, sizeof(camera)));
+	pos = rt_vec(ctx);
+	dir = rt_vec_norm(ctx);
+	fov = rt_float(ctx);
+	camera_set(world, &world->camera, pos, dir, fov);
 }
+

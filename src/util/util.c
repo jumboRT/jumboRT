@@ -4,6 +4,9 @@
 #include <unistd.h>
 #include <libft.h>
 #include <ft_printf.h>
+#include <signal.h>
+
+#ifndef RT_DEBUG
 
 void
 	rt_assert(int condition, const char *msg)
@@ -15,38 +18,27 @@ void
 	}
 }
 
-void
-	*rt_malloc(size_t size)
-{
-	void	*ptr;
-
-	ptr = malloc(size);
-	rt_assert(ptr != NULL, "malloc failed");
-	return (ptr);
-}
+#else
 
 void
-	*rt_realloc(void *ptr, size_t old_size, size_t new_size)
+	rt_assert(int condition, const char *msg)
 {
-	size_t	size;
-	void	*ret;
-
-	ret = rt_malloc(new_size);
-	if (!ret)
-		return (NULL);
-	size = old_size;
-	if (new_size < old_size)
-		size = new_size;
-	if (ptr)
+	if (!condition)
 	{
-		ft_memcpy(ret, ptr, size);
-		rt_free(ptr);
+		ft_fprintf(STDERR_FILENO, "assertion failed: %s\n", msg);
+		raise(SIGTRAP);
 	}
-	return (ret);
 }
 
+#endif
+
 void
-	rt_free(void *ptr)
+	*rt_memdup(const void *src, size_t size)
 {
-	free(ptr);
+	void	*cpy;
+
+	cpy = rt_malloc(size);
+	ft_memcpy(cpy, src, size);
+	return (cpy);
 }
+

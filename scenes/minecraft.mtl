@@ -1,0 +1,368 @@
+
+newmtl minecraft_block-tuff
+Kd 0.4238 0.4280 0.4025
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/tuff.png
+
+newmtl minecraft_entity-chest-normal
+Kd 0.4119 0.3043 0.1372
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/entity/chest/normal.png
+map_d tex/minecraft/entity/chest/normal.png
+
+newmtl minecraft_block-cactus_side
+Kd 0.3472 0.5102 0.1777
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/cactus_side.png
+map_d tex/minecraft/block/cactus_side.png
+
+newmtl minecraft_block-grass_block_side
+Kd 0.4972 0.4201 0.2572
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/grass_block_side.png
+
+newmtl minecraft_block-medium_amethyst_bud
+Kd 0.6208 0.4724 0.7903
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/medium_amethyst_bud.png
+map_d tex/minecraft/block/medium_amethyst_bud.png
+
+newmtl minecraft_block-dripstone_block
+Kd 0.5273 0.4218 0.3628
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/dripstone_block.png
+
+newmtl minecraft_block-deepslate_top
+Kd 0.3420 0.3420 0.3507
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/deepslate_top.png
+
+newmtl minecraft_block-water_flow
+Kd 0.1614 0.3047 0.5906
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/water_flow.png
+map_d tex/minecraft/block/water_flow.png
+
+newmtl minecraft_block-gravel
+Kd 0.5174 0.4998 0.4961
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/gravel.png
+
+newmtl minecraft_block-pointed_dripstone_down_tip
+Kd 0.5367 0.4291 0.3679
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_down_tip.png
+map_d tex/minecraft/block/pointed_dripstone_down_tip.png
+
+newmtl minecraft_block-pointed_dripstone_down_tip_merge
+Kd 0.5435 0.4391 0.3745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_down_tip_merge.png
+map_d tex/minecraft/block/pointed_dripstone_down_tip_merge.png
+
+newmtl minecraft_block-lava_still
+Kd 0.8504 0.4100 0.1033
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/lava_still.png
+
+newmtl minecraft_block-fern
+Kd 0.1332 0.3414 0.0444
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/fern.png
+map_d tex/minecraft/block/fern.png
+
+newmtl minecraft_block-cactus_top
+Kd 0.3368 0.4983 0.1696
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/cactus_top.png
+map_d tex/minecraft/block/cactus_top.png
+
+newmtl minecraft_block-bone_block_top
+Kd 0.8228 0.8087 0.7035
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/bone_block_top.png
+
+newmtl minecraft_block-cobblestone
+Kd 0.5011 0.4992 0.5004
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/cobblestone.png
+
+newmtl minecraft_block-brown_mushroom
+Kd 0.6020 0.4581 0.3627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/brown_mushroom.png
+map_d tex/minecraft/block/brown_mushroom.png
+
+newmtl minecraft_block-fire_0
+Kd 0.8352 0.5619 0.2362
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/fire_0.png
+map_d tex/minecraft/block/fire_0.png
+
+newmtl minecraft_block-dirt
+Kd 0.5265 0.3776 0.2627
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/dirt.png
+
+newmtl minecraft_block-sandstone_top
+Kd 0.8778 0.8400 0.6680
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/sandstone_top.png
+
+newmtl minecraft_block-budding_amethyst
+Kd 0.5193 0.3772 0.7324
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/budding_amethyst.png
+
+newmtl minecraft_block-pointed_dripstone_up_base
+Kd 0.5075 0.4035 0.3513
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_up_base.png
+map_d tex/minecraft/block/pointed_dripstone_up_base.png
+
+newmtl minecraft_block-grass
+Kd 0.1571 0.3982 0.0528
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/grass.png
+map_d tex/minecraft/block/grass.png
+
+newmtl minecraft_block-small_amethyst_bud
+Kd 0.5167 0.3890 0.7545
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/small_amethyst_bud.png
+map_d tex/minecraft/block/small_amethyst_bud.png
+
+newmtl minecraft_block-pumpkin_side
+Kd 0.7668 0.4503 0.0948
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pumpkin_side.png
+
+newmtl minecraft_block-bone_block_side
+Kd 0.8998 0.8859 0.8149
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/bone_block_side.png
+
+newmtl minecraft_block-glow_lichen
+Kd 0.4406 0.5123 0.4768
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/glow_lichen.png
+map_d tex/minecraft/block/glow_lichen.png
+
+newmtl minecraft_block-red_mushroom
+Kd 0.8509 0.2957 0.2661
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/red_mushroom.png
+map_d tex/minecraft/block/red_mushroom.png
+
+newmtl minecraft_block-cactus_bottom
+Kd 0.5613 0.6681 0.3370
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/cactus_bottom.png
+map_d tex/minecraft/block/cactus_bottom.png
+
+newmtl minecraft_block-poppy
+Kd 0.5045 0.2542 0.1480
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/poppy.png
+map_d tex/minecraft/block/poppy.png
+
+newmtl minecraft_block-oak_log_top
+Kd 0.5939 0.4771 0.2863
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/oak_log_top.png
+
+newmtl minecraft_block-lava_flow
+Kd 0.8129 0.3601 0.0808
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/lava_flow.png
+
+newmtl minecraft_block-pointed_dripstone_up_tip_merge
+Kd 0.5435 0.4391 0.3745
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_up_tip_merge.png
+map_d tex/minecraft/block/pointed_dripstone_up_tip_merge.png
+
+newmtl minecraft_block-oak_log
+Kd 0.4278 0.3338 0.1988
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/oak_log.png
+
+newmtl minecraft_block-pointed_dripstone_up_middle
+Kd 0.5102 0.4073 0.3543
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_up_middle.png
+map_d tex/minecraft/block/pointed_dripstone_up_middle.png
+
+newmtl minecraft_block-dead_bush
+Kd 0.4215 0.3095 0.1590
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/dead_bush.png
+map_d tex/minecraft/block/dead_bush.png
+
+newmtl minecraft_block-magma
+Kd 0.5565 0.2457 0.1214
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/magma.png
+
+newmtl minecraft_block-water_still
+Kd 0.1680 0.3193 0.6148
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/water_still.png
+map_d tex/minecraft/block/water_still.png
+
+newmtl minecraft_block-raw_iron_block
+Kd 0.6521 0.5322 0.4212
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/raw_iron_block.png
+
+newmtl minecraft_block-deepslate
+Kd 0.3142 0.3142 0.3239
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/deepslate.png
+
+newmtl minecraft_block-obsidian
+Kd 0.0594 0.0416 0.0963
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/obsidian.png
+
+newmtl minecraft_block-spawner
+Kd 0.1428 0.1818 0.2463
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/spawner.png
+map_d tex/minecraft/block/spawner.png
+
+newmtl minecraft_block-oak_leaves
+Kd 0.2112 0.5280 0.0699
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/oak_leaves.png
+map_d tex/minecraft/block/oak_leaves.png
+
+newmtl minecraft_block-sugar_cane
+Kd 0.3832 0.6486 0.1705
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/sugar_cane.png
+map_d tex/minecraft/block/sugar_cane.png
+
+newmtl minecraft_block-birch_leaves
+Kd 0.3351 0.4337 0.2231
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/birch_leaves.png
+map_d tex/minecraft/block/birch_leaves.png
+
+newmtl minecraft_block-sandstone_bottom
+Kd 0.8458 0.7924 0.6047
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/sandstone_bottom.png
+
+newmtl minecraft_block-birch_log
+Kd 0.8492 0.8432 0.8247
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/birch_log.png
+
+newmtl minecraft_block-amethyst_cluster
+Kd 0.6425 0.4975 0.8128
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/amethyst_cluster.png
+map_d tex/minecraft/block/amethyst_cluster.png
+
+newmtl minecraft_block-pointed_dripstone_down_middle
+Kd 0.5102 0.4073 0.3543
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_down_middle.png
+map_d tex/minecraft/block/pointed_dripstone_down_middle.png
+
+newmtl minecraft_block-pointed_dripstone_up_tip
+Kd 0.5367 0.4291 0.3679
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_up_tip.png
+map_d tex/minecraft/block/pointed_dripstone_up_tip.png
+
+newmtl minecraft_block-pumpkin_top
+Kd 0.7769 0.4656 0.0959
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pumpkin_top.png
+
+newmtl minecraft_block-bedrock
+Kd 0.3338 0.3338 0.3338
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/bedrock.png
+
+newmtl minecraft_block-clay
+Kd 0.6301 0.6528 0.7037
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/clay.png
+
+newmtl minecraft_block-large_amethyst_bud
+Kd 0.6324 0.4960 0.7955
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/large_amethyst_bud.png
+map_d tex/minecraft/block/large_amethyst_bud.png
+
+newmtl minecraft_block-sandstone
+Kd 0.8488 0.7971 0.6111
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/sandstone.png
+
+newmtl minecraft_block-sand
+Kd 0.8594 0.8126 0.6396
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/sand.png
+
+newmtl minecraft_block-pointed_dripstone_down_frustum
+Kd 0.5055 0.4023 0.3505
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_down_frustum.png
+map_d tex/minecraft/block/pointed_dripstone_down_frustum.png
+
+newmtl minecraft_block-mossy_cobblestone
+Kd 0.4318 0.4647 0.3723
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/mossy_cobblestone.png
+
+newmtl minecraft_block-smooth_basalt
+Kd 0.2850 0.2835 0.3067
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/smooth_basalt.png
+
+newmtl minecraft_block-calcite
+Kd 0.8764 0.8803 0.8654
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/calcite.png
+
+newmtl minecraft_block-pointed_dripstone_down_base
+Kd 0.5075 0.4035 0.3513
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_down_base.png
+map_d tex/minecraft/block/pointed_dripstone_down_base.png
+
+newmtl minecraft_block-stone
+Kd 0.4923 0.4923 0.4923
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/stone.png
+
+newmtl minecraft_block-grass_block_top
+Kd 0.3640 0.5742 0.2261
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/grass_block_top.png
+
+newmtl minecraft_block-birch_log_top
+Kd 0.7578 0.7036 0.5300
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/birch_log_top.png
+
+newmtl minecraft_block-amethyst_block
+Kd 0.5246 0.3843 0.7500
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/amethyst_block.png
+
+newmtl minecraft_block-pointed_dripstone_up_frustum
+Kd 0.5055 0.4023 0.3505
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/pointed_dripstone_up_frustum.png
+map_d tex/minecraft/block/pointed_dripstone_up_frustum.png
+
+newmtl minecraft_block-dandelion
+Kd 0.5792 0.6755 0.1705
+Ks 0.0000 0.0000 0.0000
+map_Kd tex/minecraft/block/dandelion.png
+map_d tex/minecraft/block/dandelion.png

@@ -1,15 +1,57 @@
 NAME					:= miniRT
 
-MATH_FILES				:= common.c init.c scalar.c vec.c debug.c mul.c float.c color.c const.c cmp.c ray.c polynomial.c
-GFX_FILES				:= win.c img.c draw.c hook.c
-MT_FILES				:= mutex.c thread.c mutex_mt.c thread_mt.c cond.c cond_mt.c
-SCENE_FILES				:= sphere.c plane.c light.c cylinder.c camera.c ambient_light.c triangle.c cone.c compare.c
-MATERIAL_FILES			:= lambertian.c metal.c dielectric.c emitter.c
-TEX_FILES				:= tex.c image.c color.c
-BASE_FILES				:= main.c events.c threads.c render_util.c projection.c trace.c time.c context.c
-PARSER_FILES			:= common.c light.c parser.c camera.c object.c material.c texture.c
-UTIL_FILES				:= atof.c memdup.c readfile.c random.c util.c
-TREE_FILES				:= tree.c util.c optimize.c
+UTIL_FILES				:= util.c memory.c image_bin.c writefile.c readfile.c lib.c atof.c random.c queue.c aabb.c hash.c
+VECTOR_FILES			:= vector.c sort.c swap.c view.c
+MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
+WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
+MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
+							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
+							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
+GFX_FILES				:= win.c
+BASE_FILES				:= main.c options.c perf.c
+
+OPENCL_FILES			:= \
+	src/util/random.c \
+	src/work/compute.c \
+	src/math/plane.c \
+	src/math/polynomial.c \
+	src/math/sphere.c \
+	src/math/triangle.c \
+	src/math/cylinder.c \
+	src/math/cone.c \
+	src/math/ray_constr.c \
+	src/math/vec_arith.c \
+	src/math/vec_arith_fast.c \
+	src/math/vec_constr.c \
+	src/math/vec_constr_fast.c \
+	src/math/vec_geo.c \
+	src/math/vec_geo_fast.c \
+	src/math/vec_get.c \
+	src/math/vec_get_fast.c \
+	src/math/vec_size.c \
+	src/math/vec_size_fast.c \
+	src/math/vec2.c \
+	src/math/vec2_fast.c \
+	src/math/vec_rotate.c \
+	src/math/vec_set.c \
+	src/math/sqrt.c \
+	src/math/sin.c \
+	src/math/cos.c \
+	src/math/tan.c \
+	src/math/min.c \
+	src/math/max.c \
+	src/math/abs.c \
+	src/math/pow.c \
+	src/math/mod.c \
+	src/world/intersect.c \
+	src/world/intersect_prim.c \
+	src/world/primitive.c \
+	src/world/node.c \
+	src/world/common.c \
+	src/world/trace.c \
+	src/world/tex_sample.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -20,20 +62,19 @@ ifndef platform
 endif
 
 FILE_NAMES				:= \
-	$(patsubst %,util/%,$(UTIL_FILES)) \
-	$(patsubst %,math/%,$(MATH_FILES)) \
-	$(patsubst %,gfx/%,$(GFX_FILES)) \
-	$(patsubst %,mt/%,$(MT_FILES)) \
-	$(patsubst %,scene/%,$(SCENE_FILES)) \
-	$(patsubst %,material/%,$(MATERIAL_FILES)) \
-	$(patsubst %,tex/%,$(TEX_FILES)) \
-	$(patsubst %,parser/%,$(PARSER_FILES)) \
-	$(patsubst %,tree/%,$(TREE_FILES)) \
+	$(patsubst %.c,util/%.c,$(UTIL_FILES)) \
+	$(patsubst %.c,vector/%.c,$(VECTOR_FILES)) \
+	$(patsubst %.c,mt/%.c,$(MT_FILES)) \
+	$(patsubst %.c,work/%.c,$(WORK_FILES)) \
+	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
+	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
+	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
+	$(patsubst %.c,gfx/%.c,$(GFX_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -pedantic 
+CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic
 LFLAGS					:= -Wall -Wextra
 
 SRC_DIR					:= src
@@ -54,7 +95,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+=
+CFLAGS          		+= -DRT_MT -DRT_USE_LIBC
 LFLAGS          		+=
 
 SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
@@ -94,13 +135,23 @@ ifndef san
 	san := address
 endif 
 
-ifndef nothread
-	CFLAGS		+= -DRT_MT -DRT_TIME
+ifndef renderer
+	renderer := thread
+endif
+
+ifeq ($(renderer), cl)
+	CFLAGS		+= -DRT_WORK_OPENCL
+else ifeq ($(renderer), thread)
+	CFLAGS		+= -DRT_WORK_THREAD
+else ifeq ($(renderer), single)
+	CFLAGS		+= -DRT_WORK_SINGLE
+else
+$(error "invalid renderer $(renderer)")
 endif
 
 ifeq ($(config), debug)
-	CFLAGS		+= -DSH_DEBUG=1 -fno-inline -g3 -O0 -DSH_BACKTRACE
-	LFLAGS		+= -DSH_DEBUG=1 -fno-inline
+	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE
+	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
 		LFLAGS	+= -fsanitize=address,undefined
@@ -112,11 +163,14 @@ ifeq ($(config), debug)
 		LFLAGS	+= -fsanitize=thread,undefined
 	endif
 else ifeq ($(config), release)
-	CFLAGS		+= -g3 -O2
-	LFLAGS		+=
+	CFLAGS		+= -g3 -O2 -DRT_DEBUG=1
+	LFLAGS		+= -g3 -O2 -DRT_DEBUG=1
+else ifeq ($(config), profile)
+	CFLAGS		+= -g3 -O2 -pg
+	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g0 -Ofast -flto -march=native
-	LFLAGS		+= -g0 -Ofast -flto -march=native
+	CFLAGS		+= -g3 -Ofast -flto -march=native
+	LFLAGS		+= -g3 -Ofast -flto -march=native
 else
 $(error "invalid config $(config"))
 endif
@@ -130,13 +184,14 @@ ifndef verbose
 endif
 
 ifeq ($(platform), macos)
-	FRAMEWORKS	:= -framework OpenGL -framework AppKit
+	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
+	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
 else
-	FRAMEWORKS	:= -lX11 -lXext -lm
+	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	CFLAGS		+= -DRT_LINUX
 endif
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
+$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
 
@@ -146,13 +201,21 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(SILENT)$(CC) $(CFLAGS) -c -o $@ $< -MMD $(patsubst %,-I%,$(INC_DIR))
 
 $(LIBFT_LIB):
-	$(SILENT)${MAKE} -C $(LIBFT_DIR) bonus
+	$(SILENT)${MAKE} -C $(LIBFT_DIR) bonus config=$(config) san=$(san) CC=$(CC)
 
 $(FT_PRINTF_LIB):
-	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR)
+	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR)
+
+# TODO: unhardcode these files
+compile: compiler/main.c
+	$(SILENT)$(CC) $(CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
+
+kernel.bin: $(OPENCL_FILES) compile
+	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
+	$(SILENT)sh -c "until ./compile $(OPENCL_FILES); do sleep 1; done"
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
@@ -164,7 +227,7 @@ clean:
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
 	$(SILENT)rm -f $(NAME)
-	$(SILENT)rm -f crash
+	$(SILENT)rm -f compile kernel.bin
 
 re: fclean
 	$(MAKE) all

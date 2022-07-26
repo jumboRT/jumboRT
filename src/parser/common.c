@@ -1,206 +1,224 @@
 #include "parser.h"
 
 #include "util.h"
-#include <ft_printf.h>
 #include <libft.h>
 #include <limits.h>
 
-
-#include <stdio.h>
-
-const char
-	*rt_end(const char *line, char **error)
+void
+	rt_skip(t_parse_ctx *ctx, int (*pred)(int))
 {
-	if (line == NULL)
-		return (NULL);
-	if (*line != '\0' && *line != '\n')
-	{
-		ft_asprintf(error, "Unexpected token:'%s' expected end of line", line);
-		return (NULL);
-	}
-	return (line);
+	while (pred(*ctx->data) && *ctx->data != '\0')
+		rt_advance(ctx);
 }
 
-const char
-	*rt_uint(const char *line, char **error, unsigned int *dst)
+void
+	rt_expect(t_parse_ctx *ctx, int ch)
 {
-	const char	*beg;
-	long		val;
-
-	if (line == NULL)
-		return (NULL);
-	beg = line;
-	if (!ft_isdigit(*line))
-	{
-		ft_asprintf(error, "Expected digit, found '%.*s'",
-			(int) rt_wordlen(beg), beg);
-		return (NULL);
-	}
-	val = ft_atol(line);
-	line = rt_skip(line, ft_isdigit);
-	if (val < 0 || val > UINT_MAX)
-	{
-		ft_asprintf(error, "Number out of range of integer: '%.*s'",
-			(int) rt_wordlen(beg), beg);
-		return (NULL);
-	}
-	*dst = (unsigned int) val;
-	return (line);
-}
-
-const char
-	*rt_float(const char *line, char **error, FLOAT *dst)
-{
-	const char	*beg;
-
-	if (line == NULL)
-		return (NULL);
-	line = rt_skip(line, ft_isspace);
-	beg = line;
-	if (!ft_isdigit(*line) && *line != '-')
-	{
-		ft_asprintf(error, "Expected digit, found '%.*s'",
-			(int) rt_wordlen(beg), beg);
-		return (NULL);
-	}
-	if (!rt_atof(line, dst))
-	{
-		ft_asprintf(error, "Float:'%.*s' would be infinite",
-			(int) rt_wordlen(beg), beg);
-		return (NULL);
-	}
-	if (*line == '-' || *line == '+')
-		line += 1;
-	line = rt_skip(line, ft_isdigit);
-	if (*line == '.')
-		line += 1;
-	line = rt_skip(line, ft_isdigit);
-	return (line);
-}
-
-static const char
-	*rt_color_part(const char *line, char **error, FLOAT *dst)
-{
-	unsigned int	val;
-
-	if (line == NULL)
-		return (NULL);
-	line = rt_uint(line, error, &val);
-	if (line == NULL)
-		return (NULL);
-	if (val > 255)
-	{
-		ft_asprintf(error, "Color value may not exceed 255");
-		return (NULL);
-	}
-	*dst = 0.0;
-	if (val > 0)
-		*dst = (val / 255.0);
-	return (line);
-}
-
-const char
-	*rt_color(const char *line, char **error, t_vec *dst)
-{
-	if (line == NULL)
-		return (NULL);
-	line = rt_skip(line, ft_isspace);
-	dst->v[W] = 0.0;
-	line = rt_color_part(line, error, &dst->v[X]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_color_part(line, error, &dst->v[Y]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_color_part(line, error, &dst->v[Z]);
-	if (line == NULL)
-		return (NULL);
-	return (line);
-}
-
-const char
-	*rt_pos(const char *line, char **error, t_vec *dst)
-{
-	if (line == NULL)
-		return (NULL);
-	line = rt_skip(line, ft_isspace);
-	dst->v[W] = 0.0;
-	line = rt_float(line, error, &dst->v[X]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_float(line, error, &dst->v[Y]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_float(line, error, &dst->v[Z]);
-	if (line == NULL)
-		return (NULL);
-	return (line);
-}
-
-const char
-	*rt_norm_vec(const char *line, char **error, t_vec *dst)
-{
-	const char	*beg;
-
-	if (line == NULL)
-		return (NULL);
-	line = rt_skip(line, ft_isspace);
-	beg = line;
-	dst->v[W] = 0.0;
-	line = rt_float(line, error, &dst->v[X]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_float(line, error, &dst->v[Y]);
-	line = rt_expect_char(line, error, ',');
-	line = rt_float(line, error, &dst->v[Z]);
-	if (line == NULL)
-		return (NULL);
-	*dst = vec_norm(*dst); //TODO REMOVE BEFORE TURNING IN!!!
-	if (vec_mag(*dst) < 0.99 || vec_mag(*dst) > 1.01)
-	{
-		ft_asprintf(error, "Vector '%.*s' is not a normalized vector",
-				(int) rt_wordlen(beg), beg);
-		return (NULL);
-	}
-	return (rt_skip(line, ft_isspace));
+	if (*ctx->data != ch)
+		rt_parse_error(ctx, "unexpected character %c, expected %c", (int) *ctx->data, ch);
+	rt_advance(ctx);
 }
 
 size_t
-	rt_wordlen(const char *str)
+	rt_idlen(t_parse_ctx *ctx)
 {
 	size_t	i;
 
 	i = 0;
-	while (str[i] != '\0' && !ft_isspace(str[i]))
+	while (!ft_isspace(ctx->data[i]) && ctx->data[i] != '\0')
 		i += 1;
 	return (i);
 }
 
-const char
-	*rt_expect_char(const char *line, char **error, char c)
+void
+	rt_idskip(t_parse_ctx *ctx, size_t len)
 {
-	if (line == NULL)
-		return (NULL);
-	if (*line != c)
+	while (len > 0)
 	{
-		ft_asprintf(error, "Unexpected char:'%c' in string:'%.*s' exected:'%c'",
-			*line, (int) rt_wordlen(line), line, c);
-		return (NULL);
+		rt_advance(ctx);
+		len -= 1;
 	}
-	return (line + 1);
 }
 
-const char
-	*rt_next_word(const char *line)
+unsigned int
+	rt_uint(t_parse_ctx *ctx)
 {
-	const char	*next;
+	long	result;
 
-	next = rt_skip(line, ft_isalpha);
-	next = rt_skip(next, ft_isspace);
-	return (next);
+	rt_skip(ctx, ft_isspace);
+	if (!ft_isdigit(*ctx->data))
+	{
+		rt_parse_error(ctx, "unexpected character %c, expected int", *ctx->data);
+	}
+	result = ft_atol(ctx->data);
+	if (result < 0 || result > UINT_MAX)
+	{
+		rt_parse_error(ctx, "%.*s would not fit in unsigned int", rt_idlen(ctx), ctx->data);
+	}
+	rt_skip(ctx, ft_isdigit);
+	return ((unsigned int) result);
 }
 
-const char
-	*rt_skip(const char *line, int (*skip_char)(int))
+FLOAT
+	rt_float(t_parse_ctx *ctx)
 {
-	if (line == NULL)
-		return (NULL);
-	while (skip_char(*line))
-		line += 1;
-	return (line);
+	FLOAT	result;
+
+	rt_skip(ctx, ft_isspace);
+	if (!ft_isdigit(*ctx->data) && *ctx->data != '-')
+	{
+		rt_parse_error(ctx, "unexpected character %c, expected: float", *ctx->data);
+	}
+	if (!rt_atof(ctx->data, &result))
+	{
+		rt_parse_error(ctx, "%.*s would be infinite", rt_idlen(ctx), ctx->data);
+	}
+	if (*ctx->data == '-')
+		rt_advance(ctx);
+	rt_skip(ctx, ft_isdigit);
+	if (*ctx->data == '.')
+		rt_advance(ctx);
+	rt_skip(ctx, ft_isdigit);
+	return (result);
+}
+
+FLOAT
+	rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max)
+{
+	FLOAT	result;
+
+	result = rt_float(ctx);
+	if (result < min || result > max)
+	{
+		rt_parse_error(ctx, "float out of range"); /* TODO print out range and value of float*/
+	}
+	return (result);
+}
+
+static FLOAT
+	rt_color_part(t_parse_ctx *ctx)
+{
+	unsigned int	ival;
+
+	ival = rt_uint(ctx);
+	if (ival > 255)
+	{
+		rt_parse_error(ctx, "%d exceeds max value for color byte: 255", ival);
+	}
+	if (ival > 0)
+		return ((FLOAT) ival / 255.0);
+	return (0.0);
+}
+
+t_vec
+	rt_color(t_parse_ctx *ctx)
+{
+	FLOAT	red;
+	FLOAT	green;
+	FLOAT	blue;
+
+	rt_skip(ctx, ft_isspace);
+	red = rt_color_part(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	green = rt_color_part(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	blue = rt_color_part(ctx);
+	return (vec(red, green, blue, 1.0));
+}
+
+t_vec
+	rt_vec(t_parse_ctx *ctx)
+{
+	FLOAT	x;
+	FLOAT	y;
+	FLOAT	z;
+
+	rt_skip(ctx, ft_isspace);
+	x = rt_float(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	y = rt_float(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	z = rt_float(ctx);
+	return (vec(x, y, z, 0.0));
+}
+
+t_vec2
+	rt_vec2(t_parse_ctx *ctx)
+{
+	FLOAT	x;
+	FLOAT	y;
+
+	rt_skip(ctx, ft_isspace);
+	x = rt_float(ctx);
+	rt_expect(ctx, ',');
+	rt_skip(ctx, ft_isspace);
+	y = rt_float(ctx);
+	return (vec2(x, y));
+}
+
+t_vec
+	rt_vec_norm(t_parse_ctx *ctx)
+{
+	return (vec_norm(rt_vec(ctx)));
+}
+
+char
+	*rt_word(t_parse_ctx *ctx)
+{
+	char	*result;
+	size_t	id_len;
+
+	rt_skip(ctx, ft_isspace);
+	id_len = rt_idlen(ctx);
+	if (id_len == 0)
+	{
+		rt_parse_error(ctx, "expected word, got nothing");
+	}
+	result = ft_strndup(ctx->data, id_len);
+	rt_idskip(ctx, id_len);
+	return (result);
+	
+}
+
+char
+	*rt_keyword(t_parse_ctx *ctx, const char *prefix)
+{
+	size_t	prefix_len;
+	size_t	id_len;
+	char	*result;
+
+	rt_skip(ctx, ft_isspace);
+	prefix_len = ft_strlen(prefix);
+	id_len = rt_idlen(ctx);
+	if (ft_strncmp(ctx->data, prefix, prefix_len))
+	{
+		rt_parse_error(ctx, "unexpected keyword %.*s, expected keyword"
+				"starting with: '%s'", id_len, ctx->data, prefix);
+	}
+	result = ft_strndup(ctx->data, id_len);
+	rt_idskip(ctx, id_len);
+	return (result);
+}
+
+int
+	rt_bool(t_parse_ctx *ctx)
+{
+	rt_skip(ctx, ft_isspace);
+	if (ft_strncmp(ctx->data, "true", 4) == 0)
+	{
+		rt_idskip(ctx, 4);
+		return (1);
+	}
+	else if (ft_strncmp(ctx->data, "false", 5) == 0)
+	{
+		rt_idskip(ctx, 5);
+		return (0);
+	}
+	rt_parse_error(ctx, "unexpected word %.*s, expected 'true' or 'false'",
+			rt_idlen(ctx), ctx->data);
+	return (0);
 }

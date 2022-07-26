@@ -21,7 +21,7 @@ INC=\
 	libft.h
 OBJ=$(SRC:.c=.o)
 OBJ_BONUS=$(SRC_BONUS:.c=.o)
-CFLAGS=-Wall -Wextra -Werror -DFT_SAFE=1 -ansi -pedantic -Ofast
+CFLAGS=-Wall -Wextra -Werror -DFT_SAFE=1 -ansi -pedantic
 NAME=libft.a
 
 BLACK					:="\033[0;30m"
@@ -48,6 +48,33 @@ COMPILE_COLOR			:= $(GREEN)
 LINK_COLOR				:= $(CYAN)
 OBJECT_COLOR			:= $(RED)
 CLEAN_COLOR				:= $(PURPLE)
+
+ifndef config
+	config = distr
+endif
+
+ifndef san
+	san := address
+endif 
+
+ifeq ($(config), debug)
+	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
+	ifeq ($(san), address)
+		CFLAGS	+= -fsanitize=address,undefined
+	else ifeq ($(san), memory)
+		CFLAGS	+= -fsanitize=memory,undefined
+	else ifeq ($(san), thread)
+		CLFLAGS	+= -fsanitize=thread,undefined
+	endif
+else ifeq ($(config), release)
+	CFLAGS		+= -g3 -O2
+else ifeq ($(config), profile)
+	CFLAGS		+= -g3 -O2 -pg
+else ifeq ($(config), distr)
+	CFLAGS		+= -g0 -Ofast -march=native
+else
+$(error "invalid config $(config"))
+endif
 
 SILENT					:=
 ifndef verbose
