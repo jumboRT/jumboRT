@@ -79,17 +79,15 @@ uint32_t	world_add_accel_index(t_world *world, uint32_t accel_index);
 uint32_t	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate);
 uint32_t	world_add_tex(t_world *world, const t_tex *tex);
 uint32_t	world_alloc_tex_data(t_world *world, size_t size);
-uint32_t	world_add_bsdf(t_world *world, void *bsdf, size_t size);
+void		world_insert_bxdf(t_world *world, t_material *material, t_bxdf *bxdf, size_t size);
 
 void		world_load_ppm(t_world *world, t_tex *tex, const unsigned char *data, size_t len);
-
-int64_t		world_get_material(const t_world *world, uint32_t index);
 
 void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);
 
-void		material_init(t_material *mat);
+void		material_init(t_material *mat, const t_world *world);
 void		texture_init(t_tex *tex);
 
 /* voor daan */

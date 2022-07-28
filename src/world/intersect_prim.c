@@ -35,7 +35,7 @@ static inline int
 					world->vertices[tr->c].normal),
 				min,
 				hit,
-				get_mat_const(world, prim_mat(&tr->base))->is_smooth));
+				(get_mat_const(world, prim_mat(&tr->base))->flags & RT_MAT_SMOOTH) != 0));
 }
 
 static inline int

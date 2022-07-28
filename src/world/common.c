@@ -50,7 +50,7 @@ const GLOBAL unsigned char
 }
 
 const GLOBAL t_tex
-	*get_tex(const GLOBAL t_world *world, uint32_t index)
+	*get_tex_const(const GLOBAL t_world *world, uint32_t index)
 {
 	return (world->textures + index);
 }
@@ -61,15 +61,15 @@ t_vec
 	return (world->vertices[index].pos);
 }
 
-const GLOBAL t_bsdf
-	*get_bsdf_const(const GLOBAL t_world *world, uint32_t index)
+const GLOBAL t_bxdf
+	*get_bxdf_const(const GLOBAL t_world *world, uint32_t index)
 {
-	return ((const GLOBAL t_bsdf *) ((const GLOBAL char *) world->bsdfs + (uint64_t) index * RT_BSDF_ALIGN));
+	return ((const GLOBAL t_bxdf *) ((const GLOBAL char *) world->bxdfs + (uint64_t) index * RT_BXDF_ALIGN));
 }
 
-GLOBAL t_bsdf
-	*get_bsdf(GLOBAL t_world *world, uint32_t index)
+GLOBAL t_bxdf
+	*get_bxdf(GLOBAL t_world *world, uint32_t index)
 {
-	return ((GLOBAL t_bsdf *) ((GLOBAL char *) world->bsdfs + (uint64_t) index * RT_BSDF_ALIGN));
+	return ((GLOBAL t_bxdf *) ((GLOBAL char *) world->bxdfs + (uint64_t) index * RT_BXDF_ALIGN));
 }
 

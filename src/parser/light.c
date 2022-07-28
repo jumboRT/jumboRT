@@ -11,10 +11,9 @@ void
 	sphere.base.data = RT_SHAPE_SPHERE;
 	sphere.pos = rt_vec(ctx);
 	sphere.radius = 1.0;
-	material_init(&material);
+	material_init(&material, world);
 	material.brightness = rt_float_range(ctx, 0.0, 1.0) * 256;
-	material.emission = rt_color(ctx);
-	material.albedo = vec(0.0, 0.0, 0.0, 1.0);
+	material.emission = rt_texture(world, ctx);
 	sphere.base.data |= world_add_material(world, &material, sizeof(material)) << 8;
 	world_add_primitive(world, &sphere, sizeof(sphere));
 }

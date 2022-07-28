@@ -7,7 +7,7 @@ WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
@@ -47,11 +47,12 @@ OPENCL_FILES			:= \
 	src/math/mod.c \
 	src/world/intersect.c \
 	src/world/intersect_prim.c \
-	src/world/primitive.c \
+	src/world/size.c \
 	src/world/node.c \
 	src/world/common.c \
 	src/world/trace.c \
-	src/world/tex_sample.c
+	src/world/tex_sample.c \
+	src/world/bsdf.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -186,9 +187,11 @@ endif
 ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
 	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
+	COMPILER_CFLAGS	+= -DRT_MACOS
 else
 	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	CFLAGS		+= -DRT_LINUX
+	COMPILER_CFLAGS += -DRT_LINUX
 endif
 
 $(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
@@ -211,7 +214,7 @@ $(MLX_LIB):
 
 # TODO: unhardcode these files
 compile: compiler/main.c
-	$(SILENT)$(CC) $(CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
+	$(SILENT)$(CC) $(COMPILER_CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
 
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n

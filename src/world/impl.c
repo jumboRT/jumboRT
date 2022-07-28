@@ -25,6 +25,7 @@ void
 	world->accel_degenerates = world_zero(&world->accel_degenerates_count, &world->accel_degenerates_size, &world->accel_degenerates_capacity);
 	world->textures = world_zero(&world->textures_count, &world->textures_size, &world->textures_capacity);
 	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
+	world->bxdfs = world_zero(&world->bxdfs_count, &world->bxdfs_size, &world->bxdfs_capacity);
 }
 
 void
@@ -150,20 +151,26 @@ uint32_t
 	return (old_size);
 }
 
-int64_t
-	world_get_material(const t_world *world, uint32_t id)
+void
+	world_insert_bxdf(t_world *world, t_material *material, t_bxdf *bxdf, size_t size)
 {
-	size_t				offset;
-	const t_material	*material;
+	size_t	begin;
+	t_bxdf	*tmp;
+	size_t	old_size;
 
-	offset = 0;
-	while (offset < world->materials_size)
+	world->bxdfs_count += 1;
+	old_size = world->bxdfs_size;
+	world->bxdfs_size += world_bxdf_size(bxdf->type);
+	world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
+	begin = material->bxdf_begin * RT_BXDF_ALIGN;
+	tmp = (t_bxdf *) ((char *) world->bxdfs + begin);
+	while (begin < material->bxdf_end * RT_BXDF_ALIGN && bxdf->type < tmp->type)
 	{
-		material = (const t_material *) ((const char *) world->materials + offset);
-		if (material->id == id)
-			return (offset / RT_MATERIAL_ALIGN);
-		offset += sizeof(*material); /* TOOD do something like world_material_size */
+		begin += world_bxdf_size(tmp->type);
+		tmp = (t_bxdf *) ((char *) world->bxdfs + begin);
 	}
-	return (-1);
+	ft_memmove((char *) tmp + world_bxdf_size(bxdf->type), tmp, old_size - begin);
+	ft_memcpy(tmp, bxdf, size);
+	material->bxdf_end += world_bxdf_size(bxdf->type) / RT_BXDF_ALIGN;
 }
 

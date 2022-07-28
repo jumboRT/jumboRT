@@ -25,6 +25,7 @@ struct s_mat_entry {
 struct s_tex_entry {
 	uint32_t	index;
 	const char	*name;
+	t_vec		color;
 };
 
 struct s_parse_ctx {
@@ -45,6 +46,7 @@ void			tex_add(t_parse_ctx *ctx, const char *name, uint32_t index);
 uint32_t		mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
 uint32_t		mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
 uint32_t		tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
+uint32_t		tex_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
 
 void			rt_parse_error(t_parse_ctx *ctx, const char *fmt, ...);
 void			rt_advance(t_parse_ctx *ctx);
@@ -64,6 +66,7 @@ t_vec			rt_vec_norm(t_parse_ctx *ctx);
 char			*rt_word(t_parse_ctx *ctx);
 char			*rt_keyword(t_parse_ctx *ctx, const char *prefix);
 FLOAT			rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max);
+uint32_t		rt_texture(t_world *world, t_parse_ctx *ctx);
 void			rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape);
 void			rt_tex(t_parse_ctx *ctx, t_world *world, t_material *material);
 
@@ -81,13 +84,10 @@ void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_albedo(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_diffuse(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_refractive(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_fuzzy(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_density(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_brightness(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_tex(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_smooth(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);

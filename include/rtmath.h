@@ -3,6 +3,7 @@
 
 # define RT_HUGE_VAL 1000000000.0
 
+# define RT_1_PI 0.31831 
 # define RT_PI 3.14159
 # define RT_2PI 6.28319
 # if !defined FLOAT
@@ -98,6 +99,12 @@ struct s_cone {
 struct s_hit {
 	t_vec	pos;
 	t_vec	normal;
+/*
+	t_vec	dpdu;
+	t_vec	dpdv;
+	t_vec	dndu;
+	t_vec	dndv;
+*/
 	t_vec2	uv;
 	FLOAT	t;
 };

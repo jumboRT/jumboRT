@@ -3,6 +3,7 @@
 t_vec
     ray_scatter(const GLOBAL t_material *mat, GLOBAL t_context *ctx, t_ray ray_in, t_world_hit hit)
 {
+	/*
 	t_vec	reflected;
 	FLOAT	cos_theta;
 	FLOAT	sin_theta;
@@ -31,24 +32,13 @@ t_vec
 	}
 	if (mat->reflective || mat->refractive) {
 		reflected = vec_sub(ray_in.dir, vec_scale(hit.relative_normal, 2.0 * vec_dot(ray_in.dir, hit.relative_normal)));
-		/* TODO: fuzzy is unset for refractive materials, but it's used here anyways */
+		// TODO: fuzzy is unset for refractive materials, but it's used here anyways
 		return (vec_norm(vec_add(reflected, rt_random_in_sphere(&ctx->seed, 0.0, mat->fuzzy))));
 	}
+	*/
+	(void) mat;
+	(void) ray_in;
 	return (rt_random_on_hemi(&ctx->seed, hit.relative_normal));
-}
-
-t_vec get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
-	if (mat->has_texture & RT_TEX_ALBEDO_BIT) {
-		return tex_sample(world, get_tex(world, mat->tex_albedo_offset), uv);
-	}
-	return mat->albedo;
-}
-
-t_vec get_emission(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv) {
-	if (mat->has_texture & RT_TEX_EMISSION_BIT) {
-		return vec_scale(tex_sample(world, get_tex(world, mat->tex_emission_offset), uv), mat->brightness);
-	}
-	return vec_scale(mat->emission, mat->brightness);
 }
 
 t_vec
@@ -57,7 +47,8 @@ t_vec
 	t_vec					head;
 	t_vec					tail;
 	t_world_hit				hit;
-	t_vec					albedo;
+	t_vec					new_dir;
+	t_vec					bsdf;
 	const GLOBAL t_material	*mat;
 
 	head = vec(1, 1, 1, 1);
@@ -65,19 +56,13 @@ t_vec
 	while (depth > 0 && world_intersect(world, ray, &hit))
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
-		albedo = get_albedo(world, mat, hit.hit.uv);
-		/* TODO: don't use albedo alpha to determine emission */
-		if (rt_random_float(&ctx->seed) <= w(albedo))
-		{
-			tail = vec_add(tail, vec_mul(head, get_emission(world, mat, hit.hit.uv)));
-			head = vec_mul(head, albedo);
-			ray.org = hit.hit.pos;
-			ray.dir = ray_scatter(mat, ctx, ray, hit);
-		}
-		else
-		{
-			ray.org = hit.hit.pos;
-		}
+		new_dir = ray_scatter(mat, ctx, ray, hit);
+		bsdf = f_bsdf(world, *mat, hit.hit, ray.dir, new_dir);
+		if (mat->flags & RT_MAT_EMITTER)
+			tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
+		head = vec_mul(head, bsdf);
+		ray.org = hit.hit.pos;
+		ray.dir = new_dir;
 		depth -= 1;
 	}
 	return (tail);

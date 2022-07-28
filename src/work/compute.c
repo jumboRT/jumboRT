@@ -22,7 +22,7 @@ __kernel void
 	if (offset == 7)
 		world->textures = ptr;
 	if (offset == 8)
-		world->bsdfs = ptr;
+		world->bxdfs = ptr;
 }
 
 /* TODO: synchronize or duplicate context */

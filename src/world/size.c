@@ -7,9 +7,9 @@ static uint64_t
 }
 
 static uint64_t
-	world_bsdf_size_adjust(uint64_t size)
+	world_bxdf_size_adjust(uint64_t size)
 {
-	return ((size + RT_BSDF_ALIGN - 1) / RT_BSDF_ALIGN * RT_BSDF_ALIGN);
+	return ((size + RT_BXDF_ALIGN - 1) / RT_BXDF_ALIGN * RT_BXDF_ALIGN);
 }
 
 uint64_t
@@ -29,14 +29,14 @@ uint64_t
 }
 
 uint64_t
-	world_bsdf_size(uint32_t bsdf_type)
+	world_bxdf_size(uint32_t bsdf_type)
 {
-	if (bsdf_type == RT_BSDF_DIFFUSE)
-		return (world_bsdf_size_adjust(sizeof(t_diffuse_bsdf)));
-	if (bsdf_type == RT_BSDF_SPECULAR)
-		return (world_bsdf_size_adjust(sizeof(t_specular_bsdf)));
-	if (bsdf_type == RT_BSDF_REFRACTIVE)
-		return (world_bsdf_size_adjust(sizeof(t_refractive_bsdf)));
-	return (RT_BSDF_ALIGN);
+	if (bsdf_type == RT_BXDF_DIFFUSE)
+		return (world_bxdf_size_adjust(sizeof(t_bxdf_diffuse)));
+	if (bsdf_type == RT_BXDF_REFLECTIVE)
+		return (world_bxdf_size_adjust(sizeof(t_bxdf_reflective)));
+	if (bsdf_type == RT_BXDF_REFRACTIVE)
+		return (world_bxdf_size_adjust(sizeof(t_bxdf_refractive)));
+	return (RT_BXDF_ALIGN);
 }
 	
