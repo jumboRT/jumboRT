@@ -28,13 +28,13 @@ GLOBAL t_primitive
 const GLOBAL t_material
 	*get_mat_const(const GLOBAL t_world *world, uint32_t index)
 {
-	return ((const GLOBAL t_material *) ((const GLOBAL char *) world->materials + (uint64_t) index * RT_MATERIAL_ALIGN));
+	return (&world->materials[index]);
 }
 
 GLOBAL t_material
 	*get_mat(GLOBAL t_world *world, uint32_t index)
 {
-	return ((GLOBAL t_material *) ((GLOBAL char *) world->materials + (uint64_t) index * RT_MATERIAL_ALIGN));
+	return (&world->materials[index]);
 }
 
 GLOBAL unsigned char
@@ -64,12 +64,12 @@ t_vec
 const GLOBAL t_bxdf
 	*get_bxdf_const(const GLOBAL t_world *world, uint32_t index)
 {
-	return ((const GLOBAL t_bxdf *) ((const GLOBAL char *) world->bxdfs + (uint64_t) index * RT_BXDF_ALIGN));
+	return (&world->bxdfs[index].base);
 }
 
 GLOBAL t_bxdf
 	*get_bxdf(GLOBAL t_world *world, uint32_t index)
 {
-	return ((GLOBAL t_bxdf *) ((GLOBAL char *) world->bxdfs + (uint64_t) index * RT_BXDF_ALIGN));
+	return (&world->bxdfs[index].base);
 }
 

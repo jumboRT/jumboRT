@@ -116,16 +116,25 @@ t_vec
 	FLOAT	red;
 	FLOAT	green;
 	FLOAT	blue;
+	t_vec	result;
 
+	if (*ctx->data != '(')
+	{
+		rt_skip(ctx, ft_isspace);
+		red = rt_color_part(ctx);
+		rt_expect(ctx, ',');
+		rt_skip(ctx, ft_isspace);
+		green = rt_color_part(ctx);
+		rt_expect(ctx, ',');
+		rt_skip(ctx, ft_isspace);
+		blue = rt_color_part(ctx);
+		return (vec(red, green, blue, 1.0));
+	}
+	rt_advance(ctx);
+	result = rt_vec(ctx);
 	rt_skip(ctx, ft_isspace);
-	red = rt_color_part(ctx);
-	rt_expect(ctx, ',');
-	rt_skip(ctx, ft_isspace);
-	green = rt_color_part(ctx);
-	rt_expect(ctx, ',');
-	rt_skip(ctx, ft_isspace);
-	blue = rt_color_part(ctx);
-	return (vec(red, green, blue, 1.0));
+	rt_expect(ctx, ')');
+	return (vec(x(result), y(result), z(result), 1.0));
 }
 
 t_vec

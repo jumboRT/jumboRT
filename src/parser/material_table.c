@@ -82,8 +82,8 @@ uint32_t
 	bxdf.base.type = RT_BXDF_DIFFUSE;
 	bxdf.tex = tex_by_color(world, ctx, color);
 	material_init(&material, world);
-	world_insert_bxdf(world, &material, (t_bxdf *) &bxdf, sizeof(bxdf));
-	new_entry.index = world_add_material(world, &material, sizeof(material));
+	world_insert_bxdf(world, &material, &bxdf, sizeof(bxdf));
+	new_entry.index = world_add_material(world, &material);
 	new_entry.name = NULL;
 	new_entry.color = color;
 	vector_push(&ctx->materials, &new_entry);

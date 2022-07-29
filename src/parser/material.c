@@ -77,7 +77,7 @@ void
 
 	material_init(&material, world);
 	keyword = rt_keyword(ctx, "mat_");
-	mat_index = world_add_material(world, &material, sizeof(material));
+	mat_index = world_add_material(world, &material);
 	ctx->mat = get_mat(world, mat_index);
 	mat_add(ctx, keyword, mat_index);
 	rt_free(keyword);
@@ -92,7 +92,7 @@ void
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_DIFFUSE;
 	bxdf.tex = rt_texture(world, ctx);
-	world_insert_bxdf(world, ctx->mat, (t_bxdf *) &bxdf, sizeof(bxdf));
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
 void
@@ -105,7 +105,7 @@ void
 	bxdf.base.type = RT_BXDF_REFLECTIVE;
 	bxdf.tex = rt_texture(world, ctx);
 	bxdf.fuzzy = rt_float(ctx);
-	world_insert_bxdf(world, ctx->mat, (t_bxdf *) &bxdf, sizeof(bxdf));
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
 void
@@ -118,7 +118,7 @@ void
 	bxdf.base.type = RT_BXDF_REFRACTIVE;
 	bxdf.tex = rt_texture(world, ctx);
 	bxdf.refractive_index = rt_float(ctx);
-	world_insert_bxdf(world, ctx->mat, (t_bxdf *) &bxdf, sizeof(bxdf));
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
 void

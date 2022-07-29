@@ -2,8 +2,6 @@
 # define WORLD_H
 
 # define RT_PRIMITIVE_ALIGN 16
-# define RT_BXDF_ALIGN 16
-# define RT_MATERIAL_ALIGN sizeof(t_material)
 
 # define RT_SHAPE_TRIANGLE		0
 # define RT_SHAPE_SPHERE		1
@@ -46,6 +44,7 @@ typedef struct s_bxdf				t_bxdf;
 typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
 typedef struct s_bxdf_reflective	t_bxdf_reflective;
 typedef struct s_bxdf_refractive	t_bxdf_refractive;
+typedef union u_bxdf_any			t_bxdf_any;
 
 struct s_context {
 	t_seed		seed;
@@ -107,6 +106,13 @@ struct s_bxdf_refractive {
 	t_bxdf		base;
 	uint32_t	tex;
 	FLOAT		refractive_index;
+};
+
+union u_bxdf_any {
+	t_bxdf				base;
+	t_bxdf_diffuse		diffuse;
+	t_bxdf_reflective	reflective;
+	t_bxdf_refractive	refractive;
 };
 
 struct s_material {
@@ -194,24 +200,20 @@ struct s_world {
 	uint64_t				texture_data_capacity;
 	uint64_t				bxdfs_capacity;
 	GLOBAL void				*primitives;
-	GLOBAL void				*materials;
+	GLOBAL t_material		*materials;
 	GLOBAL t_vertex			*vertices;
 	GLOBAL t_accel_node		*accel_nodes;
 	GLOBAL uint32_t			*accel_indices;
 	GLOBAL uint32_t			*accel_degenerates;
 	GLOBAL t_tex			*textures;
 	GLOBAL unsigned char	*texture_data;
-	GLOBAL void				*bxdfs;
+	GLOBAL t_bxdf_any		*bxdfs;
 };
 
 uint64_t	world_primitive_size(uint8_t shape_type);
-uint64_t	world_bxdf_size(uint32_t bxdf_type);
 
-t_vec		f_bxdf_diffuse(const GLOBAL t_world *world, t_hit hit, const t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf_reflective(const GLOBAL t_world *world, t_hit hit, const t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf_refractive(const GLOBAL t_world *world, t_hit hit, const t_bxdf_refractive *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf(const GLOBAL t_world *world, t_hit hit, const t_bxdf *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bsdf(const GLOBAL t_world *world, t_material mat, t_hit hit, t_vec wiw, t_vec wow);
+t_vec		f_bsdf(const GLOBAL t_world *world, t_material mat, t_world_hit hit, t_vec wiw, t_vec wow);
+t_vec		f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec *wow);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);

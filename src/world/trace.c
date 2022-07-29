@@ -57,7 +57,7 @@ t_vec
 	{
 		mat = get_mat_const(world, prim_mat(hit.prim));
 		new_dir = ray_scatter(mat, ctx, ray, hit);
-		bsdf = f_bsdf(world, *mat, hit.hit, ray.dir, new_dir);
+		bsdf = f_bsdf(world, *mat, hit, ray.dir, new_dir);
 		if (mat->flags & RT_MAT_EMITTER)
 			tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
 		head = vec_mul(head, bsdf);

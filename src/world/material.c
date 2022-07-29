@@ -6,8 +6,8 @@ void
 	material_init(t_material *mat, const t_world *world)
 {
 	mat->flags = 0;
-	mat->bxdf_begin = world->bxdfs_size / RT_BXDF_ALIGN;
-	mat->bxdf_end = world->bxdfs_size / RT_BXDF_ALIGN;
+	mat->bxdf_begin = world->bxdfs_count;
+	mat->bxdf_end = world->bxdfs_count;
 	mat->emission = 0;
 	mat->brightness = 0.0;
 }

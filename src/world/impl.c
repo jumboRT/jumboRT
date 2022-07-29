@@ -50,16 +50,16 @@ void
 }
 
 uint32_t
-	world_add_material(t_world *world, void *material, size_t size)
+	world_add_material(t_world *world, t_material *material)
 {
 	size_t	old_size;
 
 	world->materials_count += 1;
 	old_size = world->materials_size;
-	world->materials_size += (size + RT_MATERIAL_ALIGN - 1) / RT_MATERIAL_ALIGN * RT_MATERIAL_ALIGN;
+	world->materials_size += sizeof(*material);
 	world->materials = world_reallog(world->materials, &world->materials_capacity, world->materials_size);
-	ft_memcpy((char *) world->materials + old_size, material, size);
-	return (old_size / RT_MATERIAL_ALIGN);
+	ft_memcpy((char *) world->materials + old_size, material, sizeof(*material));
+	return (old_size / sizeof(*material));
 }
 
 uint32_t
@@ -152,25 +152,18 @@ uint32_t
 }
 
 void
-	world_insert_bxdf(t_world *world, t_material *material, t_bxdf *bxdf, size_t size)
+	world_insert_bxdf(t_world *world, t_material *material, void *bxdf, size_t size)
 {
-	size_t	begin;
-	t_bxdf	*tmp;
-	size_t	old_size;
+	uint32_t	i;
 
-	world->bxdfs_count += 1;
-	old_size = world->bxdfs_size;
-	world->bxdfs_size += world_bxdf_size(bxdf->type);
+	world->bxdfs_size += sizeof(t_bxdf_any);
 	world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
-	begin = material->bxdf_begin * RT_BXDF_ALIGN;
-	tmp = (t_bxdf *) ((char *) world->bxdfs + begin);
-	while (begin < material->bxdf_end * RT_BXDF_ALIGN && bxdf->type < tmp->type)
-	{
-		begin += world_bxdf_size(tmp->type);
-		tmp = (t_bxdf *) ((char *) world->bxdfs + begin);
-	}
-	ft_memmove((char *) tmp + world_bxdf_size(bxdf->type), tmp, old_size - begin);
-	ft_memcpy(tmp, bxdf, size);
-	material->bxdf_end += world_bxdf_size(bxdf->type) / RT_BXDF_ALIGN;
+	i = material->bxdf_begin;
+	while (i < material->bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+		i += 1;
+	ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
+	ft_memcpy(&world->bxdfs[i], bxdf, size);
+	world->bxdfs_count += 1;
+	material->bxdf_end += 1;
 }
 
