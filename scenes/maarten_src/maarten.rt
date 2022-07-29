@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e5c0e4e887aebd64bf34ea98cee038173e1636e7dd45e9581b5d567e5a9c5757
-size 395
+C -100,50,0     1,0,0     70
+L -50,100,20    1.0       255,255,255
+A 0.2                     255,255,255
+
+pl 0,200,0      0,1,0     95,191,255
+
+pl 0,0,0        0,1,0     63,127,255 checkerboard
+sp 0,50,0       40        255,255,255 default textures/earth.png
+cy 30,0,50      0,1,0     25 80 63,127,255 mirror
+co -10,50,-40   0,-1,0    42 40 255,95,127
+sp 50,10,-120   20        255,255,255 glass

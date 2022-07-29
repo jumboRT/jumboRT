@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:97c2ae60210f35807245be5abc32abacfd2171cf24bfc5647f5bb73e61fa56e4
-size 480
+C 0,0,-30 0,0,1 90
+L 40,0,-80 1.0 255,255,255
+L 40,0,-80 0.4 255,255,255
+
+A 0.10 255,255,255
+
+sp 0,0,0 500 255,255,255 clouds textures/stars.png
+
+sp 210,24,115 8 100,100,100 planet textures/texture.png
+
+sp 0,0,0 20.5 255,255,255 clouds textures/clouds.png
+sp 0,0,0 20 255,255,255 planet textures/earth.png
+
+sp -86,0,70 180 160,160,160 planet textures/jupiter.png
+sp 8,-2,-18 6 100,100,100 planet textures/moon.png
+sp -6,1.5,-10 6 255,255,255 glass
+
+sp 2,-5,-17 4 200,155,12 metal
