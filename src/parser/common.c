@@ -118,9 +118,9 @@ t_vec
 	FLOAT	blue;
 	t_vec	result;
 
+	rt_skip(ctx, ft_isspace);
 	if (*ctx->data != '(')
 	{
-		rt_skip(ctx, ft_isspace);
 		red = rt_color_part(ctx);
 		rt_expect(ctx, ',');
 		rt_skip(ctx, ft_isspace);

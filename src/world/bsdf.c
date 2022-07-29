@@ -1,8 +1,6 @@
 #include "world.h"
 
-#include "rtphysics.h"
-
-static inline t_vec world_to_local(t_hit hit, t_vec v) {
+static inline t_vec world_to_local(t_world_hit hit, t_vec v) {
 	/*
 	t_vec		ns;
 	t_vec		ss;
@@ -20,6 +18,11 @@ static inline t_vec world_to_local(t_hit hit, t_vec v) {
 	return v;
 }
 
+static inline t_vec local_to_world(t_world_hit hit, t_vec v) {
+	(void) hit;
+	return v;
+}
+
 t_vec
 	f_bxdf_diffuse(const GLOBAL t_world *world, const t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
@@ -32,7 +35,7 @@ t_vec
 }
 
 t_vec
-	f_bxdf_reflective(const GLOBAL t_world *world, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	f_bxdf_perfect_reflective(const GLOBAL t_world *world, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
 	(void) world;
 	(void) hit;
@@ -43,11 +46,14 @@ t_vec
 }
 
 t_vec
-	f_bxdf_dielectric_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+	f_bxdf_perfect_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	(void) ctx;
-	*wo = vec_neg(wi); /* perfect reflection */
-	return vec_mul(fresnel_dielectric_eval(z(wi)), vec_scale(tex_sample_id(world, bxdf->tex, hit.hit.uv), 1.0 / rt_abs(z(wi))));
+	(void)ctx;
+	(void) bxdf;
+	/**wo = vec_neg(wi);  perfect reflection */
+	*wo = vec_sub(wi, vec_scale(hit.relative_normal, 2.0 * vec_dot(wi, hit.relative_normal)));
+	*wo = vec_norm(vec_add(*wo, rt_random_in_sphere(&ctx->seed, 0.0, bxdf->fuzzy)));
+	return (tex_sample_id(world, bxdf->tex, hit.hit.uv));
 }
 
 t_vec
@@ -68,7 +74,7 @@ t_vec
 		return f_bxdf_diffuse(world, (const t_bxdf_diffuse *) bxdf, hit, wi, wo);
 	}
 	if (bxdf->type == RT_BXDF_REFLECTIVE) {
-		return f_bxdf_reflective(world, (const t_bxdf_reflective *) bxdf, hit, wi, wo);
+		return f_bxdf_perfect_reflective(world, (const t_bxdf_reflective *) bxdf, hit, wi, wo);
 	}
 	if (bxdf->type == RT_BXDF_REFRACTIVE) {
 		return f_bxdf_refractive(world, (const t_bxdf_refractive *) bxdf, hit, wi, wo);
@@ -88,8 +94,8 @@ t_vec
 	const t_bxdf		*bxdf;
 
 	ng = hit.hit.normal;
-	wi = world_to_local(hit.hit, wiw);
-	wo = world_to_local(hit.hit, wow);
+	wi = world_to_local(hit, wiw);
+	wo = world_to_local(hit, wow);
 	reflect = (vec_dot(wiw, ng) * vec_dot(wow, ng)) <= 0;
 	result = vec_0();
 	index = mat.bxdf_begin;
@@ -118,13 +124,29 @@ t_vec
 		return (f_bxdf_diffuse_sample(world, ctx, (const t_bxdf_diffuse *) bxdf, hit, wi, wo));
 	}
 	if (bxdf->type == RT_BXDF_REFLECTIVE) {
-		return (f_bxdf_dielectric_sample(world, ctx, (const t_bxdf_reflective *) bxdf, hit, wi, wo));
+		return (f_bxdf_perfect_reflective_sample(world, ctx, (const t_bxdf_reflective *) bxdf, hit, wi, wo));
 	}
 	return vec_0();
 }
 
-t_vec
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec *wow)
+int
+	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec *wow, t_vec *result)
 {
+	uint32_t		count;
+	uint32_t		idx;
+	t_vec			wi;
+	t_vec			wo;
+	const t_bxdf	*bxdf;
 
+	wi = world_to_local(hit, wiw);
+	count = mat.bxdf_end - mat.bxdf_begin;
+	if (count == 0)
+	{
+		return (0);
+	}
+	idx = rt_random(&ctx->seed) % count;
+	bxdf = get_bxdf_const(world, mat.bxdf_begin + idx);
+	*result = f_bxdf_sample(world, ctx, bxdf, hit, wi, &wo);
+	*wow = local_to_world(hit, wo);
+	return (1);
 }

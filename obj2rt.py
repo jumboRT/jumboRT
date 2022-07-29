@@ -272,7 +272,7 @@ for material in materials:
     if material[3] is not None:
         sys.stdout.write(f"    refractive 255,255,255 {str_float(material[3])}\n")
     if material[4] != (0, 0, 0):
-        sys.stdout.write(f"    emission {str_texture(material[4])}\n")
+        sys.stdout.write(f"    emission 1.0 {str_texture(material[4])}\n")
     sys.stdout.write(f"mat_end\n")
 for plane in planes:
     use_material(plane[2])
