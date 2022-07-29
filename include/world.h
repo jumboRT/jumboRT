@@ -207,10 +207,10 @@ struct s_world {
 uint64_t	world_primitive_size(uint8_t shape_type);
 uint64_t	world_bxdf_size(uint32_t bxdf_type);
 
-t_vec		f_bxdf_diffuse(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf_reflective(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf_refractive(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_refractive *bxdf, t_vec wi, t_vec wo);
-t_vec		f_bxdf(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf *bxdf, t_vec wi, t_vec wo);
+t_vec		f_bxdf_diffuse(const GLOBAL t_world *world, t_hit hit, const t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+t_vec		f_bxdf_reflective(const GLOBAL t_world *world, t_hit hit, const t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
+t_vec		f_bxdf_refractive(const GLOBAL t_world *world, t_hit hit, const t_bxdf_refractive *bxdf, t_vec wi, t_vec wo);
+t_vec		f_bxdf(const GLOBAL t_world *world, t_hit hit, const t_bxdf *bxdf, t_vec wi, t_vec wo);
 t_vec		f_bsdf(const GLOBAL t_world *world, t_material mat, t_hit hit, t_vec wiw, t_vec wow);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);

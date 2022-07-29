@@ -19,23 +19,21 @@ static inline t_vec world_to_local(t_hit hit, t_vec v) {
 }
 
 t_vec
-	f_bxdf_diffuse(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo)
+	f_bxdf_diffuse(const GLOBAL t_world *world, t_hit hit, const t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo)
 {
 	t_vec	color;
 
 	(void) wi;
 	(void) wo;
-	(void) mat;
 	color = tex_sample_id(world, bxdf->tex, hit.uv);
-	return (vec_scale(color, RT_1_PI));
+	return (vec_scale(color, RT_1_PI * 2));
 }
 
 t_vec
-	f_bxdf_reflective(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_reflective *bxdf, t_vec wi, t_vec wo)
+	f_bxdf_reflective(const GLOBAL t_world *world, t_hit hit, const t_bxdf_reflective *bxdf, t_vec wi, t_vec wo)
 {
 	(void) world;
 	(void) bxdf;
-	(void) mat;
 	(void) hit;
 	(void) wi;
 	(void) wo;
@@ -43,11 +41,10 @@ t_vec
 }
 
 t_vec
-	f_bxdf_refractive(const GLOBAL t_world *world, t_material mat, t_hit hit, const t_bxdf_refractive *bxdf, t_vec wi, t_vec wo)
+	f_bxdf_refractive(const GLOBAL t_world *world, t_hit hit, const t_bxdf_refractive *bxdf, t_vec wi, t_vec wo)
 {
 	(void) world;
 	(void) bxdf;
-	(void) mat;
 	(void) hit;
 	(void) wi;
 	(void) wo;
@@ -55,16 +52,16 @@ t_vec
 }
 
 t_vec
-	f_bxdf(const GLOBAL  t_world *world, t_material mat, t_hit hit, const t_bxdf *bxdf, t_vec wi, t_vec wo)
+	f_bxdf(const GLOBAL  t_world *world, t_hit hit, const t_bxdf *bxdf, t_vec wi, t_vec wo)
 {
 	if (bxdf->type == RT_BXDF_DIFFUSE) {
-		return f_bxdf_diffuse(world, mat, hit, (const t_bxdf_diffuse *) bxdf, wi, wo);
+		return f_bxdf_diffuse(world, hit, (const t_bxdf_diffuse *) bxdf, wi, wo);
 	}
 	if (bxdf->type == RT_BXDF_REFLECTIVE) {
-		return f_bxdf_reflective(world, mat, hit, (const t_bxdf_reflective *) bxdf, wi, wo);
+		return f_bxdf_reflective(world, hit, (const t_bxdf_reflective *) bxdf, wi, wo);
 	}
 	if (bxdf->type == RT_BXDF_REFRACTIVE) {
-		return f_bxdf_refractive(world, mat, hit, (const t_bxdf_refractive *) bxdf, wi, wo);
+		return f_bxdf_refractive(world, hit, (const t_bxdf_refractive *) bxdf, wi, wo);
 	}
 	return (vec_0());
 }
@@ -90,7 +87,7 @@ t_vec
 		bxdf = get_bxdf_const(world, index);
 		if ((reflect && (bxdf->type == RT_BXDF_DIFFUSE || bxdf->type == RT_BXDF_REFLECTIVE))
 					|| (!reflect && (bxdf->type == RT_BXDF_REFRACTIVE))) {
-			result = vec_add(result, f_bxdf(world, mat, hit, bxdf, wi, wo));
+			result = vec_add(result, f_bxdf(world, hit, bxdf, wi, wo));
 		}
 		index += world_bxdf_size(bxdf->type) / RT_BXDF_ALIGN;
 	}

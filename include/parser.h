@@ -37,6 +37,8 @@ struct s_parse_ctx {
 	t_material	*mat;
 	t_vector	materials;
 	t_vector	textures;
+	int			mat_use_set;
+	uint32_t	mat_use;
 };
 
 void			parser_init(t_parse_ctx *ctx, const char *filename);
@@ -81,6 +83,7 @@ void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_mat_use(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);

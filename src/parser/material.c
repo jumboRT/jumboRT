@@ -32,8 +32,8 @@ uint32_t
 	}
 }
 
-void
-	rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape)
+uint32_t
+	rt_material_int(t_parse_ctx *ctx, t_world *world)
 {
 	char		*keyword;
 	uint32_t	mat_index;
@@ -42,14 +42,30 @@ void
 	{
 		keyword = rt_keyword(ctx, "mat_");
 		mat_index = mat_by_name(world, ctx, keyword);
-		shape->data |= (uint32_t) mat_index << 8;
 		rt_free(keyword);
+		return (mat_index);
 	}
 	else
 	{
 		mat_index = mat_by_color(world, ctx, rt_color(ctx));
-		shape->data |= (uint32_t) mat_index << 8;
+		return (mat_index);
 	}
+}
+
+void
+	rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape)
+{
+	if (ctx->mat_use_set)
+		shape->data |= ctx->mat_use << 8;
+	else
+		shape->data |= rt_material_int(ctx, world) << 8;
+}
+
+void
+	rt_exec_mat_use(t_world *world, t_parse_ctx *ctx)
+{
+	ctx->mat_use_set = 1;
+	ctx->mat_use = rt_material_int(ctx, world);
 }
 
 void
