@@ -62,6 +62,7 @@ struct s_camera {
 	t_vec	dir;
 	t_vec	u;
 	t_vec	v;
+	FLOAT	fov;
 };
 
 struct s_vertex {
@@ -89,22 +90,20 @@ struct s_tex {
 
 struct s_bxdf {
 	uint32_t	type;
+	uint32_t	tex;
 };
 
 struct s_bxdf_diffuse {
 	t_bxdf		base;
-	uint32_t	tex;
 };
 
 struct s_bxdf_reflective {
 	t_bxdf		base;
-	uint32_t	tex;
 	FLOAT		fuzzy;
 };
 
 struct s_bxdf_refractive {
 	t_bxdf		base;
-	uint32_t	tex;
 	FLOAT		refractive_index;
 };
 
@@ -213,7 +212,7 @@ struct s_world {
 uint64_t	world_primitive_size(uint8_t shape_type);
 
 t_vec		f_bsdf(const GLOBAL t_world *world, t_material mat, t_world_hit hit, t_vec wiw, t_vec wow);
-int			f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec *wow, t_vec *result);
+int			f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow, t_vec *result);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);

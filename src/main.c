@@ -233,70 +233,70 @@ int
 	{
 		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 12);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90); /* TODO: use correct fov */
+		camera_set(work->state->world, camera, org, dir, camera->fov); /* TODO: use correct fov */
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_RIGHT)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 12);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_UP)
 	{
 		dir = vec_rotate(left, dir, RT_PI / 12);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_DOWN)
 	{
 		dir = vec_rotate(left, dir, -RT_PI / 12);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_S)
 	{
 		org = vec_add(org, vec_neg(dir));	    
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_W)
 	{
 		org = vec_add(org, dir);	    
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_A)
 	{
 		org = vec_add(org, left);
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, 90);
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_D)
 	{
 	    org = vec_add(org, vec_neg(left));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, 90);
+	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SPACE)
 	{
 	    org = vec_add(org, vec_z(1.0));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, 90);
+	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SHIFT)
 	{
 	    org = vec_add(org, vec_z(-1.0));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, 90);
+	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
 	return (0);
