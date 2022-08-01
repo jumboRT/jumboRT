@@ -25,7 +25,6 @@ __kernel void
 		world->bxdfs = ptr;
 }
 
-/* TODO: synchronize or duplicate context */
 __kernel void
 	work_kernel(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t begin, uint64_t end, GLOBAL t_result *results)
 {
@@ -72,3 +71,4 @@ t_result
 	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }
+

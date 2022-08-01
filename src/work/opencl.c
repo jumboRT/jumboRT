@@ -111,6 +111,10 @@ void
 		rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 		rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
+		status = clFlush(cl_ctx->command_queue[0]);
+		rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
+		status = clFlush(cl_ctx->command_queue[1]);
+		rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
 		cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 		rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
 		status = clSetEventCallback(read_event, CL_COMPLETE, work_callback, &cb_ctx[id]);
@@ -137,6 +141,10 @@ void
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
 			status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 			rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
+			status = clFlush(cl_ctx->command_queue[0]);
+			rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
+			status = clFlush(cl_ctx->command_queue[1]);
+			rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
 			cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 			rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
 			status = clSetEventCallback(read_event, CL_COMPLETE, work_callback, &cb_ctx[id]);
@@ -254,7 +262,7 @@ void
 	rt_assert(string != NULL, error);
 	cl_ctx->program = clCreateProgramWithBinary(cl_ctx->context, 1, &device, &length, (const unsigned char **) &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS, "clCreateProgramWithBinary failed");
-	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global", NULL, NULL);
+	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global -Werror", NULL, NULL);
 	if (status != CL_SUCCESS)
 	{
 		status = clGetProgramBuildInfo(cl_ctx->program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
@@ -320,8 +328,8 @@ void
 	context_props[2] = 0;
 	cl_ctx->context = clCreateContextFromType(context_props, CL_DEVICE_TYPE_DEFAULT, NULL, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateContextFromType failed");
-	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
-	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
+	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, 0);
+	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, 0);
 	work_create_program(cl_ctx, device);
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");
