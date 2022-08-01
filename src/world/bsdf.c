@@ -24,7 +24,7 @@ static inline t_vec local_to_world(t_world_hit hit, t_vec v) {
 }
 
 static t_vec
-	f_bxdf_diffuse(const GLOBAL t_world *world, const t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	f_bxdf_diffuse(const GLOBAL t_world *world, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
 	t_vec	color;
 
@@ -35,7 +35,7 @@ static t_vec
 }
 
 static t_vec
-	f_bxdf_perfect_reflective(const GLOBAL t_world *world, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	f_bxdf_perfect_reflective(const GLOBAL t_world *world, const GLOBAL t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
 	(void) world;
 	(void) hit;
@@ -46,7 +46,7 @@ static t_vec
 }
 
 static t_vec
-	f_bxdf_perfect_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+	f_bxdf_perfect_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
 	(void)ctx;
 	(void) bxdf;
@@ -57,7 +57,7 @@ static t_vec
 }
 
 static t_vec
-	f_bxdf_refractive(const GLOBAL t_world *world, const t_bxdf_refractive *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	f_bxdf_refractive(const GLOBAL t_world *world, const GLOBAL t_bxdf_refractive *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
 	(void) world;
 	(void) bxdf;
@@ -68,14 +68,14 @@ static t_vec
 }
 
 static t_vec
-	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
 	*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
 	return (f_bxdf_diffuse(world, bxdf, hit, wi, *wo));
 }
 
 static t_vec
-	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
+	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
 	t_vec	wi;
 	t_vec	wo;
@@ -84,21 +84,21 @@ static t_vec
 	wi = world_to_local(hit, wiw);
 	result = vec_0();
 	if (bxdf->type == RT_BXDF_DIFFUSE)
-		result = f_bxdf_diffuse_sample(world, ctx, (const t_bxdf_diffuse *) bxdf, hit, wi, &wo);
+		result = f_bxdf_diffuse_sample(world, ctx, (const GLOBAL t_bxdf_diffuse *) bxdf, hit, wi, &wo);
 	if (bxdf->type == RT_BXDF_REFLECTIVE)
-		result = f_bxdf_perfect_reflective_sample(world, ctx, (const t_bxdf_reflective *) bxdf, hit, wi, &wo);
+		result = f_bxdf_perfect_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wi, &wo);
 	*wow = local_to_world(hit, wo);
 	return result;
 }
 
 static t_vec
-	bxdf_color(const GLOBAL t_world *world, const t_bxdf *bxdf, t_vec2 uv)
+	bxdf_color(const GLOBAL t_world *world, const GLOBAL t_bxdf *bxdf, t_vec2 uv)
 {
 	return (tex_sample_id(world, bxdf->tex, uv));
 }
 
 static FLOAT
-	bxdf_weight(const GLOBAL t_world *world, const t_bxdf *bxdf, t_vec color, t_vec2 uv)
+	bxdf_weight(const GLOBAL t_world *world, const GLOBAL t_bxdf *bxdf, t_vec color, t_vec2 uv)
 {
 	return (vec_dot(color, bxdf_color(world, bxdf, uv)));
 }
@@ -106,9 +106,9 @@ static FLOAT
 static FLOAT
 	bsdf_total_weight(const GLOBAL t_world *world, t_material mat, t_world_hit hit, t_vec color)
 {
-	uint32_t		idx;
-	FLOAT			result;
-	const t_bxdf	*bxdf;
+	uint32_t			idx;
+	FLOAT				result;
+	const GLOBAL t_bxdf	*bxdf;
 
 	result = 0.0;
 	idx = mat.bxdf_begin;
@@ -123,11 +123,11 @@ static FLOAT
 int
 	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow, t_vec *result)
 {
-	uint32_t		idx;
-	FLOAT			total_weight;
-	FLOAT			rand;
-	FLOAT			weight;
-	const t_bxdf	*bxdf;
+	uint32_t			idx;
+	FLOAT				total_weight;
+	FLOAT				rand;
+	FLOAT				weight;
+	const GLOBAL t_bxdf	*bxdf;
 
 	total_weight = bsdf_total_weight(world, mat, hit, color);
 	*result = vec_0();
