@@ -2,7 +2,6 @@
 
 #if defined RT_VECTORIZE
 
-__attribute__ ((const))
 t_vec
 	vec_min(t_vec a, t_vec b)
 {
@@ -18,7 +17,6 @@ t_vec
 	return (conv_a.vec);
 }
 
-__attribute__ ((const))
 t_vec
 	vec_max(t_vec a, t_vec b)
 {
@@ -34,7 +32,6 @@ t_vec
 	return (conv_a.vec);
 }
 
-__attribute__ ((const))
 t_vec
 	vec_clamp(t_vec v, FLOAT min, FLOAT max)
 {

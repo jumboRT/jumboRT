@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 t_ray
 	ray(t_vec org, t_vec dir)
 {
@@ -11,7 +10,6 @@ t_ray
 	return (result);
 }
 
-__attribute__ ((const))
 t_vec
 	ray_at(t_ray ray, FLOAT t)
 {
