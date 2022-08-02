@@ -20,7 +20,8 @@
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
 # define RT_MAT_HAS_ALPHA 4
-# define RT_MAT_HAS_BUMP 16
+# define RT_MAT_HAS_NORMAL 16
+# define RT_MAT_HAS_BUMP 32
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -132,6 +133,7 @@ struct s_material {
 	uint32_t	emission;
 	FLOAT		brightness;
 	uint32_t	alpha_tex;
+	uint32_t	normal_map;
 	uint32_t	bump_map;
 };
 
@@ -179,6 +181,7 @@ struct s_accel_node {
 struct s_world_hit {
 	t_hit						hit;
 	t_vec						relative_normal;
+	t_vec						geometric_normal;
 	const GLOBAL t_primitive	*prim;
 };
 

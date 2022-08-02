@@ -85,5 +85,6 @@ int
 	hit->relative_normal = hit->hit.normal;
 	if (vec_dot(hit->relative_normal, ray.dir) > 0)
 		hit->relative_normal = vec_neg(hit->relative_normal);
+	hit->geometric_normal = hit->relative_normal;
 	return (did_hit);
 }

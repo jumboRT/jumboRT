@@ -167,6 +167,16 @@ void
 }
 
 void
+	rt_exec_normal(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->normal_map = rt_texture(world, ctx);
+	ctx->mat->flags |= RT_MAT_HAS_NORMAL;
+}
+
+void
 	rt_exec_bump(t_world *world, t_parse_ctx *ctx)
 {
 	(void) world;
