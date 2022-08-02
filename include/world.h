@@ -20,6 +20,7 @@
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
 # define RT_MAT_HAS_ALPHA 4
+# define RT_MAT_HAS_BUMP 16
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -131,6 +132,7 @@ struct s_material {
 	uint32_t	emission;
 	FLOAT		brightness;
 	uint32_t	alpha_tex;
+	uint32_t	bump_map;
 };
 
 struct s_shape_triangle {
@@ -242,6 +244,8 @@ t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat,
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
+FLOAT		tex_samplef_id_offset(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv, t_vec2 poffset);
+t_vec		tex_sample_offset(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv, t_vec2 poffset);
 t_vec		tex_sample_id(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv);
 t_vec		tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv);
 

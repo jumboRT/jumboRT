@@ -135,6 +135,7 @@ FLOAT		xyz(t_vec v, int i);
 t_vec		vec_set(t_vec v, int axis, FLOAT val);
 
 t_vec		vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w);
+t_vec		vec3(FLOAT x, FLOAT y, FLOAT z);
 t_vec		vec_0(void);
 t_vec		vec_x(FLOAT x);
 t_vec		vec_y(FLOAT y);
