@@ -23,6 +23,7 @@ const static t_directive	directives[] = {
 	{ "refractive", rt_exec_refractive },
 	{ "emission", rt_exec_emission },
 	{ "smooth", rt_exec_smooth },
+	{ "alpha", rt_exec_alpha },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };

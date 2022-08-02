@@ -14,13 +14,16 @@ t_vec
 	tail = vec(0, 0, 0, 0);
 	while (depth > 0 && world_intersect(world, ray, &hit))
 	{
-		mat = get_mat_const(world, prim_mat(hit.prim));
-		if (mat->flags & RT_MAT_EMITTER)
-			tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
-		bsdf = f_bsdf_sample(world, ctx, *mat, hit, ray.dir, head, &new_dir);
-		head = vec_mul(head, bsdf);
 		ray.org = hit.hit.pos;
-		ray.dir = new_dir;
+		mat = get_mat_const(world, prim_mat(hit.prim));
+		if ((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv)))
+		{
+			if (mat->flags & RT_MAT_EMITTER)
+				tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
+			bsdf = f_bsdf_sample(world, ctx, *mat, hit, ray.dir, head, &new_dir);
+			head = vec_mul(head, bsdf);
+			ray.dir = new_dir;
+		}
 		depth -= 1;
 	}
 	return (tail);

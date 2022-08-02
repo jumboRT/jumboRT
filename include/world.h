@@ -19,6 +19,7 @@
 
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
+# define RT_MAT_HAS_ALPHA 4
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -129,6 +130,7 @@ struct s_material {
 	uint32_t	bxdf_end;
 	uint32_t	emission;
 	FLOAT		brightness;
+	uint32_t	alpha_tex;
 };
 
 struct s_shape_triangle {
