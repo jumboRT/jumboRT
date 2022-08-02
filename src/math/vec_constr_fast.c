@@ -13,6 +13,12 @@ t_vec
 	conv.elem[3] = w;
 	return (conv.vec);
 }
+
+t_vec
+	vec3(FLOAT x, FLOAT y, FLOAT z)
+{
+	return (vec(x, y, z, 0.0));
+}
 	
 t_vec
 	vec_0(void)

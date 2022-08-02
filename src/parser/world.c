@@ -24,6 +24,7 @@ const static t_directive	directives[] = {
 	{ "emission", rt_exec_emission },
 	{ "smooth", rt_exec_smooth },
 	{ "alpha", rt_exec_alpha },
+	{ "bump", rt_exec_bump },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };
