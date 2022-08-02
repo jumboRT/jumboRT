@@ -15,6 +15,7 @@
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
 # define RT_BXDF_REFRACTIVE		2
+# define RT_BXDF_MF_REFLECTIVE	3
 
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
@@ -44,6 +45,7 @@ typedef struct s_bxdf				t_bxdf;
 typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
 typedef struct s_bxdf_reflective	t_bxdf_reflective;
 typedef struct s_bxdf_refractive	t_bxdf_refractive;
+typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef union u_bxdf_any			t_bxdf_any;
 
 struct s_context {
@@ -107,11 +109,18 @@ struct s_bxdf_refractive {
 	FLOAT		refractive_index;
 };
 
+struct s_bxdf_mf_reflection {
+	t_bxdf		base;
+	FLOAT		alphax;
+	FLOAT		alphay;
+};
+
 union u_bxdf_any {
-	t_bxdf				base;
-	t_bxdf_diffuse		diffuse;
-	t_bxdf_reflective	reflective;
-	t_bxdf_refractive	refractive;
+	t_bxdf					base;
+	t_bxdf_diffuse			diffuse;
+	t_bxdf_reflective		reflective;
+	t_bxdf_refractive		refractive;
+	t_bxdf_mf_reflection	mf_reflective;
 };
 
 struct s_material {

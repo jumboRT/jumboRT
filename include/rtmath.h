@@ -99,12 +99,11 @@ struct s_cone {
 struct s_hit {
 	t_vec	pos;
 	t_vec	normal;
-/*
 	t_vec	dpdu;
 	t_vec	dpdv;
 	t_vec	dndu;
 	t_vec	dndv;
-*/
+	t_vec	ss;
 	t_vec2	uv;
 	FLOAT	t;
 };
@@ -122,6 +121,8 @@ FLOAT		rt_min(FLOAT a, FLOAT b);
 FLOAT		rt_max(FLOAT a, FLOAT b);
 FLOAT		rt_pow(FLOAT x, FLOAT y);
 FLOAT		rt_mod(FLOAT a, FLOAT b);
+FLOAT		rt_exp(FLOAT arg);
+FLOAT		rt_clamp(FLOAT arg, FLOAT min, FLOAT max);
 
 int			float_eq(FLOAT a, FLOAT b, FLOAT error) __attribute__ ((const));
 
@@ -164,6 +165,12 @@ t_vec		vec_add(t_vec a, t_vec b) __attribute__ ((const));
 t_vec		vec_sub(t_vec a, t_vec b) __attribute__ ((const));
 t_vec		vec_mul(t_vec a, t_vec b) __attribute__ ((const));
 t_vec		vec_norm(t_vec v) __attribute__ ((const));
+
+t_vec2		vec2_neg(t_vec2 v) __attribute__ ((const));
+t_vec2		vec2_scale(t_vec2 v, FLOAT s) __attribute__ ((const));
+t_vec2		vec2_add(t_vec2 a, t_vec2 b) __attribute__ ((const));
+t_vec2		vec2_sub(t_vec2 a, t_vec2 b) __attribute__ ((const));
+t_vec2		vec2_mul(t_vec2 a, t_vec2 b) __attribute__ ((const));
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec		vec_norm2(t_vec v) __attribute__ ((const));
 
