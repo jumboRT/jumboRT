@@ -34,6 +34,8 @@ t_vec
 		mat = get_mat_const(world, prim_mat(hit.prim));
 		if ((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv)))
 		{
+			if (mat->flags & RT_MAT_HAS_NORMAL)
+				hit.hit.normal = vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv));
 			if (mat->flags & RT_MAT_HAS_BUMP)
 				hit.hit.normal = vec_norm(vec_add(hit.hit.normal, bump(world, mat->bump_map, hit.hit.uv)));
 			hit.relative_normal = hit.hit.normal;

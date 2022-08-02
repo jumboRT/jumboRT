@@ -267,7 +267,12 @@ static t_vec
 static t_vec
 	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+	while (1)
+	{
+		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+		if (vec_dot(*wo, hit.geometric_normal) >= 0)
+			break;
+	}
 	*wo = world_to_local(hit, *wo);
 	return (f_bxdf_diffuse(world, bxdf, hit, wi, *wo));
 }

@@ -86,11 +86,11 @@ def mjoosten_material(color, name):
         if material[0] == full_name:
             return full_name
     if name == "mirror":
-        materials.append((full_name, (255, 255, 255), 0, None, (0, 0, 0)))
+        materials.append((full_name, (255, 255, 255), 0, None, (0, 0, 0), None))
     elif name == "glass":
-        materials.append((full_name, (255, 255, 255), None, 1.5, (0, 0, 0)))
+        materials.append((full_name, (255, 255, 255), None, 1.5, (0, 0, 0), None))
     elif name == "metal":
-        materials.append((full_name, color, 0.1, None, (0, 0, 0)))
+        materials.append((full_name, color, 0.1, None, (0, 0, 0), None))
     else:
         assert False
     return full_name
@@ -223,7 +223,7 @@ def load_obj(filename, flip_textures):
                         if len(line) == 0:
                             continue
                         if line[0] == "newmtl":
-                            materials.append((f"mat_{line[1]}", (0, 0, 0), None, None, (0, 0, 0)))
+                            materials.append((f"mat_{line[1]}", (0, 0, 0), None, None, (0, 0, 0), None))
                         if line[0] == "Ka":
                             mat = list(materials[-1])
                             if type(mat[4]) is not str:
@@ -244,6 +244,12 @@ def load_obj(filename, flip_textures):
                             path = os.path.join(os.path.dirname(filename), line[1])
                             mat[1] = add_texture(path, flip_textures)
                             materials[-1] = tuple(mat)
+                        if line[0] == "map_Disp":
+                            mat = list(materials[-1])
+                            path = os.path.join(os.path.dirname(filename), line[1])
+                            mat[5] = add_texture(path, flip_textures)
+                            materials[-1] = tuple(mat)
+
 
 if len(sys.argv) < 3:
     sys.stderr.write(f"usage: {sys.argv[0]} [format] [filename]\n")
@@ -273,6 +279,8 @@ for material in materials:
         sys.stdout.write(f"    refractive 255,255,255 {str_float(material[3])}\n")
     if material[4] != (0, 0, 0):
         sys.stdout.write(f"    emission 1.0 {str_texture(material[4])}\n")
+    if material[5] != None:
+        sys.stdout.write(f"    normal {str_texture(material[5])}\n")
     sys.stdout.write(f"mat_end\n")
 for plane in planes:
     use_material(plane[2])
