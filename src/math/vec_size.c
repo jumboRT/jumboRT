@@ -2,21 +2,18 @@
 
 #if !defined RT_VECTORIZE
 
-__attribute__ ((const))
 FLOAT
 	vec_mag2(t_vec a)
 {
 	return (vec_dot(a, a));
 }
 
-__attribute__ ((const))
 FLOAT
 	vec_mag(t_vec a)
 {
 	return (rt_sqrt(vec_mag2(a)));
 }
 
-__attribute__ ((const))
 t_vec
 	vec_norm(t_vec v)
 {
@@ -24,7 +21,6 @@ t_vec
 }
 
 /* Safe version of vec_norm that doesn't divide by 0 */
-__attribute__ ((const))
 t_vec
 	vec_norm2(t_vec v)
 {

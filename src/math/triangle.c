@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 t_triangle
 	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n0, t_vec n1, t_vec n2)
 {

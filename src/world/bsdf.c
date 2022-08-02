@@ -120,8 +120,8 @@ static FLOAT
 	return (result);
 }
 
-int
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow, t_vec *result)
+t_vec
+	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
 {
 	uint32_t			idx;
 	FLOAT				total_weight;
@@ -130,7 +130,6 @@ int
 	const GLOBAL t_bxdf	*bxdf;
 
 	total_weight = bsdf_total_weight(world, mat, hit, color);
-	*result = vec_0();
 	idx = mat.bxdf_begin;
 	rand = rt_random_float_range(&ctx->seed, 0.0, total_weight);
 	while (idx < mat.bxdf_end)
@@ -141,12 +140,9 @@ int
 		{
 			rand -= weight;
 			if (rand <= 0)
-			{
-				*result = vec_scale(f_bxdf_sample(world, ctx, bxdf, hit, wiw, wow), (weight) / total_weight);
-				return (1);
-			}
+				return (vec_scale(f_bxdf_sample(world, ctx, bxdf, hit, wiw, wow), (weight) / total_weight));
 		}
 		idx++;
 	}
-	return (0);
+	return (vec(0, 0, 0, 0));
 }

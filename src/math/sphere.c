@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 t_sphere
 	sphere(t_vec pos, FLOAT radius)
 {
@@ -11,7 +10,6 @@ t_sphere
 	return (result);
 }
 
-__attribute__ ((const))
 static t_vec2
 	sphere_uv_at(t_vec point)
 {
