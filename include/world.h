@@ -20,6 +20,7 @@
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
 # define RT_MAT_HAS_ALPHA 4
+# define RT_MAT_HAS_VOLUME 8
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -128,9 +129,12 @@ struct s_material {
 	uint32_t	flags;
 	uint32_t	bxdf_begin;
 	uint32_t	bxdf_end;
+	uint32_t	volume_bxdf_begin;
+	uint32_t	volume_bxdf_end;
+	uint32_t	alpha_tex;
 	uint32_t	emission;
 	FLOAT		brightness;
-	uint32_t	alpha_tex;
+	FLOAT		density;
 };
 
 struct s_shape_triangle {
@@ -222,8 +226,7 @@ struct s_world {
 
 uint64_t	world_primitive_size(uint8_t shape_type);
 
-t_vec	f_bsdf(const GLOBAL t_world *world, t_material mat, t_world_hit hit, t_vec wiw, t_vec wow);
-t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
+t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);

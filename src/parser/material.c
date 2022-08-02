@@ -139,7 +139,6 @@ void
 void
 	rt_exec_emission(t_world *world, t_parse_ctx *ctx)
 {
-	(void) world;
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->brightness = rt_float(ctx);
@@ -159,11 +158,22 @@ void
 void
 	rt_exec_alpha(t_world *world, t_parse_ctx *ctx)
 {
-	(void) world;
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->alpha_tex = rt_texture(world, ctx);
 	ctx->mat->flags |= RT_MAT_HAS_ALPHA;
+}
+
+void
+	rt_exec_volume(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->density = rt_float(ctx);
+	ctx->mat->flags |= RT_MAT_HAS_VOLUME;
+	ctx->mat->volume_bxdf_begin = world->bxdfs_count;
+	ctx->mat->volume_bxdf_end = world->bxdfs_count;
 }
 
 void
