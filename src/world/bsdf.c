@@ -5,7 +5,7 @@ static inline t_vec world_to_local(t_world_hit hit, t_vec v) {
 	t_vec	ss;
 	t_vec	ts;
 
-	ns = hit.relative_normal; /* This is probably not correct, called 'shading normal' in pbrt */
+	ns = hit.relative_normal;
 	ss = vec_norm(hit.hit.dpdu);
 	ts = vec_cross(ns, ss);
 	return (vec(vec_dot(v, ss),
@@ -20,7 +20,7 @@ static inline t_vec local_to_world(t_world_hit hit, t_vec v) {
 	t_vec	ss;
 	t_vec	ts;
 
-	ns = hit.relative_normal; /* This is probably not correct, called 'shading normal' in pbrt */
+	ns = hit.relative_normal;
 	ss = vec_norm(hit.hit.dpdu);
 	ts = vec_cross(ns, ss);
 	return (vec_norm(vec(

@@ -157,6 +157,16 @@ void
 }
 
 void
+	rt_exec_alpha(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->alpha_tex = rt_texture(world, ctx);
+	ctx->mat->flags |= RT_MAT_HAS_ALPHA;
+}
+
+void
 	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)
 {
 	(void) world;
