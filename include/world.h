@@ -23,6 +23,8 @@
 # define RT_MAT_HAS_NORMAL 16
 # define RT_MAT_HAS_BUMP 32
 
+# define RT_MAX_DEPTH 3
+
 /* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
@@ -243,6 +245,8 @@ const GLOBAL t_bxdf			*get_bxdf_const(const GLOBAL t_world *world, uint32_t inde
 GLOBAL t_bxdf				*get_bxdf(GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
 t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
+t_vec				local_to_world(t_world_hit hit, t_vec v);
+t_vec				world_to_local(t_world_hit hit, t_vec v);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);

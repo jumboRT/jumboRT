@@ -27,6 +27,8 @@
 #define GEN_CYLINDER_CHANCE (3.0 / 3)
 #define GEN_CONE_CHANCE (0.0 / 3)
 
+#define FLY_SPEED 25
+
 void
 	world_gen_sphere(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
 {
@@ -259,42 +261,42 @@ int
 	}
 	if (keycode == RT_KEY_S)
 	{
-		org = vec_add(org, vec_neg(dir));	    
+		org = vec_add(org, vec_scale(vec_neg(dir), FLY_SPEED));	    
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_W)
 	{
-		org = vec_add(org, dir);	    
+		org = vec_add(org, vec_scale(dir, FLY_SPEED));	    
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_A)
 	{
-		org = vec_add(org, left);
+		org = vec_add(org, vec_scale(left, FLY_SPEED));
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_D)
 	{
-	    org = vec_add(org, vec_neg(left));
+	    org = vec_add(org, vec_scale(vec_neg(left), FLY_SPEED));
 	    rt_work_lock(work);
 	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SPACE)
 	{
-	    org = vec_add(org, vec_z(1.0));
+	    org = vec_add(org, vec_z(FLY_SPEED));
 	    rt_work_lock(work);
 	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SHIFT)
 	{
-	    org = vec_add(org, vec_z(-1.0));
+	    org = vec_add(org, vec_neg(vec_z(FLY_SPEED)));
 	    rt_work_lock(work);
 	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);

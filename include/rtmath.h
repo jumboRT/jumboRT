@@ -159,19 +159,19 @@ FLOAT		vec_dot(t_vec a, t_vec b);
 FLOAT		vec_mag2(t_vec a);
 FLOAT		vec_mag(t_vec a);
 
-t_vec		vec_neg(t_vec v) __attribute__ ((const));
-t_vec		vec_scale(t_vec v, FLOAT s) __attribute__ ((const));
-t_vec		vec_cross(t_vec a, t_vec b) __attribute__ ((const));
-t_vec		vec_add(t_vec a, t_vec b) __attribute__ ((const));
-t_vec		vec_sub(t_vec a, t_vec b) __attribute__ ((const));
-t_vec		vec_mul(t_vec a, t_vec b) __attribute__ ((const));
-t_vec		vec_norm(t_vec v) __attribute__ ((const));
+t_vec		vec_neg(t_vec v);
+t_vec		vec_scale(t_vec v, FLOAT s);
+t_vec		vec_cross(t_vec a, t_vec b);
+t_vec		vec_add(t_vec a, t_vec b);
+t_vec		vec_sub(t_vec a, t_vec b);
+t_vec		vec_mul(t_vec a, t_vec b);
+t_vec		vec_norm(t_vec v);
 
-t_vec2		vec2_neg(t_vec2 v) __attribute__ ((const));
-t_vec2		vec2_scale(t_vec2 v, FLOAT s) __attribute__ ((const));
-t_vec2		vec2_add(t_vec2 a, t_vec2 b) __attribute__ ((const));
-t_vec2		vec2_sub(t_vec2 a, t_vec2 b) __attribute__ ((const));
-t_vec2		vec2_mul(t_vec2 a, t_vec2 b) __attribute__ ((const));
+t_vec2		vec2_neg(t_vec2 v);
+t_vec2		vec2_scale(t_vec2 v, FLOAT s);
+t_vec2		vec2_add(t_vec2 a, t_vec2 b);
+t_vec2		vec2_sub(t_vec2 a, t_vec2 b);
+t_vec2		vec2_mul(t_vec2 a, t_vec2 b);
 /* Safe version of vec_norm that doesn't divide by 0 */
 t_vec		vec_norm2(t_vec v);
 
