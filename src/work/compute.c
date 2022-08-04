@@ -71,7 +71,7 @@ t_result
 	t_ray		ray;
 
 	ray = project(world, ctx, index);
-	result.color = world_trace(world, ctx, ray, 8); // TODO: RT_MAX_DEPTH
+	result.color = world_trace(world, ctx, ray, RT_MAX_DEPTH); // TODO: RT_MAX_DEPTH
 	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }

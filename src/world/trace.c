@@ -35,13 +35,18 @@ t_vec
 		if ((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv)))
 		{
 			if (mat->flags & RT_MAT_HAS_NORMAL)
-				hit.hit.normal = vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv));
+			{
+				hit.relative_normal = local_to_world(hit, vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
+				/*hit.relative_normal = (vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
+				hit.relative_normal = vec_neg(local_to_world(hit, hit.relative_normal));*/
+			}
+			/*return vec(rt_abs(x(hit.relative_normal)), rt_abs(y(hit.relative_normal)), rt_abs(z(hit.relative_normal)), 0);*/
+			/*
 			if (mat->flags & RT_MAT_HAS_BUMP)
-				hit.hit.normal = vec_norm(vec_add(hit.hit.normal, bump(world, mat->bump_map, hit.hit.uv)));
-			hit.relative_normal = hit.hit.normal;
+				hit.hit.normal = vec_norm(vec_add(hit.hit.normal, local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv))));
+			*/
 			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
-				hit.relative_normal = vec_neg(hit.hit.normal);
-				/*hit.relative_normal = vec_norm(vec_add(hit.relative_normal, bump(world, mat->bump_map, hit.hit.uv)));*/
+				hit.relative_normal = vec_neg(hit.relative_normal);
 			if (mat->flags & RT_MAT_EMITTER)
 				tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
 			bsdf = f_bsdf_sample(world, ctx, *mat, hit, ray.dir, head, &new_dir);
