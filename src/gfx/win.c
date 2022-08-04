@@ -62,6 +62,11 @@ static int color_at(const t_image *img, size_t index)
 	final_color = vec(1.0, 0.0, 1.0, 1.0);
 	if (pixel.samples != 0)
 		final_color = vec_scale(pixel.color, 1.0 / pixel.samples);
+	final_color = vec(
+			rt_sqrt(x(final_color)),
+			rt_sqrt(y(final_color)),
+			rt_sqrt(z(final_color)),
+			0.0);
 	final_color = vec_clamp(vec_scale(final_color, 255.0), 0, 255.0);
 	return (to_color(
 				(unsigned char) x(final_color),

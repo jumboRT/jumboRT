@@ -43,8 +43,8 @@ static const GLOBAL t_material
 	t2 = *max_t;
 	while (volume_index < volume_size)
 	{
-		t = rt_random_float(&ctx->seed) * t2;
-		if (rt_random_float(&ctx->seed) < volumes[volume_index]->density && t < *max_t)
+		t = rt_log(1 - rt_random_float(&ctx->seed)) / -volumes[volume_index]->density;
+		if (t < t2)
 		{
 			*max_t = t;
 			mat = volumes[volume_index];
@@ -74,7 +74,7 @@ t_vec
 		if (mat != 0)
 		{
 			ray.org = ray_at(ray, hit.hit.t);
-			hit.hit.normal = vec_norm(rt_random_in_sphere(&ctx->seed, 0, 1));
+			hit.hit.normal = rt_random_on_hemi(&ctx->seed, ray.dir);
 			hit.relative_normal = hit.hit.normal;
 			head = vec_mul(head, f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, ray.dir, head, &new_dir));
 			ray.dir = new_dir;

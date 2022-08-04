@@ -6,7 +6,7 @@ MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c p
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
-							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c
+							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c log.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
 GFX_FILES				:= win.c
@@ -48,6 +48,7 @@ OPENCL_FILES			:= \
 	src/math/pow.c \
 	src/math/mod.c \
 	src/math/exp.c \
+	src/math/log.c \
 	src/world/intersect.c \
 	src/world/intersect_prim.c \
 	src/world/size.c \
