@@ -1,5 +1,6 @@
 #include "util.h"
 #include "state.h"
+#include "rtmath.h"
 #include <ft_printf.h>
 
 static size_t 
@@ -13,9 +14,14 @@ static size_t
 {
 	t_vec	final_color;
 
-	final_color = vec(1.0, 0.0, 1.0);
+	final_color = vec(1.0, 0.0, 1.0, 0.0);
 	if (pixel->samples != 0)
 		final_color = vec_scale(pixel->color, 1.0 / pixel->samples);
+	final_color = vec(
+			rt_sqrt(x(final_color)),
+			rt_sqrt(y(final_color)),
+			rt_sqrt(z(final_color)),
+			0.0);
 	final_color = vec_clamp(vec_scale(final_color, 255.0), 0, 255.0);
 	return (ft_sprintf(dest, "%.3d\t%.3d\t%.3d", (int) x(final_color), (int) y(final_color), (int) z(final_color)));
 }
