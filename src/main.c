@@ -222,15 +222,16 @@ int
 	work = ctx;
 	if (keycode == RT_KEY_ESC || keycode == RT_KEY_Q)
 		rt_exit(work);
-	if (keycode == RT_KEY_R)
-	{
-		rt_work_lock(work);
-		rt_work_unlock(work);
-	}
 	camera = &work->state->world->camera;
 	org = camera->org;
 	dir = work->state->world->camera.dir;
 	left = vec_norm(vec_cross(dir, vec_z(1.0)));
+	if (keycode == RT_KEY_R)
+	{
+		rt_work_lock(work);
+		printf("%f %f %f\n", x(org), y(org), z(org));
+		rt_work_unlock(work);
+	}
 	if (keycode == RT_KEY_LEFT)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 12);

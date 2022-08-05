@@ -1,0 +1,1942 @@
+# Blender MTL File: 'mirage.blend'
+# Material Count: 171
+
+newmtl brick/brick_ext_04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/brick_brick_ext_04.png
+
+newmtl brick/infwllg
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/brick_infwllg.png
+
+newmtl brick/infwllg_overlay_a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/brick_infwllg_overlay_a.png
+map_d mirage_textures/brick_infwllg_overlay_a.png
+
+newmtl concrete/blend_blacktopsand_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl concrete/concrete_ext_07
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/concrete_concrete_ext_07.png
+
+newmtl concrete/concrete_floor_04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/concrete_concrete_floor_04.png
+
+newmtl concrete/street_overlay_parkingstripe
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/concrete_street_overlay_parkingstripe.png
+map_d mirage_textures/concrete_street_overlay_parkingstripe.png
+
+newmtl cs_havana/door01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_havana_door01.png
+
+newmtl cs_italy/hpe_plaster_tan_wall
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_italy_hpe_plaster_tan_wall.png
+
+newmtl cs_italy/hpe_plaster_tint_tan
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl cs_italy/hpe_plaster_trim_light
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_italy_hpe_plaster_trim_light.png
+
+newmtl cs_italy/hpe_plaster_yellow_wall
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_italy_hpe_plaster_yellow_wall.png
+
+newmtl cs_italy/plasterwall04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_italy_plasterwall04.png
+
+newmtl cs_italy/tileroof01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/cs_italy_tileroof01.png
+
+newmtl de_dust/door011
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_door011.png
+
+newmtl de_dust/door02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_door02.png
+
+newmtl de_dust/door04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_door04.png
+
+newmtl de_dust/dusandwlltrim3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_dust/dutile1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_dust/marketwall02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_marketwall02.png
+
+newmtl de_dust/marketwall05a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_marketwall05a.png
+
+newmtl de_dust/residwall04a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_residwall04a.png
+
+newmtl de_dust/sitebwall07a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_sitebwall07a.png
+
+newmtl de_dust/sitebwall08a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_sitebwall08a.png
+
+newmtl de_dust/sitebwall13a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_sitebwall13a.png
+
+newmtl de_dust/stonestep01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_stonestep01.png
+
+newmtl de_dust/stonestep02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_stonestep02.png
+
+newmtl de_dust/stonestep03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_stonestep03.png
+
+newmtl de_dust/stonestep04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_stonestep04.png
+
+newmtl de_dust/tilefloor01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_tilefloor01.png
+
+newmtl de_dust/tilefloor02
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_dust_tilefloor02.png
+map_Ks mirage_textures/de_dust_tilefloor02_normal.png
+
+newmtl de_mirage/base/de_mirage_base_trim_ver1_diffuse_
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_base_base_trim_ver1_diffuse.png
+
+newmtl de_mirage/base/de_mirage_base_ver1_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/base/de_mirage_mid_ver1_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_base_base_mid_ver1_diffuse.png
+
+newmtl de_mirage/base/de_mirage_top_ver1_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/base/de_mirage_top_ver1_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_base_base_top_ver1_diffuse.png
+
+newmtl de_mirage/brick/de_mirage_brick_ver1_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/brick/de_mirage_brick_ver1_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_brick_brick_ver1_diffuse.png
+
+newmtl de_mirage/brick/de_mirage_brick_ver1pl_blend_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/brick/de_mirage_brick_ver2_blend2_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/brick/de_mirage_brick_ver2_blend_update
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/decals/poster_a_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_poster_a_decal.png
+map_d mirage_textures/de_mirage_decals_poster_a_decal.png
+
+newmtl de_mirage/decals/poster_b_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_poster_b_decal.png
+map_d mirage_textures/de_mirage_decals_poster_b_decal.png
+
+newmtl de_mirage/decals/poster_c_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_poster_c_decal.png
+map_d mirage_textures/de_mirage_decals_poster_c_decal.png
+
+newmtl de_mirage/decals/sign_b_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_sign_b_decal.png
+map_d mirage_textures/de_mirage_decals_sign_b_decal.png
+
+newmtl de_mirage/decals/sign_c_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_sign_c_decal.png
+map_d mirage_textures/de_mirage_decals_sign_c_decal.png
+
+newmtl de_mirage/decals/wall_worna_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_wall_worna_decal.png
+map_d mirage_textures/de_mirage_decals_wall_worna_decal.png
+
+newmtl de_mirage/decals/window_a_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_window_a_decal.png
+map_d mirage_textures/de_mirage_decals_window_a_decal.png
+
+newmtl de_mirage/decals/window_b_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_decals_window_b_decal.png
+map_d mirage_textures/de_mirage_decals_window_b_decal.png
+
+newmtl de_mirage/doors/door_a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_doors_doortexture_a_diffuse.png
+
+newmtl de_mirage/doors/door_b
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_doors_doortexture_b_diffuse.png
+
+newmtl de_mirage/doors/door_c
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_doors_doortexture_c_diffuse.png
+
+newmtl de_mirage/ground/de_mirage_ground_tilec_blend_diffuse_
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/ground/de_mirage_ground_tileh_blend2_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/ground/de_mirage_ground_tileh_blend_diffuse_
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/ground/de_mirage_tilef_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_ground_ground_tilef_diffuse.png
+
+newmtl de_mirage/hr_mirage/mirage_plaster_1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_hr_mirage_mirage_plaster_1.png
+
+newmtl de_mirage/hr_mirage/mirage_plaster_2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_hr_mirage_mirage_plaster_2.png
+
+newmtl de_mirage/hr_mirage/mirage_plaster_blend_3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/marble/marble_01
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Ks mirage_textures/de_mirage_marble_de_mirage_marble_01_normal.png
+
+newmtl de_mirage/plaster/de_mirage_plaster_blue1_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/plaster/de_mirage_plaster_blue1_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_plaster_plaster_blue1_diffuse.png
+
+newmtl de_mirage/plaster/de_mirage_plaster_salmon1_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/plaster/de_mirage_plaster_salmon1_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_plaster_plaster_salmon1_diffuse.png
+
+newmtl de_mirage/plaster_worn/de_mirage_plaster_brick4_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_plaster_worn_plaster_brick4_diffuse.png
+
+newmtl de_mirage/tile/de_mirage_tile_ver4_blend
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl de_mirage/tile/de_mirage_tile_ver4_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_tile_tile_ver4_diffuse.png
+
+newmtl de_mirage/wood/de_mirage_wood_ver3_diffuse
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_mirage_wood_wood_ver3_diffuse.png
+
+newmtl de_nuke/nuke_metaltrims_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_nuke_nuke_metaltrims_01.png
+
+newmtl de_train/train_cement_stain_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_train_train_cement_stain_01.png
+map_d mirage_textures/de_train_train_cement_stain_01.png
+
+newmtl de_train/train_dirt_decal_05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_train_train_dirt_decal_05.png
+map_d mirage_textures/de_train_train_dirt_decal_05.png
+
+newmtl de_train/train_dirt_decal_06
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/de_train_train_dirt_decal_06.png
+map_d mirage_textures/de_train_train_dirt_decal_06.png
+
+newmtl decals/bombsite_a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_a.png
+map_d mirage_textures/decals_bombsite_a.png
+
+newmtl decals/bombsite_b
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_b.png
+map_d mirage_textures/decals_bombsite_b.png
+
+newmtl decals/bombsite_left_arrow
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_left_arrow.png
+map_d mirage_textures/decals_bombsite_left_arrow.png
+
+newmtl decals/bombsite_letter_a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_letter_a.png
+map_d mirage_textures/decals_bombsite_letter_a.png
+
+newmtl decals/bombsite_letter_b
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_letter_b.png
+map_d mirage_textures/decals_bombsite_letter_b.png
+
+newmtl decals/bombsite_right_arrow
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_bombsite_right_arrow.png
+map_d mirage_textures/decals_bombsite_right_arrow.png
+
+newmtl decals/debris_concrete001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_debris_concrete001a.png
+map_d mirage_textures/decals_debris_concrete001a.png
+
+newmtl decals/debris_exterior_00
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_debris_exterior_00.png
+map_d mirage_textures/decals_debris_exterior_00.png
+
+newmtl decals/decalmetalmanhole004a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalmetalmanhole004a.png
+map_d mirage_textures/decals_decalmetalmanhole004a.png
+
+newmtl decals/decalrug001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalrug001a.png
+map_d mirage_textures/decals_decalrug001a.png
+
+newmtl decals/decalrug003a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalrug003a.png
+map_d mirage_textures/decals_decalrug003a.png
+
+newmtl decals/decalrug004a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalrug004a.png
+map_d mirage_textures/decals_decalrug004a.png
+
+newmtl decals/decalrug005a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalrug005a.png
+map_d mirage_textures/decals_decalrug005a.png
+
+newmtl decals/decalstain001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalstain001a.png
+map_d mirage_textures/decals_decalstain001a.png
+
+newmtl decals/decalstain002a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalstain002a.png
+map_d mirage_textures/decals_decalstain002a.png
+
+newmtl decals/decalstain005a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalstain005a.png
+map_d mirage_textures/decals_decalstain005a.png
+
+newmtl decals/decalstain011a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalstain011a.png
+map_d mirage_textures/decals_decalstain011a.png
+
+newmtl decals/decalstain015a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_decalstain015a.png
+map_d mirage_textures/decals_decalstain015a.png
+
+newmtl decals/drainage_stain_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_drainage_stain_01.png
+map_d mirage_textures/decals_drainage_stain_01.png
+
+newmtl decals/drainage_stain_03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_drainage_stain_03.png
+map_d mirage_textures/decals_drainage_stain_03.png
+
+newmtl decals/dust_poster3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_dust_poster3.png
+map_d mirage_textures/decals_dust_poster3.png
+
+newmtl decals/dust_poster5
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_dust_poster5.png
+map_d mirage_textures/decals_dust_poster5.png
+
+newmtl decals/graffiti01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_graffiti01.png
+map_d mirage_textures/decals_graffiti01.png
+
+newmtl decals/graffiti02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_graffiti02.png
+map_d mirage_textures/decals_graffiti02.png
+
+newmtl decals/graffiti_noscope_4k
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_graffiti_noscope_4k.png
+map_d mirage_textures/decals_graffiti_noscope_4k.png
+
+newmtl decals/hpe_plaster_decal_decay_04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_hpe_plaster_decal_decay_04.png
+map_d mirage_textures/decals_hpe_plaster_decal_decay_04.png
+
+newmtl decals/hpe_plaster_decal_decay_brick_03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_hpe_plaster_decal_decay_brick_03.png
+map_d mirage_textures/decals_hpe_plaster_decal_decay_brick_03.png
+
+newmtl decals/hpe_plaster_decal_decay_brick_04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_hpe_plaster_decal_decay_brick_04.png
+map_d mirage_textures/decals_hpe_plaster_decal_decay_brick_04.png
+
+newmtl decals/hpe_plaster_decal_decay_brick_06
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_hpe_plaster_decal_decay_brick_06.png
+map_d mirage_textures/decals_hpe_plaster_decal_decay_brick_06.png
+
+newmtl decals/hr_decals/plaster_stain_7
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_d mirage_textures/decals_hr_decals_plaster_stain_7.png
+
+newmtl decals/infstains
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_infstains.png
+map_d mirage_textures/decals_infstains.png
+
+newmtl decals/infwalldetail02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_infwalldetail02.png
+map_d mirage_textures/decals_infwalldetail02.png
+
+newmtl decals/infwalldetail09
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_infwalldetail09.png
+map_d mirage_textures/decals_infwalldetail09.png
+
+newmtl decals/infwalldetail10
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_infwalldetail10.png
+map_d mirage_textures/decals_infwalldetail10.png
+
+newmtl decals/manholecover01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_manholecover01.png
+map_d mirage_textures/decals_manholecover01.png
+
+newmtl decals/milrug001
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_milrug001.png
+map_d mirage_textures/decals_milrug001.png
+
+newmtl decals/milswitch001
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_milswitch001.png
+map_d mirage_textures/decals_milswitch001.png
+
+newmtl decals/mirage_flammable
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_mirage_flammable.png
+map_d mirage_textures/decals_mirage_flammable.png
+
+newmtl decals/offpapers03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_offpapers03.png
+map_d mirage_textures/decals_offpapers03.png
+
+newmtl decals/plaster011a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_plaster011a.png
+map_d mirage_textures/decals_plaster011a.png
+
+newmtl decals/plaster013a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_plaster013a.png
+map_d mirage_textures/decals_plaster013a.png
+
+newmtl decals/plaster017a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_plaster017a.png
+map_d mirage_textures/decals_plaster017a.png
+
+newmtl decals/prodplatea
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_prodplatea.png
+map_d mirage_textures/decals_prodplatea.png
+
+newmtl decals/rug_green01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_rug_green01.png
+map_d mirage_textures/decals_rug_green01.png
+
+newmtl decals/sanddecal01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_sanddecal01.png
+map_d mirage_textures/decals_sanddecal01.png
+
+newmtl decals/sanddecal02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_sanddecal02.png
+map_d mirage_textures/decals_sanddecal02.png
+
+newmtl decals/stain01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_stain01.png
+map_d mirage_textures/decals_stain01.png
+
+newmtl decals/trash_00
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trash_00.png
+map_d mirage_textures/decals_trash_00.png
+
+newmtl decals/trashdecal01a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal01a.png
+map_d mirage_textures/decals_trashdecal01a.png
+
+newmtl decals/trashdecal01b
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal01b.png
+map_d mirage_textures/decals_trashdecal01b.png
+
+newmtl decals/trashdecal02a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal02a.png
+map_d mirage_textures/decals_trashdecal02a.png
+
+newmtl decals/trashdecal03a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal03a.png
+map_d mirage_textures/decals_trashdecal03a.png
+
+newmtl decals/trashdecal04a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal04a.png
+map_d mirage_textures/decals_trashdecal04a.png
+
+newmtl decals/trashdecal05a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_trashdecal05a.png
+map_d mirage_textures/decals_trashdecal05a.png
+
+newmtl decals/win_rectang
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_win_rectang.png
+map_d mirage_textures/decals_win_rectang.png
+
+newmtl decals/win_square
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/decals_win_square.png
+map_d mirage_textures/decals_win_square.png
+
+newmtl effects/metalrail011a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/metal_metalrail011a.png
+map_d mirage_textures/metal_metalrail011a.png
+
+newmtl glass/glass01
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/models_props_windows_window_uban_apt_glass.png
+map_d mirage_textures/models_props_windows_window_uban_apt_glass.png
+
+newmtl glass/glasswindow048a
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/glass_glasswindow048a.png
+
+newmtl metal/metal_corrugated03a
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/metal_metal_corrugated03a.png
+map_Ks mirage_textures/metal_corrugated-ssbump.png
+
+newmtl metal/metaldoor034a
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl metal/metalfence004a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/metal_metalfence004a.png
+map_d mirage_textures/metal_metalfence004a.png
+
+newmtl metal/metalhull003a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl metal/metaltrack001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/metal_metaltrack001a.png
+
+newmtl metal/metalwall031a
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl metal/vertigo_ibeam
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl nature/dirtfloor009c_decal
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/nature_dirtfloor009c_decal.png
+map_d mirage_textures/nature_dirtfloor009c_decal.png
+
+newmtl overlays/shacks_beverage
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_shacks_beverage.png
+map_d mirage_textures/overlays_shacks_beverage.png
+
+newmtl overlays/trash_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_trash_01.png
+map_d mirage_textures/overlays_trash_01.png
+
+newmtl overlays/urban_paintswatch_01a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_urban_paintswatch_01a.png
+map_d mirage_textures/overlays_urban_paintswatch_01a.png
+
+newmtl overlays/urban_paintswatch_02a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_urban_paintswatch_02a.png
+map_d mirage_textures/overlays_urban_paintswatch_02a.png
+
+newmtl overlays/urban_paintswatch_03a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_urban_paintswatch_03a.png
+map_d mirage_textures/overlays_urban_paintswatch_03a.png
+
+newmtl overlays/urban_paintswatch_04a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/overlays_urban_paintswatch_04a.png
+map_d mirage_textures/overlays_urban_paintswatch_04a.png
+
+newmtl plaster/plaster_ext_19
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/plaster_plaster_ext_19.png
+
+newmtl plaster/plaster_int_02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/plaster_plaster_int_02.png
+
+newmtl plaster/plasterwall021a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl props/metalfan001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/props_metalfan001a.png
+
+newmtl stone/counter01
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/stone_counter01.png
+
+newmtl tile/milflr002
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/tile_milflr002.png
+map_Ks mirage_textures/tile_milflr002_ref.png
+
+newmtl tile/tile_int_02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/tile_tile_int_02.png
+
+newmtl tile/tile_mall_floor00
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/tile_tile_mall_floor00.png
+map_Ks mirage_textures/tile_tile_mall_floor00_height-ssbump.png
+
+newmtl tile/tilewall009b
+Ns 809.999997
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/tile_tilewall009b.png
+map_Ks mirage_textures/tile_tilewall009b_normal.png
+
+newmtl tools/toolsblack
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/tools_toolsblack.png
+
+newmtl tools/toolsnodraw
+Ns 359.999993
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl tools/wrongway_timer
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd mirage_textures/tools_wrongway_timer.png
+map_d mirage_textures/tools_wrongway_timer.png
+
+newmtl wood/milbeams003
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_milbeams003.png
+
+newmtl wood/milcab001
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_milcab001.png
+
+newmtl wood/milsteps001
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_milsteps001.png
+
+newmtl wood/plywood02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl wood/wood_dock_pylon_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_wood_dock_pylon_01.png
+
+newmtl wood/wood_ext_05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_wood_ext_05.png
+
+newmtl wood/wood_int_02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_wood_int_02.png
+
+newmtl wood/woodbeam001a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_woodbeam001a.png
+
+newmtl wood/wooddoor019a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl wood/wooddoor026a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_wooddoor026a.png
+
+newmtl wood/woodfloor005a
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_woodfloor005a.png
+
+newmtl wood/woodsiding_ext_05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_woodsiding_ext_05.png
+
+newmtl wood/woodsteps001
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_woodsteps001.png
+
+newmtl wood/woodtrim_ext_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd mirage_textures/wood_woodtrim_ext_01.png
