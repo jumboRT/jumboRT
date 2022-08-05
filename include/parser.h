@@ -96,6 +96,7 @@ void			rt_exec_smooth(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_alpha(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_normal(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_bump(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_volume(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 

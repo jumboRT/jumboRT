@@ -318,15 +318,15 @@ static FLOAT
 }
 
 static FLOAT
-	bsdf_total_weight(const GLOBAL t_world *world, t_material mat, t_world_hit hit, t_vec color)
+	bsdf_total_weight(const GLOBAL t_world *world, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec color)
 {
 	uint32_t			idx;
 	FLOAT				result;
 	const GLOBAL t_bxdf	*bxdf;
 
 	result = 0.0;
-	idx = mat.bxdf_begin;
-	while (idx < mat.bxdf_end) {
+	idx = bxdf_begin;
+	while (idx < bxdf_end) {
 		bxdf = get_bxdf_const(world, idx);
 		result += bxdf_weight(world, bxdf, color, hit.hit.uv);
 		idx += 1;
@@ -335,7 +335,7 @@ static FLOAT
 }
 
 t_vec
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_material mat, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
+	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
 {
 	uint32_t			idx;
 	FLOAT				total_weight;
@@ -343,10 +343,10 @@ t_vec
 	FLOAT				weight;
 	const GLOBAL t_bxdf	*bxdf;
 
-	total_weight = bsdf_total_weight(world, mat, hit, color);
-	idx = mat.bxdf_begin;
+	total_weight = bsdf_total_weight(world, bxdf_begin, bxdf_end, hit, color);
+	idx = bxdf_begin;
 	rand = rt_random_float_range(&ctx->seed, 0.0, total_weight);
-	while (idx < mat.bxdf_end)
+	while (idx < bxdf_end)
 	{
 		bxdf = get_bxdf_const(world, idx);
 		weight = bxdf_weight(world, bxdf, color, hit.hit.uv);
