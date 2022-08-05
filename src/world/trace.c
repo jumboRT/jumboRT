@@ -100,8 +100,15 @@ t_vec
 		{
 			ray.org = ray_at(ray, hit.hit.t);
 			hit.hit.normal = rt_random_on_hemi(&ctx->seed, ray.dir);
+			hit.hit.pos = ray.org;
 			hit.relative_normal = hit.hit.normal;
-			head = vec_mul(head, f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, ray.dir, head, &new_dir));
+			hit.geometric_normal = hit.hit.normal;
+			hit.hit.dpdu = vec_0();
+			hit.hit.dpdv = vec_0();
+			bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, ray.dir, head, &new_dir);
+			if (vec_eq(bsdf, vec_0()))
+				break ;
+			head = vec_mul(head, bsdf);
 			ray.dir = new_dir;
 		}
 		else
