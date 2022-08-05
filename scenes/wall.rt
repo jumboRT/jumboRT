@@ -1,0 +1,20 @@
+C -5,0,0 1,0,0 90
+
+mat_beg mat_light emission 16 255,255,255 mat_end
+sp 0,0,-70 100 mat_light
+
+tex_def tex_checker assets/checker.bmp
+tex_def tex_normal assets/bricky.bmp
+
+mat_beg mat_wall
+	diffuse tex_checker
+	normal tex_normal
+mat_end
+
+W 0,-2,-2 1,0 1,0,0
+W 0,2,2 0,1 1,0,0
+W 0,2,-2 0,0 1,0,0
+W 0,-2,2 1,1 1,0,0
+mat_use mat_wall
+f 0 1 2
+f 0 3 1

@@ -27,7 +27,7 @@
 #define GEN_CYLINDER_CHANCE (3.0 / 3)
 #define GEN_CONE_CHANCE (0.0 / 3)
 
-#define FLY_SPEED 25
+#define FLY_SPEED 1
 
 void
 	world_gen_sphere(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)

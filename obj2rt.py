@@ -244,7 +244,7 @@ def load_obj(filename, flip_textures):
                             path = os.path.join(os.path.dirname(filename), line[1])
                             mat[1] = add_texture(path, flip_textures)
                             materials[-1] = tuple(mat)
-                        if line[0] == "map_Disp":
+                        if line[0] == "map_Bump":
                             mat = list(materials[-1])
                             path = os.path.join(os.path.dirname(filename), line[1])
                             mat[5] = add_texture(path, flip_textures)
@@ -280,7 +280,7 @@ for material in materials:
     if material[4] != (0, 0, 0):
         sys.stdout.write(f"    emission 1.0 {str_texture(material[4])}\n")
     if material[5] != None:
-        sys.stdout.write(f"    normal {str_texture(material[5])}\n")
+        sys.stdout.write(f"    bump {str_texture(material[5])}\n")
     sys.stdout.write(f"mat_end\n")
 for plane in planes:
     use_material(plane[2])
