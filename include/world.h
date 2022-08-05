@@ -23,7 +23,7 @@
 # define RT_MAT_HAS_NORMAL 16
 # define RT_MAT_HAS_BUMP 32
 
-# define RT_MAX_DEPTH 3
+# define RT_MAX_DEPTH 8
 
 /* # define RT_RAY_MIN 0.001 */
 

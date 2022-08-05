@@ -6,14 +6,22 @@ t_vec
 	FLOAT	dfdx;
 	FLOAT	dfdy;
 
-	dfdx = tex_samplef_id_offset(world, bump_map, uv, vec2(2, 0));
-	dfdy = tex_samplef_id_offset(world, bump_map, uv, vec2(0, 2));
+	dfdx = tex_samplef_id_offset(world, bump_map, uv, vec2(10, 0));
+	dfdy = tex_samplef_id_offset(world, bump_map, uv, vec2(0, 10));
 	dfdx -= tex_samplef_id_offset(world, bump_map, uv, vec2(0, 0));
 	dfdy -= tex_samplef_id_offset(world, bump_map, uv, vec2(0, 0));
+	/*
 	return (vec_scale(vec3(
 				(-dfdx) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
 				(-dfdy) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
 				1 / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1))), 1.0));
+	*/
+	return (vec_scale(vec(
+				(-dfdx) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
+				(-dfdy) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
+				1 / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
+				0.0),
+				1.0));
 }
 
 t_vec
@@ -40,10 +48,15 @@ t_vec
 				/*hit.relative_normal = (vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
 				hit.relative_normal = vec_neg(local_to_world(hit, hit.relative_normal));*/
 			}
-			/*return vec(rt_abs(x(hit.relative_normal)), rt_abs(y(hit.relative_normal)), rt_abs(z(hit.relative_normal)), 0);*/
-			/*
 			if (mat->flags & RT_MAT_HAS_BUMP)
-				hit.hit.normal = vec_norm(vec_add(hit.hit.normal, local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv))));
+			{
+				/*
+				hit.relative_normal = vec_norm(vec_add(hit.relative_normal, local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv))));
+				*/
+				hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
+			}
+			/*
+			return vec(rt_abs(x(hit.relative_normal)), rt_abs(y(hit.relative_normal)), rt_abs(z(hit.relative_normal)), 0);
 			*/
 			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
 				hit.relative_normal = vec_neg(hit.relative_normal);
