@@ -28,7 +28,6 @@ struct s_opencl_ctx {
 	cl_command_queue	command_queue[2];
 	cl_program			program;
 	cl_kernel			work_kernel;
-	cl_kernel			set_ptr_kernel;
 	cl_mem				world_mem;
 	cl_mem				ctx_mem;
 	cl_mem				result_mem[2];
@@ -40,6 +39,7 @@ struct s_opencl_ctx {
 	cl_mem				accel_degenerates_mem;
 	cl_mem				texture_data_mem;
 	cl_mem				textures_mem;
+	cl_mem				bxdfs_mem;
 	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
 	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
 	int					id;
@@ -110,6 +110,10 @@ void
 		rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 		rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
+		status = clFlush(cl_ctx->command_queue[0]);
+		rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
+		status = clFlush(cl_ctx->command_queue[1]);
+		rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
 		cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 		rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
 		status = clSetEventCallback(read_event, CL_COMPLETE, work_callback, &cb_ctx[id]);
@@ -136,6 +140,10 @@ void
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
 			status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 			rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
+			status = clFlush(cl_ctx->command_queue[0]);
+			rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
+			status = clFlush(cl_ctx->command_queue[1]);
+			rt_assert(status == CL_SUCCESS, "clFlush work_kernel failed");
 			cb_ctx[id].event = clCreateUserEvent(cl_ctx->context, &status);
 			rt_assert(status == CL_SUCCESS, "clCreateUserEvent work_kernel failed");
 			status = clSetEventCallback(read_event, CL_COMPLETE, work_callback, &cb_ctx[id]);
@@ -153,30 +161,6 @@ void
 	return (NULL);
 }
 
-void
-	work_set_ptr(struct s_opencl_ctx *cl_ctx, cl_mem dst, cl_int offset, cl_mem ptr)
-{
-	size_t		global_work_size[1];
-	size_t		local_work_size[1];
-	cl_int		status;
-	cl_event	event;
-
-	global_work_size[0] = 1;
-	local_work_size[0] = 1;
-	status = clSetKernelArg(cl_ctx->set_ptr_kernel, 0, sizeof(cl_mem), &dst);
-	rt_assert(status == CL_SUCCESS, "clSetKernelArg set_ptr_kernel 0 failed");
-	status = clSetKernelArg(cl_ctx->set_ptr_kernel, 1, sizeof(offset), &offset);
-	rt_assert(status == CL_SUCCESS, "clSetKernelArg set_ptr_kernel 1 failed");
-	status = clSetKernelArg(cl_ctx->set_ptr_kernel, 2, sizeof(cl_mem), &ptr);
-	rt_assert(status == CL_SUCCESS, "clSetKernelArg set_ptr_kernel 2 failed");
-	status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->set_ptr_kernel, 1, NULL, global_work_size, local_work_size, 0, NULL, &event);
-	rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel set_ptr_kernel failed");
-	status = clWaitForEvents(1, &event);
-	rt_assert(status == CL_SUCCESS, "clWaitForEvents set_ptr_kernel failed");
-	status = clReleaseEvent(event);
-	rt_assert(status == CL_SUCCESS, "clReleaseEvent set_ptr_kernel failed");
-}
-
 cl_mem
 	work_copy_array(struct s_opencl_ctx *cl_ctx, size_t size, void *ptr)
 {
@@ -189,6 +173,18 @@ cl_mem
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer failed");
 	status = clEnqueueWriteBuffer(cl_ctx->command_queue[0], mem, CL_TRUE, 0, size, ptr, 0, NULL, NULL);
 	rt_assert(status == CL_SUCCESS, "clEnqueueWriteBuffer failed");
+	return (mem);
+}
+
+cl_mem
+	work_copy_ptr(struct s_opencl_ctx *cl_ctx, size_t size, void *ptr, int arg)
+{
+	cl_int	status;
+	cl_mem	mem;
+
+	mem = work_copy_array(cl_ctx, size, ptr);
+	status = clSetKernelArg(cl_ctx->work_kernel, arg, sizeof(cl_mem), &mem);
+	rt_assert(status == CL_SUCCESS, "clSetKernelArg failed");
 	return (mem);
 }
 
@@ -208,28 +204,21 @@ void
 {
 	cl_int	status;
 
-	cl_ctx->world_mem = work_copy_array(cl_ctx, sizeof(*work->state->world), work->state->world);
+	cl_ctx->world_mem = work_copy_array(cl_ctx, offsetof(t_world, primitives), work->state->world);
 	cl_ctx->ctx_mem = work_copy_array(cl_ctx, sizeof(*cl_ctx->ctx) * RT_WORK_OPENCL_GLOBAL_SIZE, cl_ctx->ctx);
 	cl_ctx->result_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[0] failed");
 	cl_ctx->result_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[1] failed");
-	cl_ctx->primitives_mem = work_copy_array(cl_ctx, work->state->world->primitives_size, work->state->world->primitives);
-	cl_ctx->vertices_mem = work_copy_array(cl_ctx, work->state->world->vertices_size, work->state->world->vertices);
-	cl_ctx->materials_mem = work_copy_array(cl_ctx, work->state->world->materials_size, work->state->world->materials);
-	cl_ctx->accel_nodes_mem = work_copy_array(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes);
-	cl_ctx->accel_indices_mem = work_copy_array(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices);
-	cl_ctx->accel_degenerates_mem = work_copy_array(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates);
-	cl_ctx->texture_data_mem = work_copy_array(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data);
-	cl_ctx->textures_mem = work_copy_array(cl_ctx, work->state->world->textures_size, work->state->world->textures);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 0, cl_ctx->primitives_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 1, cl_ctx->materials_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 2, cl_ctx->vertices_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 3, cl_ctx->accel_nodes_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 4, cl_ctx->accel_indices_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 5, cl_ctx->accel_degenerates_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 6, cl_ctx->texture_data_mem);
-	work_set_ptr(cl_ctx, cl_ctx->world_mem, 7, cl_ctx->textures_mem);
+	cl_ctx->primitives_mem = work_copy_ptr(cl_ctx, work->state->world->primitives_size, work->state->world->primitives, 5);
+	cl_ctx->materials_mem = work_copy_ptr(cl_ctx, work->state->world->materials_size, work->state->world->materials, 6);
+	cl_ctx->vertices_mem = work_copy_ptr(cl_ctx, work->state->world->vertices_size, work->state->world->vertices, 7);
+	cl_ctx->accel_nodes_mem = work_copy_ptr(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes, 8);
+	cl_ctx->accel_indices_mem = work_copy_ptr(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices, 9);
+	cl_ctx->accel_degenerates_mem = work_copy_ptr(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates, 10);
+	cl_ctx->texture_data_mem = work_copy_ptr(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data, 11);
+	cl_ctx->textures_mem = work_copy_ptr(cl_ctx, work->state->world->textures_size, work->state->world->textures, 12);
+	cl_ctx->bxdfs_mem = work_copy_ptr(cl_ctx, work->state->world->bxdfs_size, work->state->world->bxdfs, 13);
 	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
 	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
 	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
@@ -251,7 +240,7 @@ void
 	rt_assert(string != NULL, error);
 	cl_ctx->program = clCreateProgramWithBinary(cl_ctx->context, 1, &device, &length, (const unsigned char **) &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS, "clCreateProgramWithBinary failed");
-	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global", NULL, NULL);
+	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global -Werror", NULL, NULL);
 	if (status != CL_SUCCESS)
 	{
 		status = clGetProgramBuildInfo(cl_ctx->program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
@@ -317,13 +306,11 @@ void
 	context_props[2] = 0;
 	cl_ctx->context = clCreateContextFromType(context_props, CL_DEVICE_TYPE_DEFAULT, NULL, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateContextFromType failed");
-	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
-	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE);
+	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, 0);
+	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, 0);
 	work_create_program(cl_ctx, device);
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");
-	cl_ctx->set_ptr_kernel = clCreateKernel(cl_ctx->program, "set_ptr_kernel", &status);
-	rt_assert(status == CL_SUCCESS, "clCreateKernel set_ptr_kernel failed");
 	cl_ctx->world_mem = NULL;
 	cl_ctx->ctx_mem = NULL;
 	cl_ctx->result_mem[0] = NULL;
@@ -336,6 +323,7 @@ void
 	cl_ctx->accel_degenerates_mem = NULL;
 	cl_ctx->texture_data_mem = NULL;
 	cl_ctx->textures_mem = NULL;
+	cl_ctx->bxdfs_mem = NULL;
 	work_add(work, work_start, cl_ctx);
 }
 
@@ -368,6 +356,7 @@ void
 	work_destroy_array(cl_ctx->accel_degenerates_mem);
 	work_destroy_array(cl_ctx->texture_data_mem);
 	work_destroy_array(cl_ctx->textures_mem);
+	work_destroy_array(cl_ctx->bxdfs_mem);
 }
 
 void
@@ -391,8 +380,6 @@ void
 		status = clReleaseProgram(cl_ctx->program);
 		rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
 		status = clReleaseKernel(cl_ctx->work_kernel);
-		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
-		status = clReleaseKernel(cl_ctx->set_ptr_kernel);
 		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
 		work_release_buffers(cl_ctx);
 		j = 0;

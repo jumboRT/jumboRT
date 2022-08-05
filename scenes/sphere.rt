@@ -1,0 +1,10 @@
+C 0,4,0 0,-1,0 50
+mat_beg mat_sphere
+	diffuse (10.0,0.0,0.0)
+	reflective (0.0,0.0,1.0) 0.05
+mat_end
+mat_beg mat_light
+	emission 1.6 (1.0,1.0,1.0)
+mat_end
+sp 0,0,0 2 mat_sphere 
+sp -2,2,2 2 mat_light

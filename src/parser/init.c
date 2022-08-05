@@ -20,6 +20,7 @@ void
 	ctx->line = 1;
 	ctx->column = 1;
 	ctx->mat = NULL;
+	ctx->mat_use_set = 0;
 	vector_create(&ctx->materials, sizeof(t_mat_entry), 0);
 	vector_create(&ctx->textures, sizeof(t_tex_entry), 0);
 }

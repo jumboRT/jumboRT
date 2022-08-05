@@ -25,6 +25,7 @@ void
 	world->accel_degenerates = world_zero(&world->accel_degenerates_count, &world->accel_degenerates_size, &world->accel_degenerates_capacity);
 	world->textures = world_zero(&world->textures_count, &world->textures_size, &world->textures_capacity);
 	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
+	world->bxdfs = world_zero(&world->bxdfs_count, &world->bxdfs_size, &world->bxdfs_capacity);
 }
 
 void
@@ -49,16 +50,16 @@ void
 }
 
 uint32_t
-	world_add_material(t_world *world, void *material, size_t size)
+	world_add_material(t_world *world, t_material *material)
 {
 	size_t	old_size;
 
 	world->materials_count += 1;
 	old_size = world->materials_size;
-	world->materials_size += (size + RT_MATERIAL_ALIGN - 1) / RT_MATERIAL_ALIGN * RT_MATERIAL_ALIGN;
+	world->materials_size += sizeof(*material);
 	world->materials = world_reallog(world->materials, &world->materials_capacity, world->materials_size);
-	ft_memcpy((char *) world->materials + old_size, material, size);
-	return (old_size / RT_MATERIAL_ALIGN);
+	ft_memcpy((char *) world->materials + old_size, material, sizeof(*material));
+	return (old_size / sizeof(*material));
 }
 
 uint32_t
@@ -150,20 +151,19 @@ uint32_t
 	return (old_size);
 }
 
-int64_t
-	world_get_material(const t_world *world, uint32_t id)
+void
+	world_insert_bxdf(t_world *world, t_material *material, void *bxdf, size_t size)
 {
-	size_t				offset;
-	const t_material	*material;
+	uint32_t	i;
 
-	offset = 0;
-	while (offset < world->materials_size)
-	{
-		material = (const t_material *) ((const char *) world->materials + offset);
-		if (material->id == id)
-			return (offset / RT_MATERIAL_ALIGN);
-		offset += sizeof(*material); /* TOOD do something like world_material_size */
-	}
-	return (-1);
+	world->bxdfs_size += sizeof(t_bxdf_any);
+	world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
+	i = material->bxdf_begin;
+	while (i < material->bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+		i += 1;
+	ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
+	ft_memcpy(&world->bxdfs[i], bxdf, size);
+	world->bxdfs_count += 1;
+	material->bxdf_end += 1;
 }
 

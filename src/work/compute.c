@@ -3,34 +3,39 @@
 #ifdef RT_OPENCL
 
 __kernel void
-	set_ptr_kernel(GLOBAL t_world *world, int offset, GLOBAL void *ptr)
-{
-	if (offset == 0)
-		world->primitives = ptr;
-	if (offset == 1)
-		world->materials = ptr;
-	if (offset == 2)
-		world->vertices = ptr;
-	if (offset == 3)
-		world->accel_nodes = ptr;
-	if (offset == 4)
-		world->accel_indices = ptr;
-	if (offset == 5)
-		world->accel_degenerates = ptr;
-	if (offset == 6)
-		world->texture_data = ptr;
-	if (offset == 7)
-		world->textures = ptr;
-}
-
-/* TODO: synchronize or duplicate context */
-__kernel void
-	work_kernel(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t begin, uint64_t end, GLOBAL t_result *results)
+	work_kernel(
+		GLOBAL t_world *world,
+		GLOBAL t_context *ctx,
+		uint64_t begin,
+		uint64_t end,
+		GLOBAL t_result *results,
+		GLOBAL void *primitives,
+		GLOBAL void *materials,
+		GLOBAL void *vertices,
+		GLOBAL void *accel_nodes,
+		GLOBAL void *accel_indices,
+		GLOBAL void *accel_degenerates,
+		GLOBAL void *texture_data,
+		GLOBAL void *textures,
+		GLOBAL void *bxdfs)
 {
 	uint64_t			index;
 	uint64_t			size;
 	GLOBAL t_context	*my_ctx;
 
+	if (get_global_id(0) == 0)
+	{
+		world->primitives = primitives;
+		world->materials = materials;
+		world->vertices = vertices;
+		world->accel_nodes = accel_nodes;
+		world->accel_indices = accel_indices;
+		world->accel_degenerates = accel_degenerates;
+		world->texture_data = texture_data;
+		world->textures = textures;
+		world->bxdfs = bxdfs;
+	}
+	barrier(CLK_GLOBAL_MEM_FENCE);
 	size = end - begin;
 	index = get_global_id(0);
 	my_ctx = &ctx[index];
@@ -66,7 +71,8 @@ t_result
 	t_ray		ray;
 
 	ray = project(world, ctx, index);
-	result.color = world_trace(world, ctx, ray, 8); // TODO: RT_MAX_DEPTH
+	result.color = world_trace(world, ctx, ray, RT_MAX_DEPTH); // TODO: RT_MAX_DEPTH
 	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }
+

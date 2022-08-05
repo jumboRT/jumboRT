@@ -6,8 +6,8 @@ MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c p
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c sin.c cos.c tan.c \
 							vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
-							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c primitive.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c
+							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
@@ -34,8 +34,10 @@ OPENCL_FILES			:= \
 	src/math/vec_size_fast.c \
 	src/math/vec2.c \
 	src/math/vec2_fast.c \
+	src/math/vec2_arith_fast.c \
 	src/math/vec_rotate.c \
 	src/math/vec_set.c \
+	src/math/clamp.c \
 	src/math/sqrt.c \
 	src/math/sin.c \
 	src/math/cos.c \
@@ -45,13 +47,15 @@ OPENCL_FILES			:= \
 	src/math/abs.c \
 	src/math/pow.c \
 	src/math/mod.c \
+	src/math/exp.c \
 	src/world/intersect.c \
 	src/world/intersect_prim.c \
-	src/world/primitive.c \
+	src/world/size.c \
 	src/world/node.c \
 	src/world/common.c \
 	src/world/trace.c \
-	src/world/tex_sample.c
+	src/world/tex_sample.c \
+	src/world/bsdf.c
 
 ifndef platform
 	ifeq ($(shell uname -s),Linux)
@@ -150,14 +154,14 @@ $(error "invalid renderer $(renderer)")
 endif
 
 ifeq ($(config), debug)
-	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE
+	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
 		LFLAGS	+= -fsanitize=address,undefined
 	else ifeq ($(san), memory)
-		CFLAGS	+= -fsanitize=memory,undefined
-		LFLAGS	+= -fsanitize=memory,undefined
+		CFLAGS	+= -fsanitize=memory,undefined -fsanitize-memory-track-origins
+		LFLAGS	+= -fsanitize=memory,undefined -fsanitize-memory-track-origins
 	else ifeq ($(san), thread)
 		CLFLAGS	+= -fsanitize=thread,undefined
 		LFLAGS	+= -fsanitize=thread,undefined
@@ -193,6 +197,9 @@ else
 	COMPILER_CFLAGS	+= -DRT_LINUX
 endif
 
+run: $(NAME)
+	./$(NAME) scenes/cornell_ball.rt
+
 $(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
@@ -209,7 +216,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -C $(MLX_DIR)
+	$(SILENT)${MAKE} -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
 # TODO: unhardcode these files
 compile: compiler/main.c

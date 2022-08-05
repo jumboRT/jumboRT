@@ -2,7 +2,6 @@
 
 #if defined RT_VECTORIZE
 
-__attribute__ ((const))
 FLOAT
 	vec_dot(t_vec a, t_vec b)
 {
@@ -12,7 +11,6 @@ FLOAT
 	return (conv.elem[0] + conv.elem[1] + conv.elem[2]);
 }
 
-__attribute__ ((const))
 t_vec
 	vec_cross(t_vec a, t_vec b)
 {

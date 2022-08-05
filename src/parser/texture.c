@@ -14,6 +14,7 @@ void
 	size_t	size;
 
 	texture_init(&tex);
+	tex.type = RT_TEX_TEXTURE;
 	keyword = rt_keyword(ctx, "tex_");
 	path = rt_word(ctx);
 	content = rt_readfile(path, &error, &size);

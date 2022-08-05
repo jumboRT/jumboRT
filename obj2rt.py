@@ -4,6 +4,7 @@ import math
 import os.path
 import PIL.Image
 import subprocess
+import random
 
 vertices = []
 faces = []
@@ -15,6 +16,8 @@ materials = []
 textures = []
 
 camera = ((0, 0, 0), (1, 0, 0), 90)
+
+mat_use = None
 
 def parse_vertex(line, swap_yz=False):
     x = float(line[0])
@@ -44,6 +47,18 @@ def str_material(material):
         return material
     return str_color(material)
 
+def str_texture(texture):
+    if type(texture) is str:
+        return texture
+    return str_color(texture)
+
+def use_material(material):
+    global mat_use
+    string = str_material(material)
+    if string != mat_use:
+        mat_use = string
+        sys.stdout.write(f"mat_use {string}\n")
+
 def add_vertex(vertex):
     try:
         return vertices.index(vertex)
@@ -51,14 +66,17 @@ def add_vertex(vertex):
         vertices.append(vertex)
         return len(vertices) - 1
 
-def add_texture(path):
+def add_texture(path, flip):
     filename = os.path.splitext(path)[0] + ".bmp"
     for texture in textures:
         if texture[1] == filename:
             return texture[0]
-    args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', filename]
+    if flip:
+        args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', '-flip', filename]
+    else:
+        args = ['magick', path, '-colorspace', 'sRGB', '-depth', '32', '-alpha', 'set', filename]
     subprocess.call(args);
-    name = f"tex_{filename}"
+    name = f"tex_{os.path.splitext(os.path.basename(filename))[0]}_{random.randrange(2**32):08x}"
     textures.append((name, filename))
     return name
 
@@ -68,11 +86,11 @@ def mjoosten_material(color, name):
         if material[0] == full_name:
             return full_name
     if name == "mirror":
-        materials.append((full_name, (255, 255, 255), 0, None, (0, 0, 0)))
+        materials.append((full_name, (255, 255, 255), 0, None, (0, 0, 0), None))
     elif name == "glass":
-        materials.append((full_name, (255, 255, 255), None, 1.5, (0, 0, 0)))
+        materials.append((full_name, (255, 255, 255), None, 1.5, (0, 0, 0), None))
     elif name == "metal":
-        materials.append((full_name, color, 0.1, None, (0, 0, 0)))
+        materials.append((full_name, color, 0.1, None, (0, 0, 0), None))
     else:
         assert False
     return full_name
@@ -145,7 +163,7 @@ def load_mjoosten(filename):
                     material = mjoosten_material(material, line[4])
                 spheres.append((position, diameter, material))
 
-def load_obj(filename):
+def load_obj(filename, flip_textures):
     obj_vert = []
     obj_vtex = []
     obj_norm = []
@@ -205,7 +223,7 @@ def load_obj(filename):
                         if len(line) == 0:
                             continue
                         if line[0] == "newmtl":
-                            materials.append((f"mat_{line[1]}", (0, 0, 0), None, None, (0, 0, 0)))
+                            materials.append((f"mat_{line[1]}", (0, 0, 0), None, None, (0, 0, 0), None))
                         if line[0] == "Ka":
                             mat = list(materials[-1])
                             if type(mat[4]) is not str:
@@ -219,13 +237,19 @@ def load_obj(filename):
                         if line[0] == "map_Ka":
                             mat = list(materials[-1])
                             path = os.path.join(os.path.dirname(filename), line[1])
-                            mat[4] = add_texture(path)
+                            mat[4] = add_texture(path, flip_textures)
                             materials[-1] = tuple(mat)
                         if line[0] == "map_Kd":
                             mat = list(materials[-1])
                             path = os.path.join(os.path.dirname(filename), line[1])
-                            mat[1] = add_texture(path)
+                            mat[1] = add_texture(path, flip_textures)
                             materials[-1] = tuple(mat)
+                        if line[0] == "map_Bump":
+                            mat = list(materials[-1])
+                            path = os.path.join(os.path.dirname(filename), line[1])
+                            mat[5] = add_texture(path, flip_textures)
+                            materials[-1] = tuple(mat)
+
 
 if len(sys.argv) < 3:
     sys.stderr.write(f"usage: {sys.argv[0]} [format] [filename]\n")
@@ -234,8 +258,8 @@ elif sys.argv[1] == "jkoers":
     load_jkoers(sys.argv[2])
 elif sys.argv[1] == "mjoosten":
     load_mjoosten(sys.argv[2])
-elif sys.argv[1] == "obj":    
-    load_obj(sys.argv[2])
+elif sys.argv[1] == "obj" or sys.argv[1] == "obj-flip":    
+    load_obj(sys.argv[2], sys.argv[1] == "obj-flip")
 else:
     sys.stderr.write(f"invalid format {sys.argv[1]}\n")
     sys.exit(1)
@@ -247,33 +271,35 @@ for texture in textures:
     sys.stdout.write(f"tex_def {texture[0]} {texture[1]}\n")
 for material in materials:
     sys.stdout.write(f"mat_beg {material[0]}\n")
-    if type(material[1]) is str:
-        sys.stdout.write(f"    albedo {material[1]}\n")
-    else:
-        sys.stdout.write(f"    albedo {str_color(material[1])}\n")
+    if material[1] != (0, 0, 0):
+        sys.stdout.write(f"    diffuse {str_texture(material[1])}\n")
     if material[2] is not None:
-        sys.stdout.write(f"    fuzzy {str_float(material[2])}\n")
+        sys.stdout.write(f"    reflective 255,255,255 {str_float(material[2])}\n")
     if material[3] is not None:
-        sys.stdout.write(f"    refractive {str_float(material[3])}\n")
-    if type(material[4]) is str:
-        sys.stdout.write(f"    emission {material[4]}\n")
-    else:
-        sys.stdout.write(f"    emission {str_color(material[4])}\n")
+        sys.stdout.write(f"    refractive 255,255,255 {str_float(material[3])}\n")
+    if material[4] != (0, 0, 0):
+        sys.stdout.write(f"    emission 1.0 {str_texture(material[4])}\n")
+    if material[5] != None:
+        sys.stdout.write(f"    bump {str_texture(material[5])}\n")
     sys.stdout.write(f"mat_end\n")
 for plane in planes:
-    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])} {str_material(plane[2])}\n")
+    use_material(plane[2])
+    sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])}\n")
 for cylinder in cylinders:
-    sys.stdout.write(f"cy {str_vertex(cylinder[0])} {str_vertex(cylinder[1])} {str_float(cylinder[2])} {str_float(cylinder[3])} {str_material(cylinder[4])}\n")
+    use_material(cylinder[4])
+    sys.stdout.write(f"cy {str_vertex(cylinder[0])} {str_vertex(cylinder[1])} {str_float(cylinder[2])} {str_float(cylinder[3])}\n")
 for sphere in spheres:
-    sys.stdout.write(f"sp {str_vertex(sphere[0])} {str_float(sphere[1])} {str_material(sphere[2])}\n")
+    use_material(sphere[2])
+    sys.stdout.write(f"sp {str_vertex(sphere[0])} {str_float(sphere[1])}\n")
 for vertex in vertices:
     if len(vertex) == 3:
         sys.stdout.write(f"v {str_vertex(vertex)}\n")
     elif len(vertex) == 5:
-        sys.stdout.write(f"vt {str_vertex(vertex)} {str_float(vertex[3])},{str_float(vertex[4])}\n")
+        sys.stdout.write(f"w {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])}\n")
     elif len(vertex) == 8:
-        sys.stdout.write(f"vtn {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])} {str_vertex(vertex[5:8])}\n")
+        sys.stdout.write(f"W {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])} {str_vertex(vertex[5:8])}\n")
 for face in faces:
-    sys.stdout.write(f"tr {face[0][0]} {face[0][1]} {face[0][2]} {str_material(face[1])}\n")
+    use_material(face[1])
+    sys.stdout.write(f"f {face[0][0]} {face[0][1]} {face[0][2]}\n")
 for light in lights:
     sys.stdout.write(f"L {str_vertex(light[0])} {str_float(light[1])} {str_color(light[2])}\n")

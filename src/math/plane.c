@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 t_plane
 	plane(t_vec pos, t_vec normal)
 {

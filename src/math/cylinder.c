@@ -1,6 +1,5 @@
 #include "rtmath.h"
 
-__attribute__ ((const))
 t_cylinder
 	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius)
 {

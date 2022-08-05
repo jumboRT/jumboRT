@@ -35,7 +35,7 @@ static inline int
 					world->vertices[tr->c].normal),
 				min,
 				hit,
-				get_mat_const(world, prim_mat(&tr->base))->is_smooth));
+				(get_mat_const(world, prim_mat(&tr->base))->flags & RT_MAT_SMOOTH) != 0));
 }
 
 static inline int
@@ -82,8 +82,12 @@ int
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		did_hit = cone_intersect(prim, ray, min, &hit->hit);
 	hit->prim = prim;
-	hit->relative_normal = hit->hit.normal;
-	if (vec_dot(hit->relative_normal, ray.dir) > 0)
-		hit->relative_normal = vec_neg(hit->relative_normal);
+	if (did_hit)
+	{
+		hit->relative_normal = hit->hit.normal;
+		if (vec_dot(hit->relative_normal, ray.dir) > 0)
+			hit->relative_normal = vec_neg(hit->relative_normal);
+		hit->geometric_normal = hit->relative_normal;
+	}
 	return (did_hit);
 }

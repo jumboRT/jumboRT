@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff04a4a8feca092ded050ad2ba50a3d174c295c56bba196745b243232086ecbe
-size 144
+C 0,0,-200 0,0,1 90
+L 0,10,0 0.7 140,180,240
+A 0.15 255,255,255
+
+sp 10,0,4 10 80,80,240 checkerboard
+
+pl 0,0,20 0,0,1 255,255,255 checkerboard
+

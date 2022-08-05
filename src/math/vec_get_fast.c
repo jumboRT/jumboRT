@@ -2,7 +2,6 @@
 
 #if defined RT_VECTORIZE
 
-__attribute__ ((const))
 FLOAT
 	x(t_vec v)
 {
@@ -12,7 +11,6 @@ FLOAT
 	return (conv.elem[0]);
 }
 
-__attribute__ ((const))
 FLOAT
 	y(t_vec v)
 {
@@ -22,7 +20,6 @@ FLOAT
 	return (conv.elem[1]);
 }
 
-__attribute__ ((const))
 FLOAT
 	z(t_vec v)
 {
@@ -32,7 +29,6 @@ FLOAT
 	return (conv.elem[2]);
 }
 
-__attribute__ ((const))
 FLOAT
 	w(t_vec v)
 {
@@ -42,7 +38,6 @@ FLOAT
 	return (conv.elem[3]);
 }
 
-__attribute__ ((const))
 FLOAT
 	u(t_vec2 v)
 {
@@ -52,7 +47,6 @@ FLOAT
 	return (conv.elem[0]);
 }
 
-__attribute__ ((const))
 FLOAT
 	v(t_vec2 v)
 {
@@ -62,7 +56,6 @@ FLOAT
 	return (conv.elem[1]);
 }
 
-__attribute__ ((const))
 FLOAT
 	xyz(t_vec v, int i)
 {
@@ -74,7 +67,6 @@ FLOAT
 		return (z(v));
 }
 
-__attribute__ ((const))
 int
 	vec_eq(t_vec a, t_vec b)
 {

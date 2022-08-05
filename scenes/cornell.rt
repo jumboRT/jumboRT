@@ -1,3 +1,49 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:da4cbd81941fd5ec00e245ea4275a9d93acfd34c8b2bca61a39635b8e25a919d
-size 880
+C -2,0,0 1,0,0 90
+
+# box vertices
+v -2,-1,-1
+v -2,-1, 1
+v -2, 1,-1
+v -2, 1, 1
+v  1,-1,-1
+v  1,-1, 1
+v  1, 1,-1
+v  1, 1, 1
+
+# light vertices
+v -0.5,-0.5, 0.9
+v -0.5, 0.5, 0.9
+v  0.5,-0.5, 0.9
+v  0.5, 0.5, 0.9
+v -0.5,-0.5, 1.0
+v -0.5, 0.5, 1.0
+v  0.5,-0.5, 1.0
+v  0.5, 0.5, 1.0
+
+# walls
+mat_beg mat_left diffuse 255,0,0 mat_end
+mat_beg mat_right diffuse 0,255,0 mat_end
+mat_beg mat_white diffuse 255,255,255 mat_end
+f 1 0 4 mat_left
+f 4 5 1 mat_left
+f 2 3 6 mat_right
+f 7 6 3 mat_right
+f 5 4 6 mat_white
+f 6 7 5 mat_white
+f 3 1 5 mat_white
+f 5 7 3 mat_white
+f 0 2 4 mat_white
+f 6 4 2 mat_white
+
+# light
+mat_beg mat_light emission 16.0 255,255,255 mat_end
+f 9 8 10 mat_light
+f 10 11 9 mat_light
+f 9 8 12 mat_light
+f 12 13 9 mat_light
+f 8 10 14 mat_light
+f 14 12 8 mat_light
+f 11 10 14 mat_light
+f 14 15 11 mat_light
+f 9 11 15 mat_light
+f 15 13 9 mat_light
