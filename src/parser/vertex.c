@@ -8,6 +8,8 @@ void
 	t_vertex	vertex;
 
 	vertex.pos = rt_vec(ctx);
+	vertex.uv = vec2(0.0, 0.0);
+	vertex.normal = vec_0();
 	world_add_vertex(world, &vertex);
 }
 
@@ -18,6 +20,7 @@ void
 
 	vertex.pos = rt_vec(ctx);
 	vertex.uv = rt_vec2(ctx);
+	vertex.normal = vec_0();
 	world_add_vertex(world, &vertex);
 }
 
@@ -27,6 +30,7 @@ void
 	t_vertex	vertex;
 
 	vertex.pos = rt_vec(ctx);
+	vertex.uv = vec2(0.0, 0.0);
 	vertex.normal = rt_vec(ctx);
 	world_add_vertex(world, &vertex);
 }

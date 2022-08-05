@@ -2,28 +2,24 @@
 
 #if !defined RT_VECTORIZE
 
-__attribute__ ((const))
 FLOAT
 	x(t_vec v)
 {
 	return (v.x);
 }
 
-__attribute__ ((const))
 FLOAT
 	y(t_vec v)
 {
 	return (v.y);
 }
 
-__attribute__ ((const))
 FLOAT
 	z(t_vec v)
 {
 	return (v.z);
 }
 
-__attribute__ ((const))
 FLOAT
 	xyz(t_vec v, int i)
 {
@@ -35,7 +31,6 @@ FLOAT
 		return (z(v));
 }
 
-__attribute__ ((const))
 int
 	vec_eq(t_vec a, t_vec b)
 {

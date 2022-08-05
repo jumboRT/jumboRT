@@ -116,16 +116,25 @@ t_vec
 	FLOAT	red;
 	FLOAT	green;
 	FLOAT	blue;
+	t_vec	result;
 
 	rt_skip(ctx, ft_isspace);
-	red = rt_color_part(ctx);
-	rt_expect(ctx, ',');
+	if (*ctx->data != '(')
+	{
+		red = rt_color_part(ctx);
+		rt_expect(ctx, ',');
+		rt_skip(ctx, ft_isspace);
+		green = rt_color_part(ctx);
+		rt_expect(ctx, ',');
+		rt_skip(ctx, ft_isspace);
+		blue = rt_color_part(ctx);
+		return (vec(red, green, blue, 1.0));
+	}
+	rt_advance(ctx);
+	result = rt_vec(ctx);
 	rt_skip(ctx, ft_isspace);
-	green = rt_color_part(ctx);
-	rt_expect(ctx, ',');
-	rt_skip(ctx, ft_isspace);
-	blue = rt_color_part(ctx);
-	return (vec(red, green, blue, 1.0));
+	rt_expect(ctx, ')');
+	return (vec(x(result), y(result), z(result), 1.0));
 }
 
 t_vec
@@ -197,7 +206,7 @@ char
 	if (ft_strncmp(ctx->data, prefix, prefix_len))
 	{
 		rt_parse_error(ctx, "unexpected keyword %.*s, expected keyword"
-				"starting with: '%s'", id_len, ctx->data, prefix);
+				" starting with: '%s'", id_len, ctx->data, prefix);
 	}
 	result = ft_strndup(ctx->data, id_len);
 	rt_idskip(ctx, id_len);

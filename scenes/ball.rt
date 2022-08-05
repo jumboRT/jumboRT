@@ -1,0 +1,16 @@
+C 0,0,0 1,0,0 90
+
+tex_def tex_checker assets/checker.bmp
+
+mat_beg mat_light
+	emission 16 (1.0,1.0,1.0)
+mat_end
+
+mat_beg mat_middle
+	diffuse tex_checker
+mat_end
+
+pl 0,0,10 0,0,-1 mat_light
+sp 1,0,0 0.5 mat_middle
+sp 1,0,-50.25 100 255,0,255
+# sp 1,0,-50.25 100 mat_light
