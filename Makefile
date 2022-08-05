@@ -154,14 +154,14 @@ $(error "invalid renderer $(renderer)")
 endif
 
 ifeq ($(config), debug)
-	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -Og -DRT_BACKTRACE
+	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
 		LFLAGS	+= -fsanitize=address,undefined
 	else ifeq ($(san), memory)
-		CFLAGS	+= -fsanitize=memory,undefined
-		LFLAGS	+= -fsanitize=memory,undefined
+		CFLAGS	+= -fsanitize=memory,undefined -fsanitize-memory-track-origins
+		LFLAGS	+= -fsanitize=memory,undefined -fsanitize-memory-track-origins
 	else ifeq ($(san), thread)
 		CLFLAGS	+= -fsanitize=thread,undefined
 		LFLAGS	+= -fsanitize=thread,undefined

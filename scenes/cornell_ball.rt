@@ -2,6 +2,7 @@ C -2,0,0 1,0,0 90
 
 tex_def tex_check assets/checker.bmp
 tex_def tex_bump scenes/bump/wavy.bmp
+tex_def tex_ball assets/golf_ball.bmp
 
 # box vertices
 v -2,-1,-1
@@ -24,8 +25,7 @@ v  0.5,-0.5, 1.0
 v  0.5, 0.5, 1.0
 
 mat_beg mat_ball
-	diffuse 255,0,0
-	bump tex_bump
+	mf_reflective 5 5 255,0,0
 mat_end
 sp 0,0,0 1 mat_ball
 
