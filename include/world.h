@@ -15,7 +15,7 @@
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
 # define RT_BXDF_REFRACTIVE		2
-# define RT_BXDF_MF_REFLECTIVE	3
+# define RT_BXDF_MF_REFLECTIVE		3
 
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2

@@ -64,6 +64,9 @@ int
 		dp12 = vec_sub(triangle.vertices[1], triangle.vertices[2]);
 		invdet = (u(duv02) * v(duv12) - v(duv02) * u(duv12));
 		degenerate = rt_abs(invdet) > 0.0001;
+		hit->dpdu = vec_0();
+		hit->dpdv = vec_0();
+		/* TODO check if triangle has UV's before reading degenerate. Use of unitialized value */
 		if (degenerate)
 		{
 			invdet = 1.0 / invdet;

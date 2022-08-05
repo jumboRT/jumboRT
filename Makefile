@@ -216,7 +216,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -C $(MLX_DIR)
+	$(SILENT)${MAKE} -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
 # TODO: unhardcode these files
 compile: compiler/main.c
