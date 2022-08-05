@@ -16,18 +16,20 @@ t_vec
 t_vec
 	tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv)
 {
-	uint64_t					x;
-	uint64_t					y;
+	uint64_t					xv;
+	uint64_t					yv;
 	const GLOBAL unsigned char	*pixels;
 	unsigned char				colors[4];
+	t_vec						color;
 
 	uv = vec2(rt_mod(rt_mod(u(uv), 1.0) + 1.0, 1.0), rt_mod(rt_mod(v(uv), 1.0) + 1.0, 1.0));
-	x = (uint64_t)(u(uv) * tex->a.tex.width);
-	y = (uint64_t)(v(uv) * tex->a.tex.height);
+	xv = (uint64_t)(u(uv) * tex->a.tex.width);
+	yv = (uint64_t)(v(uv) * tex->a.tex.height);
 	pixels = get_tex_data_const(world, tex->a.tex.offset);
-	colors[0] = pixels[(y * tex->a.tex.width + x) * 4 + 0];
-	colors[1] = pixels[(y * tex->a.tex.width + x) * 4 + 1];
-	colors[2] = pixels[(y * tex->a.tex.width + x) * 4 + 2];
-	colors[3] = pixels[(y * tex->a.tex.width + x) * 4 + 3];
-	return (vec_scale(vec(colors[0], colors[1], colors[2], colors[3]), 1.0 / 255));
+	colors[0] = pixels[(yv * tex->a.tex.width + xv) * 4 + 0];
+	colors[1] = pixels[(yv * tex->a.tex.width + xv) * 4 + 1];
+	colors[2] = pixels[(yv * tex->a.tex.width + xv) * 4 + 2];
+	colors[3] = pixels[(yv * tex->a.tex.width + xv) * 4 + 3];
+	color = vec_scale(vec(colors[0], colors[1], colors[2], colors[3]), 1.0 / 255);
+	return (vec(x(color) * x(color), y(color) * y(color), z(color) * z(color), w(color)));
 }
