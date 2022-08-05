@@ -1,7 +1,7 @@
 #include "world.h"
 
 #ifndef RT_MAX_VOLUMES
-# define RT_MAX_VOLUMES 8
+# define RT_MAX_VOLUMES 1
 #endif
 
 static void
@@ -85,13 +85,13 @@ t_vec
 			mat = get_mat_const(world, prim_mat(hit.prim));
 			if (mat->flags & RT_MAT_EMITTER)
 				tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
-			if (mat->flags & RT_MAT_HAS_VOLUME)
-				toggle_volume(volumes, &volume_size, mat, vec_dot(ray.dir, hit.hit.normal));
 			if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv))) && mat->bxdf_end > mat->bxdf_begin)
 			{
 				head = vec_mul(head, f_bsdf_sample(world, ctx, mat->bxdf_begin, mat->bxdf_end, hit, ray.dir, head, &new_dir));
 				ray.dir = new_dir;
 			}
+			else if (mat->flags & RT_MAT_HAS_VOLUME)
+				toggle_volume(volumes, &volume_size, mat, vec_dot(ray.dir, hit.hit.normal));
 		}
 		depth -= 1;
 	}
