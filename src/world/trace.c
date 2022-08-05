@@ -63,6 +63,8 @@ t_vec
 			if (mat->flags & RT_MAT_EMITTER)
 				tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
 			bsdf = f_bsdf_sample(world, ctx, *mat, hit, ray.dir, head, &new_dir);
+			if (vec_eq(bsdf, vec_0()))
+				break;
 			head = vec_mul(head, bsdf);
 			ray.dir = new_dir;
 		}
