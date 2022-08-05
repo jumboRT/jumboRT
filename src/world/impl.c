@@ -156,14 +156,29 @@ void
 {
 	uint32_t	i;
 
-	world->bxdfs_size += sizeof(t_bxdf_any);
-	world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
-	i = material->bxdf_begin;
-	while (i < material->bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
-		i += 1;
-	ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
-	ft_memcpy(&world->bxdfs[i], bxdf, size);
-	world->bxdfs_count += 1;
-	material->bxdf_end += 1;
+	if (material->flags & RT_MAT_HAS_VOLUME)
+	{
+		world->bxdfs_size += sizeof(t_bxdf_any);
+		world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
+		i = material->volume_bxdf_begin;
+		while (i < material->volume_bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+			i += 1;
+		ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
+		ft_memcpy(&world->bxdfs[i], bxdf, size);
+		world->bxdfs_count += 1;
+		material->volume_bxdf_end += 1;
+	}
+	else
+	{
+		world->bxdfs_size += sizeof(t_bxdf_any);
+		world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
+		i = material->bxdf_begin;
+		while (i < material->bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+			i += 1;
+		ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
+		ft_memcpy(&world->bxdfs[i], bxdf, size);
+		world->bxdfs_count += 1;
+		material->bxdf_end += 1;
+	}
 }
 

@@ -100,6 +100,7 @@ static FLOAT
 {
 	unsigned int	ival;
 
+	rt_skip(ctx, ft_isspace);
 	ival = rt_uint(ctx);
 	if (ival > 255)
 	{
@@ -123,18 +124,22 @@ t_vec
 	{
 		red = rt_color_part(ctx);
 		rt_expect(ctx, ',');
-		rt_skip(ctx, ft_isspace);
 		green = rt_color_part(ctx);
 		rt_expect(ctx, ',');
-		rt_skip(ctx, ft_isspace);
 		blue = rt_color_part(ctx);
 		return (vec(red, green, blue, 1.0));
 	}
 	rt_advance(ctx);
 	result = rt_vec(ctx);
+	result = vec_set(result, 3, 1.0);
+	if (*ctx->data == ',')
+	{
+		rt_advance(ctx);
+		result = vec_set(result, 3, rt_float(ctx));
+	}
 	rt_skip(ctx, ft_isspace);
 	rt_expect(ctx, ')');
-	return (vec(x(result), y(result), z(result), 1.0));
+	return (result);
 }
 
 t_vec
@@ -144,13 +149,10 @@ t_vec
 	FLOAT	y;
 	FLOAT	z;
 
-	rt_skip(ctx, ft_isspace);
 	x = rt_float(ctx);
 	rt_expect(ctx, ',');
-	rt_skip(ctx, ft_isspace);
 	y = rt_float(ctx);
 	rt_expect(ctx, ',');
-	rt_skip(ctx, ft_isspace);
 	z = rt_float(ctx);
 	return (vec(x, y, z, 0.0));
 }

@@ -123,6 +123,7 @@ FLOAT		rt_pow(FLOAT x, FLOAT y);
 FLOAT		rt_mod(FLOAT a, FLOAT b);
 FLOAT		rt_exp(FLOAT arg);
 FLOAT		rt_clamp(FLOAT arg, FLOAT min, FLOAT max);
+FLOAT		rt_log(FLOAT arg);
 
 int			float_eq(FLOAT a, FLOAT b, FLOAT error);
 

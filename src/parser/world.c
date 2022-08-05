@@ -26,6 +26,7 @@ const static t_directive	directives[] = {
 	{ "alpha", rt_exec_alpha },
 	{ "normal", rt_exec_normal },
 	{ "bump", rt_exec_bump },
+	{ "volume", rt_exec_volume },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
 };
