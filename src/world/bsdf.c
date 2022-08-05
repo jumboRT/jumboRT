@@ -280,7 +280,12 @@ static t_vec
 static t_vec
 	f_bxdf_mf_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_mf_reflection *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+	while (1)
+	{
+		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+		if (vec_dot(*wo, hit.geometric_normal) >= 0)
+			break;
+	}
 	*wo = world_to_local(hit, *wo);
 	return (f_bxdf_microfacet_reflection(world, bxdf, hit, wi, *wo));
 }
@@ -294,12 +299,15 @@ static t_vec
 
 	wi = world_to_local(hit, wiw);
 	result = vec_0();
+	wo = vec_z(1.0);
 	if (bxdf->type == RT_BXDF_DIFFUSE)
 		result = f_bxdf_diffuse_sample(world, ctx, (const GLOBAL t_bxdf_diffuse *) bxdf, hit, wi, &wo);
+	/*
 	if (bxdf->type == RT_BXDF_REFLECTIVE)
 		result = f_bxdf_perfect_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wi, &wo);
 	if (bxdf->type == RT_BXDF_MF_REFLECTIVE)
 		result = f_bxdf_mf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_mf_reflection *) bxdf, hit, wi, &wo);
+	*/
 	*wow = local_to_world(hit, wo);
 	return result;
 }
