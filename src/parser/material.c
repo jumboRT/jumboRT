@@ -109,15 +109,16 @@ void
 }
 
 void
-	rt_exec_mf_reflective(t_world *world, t_parse_ctx *ctx)
+	rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx)
 {
-	t_bxdf_mf_reflection bxdf;
+	t_bxdf_cook_torrance bxdf;
 
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	bxdf.base.type = RT_BXDF_MF_REFLECTIVE;
-	bxdf.alphax = rt_float(ctx);
-	bxdf.alphay = rt_float(ctx);
+	bxdf.base.type = RT_BXDF_COOK_TORRANCE;
+	bxdf.roughness = rt_float(ctx);
+	bxdf.k = rt_float(ctx);
+	bxdf.eta = rt_float(ctx);
 	bxdf.base.tex = rt_texture(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 
