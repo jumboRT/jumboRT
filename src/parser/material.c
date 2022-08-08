@@ -125,15 +125,15 @@ void
 }
 
 void
-	rt_exec_refractive(t_world *world, t_parse_ctx *ctx)
+	rt_exec_transmissive(t_world *world, t_parse_ctx *ctx)
 {
-	t_bxdf_refractive	bxdf;
+	t_bxdf_transmissive	bxdf;
 
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	bxdf.base.type = RT_BXDF_REFRACTIVE;
+	bxdf.base.type = RT_BXDF_TRANSMISSIVE;
 	bxdf.base.tex = rt_texture(world, ctx);
-	bxdf.refractive_index = rt_float(ctx);
+	bxdf.eta = rt_vec(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
