@@ -80,7 +80,9 @@ uint32_t
 		i += 1;
 	}
 	bxdf.base.type = RT_BXDF_DIFFUSE;
-	bxdf.base.tex = tex_by_color(world, ctx, color);
+	bxdf.base.tex.tex[0] = tex_by_color(world, ctx, color);
+	bxdf.base.tex.tex[1] = tex_by_color(world, ctx, vec(1.0, 1.0, 1.0, 1.0));
+	bxdf.base.weight = 1.0;
 	material_init(&material, world);
 	world_insert_bxdf(world, &material, &bxdf, sizeof(bxdf));
 	new_entry.index = world_add_material(world, &material);

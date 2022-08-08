@@ -83,7 +83,7 @@ class Reflection:
         self.fuzzy = fuzzy
 
     def __str__(self):
-        return f"reflection {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.fuzzy)}"
+        return f"reflective {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.fuzzy)}"
 
 class Refraction:
     def __init__(self, weight, texture, ior):
@@ -92,7 +92,7 @@ class Refraction:
         self.ior = ior
 
     def __str__(self):
-        return f"refraction {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.ior)}"
+        return f"transmissive {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.ior)}"
 
 def parse_vertex(line, swap_yz=False):
     x = float(line[0])
@@ -132,6 +132,8 @@ def str_material(material):
 def str_texture(texture):
     if type(texture) is str:
         return texture
+    elif type(texture) is tuple and type(texture[0]) is not int and type(texture[0]) is not float:
+        return f"filter {str_texture(texture[0])} {str_texture(texture[1])}"
     return str_color(texture)
 
 def use_material(material):
@@ -181,14 +183,17 @@ def mjoosten_material(color, name):
     return full_name
 
 def obj_map(m, c):
-    if m is not None:
-        if c is None or c != (0.0, 0.0, 0.0):
-            return m
-    elif c is not None:
-        if type(c) is float:
-            return (0, 0, 0, c)
-        elif c != (0.0, 0.0, 0.0):
-            return c
+    if m is None:
+        if c == (0.0, 0.0, 0.0):
+            return None
+        return c
+    if c is None:
+        return m
+    if c == (0.0, 0.0, 0.0):
+        return None
+    if c == (1.0, 1.0, 1.0):
+        return m
+    return (c, m)
 
 def load_jkoers(filename):
     with open(filename) as file:
@@ -279,7 +284,7 @@ def load_mtl(filename, flip_textures):
             if line[0] == "Tf":
                 obj_materials[-1].tf = tuple(map(float, line[1:4]))
             if line[0] == "d":
-                obj_materials[-1].d = float(line[1])
+                obj_materials[-1].d = (0.0, 0.0, 0.0, float(line[1]))
             if line[0] == "Ns":
                 obj_materials[-1].ns = float(line[1])
             if line[0] == "Ni":
@@ -294,28 +299,25 @@ def load_mtl(filename, flip_textures):
                 path = os.path.join(os.path.dirname(filename), line[1])
                 obj_materials[-1].map_ks = add_texture(path, flip_textures)
             if line[0] == "map_d":
-                path = os.path.join(os.path.dirname(filename), line[1])
-                obj_materials[-1].map_d = add_texture(path, flip_textures)
+                pass
+                #path = os.path.join(os.path.dirname(filename), line[1])
+                #obj_materials[-1].map_d = add_texture(path, flip_textures)
             if line[0] == "map_Bump":
                 path = os.path.join(os.path.dirname(filename), line[1])
                 obj_materials[-1].bump = add_texture(path, flip_textures)
         for mat_obj in obj_materials:
             mat_rt = Material(mat_obj.name)
             mat_rt.emission = obj_map(mat_obj.map_ka, mat_obj.ka)
-            mat_rt.alpha = obj_map(mat_obj.map_d, mat_obj.d)
+            mat_rt.alpha = obj_map(mat_obj.map_kd, mat_obj.d)
             mat_rt.bump = mat_obj.bump
             diffuse = obj_map(mat_obj.map_kd, mat_obj.kd)
             specular = obj_map(mat_obj.map_ks, mat_obj.ks)
-            transmission = mat_obj.tf
-            if mat_obj.kd is not None:
-                if mat_obj.kd[2] > mat_obj.kd[1] and mat_obj.kd[2] > mat_obj.kd[0]:
-                    sys.stderr.write(f"{mat_obj.name}\n")
             if diffuse is not None:
                 mat_rt.add(Diffuse(1.0, diffuse))
             if specular is not None:
                 mat_rt.add(Reflection(1.0, specular, 0.0))
-            #if mat_obj.illum == 4:
-            #    mat_rt.add(Refraction(1.0, refraction, mat_obj.ni))
+            if mat_obj.illum == 4:
+                mat_rt.add(Refraction(1.0, mat_obj.tf, mat_obj.ni))
             materials.append(mat_rt)
 
 def load_obj(filename, flip_textures):
