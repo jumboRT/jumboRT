@@ -6,11 +6,20 @@ mat_beg mat_light
 	emission 16 (1.0,1.0,1.0)
 mat_end
 
-mat_beg mat_middle
-	diffuse tex_checker
+mat_beg mat_right
+	diffuse 1.0 (1.0,1.0,0.0)
 mat_end
 
-pl 0,0,10 0,0,-1 mat_light
+sp -1000,0,1000 1000 mat_light
+
+mat_beg mat_middle
+#	diffuse 1.0 tex_checker
+	transmissive 1.0 (1.0,1.0,1.0) 1.5
+mat_end
+
+# pl 0,0,10 0,0,-1 mat_light
 sp 1,0,0 0.5 mat_middle
-sp 1,0,-50.25 100 255,0,255
+sp 1,0.5,0 0.5 mat_right
+sp 1,-0.5,0 0.5 mat_middle
+sp 1,0,-50.25 100 255,255,0
 # sp 1,0,-50.25 100 mat_light

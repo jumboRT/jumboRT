@@ -93,7 +93,7 @@ static int
 		hit.geometric_normal = hit.hit.normal;
 		hit.hit.dpdu = vec_0();
 		hit.hit.dpdv = vec_0();
-		bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+		bsdf = f_bsdf_sample(world, ctx, tctx, mat->volume, hit, tctx->ray.dir, &tctx->ray.dir);
 		tctx->head = vec_mul(tctx->head, bsdf);
 		if (vec_eq(tctx->head, vec_0()))
 			return (0);
@@ -103,8 +103,8 @@ static int
 		tctx->ray.org = hit.hit.pos;
 		mat = get_mat_const(world, prim_mat(hit.prim));
 		if (mat->flags & RT_MAT_EMITTER)
-			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
-		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv))) && mat->bxdf_end > mat->bxdf_begin)
+			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
+		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(filter_sample(world, mat->alpha, hit.hit.uv))) && mat->surface.end > mat->surface.begin)
 		{
 			if (mat->flags & RT_MAT_HAS_NORMAL)
 				hit.relative_normal = local_to_world(hit, vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
@@ -112,7 +112,7 @@ static int
 				hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
 			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
 				hit.relative_normal = vec_neg(hit.relative_normal);
-			bsdf = f_bsdf_sample(world, ctx, mat->bxdf_begin, mat->bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+			bsdf = f_bsdf_sample(world, ctx, tctx, mat->surface, hit, tctx->ray.dir, &tctx->ray.dir);
 			tctx->head = vec_mul(tctx->head, bsdf);
 			if (vec_eq(tctx->head, vec_0()))
 				return (0);
@@ -144,7 +144,6 @@ void
 	t_trace_ctx	tctx;
 
 	depth = 0;
-	tctx.eta = vec3(1.0, 1.0, 1.0);
 	while (index < end - begin)
 	{
 		if (depth == 0)

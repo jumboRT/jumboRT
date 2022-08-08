@@ -32,6 +32,28 @@ uint32_t
 	}
 }
 
+t_filter
+	rt_filter(t_world *world, t_parse_ctx *ctx)
+{
+	t_filter	result;
+	size_t		len;
+
+	rt_skip(ctx, ft_isspace);
+	len = rt_idlen(ctx);
+	if (6 == len && ft_strncmp("filter", ctx->data, len) == 0)
+	{
+		rt_idskip(ctx, len);
+		result.tex[0] = rt_texture(world, ctx);
+		result.tex[1] = rt_texture(world, ctx);
+	}
+	else
+	{
+		result.tex[0] = rt_texture(world, ctx);
+		result.tex[1] = tex_by_color(world, ctx, vec(1.0, 1.0, 1.0, 1.0));
+	}
+	return (result);
+}
+
 uint32_t
 	rt_material_int(t_parse_ctx *ctx, t_world *world)
 {
@@ -92,7 +114,7 @@ void
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_DIFFUSE;
 	bxdf.base.weight = rt_float(ctx);
-	bxdf.base.tex = rt_texture(world, ctx);
+	bxdf.base.tex = rt_filter(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
@@ -105,38 +127,39 @@ void
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_REFLECTIVE;
 	bxdf.base.weight = rt_float(ctx);
-	bxdf.base.tex = rt_texture(world, ctx);
+	bxdf.base.tex = rt_filter(world, ctx);
 	bxdf.fuzzy = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
 void
-	rt_exec_mf_reflective(t_world *world, t_parse_ctx *ctx)
+	rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx)
 {
-	t_bxdf_mf_reflection bxdf;
+	t_bxdf_cook_torrance bxdf;
 
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	bxdf.base.type = RT_BXDF_MF_REFLECTIVE;
+	bxdf.base.type = RT_BXDF_COOK_TORRANCE;
 	bxdf.base.weight = rt_float(ctx);
-	bxdf.alphax = rt_float(ctx);
-	bxdf.alphay = rt_float(ctx);
-	bxdf.base.tex = rt_texture(world, ctx);
+	bxdf.roughness = rt_float(ctx);
+	bxdf.k = rt_float(ctx);
+	bxdf.eta = rt_float(ctx);
+	bxdf.base.tex = rt_filter(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 
 }
 
 void
-	rt_exec_refractive(t_world *world, t_parse_ctx *ctx)
+	rt_exec_transmissive(t_world *world, t_parse_ctx *ctx)
 {
-	t_bxdf_refractive	bxdf;
+	t_bxdf_transmissive	bxdf;
 
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	bxdf.base.type = RT_BXDF_REFRACTIVE;
 	bxdf.base.weight = rt_float(ctx);
-	bxdf.base.tex = rt_texture(world, ctx);
-	bxdf.refractive_index = rt_float(ctx);
+	bxdf.base.type = RT_BXDF_TRANSMISSIVE;
+	bxdf.base.tex = rt_filter(world, ctx);
+	bxdf.eta = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
@@ -146,7 +169,7 @@ void
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->brightness = rt_float(ctx);
-	ctx->mat->emission = rt_texture(world, ctx);
+	ctx->mat->emission = rt_filter(world, ctx);
 	ctx->mat->flags |= RT_MAT_EMITTER;
 }
 
@@ -164,7 +187,7 @@ void
 {
 	if (ctx->mat == NULL)
 	    rt_parse_error(ctx, "unexpected directive, did not start a material");
-	ctx->mat->alpha_tex = rt_texture(world, ctx);
+	ctx->mat->alpha = rt_filter(world, ctx);
 	ctx->mat->flags |= RT_MAT_HAS_ALPHA;
 }
 
