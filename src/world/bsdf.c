@@ -116,7 +116,7 @@ static inline FLOAT
 {
 	return (sinphi(w) * sinphi(w));
 }
-
+/*
 static FLOAT
 	beckmann_lambda(const t_bxdf_mf_reflection *bxdf, t_vec w)
 {
@@ -183,7 +183,6 @@ static FLOAT
 	quot = (rt_exp(inner));
 	delim = (RT_PI * bxdf->alphax * bxdf->alphay * cos4);
 	result = quot / delim;
-	/*printf("tan2 %f cos4 %f cos2phi %f alphax %f sin2phi %f alphay %f inner %f quot %f delim %f result %f\n", tan2, cos4, cos2phi(wh), bxdf->alphax, sin2phi(wh), bxdf->alphay, inner, quot, delim, result);*/
 	return result;
 }
 
@@ -230,6 +229,7 @@ static t_vec
 	result = vec_scale(color, tmp / (4.0 * costhetaI * costhetaO));
 	return (result);
 }
+*/
 
 static FLOAT
 	d_beckman_distribution(t_vec wh, t_vec n, FLOAT roughness)
@@ -375,7 +375,7 @@ static t_vec
 	*wo = vec_norm(vec_add(*wo, rt_random_in_sphere(&ctx->seed, 0.0, bxdf->fuzzy)));*/
 	return (tex_sample_id(world, bxdf->base.tex, hit.hit.uv));
 }
-
+/*
 static t_vec
 	f_bxdf_refractive(const GLOBAL t_world *world, const GLOBAL t_bxdf_refractive *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
 {
@@ -386,6 +386,7 @@ static t_vec
 	(void) wo;
 	return (vec(1.0, 0.0, 1.0, 0.0));
 }
+*/
 
 static t_vec
 	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
@@ -399,26 +400,83 @@ static t_vec
 	*wo = world_to_local(hit, *wo);
 	return (f_bxdf_diffuse(world, bxdf, hit, wi, *wo));
 }
-
+/*
 static t_vec
 	f_bxdf_mf_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_mf_reflection *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	/*
-	while (1)
-	{
-		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
-		if (vec_dot(*wo, hit.geometric_normal) >= 0)
-			break;
-	}
-	*/
 	*wo = rt_random_in_sphere(&ctx->seed, 0.0, 1.0);
 	*wo = vec_norm(*wo);
 	*wo = vec_norm(world_to_local(hit, *wo));
 	return (f_bxdf_microfacet_reflection(world, bxdf, hit, wi, *wo));
 }
+*/
+
+static int refract(t_vec wi, t_vec normal, FLOAT eta, t_vec *wo)
+{
+	FLOAT costhetai;
+	FLOAT sin2thetai;
+	FLOAT sin2thetat;
+	FLOAT costhetat;
+
+	costhetai = vec_dot(normal, wi);
+	sin2thetai = rt_max(0.0, 1.0 - costhetai * costhetai);
+	sin2thetat = eta * eta * sin2thetai;
+	if (sin2thetat >= 1)
+		return (0);
+	costhetat = rt_sqrt(1.0 - sin2thetat);
+	*wo = vec_add(vec_scale(vec_neg(wi), eta), vec_scale(normal, eta * costhetai - costhetat));
+	return (1);
+}
+
+static FLOAT fr_dielectric(FLOAT costhetai, FLOAT etai, FLOAT etat)
+{
+	FLOAT sinthetai;
+	FLOAT sinthetat;
+	FLOAT costhetat;
+	FLOAT rparl;
+	FLOAT rperp;
+
+	costhetai = rt_abs(costhetai);
+	sinthetai = rt_sqrt(rt_max(0.0, 1.0 - costhetai * costhetai));
+	sinthetat = etai / etat * sinthetai;
+	costhetat = rt_sqrt(rt_max(0.0, 1.0 - sinthetat * sinthetat));
+	rparl = ((etat * costhetai) - (etai * costhetat)) /
+		((etat * costhetai) + (etai * costhetat));
+	rperp = ((etai * costhetai) - (etat * costhetat)) /
+		((etai * costhetai) + (etat * costhetat));
+	return (rparl * rparl + rperp * rperp) / 2.0;
+}
+
+static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx,
+					  const GLOBAL t_bxdf_transmissive *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+{
+	FLOAT etai;
+	FLOAT etat;
+	FLOAT fresnel;
+	t_vec result;
+
+	(void) ctx;
+	etai = x(trace_ctx->eta);
+	etat = x(bxdf->eta);
+	if (vec_dot(hit.relative_normal, hit.geometric_normal) < 0)
+	{
+		etai = x(bxdf->eta);
+		etat = x(trace_ctx->eta);
+	}
+	if (refract(wi, hit.relative_normal, etai / etat, wo))
+	{
+		*wo = vec3(-x(wi), -y(wi), z(wi));
+		return (vec3(1.0, 1.0, 1.0));
+	}
+	trace_ctx->eta = bxdf->eta;
+	fresnel = fr_dielectric(costheta(*wo), etai, etai);
+	result = vec_mul(tex_sample_id(world, bxdf->base.tex, hit.hit.uv),
+			 vec3(1.0 - fresnel, 1.0 - fresnel, 1.0 - fresnel));
+	return (vec_scale(result, 1.0 / abs_costheta(*wo)));
+}
 
 static t_vec
-	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
+f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
 	t_vec	wi;
 	t_vec	wo;
@@ -429,12 +487,10 @@ static t_vec
 	wo = vec_z(1.0);
 	if (bxdf->type == RT_BXDF_DIFFUSE)
 		result = f_bxdf_diffuse_sample(world, ctx, (const GLOBAL t_bxdf_diffuse *) bxdf, hit, wi, &wo);
-	if (bxdf->type == RT_BXDF_REFLECTIVE)
-		result = f_bxdf_perfect_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wi, &wo);
-	if (bxdf->type == RT_BXDF_MF_REFLECTIVE)
-		result = f_bxdf_mf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_mf_reflection *) bxdf, hit, wi, &wo);
 	if (bxdf->type == RT_BXDF_COOK_TORRANCE)
 		result = f_cook_torrance_sample(world, ctx, (const GLOBAL t_bxdf_cook_torrance *) bxdf, hit, wi, &wo);
+	if (bxdf->type == RT_BXDF_TRANSMISSIVE)
+		result = f_bxdf_transmissive_sample(world, ctx, trace_ctx, (const GLOBAL t_bxdf_transmissive *) bxdf, hit, wi, &wo);
 	*wow = local_to_world(hit, wo);
 	return result;
 }
@@ -469,7 +525,7 @@ static FLOAT
 }
 
 t_vec
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
+f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
 {
 	uint32_t			idx;
 	FLOAT				total_weight;
@@ -488,7 +544,7 @@ t_vec
 		{
 			rand -= weight;
 			if (rand <= 0)
-				return (vec_scale(f_bxdf_sample(world, ctx, bxdf, hit, wiw, wow), (weight) / total_weight));
+				return (vec_scale(f_bxdf_sample(world, ctx, trace_ctx, bxdf, hit, wiw, wow), (weight) / total_weight));
 		}
 		idx++;
 	}

@@ -14,7 +14,7 @@
 
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
-# define RT_BXDF_REFRACTIVE		2
+# define RT_BXDF_TRANSMISSIVE		2
 # define RT_BXDF_MF_REFLECTIVE		3
 # define RT_BXDF_COOK_TORRANCE		4
 
@@ -52,7 +52,7 @@ typedef struct s_tex				t_tex;
 typedef struct s_bxdf				t_bxdf;
 typedef struct s_bxdf_diffuse			t_bxdf_diffuse;
 typedef struct s_bxdf_reflective		t_bxdf_reflective;
-typedef struct s_bxdf_refractive		t_bxdf_refractive;
+typedef struct s_bxdf_transmissive		t_bxdf_transmissive;
 typedef struct s_bxdf_mf_reflection		t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance		t_bxdf_cook_torrance;
 typedef union u_bxdf_any			t_bxdf_any;
@@ -65,6 +65,7 @@ struct s_trace_ctx {
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
 	uint32_t				volume_size;
+	t_vec eta;
 };
 
 struct s_result {
@@ -128,12 +129,12 @@ struct s_bxdf_reflective {
 	FLOAT		fuzzy;
 };
 
-struct s_bxdf_refractive {
+struct s_bxdf_transmissive {
 	t_bxdf		base;
-	FLOAT		refractive_index;
+	t_vec eta;
 };
 
-struct s_bxdf_mf_reflection {
+struct s_bxdf_mf_reflective {
 	t_bxdf		base;
 	FLOAT		alphax;
 	FLOAT		alphay;
@@ -150,8 +151,7 @@ union u_bxdf_any {
 	t_bxdf			base;
 	t_bxdf_diffuse		diffuse;
 	t_bxdf_reflective	reflective;
-	t_bxdf_refractive	refractive;
-	t_bxdf_mf_reflection	mf_reflective;
+	t_bxdf_transmissive	transmissive;
 	t_bxdf_cook_torrance	cook_torrance;
 };
 
@@ -261,7 +261,7 @@ t_ray	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index
 
 uint64_t	world_primitive_size(uint8_t shape_type);
 
-t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
+t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);

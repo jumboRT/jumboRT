@@ -93,7 +93,7 @@ static int
 		hit.geometric_normal = hit.hit.normal;
 		hit.hit.dpdu = vec_0();
 		hit.hit.dpdv = vec_0();
-		bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+		bsdf = f_bsdf_sample(world, ctx, tctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
 		tctx->head = vec_mul(tctx->head, bsdf);
 		if (vec_eq(tctx->head, vec_0()))
 			return (0);
@@ -112,7 +112,7 @@ static int
 				hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
 			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
 				hit.relative_normal = vec_neg(hit.relative_normal);
-			bsdf = f_bsdf_sample(world, ctx, mat->bxdf_begin, mat->bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+			bsdf = f_bsdf_sample(world, ctx, tctx, mat->bxdf_begin, mat->bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
 			tctx->head = vec_mul(tctx->head, bsdf);
 			if (vec_eq(tctx->head, vec_0()))
 				return (0);
@@ -132,6 +132,7 @@ t_vec
 	tctx.tail = vec(0, 0, 0, 0);
 	tctx.volume_size = 0;
 	tctx.ray = ray;
+	tctx.eta = vec3(1.0, 1.0, 1.0);
 	while (depth > 0 && world_trace_step(world, ctx, &tctx))
 		depth -= 1;
 	return (tctx.tail);
@@ -152,6 +153,7 @@ void
 			tctx.head = vec(1, 1, 1, 1);
 			tctx.tail = vec(0, 0, 0, 0);
 			tctx.volume_size = 0;
+			tctx.eta = vec3(1.0, 1.0, 1.0);
 			tctx.ray = project(world, ctx, begin + index);
 		}
 		if (world_trace_step(world, ctx, &tctx))
