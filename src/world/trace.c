@@ -144,6 +144,7 @@ void
 	t_trace_ctx	tctx;
 
 	depth = 0;
+	tctx.eta = vec3(1.0, 1.0, 1.0);
 	while (index < end - begin)
 	{
 		if (depth == 0)

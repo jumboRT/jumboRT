@@ -286,7 +286,15 @@ static t_vec
 }
 
 static t_vec
-	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
+	f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx,
+			GLOBAL t_trace_ctx *trace_ctx, const GLOBAL t_bxdf_transmissive * bxdf,
+			t_world_hit hit, t_vec wi, t_vec *wo)
+{
+
+}
+
+static t_vec
+	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_trace_ctx *trace_ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
 	t_vec	wi;
 	t_vec	wo;
@@ -301,6 +309,8 @@ static t_vec
 		result = f_bxdf_perfect_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wi, &wo);
 	if (bxdf->type == RT_BXDF_MF_REFLECTIVE)
 		result = f_bxdf_mf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_mf_reflection *) bxdf, hit, wi, &wo);
+	if (bxdf->type == RT_BXDF_TRANSMISSIVE)
+		result = f_bxdf_transmissive_sample(world, ctx, trace_ctx, (const GLOBAL t_bxdf_transmissive *) bxdf, hit, wi, &wo);
 	*wow = local_to_world(hit, wo);
 	return result;
 }
@@ -311,50 +321,23 @@ static t_vec
 	return (tex_sample_id(world, bxdf->tex, uv));
 }
 
-static FLOAT
-	bxdf_weight(const GLOBAL t_world *world, const GLOBAL t_bxdf *bxdf, t_vec color, t_vec2 uv)
-{
-	return (vec_dot(color, bxdf_color(world, bxdf, uv)));
-}
-
-static FLOAT
-	bsdf_total_weight(const GLOBAL t_world *world, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec color)
-{
-	uint32_t			idx;
-	FLOAT				result;
-	const GLOBAL t_bxdf	*bxdf;
-
-	result = 0.0;
-	idx = bxdf_begin;
-	while (idx < bxdf_end) {
-		bxdf = get_bxdf_const(world, idx);
-		result += bxdf_weight(world, bxdf, color, hit.hit.uv);
-		idx += 1;
-	}
-	return (result);
-}
-
 t_vec
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
+	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_bsdf bsdf, GLOBAL t_trace_ctx *trace_ctx, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow)
 {
 	uint32_t			idx;
-	FLOAT				total_weight;
 	FLOAT				rand;
-	FLOAT				weight;
 	const GLOBAL t_bxdf	*bxdf;
 
-	total_weight = bsdf_total_weight(world, bxdf_begin, bxdf_end, hit, color);
-	idx = bxdf_begin;
-	rand = rt_random_float_range(&ctx->seed, 0.0, total_weight);
-	while (idx < bxdf_end)
+	idx = bsdf.begin;
+	rand = rt_random_float_range(&ctx->seed, 0.0, bsdf.weight);
+	while (idx < bsdf.end)
 	{
 		bxdf = get_bxdf_const(world, idx);
-		weight = bxdf_weight(world, bxdf, color, hit.hit.uv);
-		if (weight != 0.0)
+		if (bxdf->weight != 0.0)
 		{
-			rand -= weight;
+			rand -= bxdf->weight;
 			if (rand <= 0)
-				return (vec_scale(f_bxdf_sample(world, ctx, bxdf, hit, wiw, wow), (weight) / total_weight));
+				return (vec_scale(f_bxdf_sample(world, ctx, trace_ctx, bxdf, hit, wiw, wow), bsdf.weight));
 		}
 		idx++;
 	}

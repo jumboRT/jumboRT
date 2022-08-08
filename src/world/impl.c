@@ -160,25 +160,27 @@ void
 	{
 		world->bxdfs_size += sizeof(t_bxdf_any);
 		world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
-		i = material->volume_bxdf_begin;
-		while (i < material->volume_bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+		i = material->volume.begin;
+		while (i < material->volume.end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
 			i += 1;
 		ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
 		ft_memcpy(&world->bxdfs[i], bxdf, size);
 		world->bxdfs_count += 1;
-		material->volume_bxdf_end += 1;
+		material->volume.end += 1;
+		material->volume.weight += ((t_bxdf *) bxdf)->weight;
 	}
 	else
 	{
 		world->bxdfs_size += sizeof(t_bxdf_any);
 		world->bxdfs = world_reallog(world->bxdfs, &world->bxdfs_capacity, world->bxdfs_size);
-		i = material->bxdf_begin;
-		while (i < material->bxdf_end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
+		i = material->surface.begin;
+		while (i < material->surface.end && ((t_bxdf *) bxdf)->type < world->bxdfs[i].base.type)
 			i += 1;
 		ft_memmove(&world->bxdfs[i + 1], &world->bxdfs[i], (world->bxdfs_count - i) * sizeof(t_bxdf_any));
 		ft_memcpy(&world->bxdfs[i], bxdf, size);
 		world->bxdfs_count += 1;
-		material->bxdf_end += 1;
+		material->surface.end += 1;
+		material->surface.weight += ((t_bxdf *) bxdf)->weight;
 	}
 }
 

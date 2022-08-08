@@ -48,6 +48,7 @@ typedef struct s_shape_cone			t_shape_cone;
 typedef struct s_accel_node			t_accel_node;
 typedef struct s_world_hit			t_world_hit;
 typedef struct s_tex				t_tex;
+typedef struct s_bsdf				t_bsdf;
 typedef struct s_bxdf				t_bxdf;
 typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
 typedef struct s_bxdf_reflective	t_bxdf_reflective;
@@ -63,6 +64,7 @@ struct s_trace_ctx {
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
 	uint32_t				volume_size;
+	t_vec					eta;
 };
 
 struct s_result {
@@ -115,6 +117,7 @@ struct s_tex {
 struct s_bxdf {
 	uint32_t	type;
 	uint32_t	tex;
+	FLOAT		weight;
 };
 
 struct s_bxdf_diffuse {
@@ -128,7 +131,7 @@ struct s_bxdf_reflective {
 
 struct s_bxdf_refractive {
 	t_bxdf		base;
-	FLOAT		refractive_index;
+	t_vec		eta;
 };
 
 struct s_bxdf_mf_reflection {
@@ -145,12 +148,16 @@ union u_bxdf_any {
 	t_bxdf_mf_reflection	mf_reflective;
 };
 
+struct s_bsdf {
+	uint32_t	begin;
+	uint32_t	end;
+	FLOAT		weight;
+};
+
 struct s_material {
 	uint32_t	flags;
-	uint32_t	bxdf_begin;
-	uint32_t	bxdf_end;
-	uint32_t	volume_bxdf_begin;
-	uint32_t	volume_bxdf_end;
+	t_bsdf		surface;
+	t_bsdf		volume;
 	uint32_t	alpha_tex;
 	uint32_t	emission;
 	FLOAT		brightness;
@@ -251,7 +258,7 @@ t_ray	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index
 
 uint64_t	world_primitive_size(uint8_t shape_type);
 
-t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
+t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_bsdf bsdf, const GLOBAL t_trace_ctx *ray_ctx, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
 
 uint32_t					prim_type(const GLOBAL t_primitive *prim);
 uint32_t					prim_mat(const GLOBAL t_primitive *prim);
