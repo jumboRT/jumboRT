@@ -1,9 +1,5 @@
 #include "world.h"
 
-#ifndef RT_MAX_VOLUMES
-# define RT_MAX_VOLUMES 1
-#endif
-
 static void
 	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size, const GLOBAL t_material *mat, FLOAT norm_dir)
 {
@@ -78,75 +74,96 @@ t_vec
 				1.0));
 }
 
+static int
+	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
+{
+	t_world_hit				hit;
+	const GLOBAL t_material	*mat;
+	t_vec					bsdf;
+
+	if (!world_intersect(world, tctx->ray, &hit))
+		return (0);
+	mat = intersect_volume(tctx->volumes, tctx->volume_size, ctx, &hit.hit.t);
+	if (mat != 0)
+	{
+		tctx->ray.org = ray_at(tctx->ray, hit.hit.t);
+		hit.hit.normal = rt_random_on_hemi(&ctx->seed, tctx->ray.dir);
+		hit.hit.pos = tctx->ray.org;
+		hit.relative_normal = hit.hit.normal;
+		hit.geometric_normal = hit.hit.normal;
+		hit.hit.dpdu = vec_0();
+		hit.hit.dpdv = vec_0();
+		bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+		tctx->head = vec_mul(tctx->head, bsdf);
+		if (vec_eq(tctx->head, vec_0()))
+			return (0);
+	}
+	else
+	{
+		tctx->ray.org = hit.hit.pos;
+		mat = get_mat_const(world, prim_mat(hit.prim));
+		if (mat->flags & RT_MAT_EMITTER)
+			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
+		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv))) && mat->bxdf_end > mat->bxdf_begin)
+		{
+			if (mat->flags & RT_MAT_HAS_NORMAL)
+				hit.relative_normal = local_to_world(hit, vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
+			if (mat->flags & RT_MAT_HAS_BUMP)
+				hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
+			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
+				hit.relative_normal = vec_neg(hit.relative_normal);
+			bsdf = f_bsdf_sample(world, ctx, mat->bxdf_begin, mat->bxdf_end, hit, tctx->ray.dir, tctx->head, &tctx->ray.dir);
+			tctx->head = vec_mul(tctx->head, bsdf);
+			if (vec_eq(tctx->head, vec_0()))
+				return (0);
+		}
+		else if (mat->flags & RT_MAT_HAS_VOLUME)
+			toggle_volume(tctx->volumes, &tctx->volume_size, mat, vec_dot(tctx->ray.dir, hit.hit.normal));
+	}
+	return (1);
+}
+
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
 {
-	t_vec					head;
-	t_vec					tail;
-	t_world_hit				hit;
-	t_vec					new_dir;
-	const GLOBAL t_material	*mat;
-	const GLOBAL t_material *volumes[RT_MAX_VOLUMES];
-	uint32_t				volume_size;
-	t_vec					bsdf;
+	t_trace_ctx	tctx;
 
-	head = vec(1, 1, 1, 1);
-	tail = vec(0, 0, 0, 0);
-	volume_size = 0;
-	while (depth > 0 && world_intersect(world, ray, &hit))
-	{
-		mat = intersect_volume(volumes, volume_size, ctx, &hit.hit.t);
-		if (mat != 0)
-		{
-			ray.org = ray_at(ray, hit.hit.t);
-			hit.hit.normal = rt_random_on_hemi(&ctx->seed, ray.dir);
-			hit.hit.pos = ray.org;
-			hit.relative_normal = hit.hit.normal;
-			hit.geometric_normal = hit.hit.normal;
-			hit.hit.dpdu = vec_0();
-			hit.hit.dpdv = vec_0();
-			bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, ray.dir, head, &new_dir);
-			if (vec_eq(bsdf, vec_0()))
-				break ;
-			head = vec_mul(head, bsdf);
-			ray.dir = new_dir;
-		}
-		else
-		{
-			ray.org = hit.hit.pos;
-			mat = get_mat_const(world, prim_mat(hit.prim));
-			if (mat->flags & RT_MAT_EMITTER)
-				tail = vec_add(tail, vec_mul(head, vec_scale(tex_sample_id(world, mat->emission, hit.hit.uv), mat->brightness)));
-			if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(tex_sample_id(world, mat->alpha_tex, hit.hit.uv))) && mat->bxdf_end > mat->bxdf_begin)
-			{
-				if (mat->flags & RT_MAT_HAS_NORMAL)
-				{
-					hit.relative_normal = local_to_world(hit, vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
-					/*hit.relative_normal = (vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
-					hit.relative_normal = vec_neg(local_to_world(hit, hit.relative_normal));*/
-				}
-				if (mat->flags & RT_MAT_HAS_BUMP)
-				{
-					/*
-					hit.relative_normal = vec_norm(vec_add(hit.relative_normal, local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv))));
-					*/
-					hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
-				}
-				/*
-				return vec(rt_abs(x(hit.relative_normal)), rt_abs(y(hit.relative_normal)), rt_abs(z(hit.relative_normal)), 0);
-				*/
-				if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)
-					hit.relative_normal = vec_neg(hit.relative_normal);
-				bsdf = f_bsdf_sample(world, ctx, mat->bxdf_begin, mat->bxdf_end, hit, ray.dir, head, &new_dir);
-				if (vec_eq(bsdf, vec_0()))
-					break;
-				head = vec_mul(head, bsdf);
-				ray.dir = new_dir;
-			}
-			else if (mat->flags & RT_MAT_HAS_VOLUME)
-				toggle_volume(volumes, &volume_size, mat, vec_dot(ray.dir, hit.hit.normal));
-		}
+	tctx.head = vec(1, 1, 1, 1);
+	tctx.tail = vec(0, 0, 0, 0);
+	tctx.volume_size = 0;
+	tctx.ray = ray;
+	while (depth > 0 && world_trace_step(world, ctx, &tctx))
 		depth -= 1;
-	}
-	return (tail);
+	return (tctx.tail);
 }
+
+void
+	world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride)
+{
+	int			depth;
+	t_trace_ctx	tctx;
+
+	depth = 0;
+	while (index < end - begin)
+	{
+		if (depth == 0)
+		{
+			depth = RT_MAX_DEPTH;
+			tctx.head = vec(1, 1, 1, 1);
+			tctx.tail = vec(0, 0, 0, 0);
+			tctx.volume_size = 0;
+			tctx.ray = project(world, ctx, begin + index);
+		}
+		if (world_trace_step(world, ctx, &tctx))
+			depth -= 1;
+		else
+			depth = 0;
+		if (depth == 0)
+		{
+			results[index].index = (begin + index) % (world->img_meta.width * world->img_meta.height);
+			results[index].color = tctx.tail;
+			index += stride;
+		}
+	}
+}
+
