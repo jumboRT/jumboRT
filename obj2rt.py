@@ -67,6 +67,7 @@ def add_vertex(vertex):
         return len(vertices) - 1
 
 def add_texture(path, flip):
+    path = path.replace("\\", "/")
     filename = os.path.splitext(path)[0] + ".bmp"
     for texture in textures:
         if texture[1] == filename:
@@ -186,7 +187,7 @@ def load_obj(filename, flip_textures):
                 normal = parse_vertex(line[1:], True)
                 obj_norm.append(normal)
             if line[0] == "f":
-                assert len(line) == 4 or len(line) == 5
+                assert len(line) >= 4
                 indices = []
                 for v in line[1:]:
                     v = v.split("/")
@@ -203,13 +204,8 @@ def load_obj(filename, flip_textures):
                         vertex_map[vertex] = len(vertices)
                         vertices.append(vertex)
                     indices.append(vertex_map[vertex])
-                result = []
-                if len(indices) == 3:
-                    result.append(tuple(indices))
-                else:
-                    result.append((indices[0], indices[1], indices[2]))
-                    result.append((indices[0], indices[2], indices[3]))
-                for face in result:
+                for i in range(2, len(indices)):
+                    face = (indices[0], indices[i - 1], indices[i])
                     if cur_mat is None:
                         faces.append((face, (255, 255, 255)))
                     else:
@@ -228,7 +224,7 @@ def load_obj(filename, flip_textures):
                             mat = list(materials[-1])
                             if type(mat[4]) is not str:
                                 mat[4] = tuple([int(min(float(x) * 256, 255)) for x in line[1:4]])
-                            materials[-1] = tuple(mat)
+                            #materials[-1] = tuple(mat)
                         if line[0] == "Kd":
                             mat = list(materials[-1])
                             if type(mat[1]) is not str:
@@ -238,7 +234,7 @@ def load_obj(filename, flip_textures):
                             mat = list(materials[-1])
                             path = os.path.join(os.path.dirname(filename), line[1])
                             mat[4] = add_texture(path, flip_textures)
-                            materials[-1] = tuple(mat)
+                            #materials[-1] = tuple(mat)
                         if line[0] == "map_Kd":
                             mat = list(materials[-1])
                             path = os.path.join(os.path.dirname(filename), line[1])

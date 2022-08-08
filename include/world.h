@@ -26,6 +26,7 @@
 # define RT_MAT_HAS_BUMP 32
 
 # define RT_MAX_DEPTH 8
+# define RT_MAX_VOLUMES 1
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -55,6 +56,21 @@ typedef struct s_bxdf_refractive		t_bxdf_refractive;
 typedef struct s_bxdf_mf_reflection		t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance		t_bxdf_cook_torrance;
 typedef union u_bxdf_any			t_bxdf_any;
+typedef struct s_result				t_result;
+typedef struct s_trace_ctx			t_trace_ctx;
+
+struct s_trace_ctx {
+	t_ray					ray;
+	t_vec					head;
+	t_vec					tail;
+	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
+	uint32_t				volume_size;
+};
+
+struct s_result {
+	t_vec		color;
+	uint64_t	index;
+};
 
 struct s_context {
 	t_seed		seed;
@@ -241,6 +257,8 @@ struct s_world {
 	GLOBAL t_bxdf_any		*bxdfs;
 };
 
+t_ray	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index);
+
 uint64_t	world_primitive_size(uint8_t shape_type);
 
 t_vec	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint32_t bxdf_begin, uint32_t bxdf_end, t_world_hit hit, t_vec wiw, t_vec color, t_vec *wow);
@@ -270,6 +288,7 @@ t_vec		tex_sample_id(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv);
 t_vec		tex_sample(const GLOBAL t_world *world, const GLOBAL t_tex *tex, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
+void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 void		world_accel(t_world *world);
 void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
