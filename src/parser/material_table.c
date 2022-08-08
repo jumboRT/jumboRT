@@ -111,7 +111,7 @@ uint32_t
 	new_entry.index = world_add_tex(world, &texture);
 	new_entry.name = NULL;
 	new_entry.color = color;
-	vector_push(&ctx->materials, &new_entry);
+	vector_push(&ctx->textures, &new_entry);
 	return (new_entry.index);
 }
 
