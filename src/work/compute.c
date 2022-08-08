@@ -20,7 +20,6 @@ __kernel void
 		GLOBAL void *bxdfs)
 {
 	uint64_t			index;
-	uint64_t			size;
 	GLOBAL t_context	*my_ctx;
 
 	if (get_global_id(0) == 0)
@@ -36,25 +35,20 @@ __kernel void
 		world->bxdfs = bxdfs;
 	}
 	barrier(CLK_GLOBAL_MEM_FENCE);
-	size = end - begin;
 	index = get_global_id(0);
 	my_ctx = &ctx[index];
-	while (index < size)
-	{
-		results[index] = work_compute(world, my_ctx, begin + index);
-		index += get_global_size(0);
-	}
+	world_trace_all(world, my_ctx, results, index, begin, end, get_global_size(0));
 }
 
 #endif
 
-static t_ray
-	project(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
+t_ray
+	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
-	GLOBAL t_camera		*cam;
-	GLOBAL t_image_meta	*meta;
-	t_vec				u;
-	t_vec				v;
+	const GLOBAL t_camera		*cam;
+	const GLOBAL t_image_meta	*meta;
+	t_vec						u;
+	t_vec						v;
 
 	(void) ctx;
 	cam = &world->camera;
