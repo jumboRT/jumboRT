@@ -19,6 +19,81 @@ camera = ((0, 0, 0), (1, 0, 0), 90)
 
 mat_use = None
 
+class ObjMaterial:
+    def __init__(self, name):
+        self.name = name
+        self.illum = 2
+        self.ka = None
+        self.kd = None
+        self.ks = None
+        self.tf = None
+        self.d = None
+        self.ns = 1.0
+        self.ni = 1.0
+        self.map_ka = None
+        self.map_kd = None
+        self.map_ks = None
+        self.map_d = None
+        self.bump = None
+
+class Material:
+    def __init__(self, name):
+        self.name = name
+        self.bsdfs = []
+        self.emission = None
+        self.bump = None
+        self.alpha = None
+
+    def write(self):
+        sys.stdout.write(f"mat_beg {self.name}\n")
+        for bsdf in self.bsdfs:
+            sys.stdout.write(f"    {str(bsdf)}\n")
+        if self.emission is not None:
+            sys.stdout.write(f"    emission 1 {str_texture(self.emission)}\n")
+        if self.bump is not None:
+            sys.stdout.write(f"    bump {str_texture(self.bump)}\n")
+        if self.alpha is not None:
+            sys.stdout.write(f"    alpha {str_texture(self.alpha)}\n")
+        sys.stdout.write(f"mat_end\n")
+
+    def add(self, bsdf):
+        self.bsdfs.append(bsdf)
+
+    def add_urgently(self, bsdf):
+        self.bsdfs = [b for b in self.bsdfs if type(b) is not type(bsdf)]
+        self.bsdfs.append(bsdf)
+
+    def add_trivially(self, bsdf):
+        bsdfs = [b for b in self.bsdfs if type(b) is type(bsdf)]
+        if len(bsdfs) == 0:
+            self.bsdfs.append(bsdf)
+
+class Diffuse:
+    def __init__(self, weight, texture):
+        self.weight = weight
+        self.texture = texture
+
+    def __str__(self):
+        return f"diffuse {str_float(self.weight)} {str_texture(self.texture)}"
+
+class Reflection:
+    def __init__(self, weight, texture, fuzzy):
+        self.weight = weight
+        self.texture = texture
+        self.fuzzy = fuzzy
+
+    def __str__(self):
+        return f"reflection {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.fuzzy)}"
+
+class Refraction:
+    def __init__(self, weight, texture, ior):
+        self.weight = weight
+        self.texture = texture
+        self.ior = ior
+
+    def __str__(self):
+        return f"refraction {str_float(self.weight)} {str_texture(self.texture)} {str_float(self.ior)}"
+
 def parse_vertex(line, swap_yz=False):
     x = float(line[0])
     y = float(line[1])
@@ -40,7 +115,14 @@ def str_vertex(vertex):
     return f"{str_float(vertex[0])},{str_float(vertex[1])},{str_float(vertex[2])}"
 
 def str_color(color):
-    return f"{color[0]},{color[1]},{color[2]}"
+    if type(color[0]) is int:
+        return f"{color[0]},{color[1]},{color[2]}"
+    elif len(color) == 3:
+        return f"({str_float(color[0])},{str_float(color[1])},{str_float(color[2])})"
+    elif len(color) == 4:
+        return f"({str_float(color[0])},{str_float(color[1])},{str_float(color[2])},{str_float(color[3])})"
+    else:
+        assert False
 
 def str_material(material):
     if type(material) is str:
@@ -86,15 +168,27 @@ def mjoosten_material(color, name):
     for material in materials:
         if material[0] == full_name:
             return full_name
+    material = Material(full_name)
+    materials.append(material)
     if name == "mirror":
-        materials.append((full_name, (255, 255, 255), 0, None, (0, 0, 0), None))
+        material.add(Reflection(1.0, (255, 255, 255), 0.0))
     elif name == "glass":
-        materials.append((full_name, (255, 255, 255), None, 1.5, (0, 0, 0), None))
+        material.add(Refraction(1.0, (255, 255, 255), 1.5))
     elif name == "metal":
-        materials.append((full_name, color, 0.1, None, (0, 0, 0), None))
+        material.add(Reflection(1.0, color, 0.1))
     else:
         assert False
     return full_name
+
+def obj_map(m, c):
+    if m is not None:
+        if c is None or c != (0.0, 0.0, 0.0):
+            return m
+    elif c is not None:
+        if type(c) is float:
+            return (0, 0, 0, c)
+        elif c != (0.0, 0.0, 0.0):
+            return c
 
 def load_jkoers(filename):
     with open(filename) as file:
@@ -164,6 +258,66 @@ def load_mjoosten(filename):
                     material = mjoosten_material(material, line[4])
                 spheres.append((position, diameter, material))
 
+def load_mtl(filename, flip_textures):
+    with open(filename) as mtl_file:
+        obj_materials = []
+        for line in mtl_file:
+            line = line.split()
+            if len(line) == 0:
+                continue
+            if line[0] == "newmtl":
+                material = ObjMaterial(f"mat_{line[1]}")
+                obj_materials.append(material)
+            if line[0] == "illum":
+                obj_materials[-1].illum = int(line[1])
+            if line[0] == "Ka":
+                obj_materials[-1].ka = tuple(map(float, line[1:4]))
+            if line[0] == "Kd":
+                obj_materials[-1].kd = tuple(map(float, line[1:4]))
+            if line[0] == "Ks":
+                obj_materials[-1].ks = tuple(map(float, line[1:4]))
+            if line[0] == "Tf":
+                obj_materials[-1].tf = tuple(map(float, line[1:4]))
+            if line[0] == "d":
+                obj_materials[-1].d = float(line[1])
+            if line[0] == "Ns":
+                obj_materials[-1].ns = float(line[1])
+            if line[0] == "Ni":
+                obj_materials[-1].ni = float(line[1])
+            if line[0] == "map_Ka":
+                path = os.path.join(os.path.dirname(filename), line[1])
+                obj_materials[-1].map_ka = add_texture(path, flip_textures)
+            if line[0] == "map_Kd":
+                path = os.path.join(os.path.dirname(filename), line[1])
+                obj_materials[-1].map_kd = add_texture(path, flip_textures)
+            if line[0] == "map_Ks":
+                path = os.path.join(os.path.dirname(filename), line[1])
+                obj_materials[-1].map_ks = add_texture(path, flip_textures)
+            if line[0] == "map_d":
+                path = os.path.join(os.path.dirname(filename), line[1])
+                obj_materials[-1].map_d = add_texture(path, flip_textures)
+            if line[0] == "map_Bump":
+                path = os.path.join(os.path.dirname(filename), line[1])
+                obj_materials[-1].bump = add_texture(path, flip_textures)
+        for mat_obj in obj_materials:
+            mat_rt = Material(mat_obj.name)
+            mat_rt.emission = obj_map(mat_obj.map_ka, mat_obj.ka)
+            mat_rt.alpha = obj_map(mat_obj.map_d, mat_obj.d)
+            mat_rt.bump = mat_obj.bump
+            diffuse = obj_map(mat_obj.map_kd, mat_obj.kd)
+            specular = obj_map(mat_obj.map_ks, mat_obj.ks)
+            transmission = mat_obj.tf
+            if mat_obj.kd is not None:
+                if mat_obj.kd[2] > mat_obj.kd[1] and mat_obj.kd[2] > mat_obj.kd[0]:
+                    sys.stderr.write(f"{mat_obj.name}\n")
+            if diffuse is not None:
+                mat_rt.add(Diffuse(1.0, diffuse))
+            if specular is not None:
+                mat_rt.add(Reflection(1.0, specular, 0.0))
+            #if mat_obj.illum == 4:
+            #    mat_rt.add(Refraction(1.0, refraction, mat_obj.ni))
+            materials.append(mat_rt)
+
 def load_obj(filename, flip_textures):
     obj_vert = []
     obj_vtex = []
@@ -213,39 +367,7 @@ def load_obj(filename, flip_textures):
             if line[0] == "usemtl":
                 cur_mat = f"mat_{line[1]}"
             if line[0] == "mtllib":
-                with open(os.path.join(os.path.dirname(filename), line[1])) as mtl_file:
-                    for line in mtl_file:
-                        line = line.split()
-                        if len(line) == 0:
-                            continue
-                        if line[0] == "newmtl":
-                            materials.append((f"mat_{line[1]}", (0, 0, 0), None, None, (0, 0, 0), None))
-                        if line[0] == "Ka":
-                            mat = list(materials[-1])
-                            if type(mat[4]) is not str:
-                                mat[4] = tuple([int(min(float(x) * 256, 255)) for x in line[1:4]])
-                            #materials[-1] = tuple(mat)
-                        if line[0] == "Kd":
-                            mat = list(materials[-1])
-                            if type(mat[1]) is not str:
-                                mat[1] = tuple([int(min(float(x) * 256, 255)) for x in line[1:4]])
-                            materials[-1] = tuple(mat)
-                        if line[0] == "map_Ka":
-                            mat = list(materials[-1])
-                            path = os.path.join(os.path.dirname(filename), line[1])
-                            mat[4] = add_texture(path, flip_textures)
-                            #materials[-1] = tuple(mat)
-                        if line[0] == "map_Kd":
-                            mat = list(materials[-1])
-                            path = os.path.join(os.path.dirname(filename), line[1])
-                            mat[1] = add_texture(path, flip_textures)
-                            materials[-1] = tuple(mat)
-                        if line[0] == "map_Bump":
-                            mat = list(materials[-1])
-                            path = os.path.join(os.path.dirname(filename), line[1])
-                            mat[5] = add_texture(path, flip_textures)
-                            materials[-1] = tuple(mat)
-
+                load_mtl(os.path.join(os.path.dirname(filename), line[1]), flip_textures)
 
 if len(sys.argv) < 3:
     sys.stderr.write(f"usage: {sys.argv[0]} [format] [filename]\n")
@@ -256,6 +378,8 @@ elif sys.argv[1] == "mjoosten":
     load_mjoosten(sys.argv[2])
 elif sys.argv[1] == "obj" or sys.argv[1] == "obj-flip":    
     load_obj(sys.argv[2], sys.argv[1] == "obj-flip")
+elif sys.argv[1] == "mtl" or sys.argv[1] == "mtl-flip":
+    load_mtl(sys.argv[2], sys.argv[1] == "mtl-flip")
 else:
     sys.stderr.write(f"invalid format {sys.argv[1]}\n")
     sys.exit(1)
@@ -266,18 +390,7 @@ sys.stdout.write(f"C {str_vertex(camera[0])} {str_vertex(camera[1])} {str_float(
 for texture in textures:
     sys.stdout.write(f"tex_def {texture[0]} {texture[1]}\n")
 for material in materials:
-    sys.stdout.write(f"mat_beg {material[0]}\n")
-    if material[1] != (0, 0, 0):
-        sys.stdout.write(f"    diffuse {str_texture(material[1])}\n")
-    if material[2] is not None:
-        sys.stdout.write(f"    reflective 255,255,255 {str_float(material[2])}\n")
-    if material[3] is not None:
-        sys.stdout.write(f"    refractive 255,255,255 {str_float(material[3])}\n")
-    if material[4] != (0, 0, 0):
-        sys.stdout.write(f"    emission 1.0 {str_texture(material[4])}\n")
-    if material[5] != None:
-        sys.stdout.write(f"    bump {str_texture(material[5])}\n")
-    sys.stdout.write(f"mat_end\n")
+    material.write()
 for plane in planes:
     use_material(plane[2])
     sys.stdout.write(f"pl {str_vertex(plane[0])} {str_vertex(plane[1])}\n")
