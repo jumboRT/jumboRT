@@ -16,6 +16,7 @@
 # define RT_BXDF_REFLECTIVE		1
 # define RT_BXDF_REFRACTIVE		2
 # define RT_BXDF_MF_REFLECTIVE		3
+# define RT_BXDF_COOK_TORRANCE		4
 
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
@@ -39,19 +40,20 @@ typedef struct s_world				t_world;
 typedef struct s_vertex				t_vertex;
 typedef struct s_primitive			t_primitive;
 typedef struct s_material			t_material;
-typedef struct s_shape_triangle		t_shape_triangle;
-typedef struct s_shape_sphere		t_shape_sphere;
-typedef struct s_shape_plane		t_shape_plane;
-typedef struct s_shape_cylinder		t_shape_cylinder;
+typedef struct s_shape_triangle			t_shape_triangle;
+typedef struct s_shape_sphere			t_shape_sphere;
+typedef struct s_shape_plane			t_shape_plane;
+typedef struct s_shape_cylinder			t_shape_cylinder;
 typedef struct s_shape_cone			t_shape_cone;
 typedef struct s_accel_node			t_accel_node;
 typedef struct s_world_hit			t_world_hit;
 typedef struct s_tex				t_tex;
 typedef struct s_bxdf				t_bxdf;
-typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
-typedef struct s_bxdf_reflective	t_bxdf_reflective;
-typedef struct s_bxdf_refractive	t_bxdf_refractive;
-typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
+typedef struct s_bxdf_diffuse			t_bxdf_diffuse;
+typedef struct s_bxdf_reflective		t_bxdf_reflective;
+typedef struct s_bxdf_refractive		t_bxdf_refractive;
+typedef struct s_bxdf_mf_reflection		t_bxdf_mf_reflection;
+typedef struct s_bxdf_cook_torrance		t_bxdf_cook_torrance;
 typedef union u_bxdf_any			t_bxdf_any;
 
 struct s_context {
@@ -121,12 +123,20 @@ struct s_bxdf_mf_reflection {
 	FLOAT		alphay;
 };
 
+struct s_bxdf_cook_torrance {
+	t_bxdf		base;
+	FLOAT		roughness;
+	FLOAT		eta;
+	FLOAT		k;
+};
+
 union u_bxdf_any {
-	t_bxdf					base;
-	t_bxdf_diffuse			diffuse;
-	t_bxdf_reflective		reflective;
-	t_bxdf_refractive		refractive;
+	t_bxdf			base;
+	t_bxdf_diffuse		diffuse;
+	t_bxdf_reflective	reflective;
+	t_bxdf_refractive	refractive;
 	t_bxdf_mf_reflection	mf_reflective;
+	t_bxdf_cook_torrance	cook_torrance;
 };
 
 struct s_material {

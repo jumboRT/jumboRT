@@ -225,14 +225,137 @@ static t_vec
 	wh = vec_norm(wh);
 	color = tex_sample_id(world, bxdf->base.tex, hit.hit.uv);
 	d = mf_beckmann_distribution_d(bxdf, wh);
-	g = mf_beckmann_distribution_g(bxdf, wo, wi);
+	g = mf_beckmann_distribution_g(bxdf, wi, wo);
 	tmp = d * g;
 	result = vec_scale(color, tmp / (4.0 * costhetaI * costhetaO));
 	return (result);
 }
 
+static FLOAT
+	d_beckman_distribution(t_vec wh, t_vec n, FLOAT roughness)
+{
+	FLOAT	whn;
+	FLOAT	dividend;
+	FLOAT	divisor;
+	FLOAT	m;
+
+	whn = vec_dot(wh, n);
+	m = rt_sqrt(roughness);
+	divisor = 4.0 * m * m * rt_pow(whn, 4.0);
+	if (divisor == 0.0)
+		return (0.0);
+	divisor = 1.0 / divisor;
+	dividend = ((whn * whn) - 1.0) /
+			(m * m * whn * whn);
+	/*
+	printf("e^%f / %f\n", dividend, divisor);
+	*/
+	return (rt_exp(dividend) * divisor);
+}
+
+static FLOAT
+	fresnel_fac(FLOAT eta, t_vec wi, t_vec wh)
+{
+	FLOAT	wih;
+	FLOAT	g;
+	FLOAT	l;
+	FLOAT	r;
+	FLOAT	gmwih;
+	FLOAT	gpwih;
+	FLOAT	g2;
+
+	wih = vec_dot(wi, wh);
+	g2 = (eta * eta) - 1.0 + (wih * wih);
+	if (g2 < 0)
+		return (1.0);
+	g = rt_sqrt(g2);
+	gmwih = g - wih;
+	gpwih = g + wih;
+	l = 0.5 * (rt_pow(gmwih, 2.0) / rt_pow(gpwih, 2.0));
+	r = (rt_pow((wih * gpwih) - 1.0, 2.0) / rt_pow((wih * gmwih) + 1.0, 2.0)) + 1.0;
+	return (l * r);
+}
+
+static FLOAT
+	geometric_attenuation(t_vec wi, t_vec wo, t_vec wh, t_vec n)
+{
+	FLOAT	whn;
+	FLOAT	win;
+	FLOAT	won;
+	FLOAT	whwo;
+	FLOAT	g1;
+	FLOAT	g2;
+
+	whn = vec_dot(wh, n);
+	win = vec_dot(wi, n);
+	won = vec_dot(wo, n);
+	whwo = vec_dot(wh, wo);
+	
+	g1 = (2.0 * whn * win) / whwo;
+	g2 = (2.0 * whn * won) / whwo;
+	return (rt_min(1.0, rt_min(g1, g2)));
+}
+
 static t_vec
-	f_bxdf_perfect_reflective(const GLOBAL t_world *world, const GLOBAL t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	f_cook_torrance_specular_part(const t_bxdf_cook_torrance *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+{
+	FLOAT	fresnel; /* fresnel factor. TODO make vector */
+	FLOAT	d; /* distribution */
+	FLOAT	g; /* geometric attenuation factor */
+	t_vec	wh; /* halfway vector */
+	t_vec	n; /* normal vector */
+	FLOAT	result; /* TODO make result vector */
+
+	wh = vec_add(wi, wo);
+	if (vec_eq(wh, vec_0()))
+		return vec_0();
+	wh = vec_norm(wh);
+	fresnel = fresnel_fac(bxdf->eta, wi, wh);
+	n = world_to_local(hit, hit.relative_normal);
+	d = d_beckman_distribution(wh, n, bxdf->roughness);
+	g = geometric_attenuation(wi, wo, wh, n);
+	result = fresnel * ((d * g) / (RT_PI * (vec_dot(n, wi) * vec_dot(n, wo))));
+	return (vec(result, result, result, 0.0));
+}
+
+static t_vec
+	f_bxdf_lambertian(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv)
+{
+	t_vec	color;
+
+	color = tex_sample_id(world, tex, uv);
+	return (vec_scale(color, RT_1_PI * 2));
+}
+
+static t_vec
+	f_cook_torrance(const GLOBAL t_world *world, const t_bxdf_cook_torrance *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+{
+	t_vec	diffuse;
+	t_vec	specular;
+	t_vec	result;
+
+	diffuse = f_bxdf_lambertian(world, bxdf->base.tex, hit.hit.uv);
+	specular = f_cook_torrance_specular_part(bxdf, hit, wo, wi);
+	result = vec_add(vec_scale(diffuse, bxdf->k), vec_scale(specular, 1.0 - bxdf->k));
+	return (result);
+}
+
+static t_vec
+	f_cook_torrance_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_cook_torrance *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+{
+	while (1)
+	{
+		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+		if (vec_dot(*wo, hit.geometric_normal) >= 0)
+			break;
+	}
+	*wo = world_to_local(hit, *wo);
+	*wo = vec3(-x(wi), -y(wi), z(wi)); /*  perfect reflection  */
+	return (f_cook_torrance(world, bxdf, hit, wi, *wo));
+}
+
+static t_vec
+	f_bxdf_perfect_reflective(const GLOBAL t_world *world, const GLOBAL t_bxdf_reflective *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
 	(void) world;
 	(void) hit;
@@ -247,8 +370,8 @@ static t_vec
 {
 	(void)ctx;
 	(void) bxdf;
-	*wo = vec_neg(wi);  /* perfect reflection  */
-	/**wo = vec_sub(wi, vec_scale(hit.relative_normal, 2.0 * vec_dot(wi, hit.relative_normal)));
+	*wo = vec3(-x(wi), -y(wi), z(wi)); /*  perfect reflection  */
+	/**wo = vec_sub(wi, vec_scale(hit.relative_normal, 2.0 * vec_dot(local_to_world(hit, wi), hit.relative_normal)));
 	*wo = vec_norm(vec_add(*wo, rt_random_in_sphere(&ctx->seed, 0.0, bxdf->fuzzy)));*/
 	return (tex_sample_id(world, bxdf->base.tex, hit.hit.uv));
 }
@@ -280,8 +403,17 @@ static t_vec
 static t_vec
 	f_bxdf_mf_reflective_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const t_bxdf_mf_reflection *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	*wo = world_to_local(hit, wi);
-	*wo = vec_neg(wi);  /* perfect reflection  */
+	/*
+	while (1)
+	{
+		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
+		if (vec_dot(*wo, hit.geometric_normal) >= 0)
+			break;
+	}
+	*/
+	*wo = rt_random_in_sphere(&ctx->seed, 0.0, 1.0);
+	*wo = vec_norm(*wo);
+	*wo = vec_norm(world_to_local(hit, *wo));
 	return (f_bxdf_microfacet_reflection(world, bxdf, hit, wi, *wo));
 }
 
@@ -301,6 +433,8 @@ static t_vec
 		result = f_bxdf_perfect_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wi, &wo);
 	if (bxdf->type == RT_BXDF_MF_REFLECTIVE)
 		result = f_bxdf_mf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_mf_reflection *) bxdf, hit, wi, &wo);
+	if (bxdf->type == RT_BXDF_COOK_TORRANCE)
+		result = f_cook_torrance_sample(world, ctx, (const GLOBAL t_bxdf_cook_torrance *) bxdf, hit, wi, &wo);
 	*wow = local_to_world(hit, wo);
 	return result;
 }

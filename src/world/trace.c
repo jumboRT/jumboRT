@@ -103,8 +103,8 @@ t_vec
 			hit.hit.pos = ray.org;
 			hit.relative_normal = hit.hit.normal;
 			hit.geometric_normal = hit.hit.normal;
-			hit.hit.dpdu = vec_0();
-			hit.hit.dpdv = vec_0();
+			hit.hit.dpdu = vec_norm(vec_cross(vec_neg(ray.dir), hit.hit.normal));
+			hit.hit.dpdv = vec_norm(vec_cross(hit.hit.normal, hit.hit.dpdu));
 			bsdf = f_bsdf_sample(world, ctx, mat->volume_bxdf_begin, mat->volume_bxdf_end, hit, ray.dir, head, &new_dir);
 			if (vec_eq(bsdf, vec_0()))
 				break ;
