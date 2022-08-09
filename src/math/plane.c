@@ -19,7 +19,6 @@ static t_vec
 	if (rt_abs(z(plane.normal)) >= 0.999)
 		return (vec3(z(plane.normal), -x(plane.normal), 0.0));
 	return (vec3(y(plane.normal), -x(plane.normal), 0.0));
-	return (vec_norm(vec_cross(vec_norm(op), plane.normal)));
 }
 
 static t_vec2
@@ -28,8 +27,7 @@ static t_vec2
 	t_vec	op;
 
 	op = vec_sub(plane.pos, point);
-	return (vec2(vec_dot(op, up), vec_dot(op, right)));
-	return (vec2(x(op), y(op)));
+	return (vec_change_basis2(op, up, right));
 }
 
 int

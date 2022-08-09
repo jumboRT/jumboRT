@@ -12,6 +12,35 @@ t_cylinder
 	return (result);
 }
 
+static t_vec2
+	cylinder_uv_mantle(t_cylinder cylinder, t_vec rel_point)
+{
+	FLOAT	u;
+	FLOAT	v;
+	FLOAT	offset;
+	FLOAT	pr2;
+
+	pr2 = RT_2PI * cylinder.radius;
+	u = (vec_dot(rel_point, vec_z(1.0)) / pr2) + 1.0;
+	v = (vec_dot(rel_point, vec_y(1.0)) / pr2) + 1.0;
+	offset = 0.0;
+	if (vec_dot(rel_point, vec_z(1.0)) < 0.0)
+		offset = 1.0;
+	return (vec2((u / 4.0) + offset, (v / 4.0) + 0.5));
+}
+
+static t_vec2
+	cylinder_uv_cap(t_cylinder cylinder, t_vec rel_point)
+{
+	t_vec	tanget;
+	t_vec2	uv;
+
+	tanget = vec_tanget(cylinder.dir);
+	uv = vec_change_basis2(tanget, vec_norm(vec_cross(cylinder.dir, tanget)), rel_point);
+	uv = vec2_add(vec2_scale(uv, 1.0 / (4.0 * cylinder.radius)), vec2(0.5, 0.5));
+	return (uv);
+}
+
 static int
 	ray_cylinder_intersect_parallel(t_ray relative_ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
 {
