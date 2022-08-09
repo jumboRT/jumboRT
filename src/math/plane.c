@@ -10,17 +10,6 @@ t_plane
 	return (result);
 }
 
-static t_vec
-	plane_hit_get_tanget(t_plane plane, t_vec point)
-{
-	t_vec	op;
-
-	op = vec_sub(plane.pos, point);
-	if (rt_abs(z(plane.normal)) >= 0.999)
-		return (vec3(z(plane.normal), -x(plane.normal), 0.0));
-	return (vec3(y(plane.normal), -x(plane.normal), 0.0));
-}
-
 static t_vec2
 	plane_get_uv(t_plane plane, t_vec point, t_vec up, t_vec right)
 {
@@ -45,7 +34,7 @@ int
 	hit->t = t;
 	hit->pos = ray_at(ray, t);
 	hit->normal = plane.normal;
-	hit->dpdu = plane_hit_get_tanget(plane, hit->pos);
+	hit->dpdu = vec_tangent(plane.normal);
 	hit->dpdv = vec_norm(vec_cross(plane.normal, hit->dpdu));
 	hit->uv = plane_get_uv(plane, hit->pos, hit->dpdu, hit->dpdv);
 	return (t >= min);
