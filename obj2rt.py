@@ -104,12 +104,12 @@ def parse_vertex(line, swap_yz=False):
         return (x, y, z)
 
 def str_float(f):
-    decimals = 0
-    result = "0"
-    while float(result) != f:
-        result = f"{f:.{decimals}f}"
-        decimals += 1
-    return result
+    d = 0
+    while True:
+        r = "%.*f" % (d, f)
+        if float(r) == f:
+            return r
+        d += 1
 
 def str_vertex(vertex):
     return f"{str_float(vertex[0])},{str_float(vertex[1])},{str_float(vertex[2])}"
@@ -315,7 +315,7 @@ def load_mtl(filename, flip_textures):
             if diffuse is not None:
                 mat_rt.add(Diffuse(1.0, diffuse))
             if specular is not None:
-                mat_rt.add(Reflection(1.0, specular, 0.0))
+                mat_rt.add(Reflection(1.0, specular, 0.1))
             if mat_obj.illum == 4:
                 mat_rt.add(Refraction(1.0, mat_obj.tf, mat_obj.ni))
             materials.append(mat_rt)
@@ -326,6 +326,7 @@ def load_obj(filename, flip_textures):
     obj_norm = []
     vertex_map = {}
     cur_mat = None
+    mtl_files = set()
 
     with open(filename) as file:
         for line in file:
@@ -369,7 +370,10 @@ def load_obj(filename, flip_textures):
             if line[0] == "usemtl":
                 cur_mat = f"mat_{line[1]}"
             if line[0] == "mtllib":
-                load_mtl(os.path.join(os.path.dirname(filename), line[1]), flip_textures)
+                pathname = os.path.join(os.path.dirname(filename), line[1])
+                if pathname not in mtl_files:
+                    load_mtl(pathname, flip_textures)
+                    mtl_files.add(pathname)
 
 if len(sys.argv) < 3:
     sys.stderr.write(f"usage: {sys.argv[0]} [format] [filename]\n")

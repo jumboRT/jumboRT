@@ -22,7 +22,7 @@ FLOAT
 }
 
 t_vec
-	rt_random_in_sphere(GLOBAL t_seed *seed, FLOAT min, FLOAT max)
+	rt_random_in_sphere(GLOBAL t_seed *seed)
 {
 	t_vec	result;
 	FLOAT	len;
@@ -30,12 +30,12 @@ t_vec
 	while (1)
 	{
 		result = vec(
-				rt_random_float_range(seed, -max, max),
-				rt_random_float_range(seed, -max, max),
-				rt_random_float_range(seed, -max, max),
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1),
+				rt_random_float_range(seed, -1, 1),
 				0.0);
 		len = vec_mag(result);
-		if (len >= min && len <= max)
+		if (len <= 1)
 			return (result);
 	}
 }
@@ -45,7 +45,7 @@ t_vec
 {
 	t_vec	result;
 
-	result = vec_norm(rt_random_in_sphere(seed, 0.001, 1));
+	result = vec_norm(rt_random_in_sphere(seed));
 	if (vec_dot(result, normal) < 0)
 		result = vec_neg(result);
 	return (result);

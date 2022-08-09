@@ -56,10 +56,10 @@ t_vec
 	FLOAT	dfdx;
 	FLOAT	dfdy;
 
-	dfdx = tex_samplef_id_offset(world, bump_map, uv, vec2(10, 0));
-	dfdy = tex_samplef_id_offset(world, bump_map, uv, vec2(0, 10));
-	dfdx -= tex_samplef_id_offset(world, bump_map, uv, vec2(0, 0));
-	dfdy -= tex_samplef_id_offset(world, bump_map, uv, vec2(0, 0));
+	dfdx = sample_float_offset(world, bump_map, uv, vec2(10, 0));
+	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 10));
+	dfdx -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
+	dfdy -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	/*
 	return (vec_scale(vec3(
 				(-dfdx) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
@@ -107,7 +107,7 @@ static int
 		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(filter_sample(world, mat->alpha, hit.hit.uv))) && mat->surface.end > mat->surface.begin)
 		{
 			if (mat->flags & RT_MAT_HAS_NORMAL)
-				hit.relative_normal = local_to_world(hit, vec_norm(tex_sample_id(world, mat->normal_map, hit.hit.uv)));
+				hit.relative_normal = local_to_world(hit, vec_norm(sample_vector(world, mat->normal_map, hit.hit.uv)));
 			if (mat->flags & RT_MAT_HAS_BUMP)
 				hit.relative_normal = vec_norm(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
 			if (vec_dot(hit.geometric_normal, hit.relative_normal) < 0)

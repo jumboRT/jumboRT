@@ -70,7 +70,7 @@ FLOAT
 int
 	vec_eq(t_vec a, t_vec b)
 {
-	return (x(a) == x(b) && y(a) == y(b) && z(a) == z(b));
+	return (x(a) == x(b) && y(a) == y(b) && z(a) == z(b) && w(a) == w(b));
 }
 
 #endif

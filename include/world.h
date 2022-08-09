@@ -14,9 +14,10 @@
 
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
-# define RT_BXDF_TRANSMISSIVE		2
-# define RT_BXDF_MF_REFLECTIVE		3
-# define RT_BXDF_COOK_TORRANCE		4
+# define RT_BXDF_TRANSMISSIVE	2
+# define RT_BXDF_MF_REFLECTIVE	3
+# define RT_BXDF_COOK_TORRANCE	4
+# define RT_BXDF_COUNT			5
 
 # define RT_MAT_SMOOTH 1
 # define RT_MAT_EMITTER 2
@@ -27,7 +28,6 @@
 
 # define RT_MAX_DEPTH 8
 # define RT_MAX_VOLUMES 1
-# define RT_MAX_ETA 8
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -67,9 +67,7 @@ struct s_trace_ctx {
 	t_vec					head;
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
-	FLOAT					eta[RT_MAX_ETA];
 	uint32_t				volume_size;
-	uint32_t				eta_size;
 };
 
 struct s_result {
@@ -289,19 +287,20 @@ const GLOBAL t_bxdf			*get_bxdf_const(const GLOBAL t_world *world, uint32_t inde
 GLOBAL t_bxdf				*get_bxdf(GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
 t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
-t_vec				local_to_world(t_world_hit hit, t_vec v);
-t_vec				world_to_local(t_world_hit hit, t_vec v);
+t_vec						local_to_world(t_world_hit hit, t_vec v);
+t_vec						world_to_local(t_world_hit hit, t_vec v);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
 t_vec		filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset);
 t_vec		filter_sample(const GLOBAL t_world *world, t_filter filter, t_vec2 uv);
-FLOAT		tex_samplef_id_offset(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv, t_vec2 poffset);
-t_vec		tex_sample_offset(const GLOBAL t_world *world, t_tex tex, t_vec2 uv, t_vec2 poffset);
-t_vec		tex_sample_id_offset(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv, t_vec2 poffset);
-t_vec		tex_sample_id(const GLOBAL t_world *world, uint32_t tex, t_vec2 uv);
-t_vec		tex_sample(const GLOBAL t_world *world, t_tex tex, t_vec2 uv);
+t_vec		sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
+t_vec		sample_color_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
+FLOAT		sample_float_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
+t_vec		sample_vector(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
+t_vec		sample_color(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
+FLOAT		sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
 void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride);

@@ -109,6 +109,7 @@ struct s_hit {
 };
 
 FLOAT		rt_sqrt(FLOAT a);
+FLOAT		rt_cbrt(FLOAT a);
 FLOAT		rt_sin(FLOAT a);
 FLOAT		rt_asin(FLOAT a);
 FLOAT		rt_cos(FLOAT a);
