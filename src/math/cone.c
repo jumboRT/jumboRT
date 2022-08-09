@@ -35,6 +35,30 @@ static t_vec
 	return (vec_norm(vec_cross(relative_hit, vec_cross(relative_hit, cone.dir))));
 }
 
+static t_vec2
+	cone_uv_mantle(t_cone cone, FLOAT radius, t_vec point)
+{
+	t_vec op;
+
+	op = vec_sub(point, cone.pos);
+	return (vec2_add(vec2_scale(vec_change_basis2(op, vec_x(1.0), vec_y(1.0)), 1.0 / (4.0 * radius)), vec2(0.25, 0.25)));
+}
+
+static t_vec2
+	cone_uv_cap(t_cone cone, FLOAT radius, t_vec point)
+{
+	t_vec	op;
+	t_vec	tangent;
+	t_vec2	uv;
+
+	op = vec_sub(point, cone.pos);
+	tangent = vec_norm(vec_tangent(cone.dir));
+	uv = vec_change_basis2(op, tangent, vec_norm(vec_cross(tangent, cone.dir)));
+	uv = vec2_scale(uv, 1.0 / (4.0 * radius));
+	uv = vec2_add(uv, vec2(0.75, 0.25));
+	return (uv);
+}
+
 int
 	ray_cone_intersect(t_ray ray, t_cone cone, FLOAT min, t_hit *hit)
 {
@@ -47,11 +71,14 @@ int
 	if (!ray_plane_intersect(ray, plane(vec_add(cone.pos, vec_scale(cone.dir, cone.height)), cone.dir), min, &end_hit))
 		end_hit.t = RT_HUGE_VAL;
 	hit->t = RT_HUGE_VAL;
+	radius = rt_tan(cone.angle) * cone.height;
 	if (end_hit.t < hit->t && end_hit.t >= min)
 	{
-		radius = rt_tan(cone.angle) * cone.height;
 		if (vec_mag2(vec_sub(end_hit.pos, vec_add(cone.pos, vec_scale(cone.dir, cone.height)))) <= radius * radius)
+		{
 			*hit = end_hit;
+			hit->uv = cone_uv_cap(cone, radius, hit->pos);
+		}
 	}
 	if (t_side[0] < hit->t && t_side[0] >= min)
 	{
@@ -59,10 +86,10 @@ int
 		if (hit_on_finite_cone(hit->pos, cone))
 		{
 			hit->t = t_side[0];
-			hit->normal = vec_z(1);
-			if (end_hit.t < RT_HUGE_VAL)
-				hit->normal = vec_x(1);
 			hit->normal = cone_normal_at(hit->pos, cone);
+			hit->dpdu = vec_norm(vec_sub(cone.pos, hit->pos));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->uv = cone_uv_mantle(cone, radius, hit->pos);
 		}
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min)
@@ -71,10 +98,10 @@ int
 		if (hit_on_finite_cone(hit->pos, cone))
 		{
 			hit->t = t_side[1];
-			hit->normal = vec_z(1);
-			if (end_hit.t < RT_HUGE_VAL)
-				hit->normal = vec_x(1);
 			hit->normal = cone_normal_at(hit->pos, cone);
+			hit->dpdu = vec_norm(vec_sub(cone.pos, hit->pos));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->uv = cone_uv_mantle(cone, radius, hit->pos);
 		}
 	}
 	return (hit->t < RT_HUGE_VAL);
