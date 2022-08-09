@@ -6,8 +6,8 @@ t_vec
 	t_vec	tex1;
 	t_vec	tex2;
 
-	tex1 = tex_sample_id_offset(world, filter.tex[0], uv, poffset);
-	tex2 = tex_sample_id_offset(world, filter.tex[1], uv, poffset);
+	tex1 = sample_color_offset(world, filter.tex[0], uv, poffset);
+	tex2 = sample_color_offset(world, filter.tex[1], uv, poffset);
 	return (vec_mul(tex1, tex2));
 }
 
