@@ -43,7 +43,6 @@ static t_vec2
 	uv = vec2_add(uv, vec2(0.5, 0.5));
 	uv = vec2_add(uv, vec2(0.5 * (z(rel_point) > (cylinder.height / 2.0)), 0.0));
 	return (uv);
-	return (vec2((x(rel_point) / (4.0 * cylinder.radius)) + (0.5 * (z(rel_point) > 0)), y(rel_point)));
 }
 
 static int
