@@ -17,28 +17,33 @@ static t_vec2
 {
 	FLOAT	u;
 	FLOAT	v;
-	FLOAT	offset;
-	FLOAT	pr2;
 
-	pr2 = RT_2PI * cylinder.radius;
-	u = (vec_dot(rel_point, vec_z(1.0)) / pr2) + 1.0;
-	v = (vec_dot(rel_point, vec_y(1.0)) / pr2) + 1.0;
-	offset = 0.0;
-	if (vec_dot(rel_point, vec_z(1.0)) < 0.0)
-		offset = 1.0;
-	return (vec2((u / 4.0) + offset, (v / 4.0) + 0.5));
+	u = rt_atan2(vec_dot(rel_point, vec_x(1.0)), vec_dot(rel_point, vec_y(1.0))) / RT_2PI;
+	v = (vec_dot(rel_point, vec_z(1.0)) / cylinder.height) + 0.0;
+	return vec2(u, (v / 2.0) + 0.5);
 }
 
-static t_vec2
-	cylinder_uv_cap(t_cylinder cylinder, t_vec rel_point)
-{
+	/*
 	t_vec	tanget;
 	t_vec2	uv;
 
-	tanget = vec_tanget(cylinder.dir);
+	tanget = vec_tangent(cylinder.dir);
 	uv = vec_change_basis2(tanget, vec_norm(vec_cross(cylinder.dir, tanget)), rel_point);
 	uv = vec2_add(vec2_scale(uv, 1.0 / (4.0 * cylinder.radius)), vec2(0.5, 0.5));
+	if (z(rel_point) > 0.001)
+		uv = vec2_add(uv, vec2(0.5, 0.0));
+	*/
+static t_vec2
+	cylinder_uv_cap(t_cylinder cylinder, t_vec rel_point)
+{
+	t_vec2	uv;
+
+	uv = vec2(x(rel_point), y(rel_point));
+	uv = vec2_scale(uv, 1.0 / (4.0 * cylinder.radius));
+	uv = vec2_add(uv, vec2(0.5, 0.5));
+	uv = vec2_add(uv, vec2(0.5 * (z(rel_point) > (cylinder.height / 2.0)), 0.0));
 	return (uv);
+	return (vec2((x(rel_point) / (4.0 * cylinder.radius)) + (0.5 * (z(rel_point) > 0)), y(rel_point)));
 }
 
 static int
@@ -112,11 +117,13 @@ static int
 	{
 		hit->t = t_end[0];
 		hit->normal = cylinder.dir;
+		hit->uv = cylinder_uv_cap(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_end[1] < hit->t && t_end[1] >= min && between(0.0, z_side[0], z_side[1]))
 	{
 		hit->t = t_end[1];
 		hit->normal = vec_neg(cylinder.dir);
+		hit->uv = cylinder_uv_cap(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_side[0] < hit->t && t_side[0] >= min && between(z_side[0], height, 0.0))
 	{
@@ -124,6 +131,7 @@ static int
 		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
 		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
 		hit->normal = vec_rotate(axis, hit->normal, angle);
+		hit->uv = cylinder_uv_mantle(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min && between(z_side[1], height, 0.0))
 	{
@@ -131,6 +139,7 @@ static int
 		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
 		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
 		hit->normal = vec_rotate(axis, hit->normal, angle);
+		hit->uv = cylinder_uv_mantle(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (hit->t < RT_HUGE_VAL)
 		return (1);
@@ -152,6 +161,8 @@ int
 		if (ray_cylinder_intersect_parallel(relative_ray, cylinder, min, hit))
 		{
 			hit->pos = ray_at(ray, hit->t);
+			hit->dpdu = cylinder.dir;
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
 			return (1);
 		}
 	}
@@ -160,6 +171,8 @@ int
 		if (ray_cylinder_intersect_normal(relative_ray, cylinder, min, hit))
 		{
 			hit->pos = ray_at(ray, hit->t);
+			hit->dpdu = cylinder.dir;
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
 			return (1);
 		}
 	}
