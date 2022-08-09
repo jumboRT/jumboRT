@@ -180,8 +180,11 @@ t_vec		vec_min(t_vec a, t_vec b);
 t_vec		vec_max(t_vec a, t_vec b);
 t_vec		vec_clamp(t_vec v, FLOAT min, FLOAT max);
 
+t_vec		vec_tanget(t_vec v);
 t_vec		vec_rotate(t_vec axis, t_vec v, FLOAT angle);
 void		vec_angles(t_vec basis, t_vec v, t_vec *out_vec, FLOAT *out_angle);
+
+t_vec2		vec_change_basis2(t_vec v, t_vec tangent, t_vec bit_tangent);
 
 int			vec_eq(t_vec a, t_vec b);
 
