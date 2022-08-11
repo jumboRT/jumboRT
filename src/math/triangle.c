@@ -29,7 +29,7 @@ int
 	FLOAT	denom;
 	FLOAT	invdet;
 	FLOAT	bc_u, bc_v, bc_w;
-	int	degenerate;
+	int		degenerate;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),
@@ -52,7 +52,8 @@ int
 	bc_w = ((d00 * d21) - (d01 * d20)) * denom;
 	bc_u = 1 - bc_v - bc_w;
 	hit->pos = pos;
-	hit->normal = normal;
+	hit->geometric_normal = normal;
+	hit->shading_normal = normal;
 	if (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1)
 	{
 		hit->uv = vec2(
@@ -96,7 +97,7 @@ int
 		}
 		if (is_smooth)
 		{
-			hit->normal = vec(
+			hit->shading_normal = vec(
 					vec_dot(vec(x(triangle.normals[0]), x(triangle.normals[1]), x(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
 					vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
 					vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),

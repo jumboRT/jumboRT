@@ -42,8 +42,9 @@ int
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
-	hit->normal = vec_scale(vec_sub(hit->pos, sphere.pos), 1.0 / sphere.radius);
-	hit->uv = sphere_uv_at(hit->normal);
+	hit->geometric_normal = vec_scale(vec_sub(hit->pos, sphere.pos), 1.0 / sphere.radius);
+	hit->shading_normal = hit->geometric_normal;
+	hit->uv = sphere_uv_at(hit->geometric_normal);
 	cosphi = x(hit->pos) / sphere.radius;
 	sinphi = y(hit->pos) / sphere.radius;
 	theta = rt_acos(rt_clamp(z(hit->pos) / sphere.radius, -1.0, 1.0));

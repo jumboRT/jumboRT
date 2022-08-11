@@ -17,14 +17,14 @@ static FLOAT
 }
 
 static t_vec
-	f_bxdf_diffuse(const GLOBAL t_world *world, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec wo)
+	clip(t_vec v, t_vec n)
 {
-	t_vec	color;
+	FLOAT	dot;
 
-	(void) wi;
-	(void) wo;
-	color = filter_sample(world, bxdf->base.tex, hit.hit.uv);
-	return (vec_scale(color, RT_1_PI * 2));
+	dot = vec_dot(v, n);
+	if (dot >= 0)
+		return (v);
+	return (reflect(v, n));
 }
 
 static t_vec
@@ -32,21 +32,18 @@ static t_vec
 {
 	(void)ctx;
 	(void) bxdf;
-	*wo = reflect(wi, hit.relative_normal);
-	*wo = vec_add(*wo, vec_scale(rt_random_in_sphere(&ctx->seed), bxdf->fuzzy));
+	*wo = reflect(wi, hit.rel_shading_normal);
+	*wo = vec_norm(vec_add(*wo, vec_scale(rt_random_in_sphere(&ctx->seed), bxdf->fuzzy)));
+	*wo = clip(*wo, hit.rel_geometric_normal);
 	return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 }
 
 static t_vec
 	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	while (1)
-	{
-		*wo = rt_random_on_hemi(&ctx->seed, hit.relative_normal);
-		if (vec_dot(*wo, hit.geometric_normal) >= 0)
-			break;
-	}
-	return (f_bxdf_diffuse(world, bxdf, hit, wi, *wo));
+	*wo = rt_random_on_hemi(&ctx->seed, hit.rel_shading_normal);
+	*wo = clip(*wo, hit.rel_geometric_normal);
+	return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 }
 
 static t_vec
@@ -73,19 +70,21 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 	FLOAT	sintheta;
 
 	etai_etat = bxdf->eta;
-	if (vec_dot(hit.relative_normal, hit.hit.normal) > 0.0)
+	if (vec_dot(wiw, hit.hit.geometric_normal) < 0.0)
 		etai_etat = 1.0 / bxdf->eta;
-	costheta = rt_min(vec_dot(vec_neg(wiw), hit.relative_normal), 1.0);
+	costheta = rt_min(vec_dot(vec_neg(wiw), hit.rel_shading_normal), 1.0);
 	sintheta = rt_sqrt(1.0 - costheta*costheta);
 	color = filter_sample(world, bxdf->base.tex, hit.hit.uv);
 	if (reflectance(costheta, etai_etat) > rt_random_float(&ctx->seed) || etai_etat * sintheta > 1.0)
 	{
-		*wow = reflect(wiw, hit.relative_normal);
+		*wow = reflect(wiw, hit.rel_shading_normal);
+		*wow = clip(*wow, hit.rel_geometric_normal);
 		/**wow = vec_sub(wiw, vec_scale(hit.relative_normal, 2.0 * vec_dot(wiw, hit.relative_normal)));*/
 	}
 	else
 	{
-		*wow = vec_norm(refract(wiw, hit.relative_normal, etai_etat));
+		*wow = vec_norm(refract(wiw, hit.rel_shading_normal, etai_etat));
+		*wow = clip(*wow, vec_neg(hit.rel_geometric_normal));
 	}
 	return (color);
 }
@@ -93,16 +92,13 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 static t_vec
 	f_bxdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, const GLOBAL t_bxdf *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
-	t_vec	result;
-
-	result = vec_0();
 	if (bxdf->type == RT_BXDF_DIFFUSE)
-		result = f_bxdf_diffuse_sample(world, ctx, (const GLOBAL t_bxdf_diffuse *) bxdf, hit, wiw, wow);
+		return (f_bxdf_diffuse_sample(world, ctx, (const GLOBAL t_bxdf_diffuse *) bxdf, hit, wiw, wow));
 	if (bxdf->type == RT_BXDF_REFLECTIVE)
-		result = f_bxdf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wiw, wow);
+		return (f_bxdf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wiw, wow));
 	if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		return (f_bxdf_transmissive_sample(world, ctx, trace_ctx, (const GLOBAL t_bxdf_transmissive *) bxdf, hit, wiw, wow));;
-	return result;
+	return vec_0();
 }
 
 t_vec

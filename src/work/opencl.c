@@ -16,11 +16,11 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
-#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 5)
 # endif
 
 # ifndef RT_WORK_OPENCL_CHUNK_SIZE
-#  define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 20)
+#  define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 16)
 # endif
 
 struct s_opencl_ctx {

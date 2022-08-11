@@ -26,9 +26,10 @@ v  0.5, 0.5, 1.0
 
 mat_beg mat_ball
 #	cook_torrance 0.15 0.0 1.0972 255,255,0
-	transmissive 1.0 (1.0, 0.0, 0.0) 1.4
-	transmissive 1.0 (0.0, 1.0, 0.0) 1.5
-	transmissive 1.0 (0.0, 0.0, 1.0) 1.6
+#	transmissive 1.0 (1.0, 0.0, 0.0) 1.4
+#	transmissive 1.0 (0.0, 1.0, 0.0) 1.5
+#	transmissive 1.0 (0.0, 0.0, 1.0) 1.6
+	transmissive 1.0 (1.0, 1.0, 1.0) 1.5
 #	reflective 255,255,0 0.0
 mat_end
 sp 0,0,0 1 mat_ball

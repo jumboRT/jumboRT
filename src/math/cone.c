@@ -86,9 +86,10 @@ int
 		if (hit_on_finite_cone(hit->pos, cone))
 		{
 			hit->t = t_side[0];
-			hit->normal = cone_normal_at(hit->pos, cone);
+			hit->geometric_normal = cone_normal_at(hit->pos, cone);
+			hit->shading_normal = hit->geometric_normal;
 			hit->dpdu = vec_norm(vec_sub(cone.pos, hit->pos));
-			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			hit->uv = cone_uv_mantle(cone, radius, hit->pos);
 		}
 	}
@@ -98,9 +99,10 @@ int
 		if (hit_on_finite_cone(hit->pos, cone))
 		{
 			hit->t = t_side[1];
-			hit->normal = cone_normal_at(hit->pos, cone);
+			hit->geometric_normal = cone_normal_at(hit->pos, cone);
+			hit->shading_normal = hit->geometric_normal;
 			hit->dpdu = vec_norm(vec_sub(cone.pos, hit->pos));
-			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			hit->uv = cone_uv_mantle(cone, radius, hit->pos);
 		}
 	}
