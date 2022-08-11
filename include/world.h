@@ -11,6 +11,7 @@
 
 # define RT_TEX_COLOR			0
 # define RT_TEX_TEXTURE			1
+# define RT_TEX_CHECKER 2
 
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
@@ -28,6 +29,8 @@
 
 # define RT_MAX_DEPTH 8
 # define RT_MAX_VOLUMES 1
+
+# define RT_MAX_ETA 8
 
 /* # define RT_RAY_MIN 0.001 */
 
@@ -61,12 +64,21 @@ typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_result				t_result;
 typedef struct s_trace_ctx			t_trace_ctx;
 typedef struct s_filter				t_filter;
+typedef struct s_eta_link t_eta_link;
+
+struct s_eta_link {
+	const void *object;
+	FLOAT eta;
+	int32_t next;
+	int32_t prev;
+};
 
 struct s_trace_ctx {
 	t_ray					ray;
 	t_vec					head;
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
+	t_eta_link etas[RT_MAX_ETA];
 	uint32_t				volume_size;
 };
 
@@ -114,6 +126,10 @@ struct s_tex {
 			uint64_t	height;
 			uint32_t	offset;
 		}	tex;
+		struct {
+			t_vec odd_color;
+			t_vec even_color;
+		} checker;
 	}	a;
 };
 
@@ -289,6 +305,7 @@ t_vec						get_vertex(const t_world *world, uint32_t index);
 t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
 t_vec						local_to_world(t_world_hit hit, t_vec v);
 t_vec						world_to_local(t_world_hit hit, t_vec v);
+void eta_init(t_trace_ctx *trace_ctx, FLOAT eta);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);

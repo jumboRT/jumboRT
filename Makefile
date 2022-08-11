@@ -152,6 +152,7 @@ endif
 
 ifeq ($(renderer), cl)
 	CFLAGS		+= -DRT_WORK_OPENCL
+	EXTRA_RULES	+= kernel.bin
 else ifeq ($(renderer), thread)
 	CFLAGS		+= -DRT_WORK_THREAD
 else ifeq ($(renderer), single)
@@ -207,7 +208,7 @@ endif
 run: $(NAME)
 	./$(NAME) scenes/cornell_ball.rt
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
+$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(EXTRA_RULES)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
 
