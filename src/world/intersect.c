@@ -26,7 +26,7 @@ static void
 	while (index < world->primitives_size)
 	{
 		primitive = (const GLOBAL t_primitive *) (primitives + index);
-		if (prim_intersect(primitive, world, ray, 0.001, &current) && current.hit.t < hit->hit.t)
+		if (prim_intersect(primitive, world, ray, RT_TINY_VAL, &current) && current.hit.t < hit->hit.t)
 			*hit = current;
 		index += world_primitive_size(prim_type(primitive));
 	}
@@ -43,7 +43,7 @@ static void
 	while (index < world->accel_degenerates_count)
 	{
 		primitive = get_prim_const(world, world->accel_degenerates[index]);
-		if (prim_intersect(primitive, world, ray, 0.001, &current) && current.hit.t < hit->hit.t)
+		if (prim_intersect(primitive, world, ray, RT_TINY_VAL, &current) && current.hit.t < hit->hit.t)
 			*hit = current;
 		index += 1;
 	}
@@ -69,7 +69,7 @@ static void
 	uint32_t					next_child;
 	t_world_hit					current;
 
-	min_t = 0.001;
+	min_t = RT_TINY_VAL;
 	max_t = RT_HUGE_VAL;
 	istack = 0;
 	node = world->accel_nodes;
@@ -123,7 +123,7 @@ static void
 		{
 			if (istack == 0)
 				return ;
-			min_t = rt_max(min_t, max_t - 0.001);
+			min_t = rt_max(min_t, max_t - RT_TINY_VAL);
 			istack -= 1;
 			node = world->accel_nodes + stack[istack].index;
 			max_t = stack[istack].max;
