@@ -15,7 +15,7 @@ void
 	rt_expect(t_parse_ctx *ctx, int ch)
 {
 	if (*ctx->data != ch)
-		rt_parse_error(ctx, "unexpected character %c, expected %c", (int) *ctx->data, ch);
+		rt_parse_error(ctx, "unexpected character %c expected %c", (int) *ctx->data, ch);
 	rt_advance(ctx);
 }
 
@@ -48,7 +48,7 @@ unsigned int
 	rt_skip(ctx, ft_isspace);
 	if (!ft_isdigit(*ctx->data))
 	{
-		rt_parse_error(ctx, "unexpected character %c, expected int", *ctx->data);
+		rt_parse_error(ctx, "unexpected character %c expected int", *ctx->data);
 	}
 	result = ft_atol(ctx->data);
 	if (result < 0 || result > UINT_MAX)
