@@ -51,7 +51,7 @@ class Material:
         if self.emission is not None:
             sys.stdout.write(f"    emission 1 {str_texture(self.emission)}\n")
         if self.bump is not None:
-            sys.stdout.write(f"    bump {str_texture(self.bump)}\n")
+            sys.stdout.write(f"    normal {str_texture(self.bump)}\n")
         if self.alpha is not None:
             sys.stdout.write(f"    alpha {str_texture(self.alpha)}\n")
         sys.stdout.write(f"mat_end\n")

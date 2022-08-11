@@ -29,7 +29,7 @@ int
 	FLOAT	denom;
 	FLOAT	invdet;
 	FLOAT	bc_u, bc_v, bc_w;
-	int	degenerate;
+	int		degenerate;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),
@@ -52,7 +52,8 @@ int
 	bc_w = ((d00 * d21) - (d01 * d20)) * denom;
 	bc_u = 1 - bc_v - bc_w;
 	hit->pos = pos;
-	hit->normal = normal;
+	hit->geometric_normal = normal;
+	hit->shading_normal = normal;
 	if (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1)
 	{
 		hit->uv = vec2(
@@ -72,9 +73,6 @@ int
 			invdet = 1.0 / invdet;
 			hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), invdet);
 			hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), invdet);
-			hit->dndu = vec_scale(vec_sub(vec_scale(vec_norm(dp02), v(duv12)), vec_scale(vec_norm(dp12), v(duv02))), invdet);
-			hit->dndv = vec_scale(vec_add(vec_scale(vec_norm(dp02), -u(duv12)), vec_scale(vec_norm(dp12), u(duv02))), invdet);
-			hit->ss = vec_norm(hit->dpdu);
 		}
 		/* When I changed this below to an else statement, it was WAAAAY faster. Probably something to do with branching! Try to 
 		 * optimize this! */
@@ -86,8 +84,6 @@ int
 			else
 				hit->dpdu = vec_scale(vec(0.0, z(tmp), -y(tmp), 0.0), rt_sqrt(y(tmp) * y(tmp) + z(tmp) * z(tmp)));
 			hit->dpdv = vec_cross(tmp, hit->dpdu);
-			hit->dndu = hit->dpdu;
-			hit->dndv = hit->dpdu;
 		}
 		if (vec_mag2(vec_cross(hit->dpdu, hit->dpdv)) <= 0.01)
 		{
@@ -96,7 +92,7 @@ int
 		}
 		if (is_smooth)
 		{
-			hit->normal = vec(
+			hit->shading_normal = vec(
 					vec_dot(vec(x(triangle.normals[0]), x(triangle.normals[1]), x(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
 					vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
 					vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),

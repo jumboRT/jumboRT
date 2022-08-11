@@ -1,52 +1,55 @@
 C 0,0,0 1,0,0 90
 
 tex_def tex_checker assets/checker.bmp
-tex_def	tex_bump assets/bricky.bmp
+tex_def tex_bump assets/bricky.bmp
 checker_def tex_a 255,0,0 0,255,0 50.0 100.0
 
 mat_beg mat_cylinder
-	reflective 1.0 tex_checker 0.2
-	normal tex_bump
+        reflective 1.0 tex_checker 0.2
+        normal tex_bump
 mat_end
 
+
 mat_beg mat_cone
-#	diffuse 1.0 tex_checker
-	transmissive 1.0 (1.0,1.0,1.0) 1.5
+#       diffuse 1.0 tex_checker
+        transmissive 1.0 (1.0,1.0,1.0) 1.5
 mat_end
 
 mat_beg mat_light
-	emission 16 (1.0,1.0,1.0)
+        emission 16 (1.0,1.0,1.0)
 mat_end
 
 mat_beg mat_plane
-	diffuse 1.0 tex_checker
-	normal tex_bump
+        diffuse 1.0 tex_checker
+        normal tex_bump
 mat_end
 
 mat_beg mat_right
-	reflective 1.0 (1.0,1.0,1.0) 0.3
-	normal tex_bump
-#	diffuse 1.0 (1.0,1.0,0.0)
+        reflective 1.0 (1.0,1.0,1.0) 0.3
+        normal tex_bump
+#       diffuse 1.0 (1.0,1.0,0.0)
 mat_end
 
 sp -1000,0,1000 1000 mat_light
 
 mat_beg mat_middle
-#	diffuse 1.0 tex_a
-	transmissive 1.0 (1.0,1.0,1.0) 1.0
+#       diffuse 1.0 tex_a
+        transmissive 1.0 (1.0,1.0,1.0) 1.0
 mat_end
 
 mat_beg mat_water
-	transmissive 1.0 (1.0,1.0,1.0) 1.5
+        transmissive 1.0 (1.0,1.0,1.0) 1.3325
+		volume 5
+		diffuse 1.0 (0.2,0.2,1.0)
 mat_end
 
 pl 0,0,-1 0,-1,-1 mat_plane
-sp 1,0,0 0.3 mat_middle
 sp 1,0,0 0.5 mat_water
 sp 1,0.5,0 0.5 mat_right
 sp 1,-0.7,0 0.5 mat_middle
-sp 1,0,0 0.2 mat_water
-sp 1,0,0 0.1 mat_middle
+# sp 1,0,0 0.3 mat_middle
+# sp 1,0,0 0.2 mat_water
+# sp 1,0,0 0.1 mat_middle
 # co 1,0,50 0,0,-1 0.785 20 mat_cone
 # cy 0,0,0.5 0,0,1 10 20 mat_cylinder
 # sp 1,0,-50.25 100 255,255,0
