@@ -111,9 +111,9 @@ static int
 		{
 			hit.rel_shading_normal = hit.hit.shading_normal;
 			if (mat->flags & RT_MAT_HAS_NORMAL)
-				hit.rel_shading_normal = local_to_world(hit, vec_norm2(sample_vector(world, mat->normal_map, hit.hit.uv)));
+				hit.rel_shading_normal = local_to_world(hit, sample_vector(world, mat->normal_map, hit.hit.uv));
 			if (mat->flags & RT_MAT_HAS_BUMP)
-				hit.rel_shading_normal = vec_norm2(local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv)));
+				hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
 			hit.hit.shading_normal = hit.rel_shading_normal;
 			if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
 				hit.rel_shading_normal = vec_neg(hit.rel_shading_normal);
