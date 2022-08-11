@@ -159,6 +159,7 @@ void
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.type = RT_BXDF_TRANSMISSIVE;
 	bxdf.base.tex = rt_filter(world, ctx);
+	bxdf.refraction_tex = rt_filter(world, ctx);
 	bxdf.eta = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }

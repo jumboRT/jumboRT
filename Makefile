@@ -10,7 +10,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_
 							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c log.c \
 							tangent.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c filter.c conversion.c
-PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c ambient.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
