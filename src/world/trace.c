@@ -132,6 +132,7 @@ t_vec
 	tctx.tail = vec(0, 0, 0, 0);
 	tctx.volume_size = 0;
 	tctx.ray = ray;
+	eta_init(&tctx, 1.0);
 	while (depth > 0 && world_trace_step(world, ctx, &tctx))
 		depth -= 1;
 	return (tctx.tail);
@@ -152,6 +153,7 @@ void
 			tctx.head = vec(1, 1, 1, 1);
 			tctx.tail = vec(0, 0, 0, 0);
 			tctx.volume_size = 0;
+			eta_init(&tctx, 1.0);
 			tctx.ray = project(world, ctx, begin + index);
 		}
 		if (world_trace_step(world, ctx, &tctx))

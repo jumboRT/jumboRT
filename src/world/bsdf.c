@@ -64,6 +64,74 @@ static t_vec
 	return (vec_add(rperp, rparl));
 }
 
+static void
+	eta_del_link(t_trace_ctx *trace_ctx, int32_t idx)
+{
+	if (trace_ctx->etas[idx].prev >= 0)
+		trace_ctx->etas[trace_ctx->etas[idx].prev].next = trace_ctx->etas[idx].next;
+	if (trace_ctx->etas[idx].next >= 0)
+		trace_ctx->etas[trace_ctx->etas[idx].next].prev = trace_ctx->etas[idx].prev;
+}
+
+static int32_t
+	eta_top(t_trace_ctx *trace_ctx)
+{
+	int32_t idx;
+
+	idx = 0;
+	while (trace_ctx->etas[idx].next >= 0)
+		idx = trace_ctx->etas[idx].next;
+	return (idx);
+}
+
+static FLOAT
+	eta_secondf(t_trace_ctx *trace_ctx)
+{
+	int32_t	idx;
+
+	idx = eta_top(trace_ctx);
+	if (trace_ctx->etas[idx].prev < 0)
+		return (trace_ctx->etas[idx].eta);
+	return (trace_ctx->etas[trace_ctx->etas[idx].prev].eta);
+}
+
+static void
+	eta_del(t_trace_ctx *trace_ctx, const void *object)
+{
+	int32_t idx;
+
+	idx = eta_top(trace_ctx);
+	while (idx >= 0 && trace_ctx->etas[idx].object != object)
+		idx = trace_ctx->etas[idx].prev;
+	if (idx < 0)
+		return;
+	eta_del_link(trace_ctx, idx);
+}	
+
+static void
+	eta_push(t_trace_ctx *trace_ctx, const void *object, FLOAT eta)
+{
+	int32_t idx;
+
+	idx = eta_top(trace_ctx);
+	if (idx + 1 >= RT_MAX_ETA)
+		return;
+	trace_ctx->etas[idx].next = idx + 1;
+	trace_ctx->etas[idx + 1].prev = idx;
+	trace_ctx->etas[idx + 1].next = -1;
+	trace_ctx->etas[idx + 1].object = object;
+	trace_ctx->etas[idx + 1].eta = eta;
+}
+
+void
+	eta_init(t_trace_ctx *trace_ctx, FLOAT eta)
+{
+	trace_ctx->etas[0].prev = -1;
+	trace_ctx->etas[0].next = -1;
+	trace_ctx->etas[0].object = (const void *) 0;
+	trace_ctx->etas[0].eta = eta;
+}
+	
 static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx,
 					  const GLOBAL t_bxdf_transmissive *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
@@ -71,10 +139,14 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 	FLOAT	etai_etat;
 	FLOAT	costheta;
 	FLOAT	sintheta;
-
-	etai_etat = bxdf->eta;
-	if (vec_dot(hit.relative_normal, hit.hit.normal) > 0.0)
-		etai_etat = 1.0 / bxdf->eta;
+	int entering;
+	FLOAT etai;
+	
+	etai = eta_secondf(trace_ctx);
+	etai_etat = bxdf->eta / etai;
+	entering = vec_dot(hit.relative_normal, hit.hit.normal) > 0.0;
+	if (entering)
+		etai_etat = etai / bxdf->eta;
 	costheta = rt_min(vec_dot(vec_neg(wiw), hit.relative_normal), 1.0);
 	sintheta = rt_sqrt(1.0 - costheta*costheta);
 	color = filter_sample(world, bxdf->base.tex, hit.hit.uv);
@@ -86,6 +158,10 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 	else
 	{
 		*wow = vec_norm(refract(wiw, hit.relative_normal, etai_etat));
+		if (entering)
+			eta_push(trace_ctx, hit.prim, bxdf->eta);
+		else
+			eta_del(trace_ctx, hit.prim);
 	}
 	return (color);
 }

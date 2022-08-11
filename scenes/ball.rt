@@ -33,14 +33,19 @@ sp -1000,0,1000 1000 mat_light
 
 mat_beg mat_middle
 #	diffuse 1.0 tex_a
+	transmissive 1.0 (1.0,1.0,1.0) 1.0
+mat_end
+
+mat_beg mat_water
 	transmissive 1.0 (1.0,1.0,1.0) 1.5
 mat_end
 
 pl 0,0,-1 0,-1,-1 mat_plane
-sp 1,0,0 0.5 mat_middle
+sp 1,0,0 0.3 mat_middle
+sp 1,0,0 0.5 mat_water
 sp 1,0.5,0 0.5 mat_right
-sp 1,-0.5,0 0.5 mat_middle
-co 1,0,50 0,0,-1 0.785 20 mat_cone
+sp 1,-0.7,0 0.5 mat_middle
+# co 1,0,50 0,0,-1 0.785 20 mat_cone
 # cy 0,0,0.5 0,0,1 10 20 mat_cylinder
 # sp 1,0,-50.25 100 255,255,0
 # sp 1,0,-50.25 100 mat_light
