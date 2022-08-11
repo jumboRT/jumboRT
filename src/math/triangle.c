@@ -73,9 +73,6 @@ int
 			invdet = 1.0 / invdet;
 			hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), invdet);
 			hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), invdet);
-			hit->dndu = vec_scale(vec_sub(vec_scale(vec_norm(dp02), v(duv12)), vec_scale(vec_norm(dp12), v(duv02))), invdet);
-			hit->dndv = vec_scale(vec_add(vec_scale(vec_norm(dp02), -u(duv12)), vec_scale(vec_norm(dp12), u(duv02))), invdet);
-			hit->ss = vec_norm(hit->dpdu);
 		}
 		/* When I changed this below to an else statement, it was WAAAAY faster. Probably something to do with branching! Try to 
 		 * optimize this! */
@@ -87,8 +84,6 @@ int
 			else
 				hit->dpdu = vec_scale(vec(0.0, z(tmp), -y(tmp), 0.0), rt_sqrt(y(tmp) * y(tmp) + z(tmp) * z(tmp)));
 			hit->dpdv = vec_cross(tmp, hit->dpdu);
-			hit->dndu = hit->dpdu;
-			hit->dndv = hit->dpdu;
 		}
 		if (vec_mag2(vec_cross(hit->dpdu, hit->dpdv)) <= 0.01)
 		{

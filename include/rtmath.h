@@ -103,9 +103,6 @@ struct s_hit {
 	t_vec	geometric_normal;
 	t_vec	dpdu;
 	t_vec	dpdv;
-	t_vec	dndu;
-	t_vec	dndv;
-	t_vec	ss;
 	t_vec2	uv;
 	FLOAT	t;
 };

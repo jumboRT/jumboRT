@@ -19,6 +19,19 @@ static t_vec
 	return (vec_scale(vec(colors[0], colors[1], colors[2], colors[3]), 1.0 / 255));
 }
 
+// static t_vec sample_checker(const GLOBAL t_world *world, t_tex tex,
+// t_vec2 uv, t_vec2 offset)
+static t_vec
+	sample_checker(const GLOBAL t_world *world, t_tex tex, t_vec2 uv, t_vec2 offset)
+{
+	FLOAT sines;
+
+	sines = rt_sin(w(tex.a.checker.odd_color) * (u(uv) + u(offset))) * rt_sin(w(tex.a.checker.even_color) * (v(uv) + v(offset)));
+	if (sines < 0.0)
+		return (tex.a.checker.odd_color);
+	return (tex.a.checker.even_color);
+}
+
 t_vec
 	sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset)
 {
@@ -27,6 +40,8 @@ t_vec
 	tex = get_tex_const(world, id);
 	if (tex->type == RT_TEX_COLOR)
 		return (tex->a.color);
+	if (tex->type == RT_TEX_CHECKER)
+		return (sample_checker(world, *tex, uv, offset));
 	return (sample_texture(world, *tex, uv, offset));
 }
 
