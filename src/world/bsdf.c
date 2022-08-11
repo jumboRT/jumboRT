@@ -132,7 +132,6 @@ void
 static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx,
 					  const GLOBAL t_bxdf_transmissive *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
-	t_vec	color;
 	FLOAT	etai_etat;
 	FLOAT	costheta;
 	FLOAT	sintheta;
@@ -146,12 +145,12 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 		etai_etat = etai / bxdf->eta;
 	costheta = rt_min(vec_dot(vec_neg(wiw), hit.rel_shading_normal), 1.0);
 	sintheta = rt_sqrt(1.0 - costheta*costheta);
-	color = filter_sample(world, bxdf->base.tex, hit.hit.uv);
 	if (reflectance(costheta, etai_etat) > rt_random_float(&ctx->seed) || etai_etat * sintheta > 1.0)
 	{
 		*wow = reflect(wiw, hit.rel_shading_normal);
 		*wow = clip(*wow, hit.rel_geometric_normal);
 		/**wow = vec_sub(wiw, vec_scale(hit.relative_normal, 2.0 * vec_dot(wiw, hit.relative_normal)));*/
+		return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 	}
 	else
 	{
@@ -161,8 +160,8 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 			eta_push(trace_ctx, hit.prim, bxdf->eta);
 		else
 			eta_del(trace_ctx, hit.prim);
+		return (filter_sample(world, bxdf->refraction_tex, hit.hit.uv));
 	}
-	return (color);
 }
 
 static t_vec

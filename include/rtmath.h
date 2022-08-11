@@ -191,6 +191,8 @@ int			vec_eq(t_vec a, t_vec b);
 t_ray		ray(t_vec org, t_vec dir);
 t_vec		ray_at(t_ray ray, FLOAT t);
 
+t_vec2		sphere_uv_at(t_vec point);
+
 int			ray_plane_intersect(t_ray ray,
 				t_plane plane, FLOAT min, t_hit *hit);
 int			ray_triangle_intersect(t_ray ray,

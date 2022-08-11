@@ -75,6 +75,7 @@ t_vec
 }
 
 /* TODO: unify these branches */
+/* TODO: when hitting a material that only has emission, should the ray stop? */
 static int
 	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {
@@ -83,7 +84,11 @@ static int
 	t_vec					bsdf;
 
 	if (!world_intersect(world, tctx->ray, &hit))
+	{
+		hit.hit.uv = sphere_uv_at(tctx->ray.dir);
+		tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, filter_sample(world, world->ambient_filter, hit.hit.uv)));
 		return (0);
+	}
 	mat = intersect_volume(tctx->volumes, tctx->volume_size, ctx, &hit.hit.t);
 	bsdf = vec(1, 1, 1, 1);
 	if (mat != 0)
@@ -111,7 +116,7 @@ static int
 		{
 			hit.rel_shading_normal = hit.hit.shading_normal;
 			if (mat->flags & RT_MAT_HAS_NORMAL)
-				hit.rel_shading_normal = local_to_world(hit, sample_vector(world, mat->normal_map, hit.hit.uv));
+				hit.rel_shading_normal = local_to_world(hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit.hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
 			if (mat->flags & RT_MAT_HAS_BUMP)
 				hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
 			hit.hit.shading_normal = hit.rel_shading_normal;

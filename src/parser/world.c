@@ -4,6 +4,7 @@
 
 const static t_directive	directives[] = {
 	{ "C", rt_exec_camera },
+	{ "A", rt_exec_ambient },
 	{ "sp", rt_exec_sphere },
 	{ "pl", rt_exec_plane },
 	{ "cy", rt_exec_cylinder },
@@ -38,6 +39,8 @@ void
 	size_t		len;
 	size_t		i;
 
+	world->ambient_filter.tex[0] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
+	world->ambient_filter.tex[1] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	rt_skip(ctx, ft_isspace);
 	while (*ctx->data != '\0')
 	{

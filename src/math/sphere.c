@@ -10,7 +10,7 @@ t_sphere
 	return (result);
 }
 
-static t_vec2
+t_vec2
 	sphere_uv_at(t_vec point)
 {
 	/* TODO Check if better to multiply by constant

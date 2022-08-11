@@ -27,7 +27,7 @@ int
 	t_vec	tmp;
 	FLOAT	d00, d01, d11, d20, d21;
 	FLOAT	denom;
-	FLOAT	invdet;
+	FLOAT	determinant;
 	FLOAT	bc_u, bc_v, bc_w;
 	int		degenerate;
 
@@ -63,16 +63,16 @@ int
 		duv12 = vec2_sub(triangle.uvs[1], triangle.uvs[2]);
 		dp02 = vec_sub(triangle.vertices[0], triangle.vertices[2]);
 		dp12 = vec_sub(triangle.vertices[1], triangle.vertices[2]);
-		invdet = (u(duv02) * v(duv12) - v(duv02) * u(duv12));
-		degenerate = rt_abs(invdet) > 0.0001;
+		determinant = (u(duv02) * v(duv12) - v(duv02) * u(duv12));
+		degenerate = rt_abs(determinant) < RT_TINY_VAL;
 		hit->dpdu = vec_0();
 		hit->dpdv = vec_0();
 		/* TODO check if triangle has UV's before reading degenerate. Use of unitialized value */
-		if (degenerate)
+		if (!degenerate)
 		{
-			invdet = 1.0 / invdet;
-			hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), invdet);
-			hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), invdet);
+			determinant = 1.0 / determinant;
+			hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), determinant);
+			hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), determinant);
 		}
 		/* When I changed this below to an else statement, it was WAAAAY faster. Probably something to do with branching! Try to 
 		 * optimize this! */
@@ -85,11 +85,15 @@ int
 				hit->dpdu = vec_scale(vec(0.0, z(tmp), -y(tmp), 0.0), rt_sqrt(y(tmp) * y(tmp) + z(tmp) * z(tmp)));
 			hit->dpdv = vec_cross(tmp, hit->dpdu);
 		}
-		if (vec_mag2(vec_cross(hit->dpdu, hit->dpdv)) <= 0.01)
+		if (vec_mag2(vec_cross(hit->dpdu, hit->dpdv)) <= 0.0001)
 		{
 			hit->dpdu = vec_z(1);
 			hit->dpdv = vec_x(1);
 		}
+		/*
+		hit->dpdu = vec_tangent(normal);
+		hit->dpdv = vec_norm(vec_cross(normal, hit->dpdu));
+		*/
 		if (is_smooth)
 		{
 			hit->shading_normal = vec(

@@ -154,6 +154,7 @@ struct s_bxdf_reflective {
 
 struct s_bxdf_transmissive {
 	t_bxdf		base;
+	t_filter	refraction_tex;
 	FLOAT		eta;
 };
 
@@ -247,6 +248,7 @@ struct s_world_hit {
 struct s_world {
 	t_image_meta			img_meta;
 	t_camera				camera;
+	t_filter				ambient_filter;
 	uint32_t				primitives_count;
 	uint32_t				materials_count;
 	uint32_t				vertices_count;

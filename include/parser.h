@@ -74,6 +74,7 @@ void			rt_material(t_parse_ctx *ctx, t_world *world, t_primitive *shape);
 void			rt_tex(t_parse_ctx *ctx, t_world *world, t_material *material);
 
 void			rt_exec_camera(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_ambient(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_sphere(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_plane(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_vertex(t_world *world, t_parse_ctx *ctx);
