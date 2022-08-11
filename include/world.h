@@ -11,6 +11,7 @@
 
 # define RT_TEX_COLOR			0
 # define RT_TEX_TEXTURE			1
+# define RT_TEX_CHECKER 2
 
 # define RT_BXDF_DIFFUSE		0
 # define RT_BXDF_REFLECTIVE		1
@@ -114,6 +115,10 @@ struct s_tex {
 			uint64_t	height;
 			uint32_t	offset;
 		}	tex;
+		struct {
+			t_vec odd_color;
+			t_vec even_color;
+		} checker;
 	}	a;
 };
 

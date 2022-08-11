@@ -15,6 +15,7 @@ const static t_directive	directives[] = {
 	{ "f", rt_exec_triangle },
 	{ "L", rt_exec_light },
 	{ "tex_def", rt_exec_tex_def },
+	{ "checker_def", rt_exec_checker_def },
 	{ "mat_use", rt_exec_mat_use },
 	{ "mat_beg", rt_exec_mat_beg },
 	{ "diffuse", rt_exec_diffuse },
