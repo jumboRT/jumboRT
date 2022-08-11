@@ -88,6 +88,7 @@ void			rt_exec_mat_use(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_checker_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_diffuse(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx);

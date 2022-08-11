@@ -2,6 +2,7 @@ C 0,0,0 1,0,0 90
 
 tex_def tex_checker assets/checker.bmp
 tex_def	tex_bump assets/bricky.bmp
+checker_def tex_a 255,0,0 0,255,0 50.0 100.0
 
 mat_beg mat_cylinder
 	reflective 1.0 tex_checker 0.2
@@ -31,7 +32,7 @@ mat_end
 sp -1000,0,1000 1000 mat_light
 
 mat_beg mat_middle
-#	diffuse 1.0 tex_checker
+#	diffuse 1.0 tex_a
 	transmissive 1.0 (1.0,1.0,1.0) 1.5
 mat_end
 
