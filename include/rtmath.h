@@ -1,6 +1,7 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
+# define RT_TINY_VAL 0.0001
 # define RT_HUGE_VAL 1000000000.0
 
 # define RT_1_PI 0.31831 
@@ -98,7 +99,8 @@ struct s_cone {
 
 struct s_hit {
 	t_vec	pos;
-	t_vec	normal;
+	t_vec	shading_normal;
+	t_vec	geometric_normal;
 	t_vec	dpdu;
 	t_vec	dpdv;
 	t_vec	dndu;

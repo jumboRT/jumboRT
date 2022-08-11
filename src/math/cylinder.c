@@ -52,12 +52,14 @@ static int
 		return (0);
 	if (z(relative_ray.org) < 0.0 && z(relative_ray.org) >= min)
 	{
-		hit->normal = vec_neg(cylinder.dir);
+		hit->geometric_normal = vec_neg(cylinder.dir);
+		hit->shading_normal = hit->geometric_normal;
 		hit->t = -z(relative_ray.org);
 	}
 	else if (cylinder.height - z(relative_ray.org) >= min)
 	{
-		hit->normal = cylinder.dir;
+		hit->geometric_normal = cylinder.dir;
+		hit->shading_normal = hit->geometric_normal;
 		hit->t = cylinder.height - z(relative_ray.org);
 	}
 	else
@@ -115,31 +117,32 @@ static int
 	if (t_end[0] < hit->t && t_end[0] >= min && between(height, z_side[0], z_side[1]))
 	{
 		hit->t = t_end[0];
-		hit->normal = cylinder.dir;
+		hit->geometric_normal = cylinder.dir;
 		hit->uv = cylinder_uv_cap(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_end[1] < hit->t && t_end[1] >= min && between(0.0, z_side[0], z_side[1]))
 	{
 		hit->t = t_end[1];
-		hit->normal = vec_neg(cylinder.dir);
+		hit->geometric_normal = vec_neg(cylinder.dir);
 		hit->uv = cylinder_uv_cap(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_side[0] < hit->t && t_side[0] >= min && between(z_side[0], height, 0.0))
 	{
 		hit->t = t_side[0];
 		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
-		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
-		hit->normal = vec_rotate(axis, hit->normal, angle);
+		hit->geometric_normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
+		hit->geometric_normal = vec_rotate(axis, hit->geometric_normal, angle);
 		hit->uv = cylinder_uv_mantle(cylinder, ray_at(relative_ray, hit->t));
 	}
 	if (t_side[1] < hit->t && t_side[1] >= min && between(z_side[1], height, 0.0))
 	{
 		hit->t = t_side[1];
 		vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
-		hit->normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
-		hit->normal = vec_rotate(axis, hit->normal, angle);
+		hit->geometric_normal = vec_scale(vec_set(ray_at(relative_ray, hit->t), 2, 0), 1 / cylinder.radius);
+		hit->geometric_normal = vec_rotate(axis, hit->geometric_normal, angle);
 		hit->uv = cylinder_uv_mantle(cylinder, ray_at(relative_ray, hit->t));
 	}
+	hit->shading_normal = hit->geometric_normal;
 	if (hit->t < RT_HUGE_VAL)
 		return (1);
 	return (0);
@@ -161,7 +164,7 @@ int
 		{
 			hit->pos = ray_at(ray, hit->t);
 			hit->dpdu = cylinder.dir;
-			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			return (1);
 		}
 	}
@@ -171,7 +174,7 @@ int
 		{
 			hit->pos = ray_at(ray, hit->t);
 			hit->dpdu = cylinder.dir;
-			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->normal));
+			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			return (1);
 		}
 	}

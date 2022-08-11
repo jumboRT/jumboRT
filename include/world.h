@@ -223,8 +223,8 @@ struct s_accel_node {
 
 struct s_world_hit {
 	t_hit						hit;
-	t_vec						relative_normal;
-	t_vec						geometric_normal;
+	t_vec						rel_geometric_normal;
+	t_vec						rel_shading_normal;
 	const GLOBAL t_primitive	*prim;
 };
 

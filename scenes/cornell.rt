@@ -21,9 +21,9 @@ v  0.5,-0.5, 1.0
 v  0.5, 0.5, 1.0
 
 # walls
-mat_beg mat_left diffuse 255,0,0 mat_end
-mat_beg mat_right diffuse 0,255,0 mat_end
-mat_beg mat_white diffuse 255,255,255 mat_end
+mat_beg mat_left diffuse 1 255,0,0 mat_end
+mat_beg mat_right diffuse 1 0,255,0 mat_end
+mat_beg mat_white diffuse 1 255,255,255 mat_end
 f 1 0 4 mat_left
 f 4 5 1 mat_left
 f 2 3 6 mat_right
