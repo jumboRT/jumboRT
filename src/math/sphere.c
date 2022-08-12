@@ -32,6 +32,7 @@ void
 	theta = rt_acos(rt_clamp(z(hit->pos) / sphere.radius, -1.0, 1.0));
 	hit->dpdu = vec(-RT_2PI * y(hit->pos), RT_2PI * x(hit->pos), 0.0, 0.0);
 	hit->dpdv = vec_scale(vec(z(hit->pos) * cosphi, z(hit->pos) * sinphi, -sphere.radius * rt_sin(theta), 0.0), RT_2PI);
+	hit->uv = sphere_uv_at(hit->geometric_normal);
 }
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
@@ -56,7 +57,6 @@ int
 	hit->pos = ray_at(ray, t[0]);
 	hit->geometric_normal = vec_scale(vec_sub(hit->pos, sphere.pos), 1.0 / sphere.radius);
 	hit->shading_normal = hit->geometric_normal;
-	hit->uv = sphere_uv_at(hit->geometric_normal);
 	return (1);
 }
 

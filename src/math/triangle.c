@@ -29,6 +29,7 @@ void
 	t_vec	tmp;
 	FLOAT	determinant;
 	int		degenerate;
+	t_vec	bary;
 
 	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
 	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
@@ -63,6 +64,18 @@ void
 		hit->dpdu = vec_z(1);
 		hit->dpdv = vec_x(1);
 	}
+	bary = vec(hit->ctx.tr.bc_u, hit->ctx.tr.bc_v, hit->ctx.tr.bc_w, 0);
+	hit->uv = vec2(
+			vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2]), 0.0), bary),
+			vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2]), 0.0), bary));
+	if (triangle.is_smooth)
+	{
+		hit->shading_normal = vec(
+				vec_dot(vec(x(triangle.normals[0]), x(triangle.normals[1]), x(triangle.normals[2]), 0.0), bary),
+				vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), bary),
+				vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), bary),
+				0.0);
+	}
 }
 
 int
@@ -72,7 +85,6 @@ int
 	t_vec	v0, v1, v2;
 	FLOAT	d00, d01, d11, d20, d21;
 	FLOAT	denom;
-	FLOAT	bc_u, bc_v, bc_w;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),
@@ -90,23 +102,8 @@ int
 	d21 = vec_dot(v2, v1);
 
 	denom = 1.0 / ((d00 * d11) - (d01 * d01));
-	bc_v = ((d11 * d20) - (d01 * d21)) * denom; 
-	bc_w = ((d00 * d21) - (d01 * d20)) * denom;
-	bc_u = 1 - bc_v - bc_w;
-	if (bc_v >= 0 && bc_w >= 0 && bc_v + bc_w <= 1)
-	{
-		hit->uv = vec2(
-				vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
-				vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)));
-		if (triangle.is_smooth)
-		{
-			hit->shading_normal = vec(
-					vec_dot(vec(x(triangle.normals[0]), x(triangle.normals[1]), x(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
-					vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
-					vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), vec(bc_u, bc_v, bc_w, 0.0)),
-					0.0);
-		}
-		return (1);
-	}
-	return (0);
+	hit->ctx.tr.bc_v = ((d11 * d20) - (d01 * d21)) * denom; 
+	hit->ctx.tr.bc_w = ((d00 * d21) - (d01 * d20)) * denom;
+	hit->ctx.tr.bc_u = 1 - hit->ctx.tr.bc_v - hit->ctx.tr.bc_w;
+	return (hit->ctx.tr.bc_v >= 0 && hit->ctx.tr.bc_w >= 0 && hit->ctx.tr.bc_v + hit->ctx.tr.bc_w <= 1);
 }
