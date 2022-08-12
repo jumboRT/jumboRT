@@ -3,7 +3,7 @@ NAME					:= miniRT
 UTIL_FILES				:= util.c memory.c image_bin.c writefile.c readfile.c lib.c atof.c random.c queue.c aabb.c hash.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
-WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c
+WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c int.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
 							sin.c cos.c tan.c basis.c vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c \
 							vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
@@ -146,21 +146,6 @@ ifndef san
 	san := address
 endif 
 
-ifndef renderer
-	renderer := thread
-endif
-
-ifeq ($(renderer), cl)
-	CFLAGS		+= -DRT_WORK_OPENCL
-	EXTRA_RULES	+= kernel.bin
-else ifeq ($(renderer), thread)
-	CFLAGS		+= -DRT_WORK_THREAD
-else ifeq ($(renderer), single)
-	CFLAGS		+= -DRT_WORK_SINGLE
-else
-$(error "invalid renderer $(renderer)")
-endif
-
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
@@ -209,7 +194,10 @@ else
 	COMPILER_CFLAGS	+= -DRT_LINUX
 endif
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(EXTRA_RULES)
+run: $(NAME)
+	./$(NAME) scenes/cornell_ball.rt
+
+$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
 
