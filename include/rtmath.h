@@ -15,6 +15,7 @@
 
 # if defined RT_VECTORIZE
 typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
+typedef int					t_ivec __attribute__ ((vector_size(16))); /* TODO can probably be removed */
 typedef FLOAT				t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
@@ -76,6 +77,7 @@ struct s_triangle {
 	t_vec	vertices[3];
 	t_vec2	uvs[3];
 	t_vec	normals[3];
+	int		is_smooth;
 };
 
 struct s_sphere {
@@ -151,7 +153,7 @@ FLOAT		u(t_vec2 v);
 FLOAT		v(t_vec2 v);
 
 t_plane		plane(t_vec pos, t_vec normal);
-t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n1, t_vec n2, t_vec n3);
+t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n1, t_vec n2, t_vec n3, int is_smooth);
 t_sphere	sphere(t_vec pos, FLOAT radius);
 t_cylinder	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius);
 t_cone		cone(t_vec pos, t_vec dir, FLOAT height, FLOAT angle); 
@@ -179,6 +181,7 @@ t_vec		vec_norm2(t_vec v);
 t_vec		vec_min(t_vec a, t_vec b);
 t_vec		vec_max(t_vec a, t_vec b);
 t_vec		vec_clamp(t_vec v, FLOAT min, FLOAT max);
+t_vec		vec_abs(t_vec a);
 
 t_vec		vec_tangent(t_vec v);
 t_vec		vec_rotate(t_vec axis, t_vec v, FLOAT angle);
@@ -196,13 +199,24 @@ t_vec2		sphere_uv_at(t_vec point);
 int			ray_plane_intersect(t_ray ray,
 				t_plane plane, FLOAT min, t_hit *hit);
 int			ray_triangle_intersect(t_ray ray,
-				t_triangle triangle, FLOAT min, t_hit *hit, int is_smooth);
+				t_triangle triangle, FLOAT min, t_hit *hit);
 int			ray_sphere_intersect(t_ray ray,
 				t_sphere sphere, FLOAT min, t_hit *hit);
 int			ray_cylinder_intersect(t_ray ray,
 				t_cylinder cylinder, FLOAT min, t_hit *hit);
 int			ray_cone_intersect(t_ray ray,
 				t_cone cone, FLOAT min, t_hit *hit);
+
+void		plane_hit_info(t_ray ray,
+				t_plane plane, t_hit *hit);
+void		triangle_hit_info(t_ray ray,
+				t_triangle triangle, t_hit *hit);
+void		sphere_hit_info(t_ray ray,
+				t_sphere sphere, t_hit *hit);
+void		cylinder_hit_info(t_ray ray,
+				t_cylinder cylinder, t_hit *hit);
+void		cone_hit_info(t_ray ray,
+				t_cone cone, t_hit *hit);
 
 int			quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
 #endif

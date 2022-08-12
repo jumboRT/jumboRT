@@ -8,7 +8,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_
 							sin.c cos.c tan.c basis.c vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c \
 							vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c log.c \
-							tangent.c
+							tangent.c vec_abs_fast.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c filter.c conversion.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c ambient.c
 GFX_FILES				:= win.c
@@ -39,6 +39,7 @@ OPENCL_FILES			:= \
 	src/math/vec2_arith_fast.c \
 	src/math/vec_rotate.c \
 	src/math/vec_set.c \
+	src/math/vec_abs_fast.c \
 	src/math/tangent.c \
 	src/math/clamp.c \
 	src/math/basis.c \

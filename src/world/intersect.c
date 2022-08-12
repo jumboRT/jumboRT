@@ -142,5 +142,11 @@ int
 	}
 	else
 		world_intersect_primitives(world, ray, hit);
-	return (hit->hit.t < RT_HUGE_VAL);
+	if (hit->hit.t < RT_HUGE_VAL)
+	{
+		prim_hit_info(hit->prim, world, ray, hit); // TODO: defer this even further if possible
+		return (1);
+	}
+	else
+		return (0);
 }

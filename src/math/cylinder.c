@@ -23,16 +23,6 @@ static t_vec2
 	return vec2(u, (v / 2.0) + 0.5);
 }
 
-	/*
-	t_vec	tanget;
-	t_vec2	uv;
-
-	tanget = vec_tangent(cylinder.dir);
-	uv = vec_change_basis2(tanget, vec_norm(vec_cross(cylinder.dir, tanget)), rel_point);
-	uv = vec2_add(vec2_scale(uv, 1.0 / (4.0 * cylinder.radius)), vec2(0.5, 0.5));
-	if (z(rel_point) > 0.001)
-		uv = vec2_add(uv, vec2(0.5, 0.0));
-	*/
 static t_vec2
 	cylinder_uv_cap(t_cylinder cylinder, t_vec rel_point)
 {
@@ -148,6 +138,14 @@ static int
 	return (0);
 }
 
+void
+	cylinder_hit_info(t_ray ray, t_cylinder cylinder, t_hit *hit)
+{
+	(void) ray;
+	(void) cylinder;
+	(void) hit;
+}
+
 int
 	ray_cylinder_intersect(t_ray ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
 {
@@ -174,6 +172,8 @@ int
 		{
 			hit->pos = ray_at(ray, hit->t);
 			hit->dpdu = cylinder.dir;
+			if (vec_eq(cylinder.dir, vec_abs(hit->geometric_normal)))
+				hit->dpdu = vec_tangent(cylinder.dir);
 			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			return (1);
 		}

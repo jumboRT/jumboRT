@@ -311,6 +311,7 @@ void eta_init(t_trace_ctx *trace_ctx, FLOAT eta);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
+void		prim_hit_info(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
 t_vec		filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset);
 t_vec		filter_sample(const GLOBAL t_world *world, t_filter filter, t_vec2 uv);

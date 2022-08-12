@@ -19,6 +19,15 @@ static t_vec2
 	return (vec_change_basis2(op, up, right));
 }
 
+void
+	plane_hit_info(t_ray ray, t_plane plane, t_hit *hit)
+{
+	(void) ray;
+	hit->dpdu = vec_tangent(plane.normal);
+	hit->dpdv = vec_norm(vec_cross(plane.normal, hit->dpdu));
+	hit->uv = plane_get_uv(plane, hit->pos, hit->dpdu, hit->dpdv);
+}
+
 int
 	ray_plane_intersect(t_ray ray, t_plane plane, FLOAT min, t_hit *hit)
 {
@@ -35,8 +44,5 @@ int
 	hit->pos = ray_at(ray, t);
 	hit->geometric_normal = plane.normal;
 	hit->shading_normal = plane.normal;
-	hit->dpdu = vec_tangent(plane.normal);
-	hit->dpdv = vec_norm(vec_cross(plane.normal, hit->dpdu));
-	hit->uv = plane_get_uv(plane, hit->pos, hit->dpdu, hit->dpdv);
 	return (t >= min);
 }

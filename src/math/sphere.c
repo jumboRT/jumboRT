@@ -20,6 +20,20 @@ t_vec2
 		    0.5 + (rt_asin(z(point)) / RT_PI)));
 }
 
+void
+	sphere_hit_info(t_ray ray, t_sphere sphere, t_hit *hit)
+{
+	FLOAT		cosphi, sinphi;
+	FLOAT		theta;
+
+	(void) ray;
+	cosphi = x(hit->pos) / sphere.radius;
+	sinphi = y(hit->pos) / sphere.radius;
+	theta = rt_acos(rt_clamp(z(hit->pos) / sphere.radius, -1.0, 1.0));
+	hit->dpdu = vec(-RT_2PI * y(hit->pos), RT_2PI * x(hit->pos), 0.0, 0.0);
+	hit->dpdv = vec_scale(vec(z(hit->pos) * cosphi, z(hit->pos) * sinphi, -sphere.radius * rt_sin(theta), 0.0), RT_2PI);
+}
+
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 int
 	ray_sphere_intersect(t_ray ray, t_sphere sphere, FLOAT min, t_hit *hit)
@@ -27,8 +41,6 @@ int
 	t_quadratic	quadratic;
 	t_vec		oc;
 	FLOAT		t[2];
-	FLOAT		cosphi, sinphi;
-	FLOAT		theta;
 
 	oc = vec_sub(ray.org, sphere.pos);
 	quadratic.a = 1.0;
@@ -45,11 +57,6 @@ int
 	hit->geometric_normal = vec_scale(vec_sub(hit->pos, sphere.pos), 1.0 / sphere.radius);
 	hit->shading_normal = hit->geometric_normal;
 	hit->uv = sphere_uv_at(hit->geometric_normal);
-	cosphi = x(hit->pos) / sphere.radius;
-	sinphi = y(hit->pos) / sphere.radius;
-	theta = rt_acos(rt_clamp(z(hit->pos) / sphere.radius, -1.0, 1.0));
-	hit->dpdu = vec(-RT_2PI * y(hit->pos), RT_2PI * x(hit->pos), 0.0, 0.0);
-	hit->dpdv = vec_scale(vec(z(hit->pos) * cosphi, z(hit->pos) * sinphi, -sphere.radius * rt_sin(theta), 0.0), RT_2PI);
 	return (1);
 }
 
