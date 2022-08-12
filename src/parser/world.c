@@ -8,13 +8,15 @@ const static t_directive	directives[] = {
 	{ "sp", rt_exec_sphere },
 	{ "pl", rt_exec_plane },
 	{ "cy", rt_exec_cylinder },
+	{ "L", rt_exec_light },
+#ifdef RT_BONUS
+	{ "l", rt_exec_light },
 	{ "co", rt_exec_cone },
 	{ "v", rt_exec_vertex },
 	{ "w", rt_exec_vertex_texture },
-	{ "V", rt_exec_vertex_normal },
-	{ "W", rt_exec_vertex_texture_normal },
+	{ "y", rt_exec_vertex_normal },
+	{ "x", rt_exec_vertex_texture_normal },
 	{ "f", rt_exec_triangle },
-	{ "L", rt_exec_light },
 	{ "tex_def", rt_exec_tex_def },
 	{ "checker_def", rt_exec_checker_def },
 	{ "mat_use", rt_exec_mat_use },
@@ -31,6 +33,7 @@ const static t_directive	directives[] = {
 	{ "volume", rt_exec_volume },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
+#endif
 };
 
 void
@@ -38,7 +41,9 @@ void
 {
 	size_t		len;
 	size_t		i;
+	char used[256];
 
+	ft_memset(used, 0, sizeof(used));
 	world->ambient_filter.tex[0] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	world->ambient_filter.tex[1] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	rt_skip(ctx, ft_isspace);
@@ -55,6 +60,10 @@ void
 		}
 		if (i == sizeof(directives) / sizeof(*directives))
 			rt_parse_error(ctx, "unknown directive %.*s", len, ctx->data);
+		if (ft_strlen(directives[i].name) == 1 && used[(unsigned char) *directives[i].name]
+		    && ft_isupper(*directives[i].name))
+			rt_parse_error(ctx, "multiple uses of directive %c", *directives[i].name);
+		used[(unsigned char) *directives[i].name] = 1;
 		rt_idskip(ctx, len);
 		directives[i].exec(world, ctx);
 		rt_skip(ctx, ft_isspace);
