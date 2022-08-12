@@ -187,7 +187,11 @@ else
 $(error "invalid config $(config"))
 endif
 
-all: $(NAME)
+# all: $(NAME)
+all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
+
+bonus: CFLAGS += -DRT_BONUS
+bonus: $(NAME)
 
 SILENT			:=
 
@@ -205,9 +209,6 @@ else
 	COMPILER_CFLAGS	+= -DRT_LINUX
 endif
 
-run: $(NAME)
-	./$(NAME) scenes/cornell_ball.rt
-
 $(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(EXTRA_RULES)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
@@ -224,7 +225,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
+	$(SILENT)${MAKE} -i -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC) 2>/dev/null
 
 # TODO: unhardcode these files
 compile: compiler/main.c
