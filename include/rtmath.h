@@ -107,6 +107,13 @@ struct s_hit {
 	t_vec	dpdv;
 	t_vec2	uv;
 	FLOAT	t;
+	union {
+		struct {
+			FLOAT	bc_u;
+			FLOAT	bc_v;
+			FLOAT	bc_w;
+		} tr;
+	} ctx;
 };
 
 FLOAT		rt_sqrt(FLOAT a);
