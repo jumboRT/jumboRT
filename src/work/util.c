@@ -6,12 +6,13 @@
 #include <stdio.h>
 
 void
-	work_add(t_work *work, t_start start, void *ctx)
+	work_add(t_work *work, t_start start, void *ctx, int backend)
 {
 	t_worker	*worker;
 
 	worker = rt_malloc(sizeof(*worker));
 	worker->work = work;
+	worker->backend = backend;
 	queue_create(&worker->queue);
 	worker->ctx = ctx;
 	work->workers = rt_realloc(work->workers,

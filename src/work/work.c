@@ -3,7 +3,7 @@
 #include "util.h"
 
 void
-	work_create(t_work *work, t_state *state)
+	work_create(t_work *work, t_state *state, int backends)
 {
 	work->state = state;
 	work->workers = NULL;
@@ -11,7 +11,6 @@ void
 	work->work_index = 0;
 	work->work_size = 0;
 	work->work_progress = 0;
-	work->ctx = NULL;
 	mutex_init(&work->mtx);
 	cond_init(&work->cnd);
 	work->pause = 0;
@@ -20,6 +19,7 @@ void
 	work->stopped = 0;
 	work->data = NULL;
 	work->capacity = 0;
+	work->backends = backends;
 	work_int_create(work);
 	work_pause(work);
 }

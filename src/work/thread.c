@@ -2,8 +2,6 @@
 
 #include "util.h"
 
-#if defined RT_WORK_THREAD
-
 # ifndef RT_WORK_THREAD_COUNT
 #  define RT_WORK_THREAD_COUNT 8
 # endif
@@ -12,7 +10,7 @@
 #  define RT_WORK_THREAD_CHUNK_SIZE 256
 # endif
 
-void
+static void
 	*work_start(void *data)
 {
 	t_worker	*worker;
@@ -36,7 +34,7 @@ void
 }
 
 void
-	work_int_create(t_work *work)
+	work_int_create_thread(t_work *work)
 {
 	t_context	*ctx;
 	size_t		i;
@@ -46,30 +44,31 @@ void
 	{
 		ctx = rt_malloc(sizeof(*ctx));
 		ctx_init(ctx);
-		work_add(work, work_start, ctx);
+		work_add(work, work_start, ctx, RT_BACKEND_THREAD);
 		i += 1;
 	}
 }
 
 void
-	work_int_destroy(t_work *work)
+	work_int_destroy_thread(t_work *work)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < work->count)
 	{
-		ctx_destroy(work->workers[i]->ctx);
-		rt_free(work->workers[i]->ctx);
+		if (work->workers[i]->backend == RT_BACKEND_THREAD)
+		{
+			ctx_destroy(work->workers[i]->ctx);
+			rt_free(work->workers[i]->ctx);
+		}
 		i += 1;
 	}
 }
 
 void
-	work_int_resume(t_work *work)
+	work_int_resume_thread(t_work *work)
 {
 	(void) work;
 }
-
-#endif
 
