@@ -120,26 +120,28 @@ t_vec
 	t_vec	result;
 
 	rt_skip(ctx, ft_isspace);
-	if (*ctx->data != '(')
-	{
-		red = rt_color_part(ctx);
-		rt_expect(ctx, ',');
-		green = rt_color_part(ctx);
-		rt_expect(ctx, ',');
-		blue = rt_color_part(ctx);
-		return (vec(red, green, blue, 1.0));
-	}
-	rt_advance(ctx);
-	result = rt_vec(ctx);
-	result = vec_set(result, 3, 1.0);
-	if (*ctx->data == ',')
+#ifdef RT_BONUS
+	if (*ctx->data == '(')
 	{
 		rt_advance(ctx);
-		result = vec_set(result, 3, rt_float(ctx));
+		result = rt_vec(ctx);
+		result = vec_set(result, 3, 1.0);
+		if (*ctx->data == ',')
+		{
+			rt_advance(ctx);
+			result = vec_set(result, 3, rt_float(ctx));
+		}
+		rt_skip(ctx, ft_isspace);
+		rt_expect(ctx, ')');
+		return (result);
 	}
-	rt_skip(ctx, ft_isspace);
-	rt_expect(ctx, ')');
-	return (result);
+#endif
+	red = rt_color_part(ctx);
+	rt_expect(ctx, ',');
+	green = rt_color_part(ctx);
+	rt_expect(ctx, ',');
+	blue = rt_color_part(ctx);
+	return (vec(red, green, blue, 1.0));
 }
 
 t_vec
