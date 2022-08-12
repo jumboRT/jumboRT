@@ -3,8 +3,6 @@
 
 #include <ft_printf.h>
 
-#if defined RT_WORK_OPENCL
-
 # ifdef RT_LINUX
 #  include <CL/cl.h>
 # else
@@ -16,7 +14,7 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
-#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 5)
+#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
 # endif
 
 # ifndef RT_WORK_OPENCL_CHUNK_SIZE
@@ -53,7 +51,7 @@ struct s_opencl_callback_ctx {
 	size_t				size;
 };
 
-void
+static void
 	work_callback(cl_event event, cl_int event_command_status, void *user_data)
 {
 	struct s_opencl_callback_ctx	*cb_ctx;
@@ -71,7 +69,7 @@ void
 	rt_assert(status == CL_SUCCESS, "clSetUserEventStatus work_callback failed");
 }
 
-void
+static void
 	*work_start(void *data)
 {
 	t_worker						*worker;
@@ -161,7 +159,7 @@ void
 	return (NULL);
 }
 
-cl_mem
+static cl_mem
 	work_copy_array(struct s_opencl_ctx *cl_ctx, size_t size, void *ptr)
 {
 	cl_int	status;
@@ -176,7 +174,7 @@ cl_mem
 	return (mem);
 }
 
-cl_mem
+static cl_mem
 	work_copy_ptr(struct s_opencl_ctx *cl_ctx, size_t size, void *ptr, int arg)
 {
 	cl_int	status;
@@ -188,7 +186,7 @@ cl_mem
 	return (mem);
 }
 
-void
+static void
 	work_destroy_array(cl_mem mem)
 {
 	cl_int	status;
@@ -199,7 +197,7 @@ void
 	rt_assert(status == CL_SUCCESS, "clReleaseMemObject failed");
 }
 
-void
+static void
 	work_create_buffers(t_work *work, struct s_opencl_ctx *cl_ctx)
 {
 	cl_int	status;
@@ -225,7 +223,7 @@ void
 	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 1 failed");
 }
 
-void
+static void
 	work_create_program(struct s_opencl_ctx *cl_ctx, cl_device_id device)
 {
 	char	*string;
@@ -256,7 +254,7 @@ void
 
 #ifdef RT_LINUX
 
-cl_command_queue
+static cl_command_queue
 	work_create_queue(cl_context context, cl_device_id device, cl_command_queue_properties props)
 {
 	cl_int				status;
@@ -273,7 +271,7 @@ cl_command_queue
 
 #else
 
-cl_command_queue
+static cl_command_queue
 	work_create_queue(cl_context context, cl_device_id device, cl_command_queue_properties props)
 {
 	cl_int				status;
@@ -286,7 +284,7 @@ cl_command_queue
 
 #endif
 
-void
+static void
 	work_setup(t_work *work, cl_platform_id platform, cl_device_id device)
 {
 	struct s_opencl_ctx		*cl_ctx;
@@ -324,11 +322,11 @@ void
 	cl_ctx->texture_data_mem = NULL;
 	cl_ctx->textures_mem = NULL;
 	cl_ctx->bxdfs_mem = NULL;
-	work_add(work, work_start, cl_ctx);
+	work_add(work, work_start, cl_ctx, RT_BACKEND_OPENCL);
 }
 
 void
-	work_int_create(t_work *work)
+	work_int_create_opencl(t_work *work)
 {
 	cl_platform_id	platform;
 	cl_device_id	device;
@@ -341,7 +339,7 @@ void
 	work_setup(work, platform, device);
 }
 
-void
+static void
     work_release_buffers(struct s_opencl_ctx *cl_ctx)
 {
 	work_destroy_array(cl_ctx->world_mem);
@@ -360,7 +358,7 @@ void
 }
 
 void
-	work_int_destroy(t_work *work)
+	work_int_destroy_opencl(t_work *work)
 {
 	size_t				i;
 	size_t				j;
@@ -370,23 +368,26 @@ void
 	i = 0;
 	while (i < work->count)
 	{
-		cl_ctx = work->workers[i]->ctx;
-		status = clReleaseContext(cl_ctx->context);
-		rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
-		status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
-		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
-		status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
-		rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
-		status = clReleaseProgram(cl_ctx->program);
-		rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
-		status = clReleaseKernel(cl_ctx->work_kernel);
-		rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
-		work_release_buffers(cl_ctx);
-		j = 0;
-		while (j < RT_WORK_OPENCL_GLOBAL_SIZE)
+		if (work->workers[i]->backend == RT_BACKEND_OPENCL)
 		{
-			ctx_destroy(&cl_ctx->ctx[j]);
-			j += 1;
+			cl_ctx = work->workers[i]->ctx;
+			status = clReleaseContext(cl_ctx->context);
+			rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
+			status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
+			rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+			status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
+			rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+			status = clReleaseProgram(cl_ctx->program);
+			rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
+			status = clReleaseKernel(cl_ctx->work_kernel);
+			rt_assert(status == CL_SUCCESS, "clReleaseKernel failed");
+			work_release_buffers(cl_ctx);
+			j = 0;
+			while (j < RT_WORK_OPENCL_GLOBAL_SIZE)
+			{
+				ctx_destroy(&cl_ctx->ctx[j]);
+				j += 1;
+			}
 		}
 		i += 1;
 	}
@@ -394,7 +395,7 @@ void
 }
 
 void
-	work_int_resume(t_work *work)
+	work_int_resume_opencl(t_work *work)
 {
 	size_t				i;
 	struct s_opencl_ctx *cl_ctx;
@@ -402,12 +403,13 @@ void
 	i = 0;
 	while (i < work->count)
 	{
-		cl_ctx = work->workers[i]->ctx;
-		work_release_buffers(cl_ctx);
-		work_create_buffers(work, cl_ctx);
+		if (work->workers[i]->backend == RT_BACKEND_OPENCL)
+		{
+			cl_ctx = work->workers[i]->ctx;
+			work_release_buffers(cl_ctx);
+			work_create_buffers(work, cl_ctx);
+		}
 		i += 1;
 	}
 }
-
-#endif
 
