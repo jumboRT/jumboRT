@@ -8,13 +8,15 @@ const static t_directive	directives[] = {
 	{ "sp", rt_exec_sphere },
 	{ "pl", rt_exec_plane },
 	{ "cy", rt_exec_cylinder },
+	{ "L", rt_exec_light },
+#ifdef RT_BONUS
+	{ "l", rt_exec_light },
 	{ "co", rt_exec_cone },
 	{ "v", rt_exec_vertex },
 	{ "w", rt_exec_vertex_texture },
-	{ "V", rt_exec_vertex_normal },
-	{ "W", rt_exec_vertex_texture_normal },
+	{ "y", rt_exec_vertex_normal },
+	{ "x", rt_exec_vertex_texture_normal },
 	{ "f", rt_exec_triangle },
-	{ "L", rt_exec_light },
 	{ "tex_def", rt_exec_tex_def },
 	{ "checker_def", rt_exec_checker_def },
 	{ "mat_use", rt_exec_mat_use },
@@ -31,6 +33,7 @@ const static t_directive	directives[] = {
 	{ "volume", rt_exec_volume },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
+#endif
 };
 
 void
