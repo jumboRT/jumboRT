@@ -412,7 +412,7 @@ for vertex in vertices:
     elif len(vertex) == 5:
         sys.stdout.write(f"w {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])}\n")
     elif len(vertex) == 8:
-        sys.stdout.write(f"W {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])} {str_vertex(vertex[5:8])}\n")
+        sys.stdout.write(f"x {str_vertex(vertex[0:3])} {str_float(vertex[3])},{str_float(vertex[4])} {str_vertex(vertex[5:8])}\n")
 for face in faces:
     use_material(face[1])
     sys.stdout.write(f"f {face[0][0]} {face[0][1]} {face[0][2]}\n")
