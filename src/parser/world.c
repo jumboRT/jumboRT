@@ -38,7 +38,9 @@ void
 {
 	size_t		len;
 	size_t		i;
+	char used[256];
 
+	ft_memset(used, 0, sizeof(used));
 	world->ambient_filter.tex[0] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	world->ambient_filter.tex[1] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	rt_skip(ctx, ft_isspace);
@@ -55,6 +57,10 @@ void
 		}
 		if (i == sizeof(directives) / sizeof(*directives))
 			rt_parse_error(ctx, "unknown directive %.*s", len, ctx->data);
+		if (ft_strlen(directives[i].name) == 1 && used[(unsigned char) *directives[i].name]
+		    && ft_isupper(*directives[i].name))
+			rt_parse_error(ctx, "multiple uses of directive %c", *directives[i].name);
+		used[(unsigned char) *directives[i].name] = 1;
 		rt_idskip(ctx, len);
 		directives[i].exec(world, ctx);
 		rt_skip(ctx, ft_isspace);
