@@ -1,21 +1,19 @@
 #include "work.h"
 
-#if defined RT_WORK_SINGLE
-
 void
-	work_int_create(t_work *work)
+	work_int_create_single(t_work *work)
 {
 	(void) work;
 }
 
 void
-	work_int_destroy(t_work *work)
+	work_int_destroy_single(t_work *work)
 {
 	(void) work;
 }
 
 void
-	work_int_resume(t_work *work)
+	work_int_resume_single(t_work *work)
 {
 	t_result	result;
 	t_context	ctx;
@@ -30,6 +28,4 @@ void
 	}
 	ctx_destroy(&ctx);
 }
-
-#endif
 

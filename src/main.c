@@ -435,7 +435,7 @@ int
 	perf_split(&perf, "load world");
 	world_accel(&world);
 	perf_split(&perf, "build tree");
-	work_create(&work, &state);
+	work_create(&work, &state, options.backends);
 	perf_split(&perf, "init device");
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work_reset(&work);

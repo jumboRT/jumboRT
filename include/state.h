@@ -20,9 +20,11 @@ struct s_options {
 	long		samples;
 	long		width;
 	long		height;
+	int			backends;
 	int			samples_set;
 	int			width_set;
 	int			height_set;
+	int			backends_set;
 };
 
 struct s_state {
