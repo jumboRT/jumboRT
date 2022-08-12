@@ -59,6 +59,14 @@ static t_vec2
 	return (uv);
 }
 
+void
+	cone_hit_info(t_ray ray, t_cone cone, t_hit *hit)
+{
+	(void) ray;
+	(void) cone;
+	(void) hit;
+}
+
 int
 	ray_cone_intersect(t_ray ray, t_cone cone, FLOAT min, t_hit *hit)
 {
