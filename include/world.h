@@ -3,6 +3,11 @@
 
 # define RT_PRIMITIVE_ALIGN 16
 
+# define RT_RENDER_MODE_DEFAULT				0
+# define RT_RENDER_MODE_GEOMETRIC_NORMAL	1
+# define RT_RENDER_MODE_SHADING_NORMAL		2
+# define RT_RENDER_MODE_UV					3
+
 # define RT_SHAPE_TRIANGLE		0
 # define RT_SHAPE_SPHERE		1
 # define RT_SHAPE_PLANE			2
@@ -249,6 +254,7 @@ struct s_world {
 	t_image_meta			img_meta;
 	t_camera				camera;
 	t_filter				ambient_filter;
+	uint32_t				render_mode;
 	uint32_t				primitives_count;
 	uint32_t				materials_count;
 	uint32_t				vertices_count;

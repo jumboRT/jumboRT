@@ -76,17 +76,31 @@ t_vec
 
 /* TODO: unify these branches */
 /* TODO: when hitting a material that only has emission, should the ray stop? */
+/* TODO: maybe ambient lighting should be a material so you can start in a volume */
+/* TODO: materials with multiple transmissive bsdfs do not always pick the same one on enter and exit */
 static int
 	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {
 	t_world_hit				hit;
 	const GLOBAL t_material	*mat;
 	t_vec					bsdf;
+	t_vec2					uv;
 
 	if (!world_intersect(world, tctx->ray, &hit))
 	{
 		hit.hit.uv = sphere_uv_at(tctx->ray.dir);
 		tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, filter_sample(world, world->ambient_filter, hit.hit.uv)));
+		return (0);
+	}
+	if (world->render_mode == RT_RENDER_MODE_GEOMETRIC_NORMAL)
+	{
+		tctx->tail = vec_abs(hit.hit.geometric_normal);
+		return (0);
+	}
+	if (world->render_mode == RT_RENDER_MODE_UV)
+	{
+		uv = vec2(rt_mod(rt_mod(u(hit.hit.uv), 1.0) + 1.0, 1.0), rt_mod(rt_mod(v(hit.hit.uv), 1.0) + 1.0, 1.0));
+		tctx->tail = vec(u(uv), v(uv), 0, 0);
 		return (0);
 	}
 	mat = intersect_volume(tctx->volumes, tctx->volume_size, ctx, &hit.hit.t);
@@ -120,6 +134,11 @@ static int
 			if (mat->flags & RT_MAT_HAS_BUMP)
 				hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
 			hit.hit.shading_normal = hit.rel_shading_normal;
+			if (world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
+			{
+				tctx->tail = vec_abs(hit.hit.shading_normal);
+				return (0);
+			}
 			if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
 				hit.rel_shading_normal = vec_neg(hit.rel_shading_normal);
 			bsdf = f_bsdf_sample(world, ctx, tctx, mat->surface, hit, tctx->ray.dir, &tctx->ray.dir);

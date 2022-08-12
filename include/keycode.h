@@ -15,6 +15,10 @@
 #  define RT_KEY_RIGHT 65363
 #  define RT_KEY_SPACE 32
 #  define RT_KEY_SHIFT 65505
+#  define RT_KEY_1 49
+#  define RT_KEY_2 50
+#  define RT_KEY_3 51
+#  define RT_KEY_4 52
 # else
 #  define RT_KEY_ESC 53
 #  define RT_KEY_Q 12
@@ -29,6 +33,10 @@
 #  define RT_KEY_RIGHT 124
 #  define RT_KEY_SPACE 49
 #  define RT_KEY_SHIFT 56
+#  define RT_KEY_NUMPAD_1 0
+#  define RT_KEY_NUMPAD_2 0
+#  define RT_KEY_NUMPAD_3 0
+#  define RT_KEY_NUMPAD_4 0
 # endif
 
 #endif
