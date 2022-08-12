@@ -302,6 +302,30 @@ int
 	    camera_set(work->state->world, camera, org, dir, camera->fov);
 	    rt_work_unlock(work);
 	}
+	if (keycode == RT_KEY_1)
+	{
+		rt_work_lock(work);
+		work->state->world->render_mode = RT_RENDER_MODE_DEFAULT;
+	    rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_2)
+	{
+		rt_work_lock(work);
+		work->state->world->render_mode = RT_RENDER_MODE_UV;
+	    rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_3)
+	{
+		rt_work_lock(work);
+		work->state->world->render_mode = RT_RENDER_MODE_GEOMETRIC_NORMAL;
+	    rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_4)
+	{
+		rt_work_lock(work);
+		work->state->world->render_mode = RT_RENDER_MODE_SHADING_NORMAL;
+	    rt_work_unlock(work);
+	}
 	return (0);
 }
 
