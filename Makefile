@@ -172,7 +172,11 @@ else
 $(error "invalid config $(config"))
 endif
 
-all: $(NAME)
+# all: $(NAME)
+all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
+
+bonus: CFLAGS += -DRT_BONUS
+bonus: $(NAME)
 
 SILENT			:=
 
@@ -209,7 +213,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
+	$(SILENT)${MAKE} -i -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC) 2>/dev/null
 
 # TODO: unhardcode these files
 compile: compiler/main.c
