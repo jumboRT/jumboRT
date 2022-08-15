@@ -1,6 +1,5 @@
 #include "work.h"
 
-/* TODO: ensure ctx->seed doesn't get set to 0 */
 void
 	ctx_init(t_context *ctx)
 {
