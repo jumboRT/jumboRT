@@ -229,33 +229,33 @@ int
 	if (keycode == RT_KEY_R)
 	{
 		rt_work_lock(work);
-		printf("%f %f %f\n", x(org), y(org), z(org));
+		printf("%f %f %f %f\n", x(org), y(org), z(org), camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_LEFT)
 	{
-		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / 12);
+		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / (12 * (90.0 / camera->fov)));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov); /* TODO: use correct fov */
+		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_RIGHT)
 	{
-		dir = vec_rotate(vec_z(1.0), dir, RT_PI / 12);
+		dir = vec_rotate(vec_z(1.0), dir, RT_PI / (12 * (90.0 / camera->fov)));
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_UP)
 	{
-		dir = vec_rotate(left, dir, RT_PI / 12);
+		dir = vec_rotate(left, dir, RT_PI / (12 * (90 / camera->fov)));
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_DOWN)
 	{
-		dir = vec_rotate(left, dir, -RT_PI / 12);
+		dir = vec_rotate(left, dir, -RT_PI / (12 * (90 / camera->fov)));
 		rt_work_lock(work);
 		camera_set(work->state->world, camera, org, dir, camera->fov);
 		rt_work_unlock(work);
@@ -325,6 +325,17 @@ int
 		rt_work_lock(work);
 		work->state->world->render_mode = RT_RENDER_MODE_SHADING_NORMAL;
 	    rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_Z)
+	{
+		rt_work_lock(work);
+		camera_set(work->state->world, camera, org, dir, rt_max(5, camera->fov - 5));
+		rt_work_unlock(work);
+	}
+	if (keycode == RT_KEY_X) {
+		rt_work_lock(work);
+		camera_set(work->state->world, camera, org, dir, camera->fov + 5);
+		rt_work_unlock(work);
 	}
 	return (0);
 }
