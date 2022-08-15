@@ -1,5 +1,6 @@
 #include "util.h"
 
+#if !defined RT_WINDOWS
 #include <ft_printf.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -100,4 +101,5 @@ char
 	}
 	return (rt_readfile_fd(fd, error, size));
 }
+#endif
 

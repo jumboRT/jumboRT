@@ -2,7 +2,7 @@
 
 #include <libft.h>
 
-const static t_directive	directives[] = {
+static const t_directive	directives[] = {
 	{ "C", rt_exec_camera },
 	{ "A", rt_exec_ambient },
 	{ "sp", rt_exec_sphere },

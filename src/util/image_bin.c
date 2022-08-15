@@ -1,6 +1,7 @@
 #include "util.h"
 #include "state.h"
 #include "rtmath.h"
+
 #include <ft_printf.h>
 
 static size_t 
