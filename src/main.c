@@ -3,8 +3,8 @@
 #include "world.h"
 #include "world_impl.h"
 #include "parser.h"
-#include "keycode.h"
 #include "perf.h"
+
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -28,157 +28,6 @@
 #define GEN_CONE_CHANCE (0.0 / 3)
 
 #define FLY_SPEED 1
-
-void
-	world_gen_sphere(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
-{
-	t_shape_sphere	sphere;
-
-	sphere.base.data = RT_SHAPE_SPHERE;
-	sphere.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
-	sphere.pos = pos;
-	world_add_primitive(world, &sphere, sizeof(sphere));
-}
-
-void
-	world_gen_cylinder(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
-{
-	t_shape_cylinder	cylinder;
-
-	cylinder.base.data = RT_SHAPE_CYLINDER;
-	cylinder.cylinder.dir = vec_norm(vec(
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				0.0));
-	cylinder.cylinder.radius = rt_random_float_range(seed, scale * GEN_MIN_SCALE, scale);
-	cylinder.cylinder.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
-	cylinder.cylinder.pos = vec_sub(pos, vec_scale(cylinder.cylinder.dir, cylinder.cylinder.height / 2));
-	world_add_primitive(world, &cylinder, sizeof(cylinder));
-}
-
-void
-	world_gen_cone(t_world *world, t_seed *seed, t_vec pos, FLOAT scale)
-{
-	t_shape_cone	cone;
-
-	cone.base.data = RT_SHAPE_CONE;
-	cone.cone.dir = vec_norm(vec(
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				0.0));
-	cone.cone.angle = rt_random_float_range(seed, RT_PI / 6 * GEN_MIN_ANGLE, RT_PI / 6);
-	cone.cone.height = rt_random_float_range(seed, scale * GEN_MIN_SCALE * 2, scale * 2);
-	cone.cone.pos = vec_sub(pos, vec_scale(cone.cone.dir, cone.cone.height / 2));
-	world_add_primitive(world, &cone, sizeof(cone));
-}
-
-FLOAT
-	world_gen_offset(t_seed *seed, int axis)
-{
-	if (axis == 0 && GEN_X_RANGE != 0)
-		return (rt_random_float_range(seed, 0, GEN_X_RANGE));
-	if (axis == 1 && GEN_Y_RANGE != 0)
-		return (rt_random_float_range(seed, 0, GEN_Y_RANGE));
-	if (axis == 2 && GEN_Z_RANGE != 0)
-		return (rt_random_float_range(seed, 0, GEN_Z_RANGE));
-	return (0);
-}
-
-void
-	world_gen(t_world *world)
-{
-	size_t	i;
-	t_seed	seed;
-	t_vec	pos;
-	FLOAT	type;
-
-	seed = 7549087012;
-	i = 0;
-	while (i < GEN_X_SIZE * GEN_Y_SIZE * GEN_Z_SIZE)
-	{
-		pos = vec(
-			+0.5 + (world_gen_offset(&seed, 0) + i % GEN_X_SIZE) / (FLOAT) GEN_Z_SIZE,
-			-(FLOAT) GEN_Y_SIZE / GEN_Z_SIZE / 2 + (world_gen_offset(&seed, 1) + i / GEN_X_SIZE % GEN_Y_SIZE) / (FLOAT) GEN_Z_SIZE,
-			-0.5 + (world_gen_offset(&seed, 2) + i / GEN_X_SIZE / GEN_Y_SIZE % GEN_Z_SIZE) / (FLOAT) GEN_Z_SIZE,
-			0.0);
-		pos = vec_scale(pos, 2);
-		type = rt_random_float_range(&seed, 0, 1);
-		if (type < GEN_SPHERE_CHANCE)
-			world_gen_sphere(world, &seed, pos, GEN_SCALE);
-		else
-		{
-			type -= GEN_SPHERE_CHANCE;
-			if (type < GEN_CYLINDER_CHANCE)
-				world_gen_cylinder(world, &seed, pos, GEN_SCALE);
-			else
-			{
-				type -= GEN_CYLINDER_CHANCE;
-				if (type < GEN_CONE_CHANCE)
-					world_gen_cone(world, &seed, pos, GEN_SCALE);
-				else
-				{
-					type -= GEN_CONE_CHANCE;
-				}
-			}
-		}
-		i += 1;
-	}
-	camera_set(world, &world->camera, vec(0, 0, 0, 0), vec(1, 0, 0, 0), 90);
-}
-
-void
-	world_load(t_world *world, const char *filename)
-{
-	t_parse_ctx	ctx;
-
-	parser_init(&ctx, filename);
-	rt_world(world, &ctx);
-	parser_destroy(&ctx);
-}
-
-#define RT_VERBOSE
-void
-	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
-{
-	int				i;
-	t_accel_node	*node;
-	t_vec			vec;
-
-	i = 0;
-	while (i < depth)
-	{
-		fprintf(stdout, "  ");
-		i += 1;
-	}
-	node = &world->accel_nodes[offset];
-	if (is_leaf(*node))
-	{
-#ifdef RT_VERBOSE
-		if (nprims(*node) == 0)
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), none (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), offset);
-		else if (nprims(*node) == 1)
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
-		else
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
-#else
-		fprintf(stdout, "leaf %d\n", (int) nprims(*node));
-#endif
-	}
-	else
-	{
-#ifdef RT_VERBOSE
-		fprintf(stdout, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
-#else
-		fprintf(stdout, "branch\n");
-#endif
-		vec = vec_set(max, split_axis(*node), split_pos(*node));
-		dump_tree(world, offset + 1, depth + 1, min, vec);
-		vec = vec_set(min, split_axis(*node), split_pos(*node));
-		dump_tree(world, above_child(*node), depth + 1, vec, max);
-	}
-}
 
 __attribute__((noreturn))
 int
@@ -209,6 +58,93 @@ void
 {
 	work_resume(work);
 }
+
+sig_atomic_t should_exit(sig_atomic_t incr)
+{
+	static sig_atomic_t	val = 0;
+
+	val += incr;
+	return val;
+}
+
+#if defined RT_BONUS && !defined RT_JOINC
+
+static void
+	sigint_handler(int sig)
+{
+	(void) sig;
+	should_exit(1);
+}
+
+#endif
+
+static void
+	setup_sighandlers(void)
+{
+#if defined RT_BONUS && !defined RT_JOINC
+	struct sigaction	action;
+
+	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty sa_mask");
+	action.sa_handler = sigint_handler;
+	action.sa_flags = SA_NODEFER | SA_RESTART;
+	rt_assert(sigaction(SIGINT, &action, NULL) != -1, "failed to install signal handler");
+#else
+	printf("warning: you're using the mandatory configuration or running on windows. NEVER forcefully kill this process!\n");
+#endif
+}
+
+static void
+	*rt_work_start(void *arg)
+{
+	t_work *work;
+
+	work = arg;
+	while (1)
+	{
+		mutex_lock(&work->state->mtx);
+		if (work->state->stop_update && work->work_progress >= work->work_index)
+		{
+			mutex_unlock(&work->state->mtx);
+			return (NULL);
+		}
+		work_update(work);
+		cond_broadcast(&work->state->cnd);
+		mutex_unlock(&work->state->mtx);
+		usleep(10000);
+	}
+}
+
+static void
+	main_image(t_work *work, const char *image_file)
+{
+	t_perf	perf;
+
+	setup_sighandlers();
+	thread_create(&work->state->work_thread, rt_work_start, work);
+	perf_start(&perf);
+	work_resume(work);
+	while (1)
+	{
+		mutex_lock(&work->state->mtx);
+		if (work->work_progress >= work->work_size || should_exit(0))
+		{
+			mutex_unlock(&work->state->mtx);
+			break ;
+		}
+		mutex_unlock(&work->state->mtx);
+		usleep(10000);
+	}
+	perf_split(&perf, "draw image");
+	mutex_lock(&work->state->mtx);
+	rt_write_ppm(image_file, work->state->image);
+	mutex_unlock(&work->state->mtx);
+	perf_split(&perf, "save image");
+	rt_exit(work);
+}
+
+#ifndef RT_JOINC
+
+#include "keycode.h"
 
 int
 	rt_key_down(int keycode, void *ctx)
@@ -329,23 +265,15 @@ int
 	if (keycode == RT_KEY_Z)
 	{
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, rt_max(5, camera->fov - 5));
+		camera_set(work->state->world, camera, org, dir, rt_max(5.0, camera->fov - 5));
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_X) {
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov + 5);
+		camera_set(work->state->world, camera, org, dir, rt_min(179.0, camera->fov + 5));
 		rt_work_unlock(work);
 	}
 	return (0);
-}
-
-sig_atomic_t should_exit(sig_atomic_t incr)
-{
-	static sig_atomic_t	val = 0;
-
-	val += incr;
-	return val;
 }
 
 int
@@ -363,45 +291,6 @@ int
 }
 
 static void
-	*rt_work_start(void *arg)
-{
-	t_work *work;
-
-	work = arg;
-	while (1)
-	{
-		mutex_lock(&work->state->mtx);
-		if (work->state->stop_update && work->work_progress >= work->work_index)
-		{
-			mutex_unlock(&work->state->mtx);
-			return (NULL);
-		}
-		work_update(work);
-		cond_broadcast(&work->state->cnd);
-		mutex_unlock(&work->state->mtx);
-		usleep(10000);
-	}
-}
-
-static void
-	sigint_handler(int sig)
-{
-	(void) sig;
-	should_exit(1);
-}
-
-static void
-	setup_sighandlers(void)
-{
-	struct sigaction	action;
-
-	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty sa_mask");
-	action.sa_handler = sigint_handler;
-	action.sa_flags = SA_NODEFER | SA_RESTART;
-	rt_assert(sigaction(SIGINT, &action, NULL) != -1, "failed to install signal handler");
-}
-
-static void
 	main_window(t_work *work)
 {
 	setup_sighandlers();
@@ -414,32 +303,83 @@ static void
 }
 
 static void
-	main_image(t_work *work, const char *image_file)
+	main_run(t_options *options, t_work *work)
 {
-	t_perf	perf;
-
-	setup_sighandlers();
-	thread_create(&work->state->work_thread, rt_work_start, work);
-	perf_start(&perf);
-	work_resume(work);
-	while (1)
-	{
-		mutex_lock(&work->state->mtx);
-		if (work->work_progress >= work->work_size || should_exit(0))
-		{
-			mutex_unlock(&work->state->mtx);
-			break ;
-		}
-		mutex_unlock(&work->state->mtx);
-		usleep(10000);
-	}
-	perf_split(&perf, "draw image");
-	mutex_lock(&work->state->mtx);
-	rt_write_ppm(image_file, work->state->image);
-	mutex_unlock(&work->state->mtx);
-	perf_split(&perf, "save image");
-	rt_exit(work);
+	if (options->image_file == NULL)
+		main_window(work);
+	else
+		main_image(work, options->image_file);
 }
+
+#else
+
+static void
+	main_run(t_options *options, t_work *work)
+{
+	if (options->image_file == NULL)
+	{
+		ft_fprintf(STDERR_FILENO, "Cannot open window in joinc mode\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		main_image(work, options->image_file);
+}
+
+#endif
+
+void
+	world_load(t_world *world, const char *filename)
+{
+	t_parse_ctx	ctx;
+
+	parser_init(&ctx, filename);
+	rt_world(world, &ctx);
+	parser_destroy(&ctx);
+}
+
+/*
+#define RT_VERBOSE
+void
+	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
+{
+	int				i;
+	t_accel_node	*node;
+	t_vec			vec;
+
+	i = 0;
+	while (i < depth)
+	{
+		fprintf(stdout, "  ");
+		i += 1;
+	}
+	node = &world->accel_nodes[offset];
+	if (is_leaf(*node))
+	{
+#ifdef RT_VERBOSE
+		if (nprims(*node) == 0)
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), none (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), offset);
+		else if (nprims(*node) == 1)
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
+		else
+			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
+#else
+		fprintf(stdout, "leaf %d\n", (int) nprims(*node));
+#endif
+	}
+	else
+	{
+#ifdef RT_VERBOSE
+		fprintf(stdout, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
+#else
+		fprintf(stdout, "branch\n");
+#endif
+		vec = vec_set(max, split_axis(*node), split_pos(*node));
+		dump_tree(world, offset + 1, depth + 1, min, vec);
+		vec = vec_set(min, split_axis(*node), split_pos(*node));
+		dump_tree(world, above_child(*node), depth + 1, vec, max);
+	}
+}
+*/
 
 int
 	main(int argc, char **argv)
@@ -474,10 +414,7 @@ int
 	perf_split(&perf, "init device");
 	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
 	work_reset(&work);
-	if (options.image_file == NULL)
-		main_window(&work);
-	else
-		main_image(&work, options.image_file);
+	main_run(&options, &work);
 	work_destroy(&work);
 	return (EXIT_SUCCESS);
 }

@@ -1,6 +1,6 @@
 NAME					:= miniRT
 
-UTIL_FILES				:= util.c memory.c image_bin.c writefile.c readfile.c lib.c atof.c random.c queue.c aabb.c hash.c
+UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c writefile.c lib.c atof.c random.c queue.c aabb.c hash.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c int.c
@@ -9,8 +9,10 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_
 							vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c log.c \
 							tangent.c vec_abs_fast.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c filter.c conversion.c
-PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c material.c material_table.c texture.c init.c ambient.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c \
+						   bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c filter.c conversion.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c \
+						   material.c material_table.c texture.c init.c ambient.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
@@ -65,7 +67,14 @@ OPENCL_FILES			:= \
 	src/world/filter.c \
 	src/world/conversion.c
 
-ifndef platform
+ifdef platform
+	ifeq ($(platform),linux)
+	else ifeq ($(platform),macos)
+	else ifeq ($(platform),win)
+	else
+$(error "invalid platform $(platform)")
+	endif
+else
 	ifeq ($(shell uname -s),Linux)
 		platform = linux
 	else
@@ -81,13 +90,12 @@ FILE_NAMES				:= \
 	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
 	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
 	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
-	$(patsubst %.c,gfx/%.c,$(GFX_FILES)) \
 	$(BASE_FILES)
 
-CC						:= clang
+CC						?= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic
-LFLAGS					:= -Wall -Wextra
+CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic $(ANALYZER)
+LFLAGS					:= -Wall -Wextra $(ANALYZER)
 
 SRC_DIR					:= src
 LIB_DIR					:= dependencies
@@ -105,14 +113,11 @@ else
 endif
 MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
-INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR) $(MLX_DIR)
 
-CFLAGS          		+= -DRT_MT -DRT_USE_LIBC
+INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR)
+
+CFLAGS          		+= -DRT_MT
 LFLAGS          		+=
-
-SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
-OBJECTS					:= $(patsubst %.c,$(OBJ_DIR)/%.o,$(FILE_NAMES))
-DEPENDS					:= $(patsubst %.c,$(DEP_DIR)/%.d,$(FILE_NAMES))
 
 BLACK					:="\033[0;30m"
 RED						:="\033[0;31m"
@@ -139,6 +144,17 @@ LINK_COLOR				:= $(CYAN)
 OBJECT_COLOR			:= $(RED)
 CLEAN_COLOR				:= $(PURPLE)
 
+ifndef target
+	INC_DIR		+= $(MLX_DIR)
+	FILE_NAMES += $(patsubst %.c,gfx/%.c,$(GFX_FILES))
+	TARGET_LIBS := $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
+else ifeq ($(target),joinc)
+	CFLAGS += -DRT_BONUS -DRT_USE_LIBC -DRT_JOINC
+	TARGET_LIBS := $(LIBFT_LIB) $(FT_PRINTF_LIB)
+else
+$(error "unknown target $(target)")
+endif
+
 ifndef config
 	config = distr
 endif
@@ -149,7 +165,7 @@ endif
 
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
-	LFLAGS		+= -DRT_DEBUG=1 -fno-inline
+	LFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3
 	ifeq ($(san), address)
 		CFLAGS	+= -fsanitize=address,undefined
 		LFLAGS	+= -fsanitize=address,undefined
@@ -167,17 +183,28 @@ else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -O2 -pg
 	LFLAGS		+= -g3 -O2 -pg
 else ifeq ($(config), distr)
-	CFLAGS		+= -g3 -Ofast -flto -march=native
-	LFLAGS		+= -g3 -Ofast -flto -march=native
+	ifeq ($(platform), linux)
+		CFLAGS		+= -g0 -Ofast -flto -march=native
+		LFLAGS		+= -g0 -Ofast -flto -march=native
+	else
+		CFLAGS		+= -g0 -Ofast
+		LFLAGS		+= -g0 -Ofast
+	endif
 else
 $(error "invalid config $(config"))
 endif
 
+SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
+OBJECTS					:= $(patsubst %.c,$(OBJ_DIR)/%.o,$(FILE_NAMES))
+DEPENDS					:= $(patsubst %.c,$(DEP_DIR)/%.d,$(FILE_NAMES))
+
 # all: $(NAME)
 all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
 
-bonus: CFLAGS += -DRT_BONUS
+bonus: CFLAGS += -DRT_BONUS -DRT_USE_LIBC
 bonus: $(NAME)
+
+mandatory: $(NAME)
 
 SILENT			:=
 
@@ -185,22 +212,33 @@ ifndef verbose
 	SILENT		:= @
 endif
 
+
 ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
 	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
 	COMPILER_CFLAGS	+= -DRT_MACOS
-else
+	COMPILER_EXE := compile
+else ifeq ($(platform), linux)
 	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	CFLAGS		+= -DRT_LINUX
 	COMPILER_CFLAGS	+= -DRT_LINUX
+	COMPILER_EXE := compile
+else ifeq ($(platform), win)
+	FRAMEWORKS	:= /usr/lib/wine/x86_64-windows/opencl.dll
+	CFLAGS		+= -DRT_WINDOWS
+	COMPILER_CFLAGS	+= -DRT_WINDOWS
+	COMPILER_EXE := compile.exe
+	CC			:= x86_64-w64-mingw32-gcc
+	LINK_CMD	:= $(CC)
 endif
 
-run: $(NAME)
-	./$(NAME) scenes/cornell_ball.rt
+analyze:
+		${MAKE} fclean
+		${MAKE} ANALYZER="-fanalyzer"
 
-$(NAME): $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) kernel.bin
+$(NAME): $(OBJECTS) $(TARGET_LIBS) kernel.bin
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
-	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB) $(FRAMEWORKS) $(LFLAGS)
+	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(TARGET_LIBS) $(FRAMEWORKS) $(LFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(SILENT)mkdir -p $(@D)
@@ -222,7 +260,7 @@ compile: compiler/main.c
 
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
-	$(SILENT)sh -c "until ./compile $(OPENCL_FILES); do sleep 1; done"
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(COMPILER_EXE) $(OPENCL_FILES); do sleep 1; done"
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n

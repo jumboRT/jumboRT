@@ -51,7 +51,7 @@ unsigned int
 		rt_parse_error(ctx, "unexpected character %c expected int", *ctx->data);
 	}
 	result = ft_atol(ctx->data);
-	if (result < 0 || result > UINT_MAX)
+	if (result < 0 || (unsigned long) result > UINT_MAX)
 	{
 		rt_parse_error(ctx, "%.*s would not fit in unsigned int", rt_idlen(ctx), ctx->data);
 	}

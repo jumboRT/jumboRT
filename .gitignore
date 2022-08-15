@@ -10,6 +10,7 @@
 /*.dSYM
 tags
 *.a
+*.exe
 /image.ppm
 /image.png
 kernel.bin

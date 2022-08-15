@@ -5,8 +5,6 @@
 #include <string.h>
 #include <errno.h>
 
-#if defined RT_BONUS
-
 static int
 	rt_open(const char *path, char **error, int flags, mode_t mode)
 {
@@ -68,12 +66,9 @@ static ssize_t
 	return (size);
 }
 
-#endif
-
 ssize_t
 	rt_writefile(const char *path, char **error, const void *data, size_t size)
 {
-#if defined RT_BONUS
 	size_t	nwritten;
 	int		fd;
 
@@ -86,10 +81,4 @@ ssize_t
 	if (rt_close(fd, error) < 0)
 		return (-1);
 	return (nwritten);
-#else
-	(void) path;
-	(void) error;
-	(void) data;
-	(void) size;
-#endif
 }

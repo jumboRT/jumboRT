@@ -1,9 +1,12 @@
 #include "work.h"
 #include "util.h"
 
+
 #include <ft_printf.h>
 
-# ifdef RT_LINUX
+# if defined RT_LINUX
+#  include <CL/cl.h>
+# elif defined RT_WINDOWS
 #  include <CL/cl.h>
 # else
 #  include <OpenCL/cl.h>

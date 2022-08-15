@@ -4,7 +4,6 @@
 # include "rtmath.h"
 # include "world.h"
 # include "cl.h"
-# include "gfx.h"
 # include "mt.h"
 # include "image.h"
 
@@ -26,6 +25,16 @@ struct s_options {
 	int			height_set;
 	int			backends_set;
 };
+
+#ifdef RT_JOINC
+
+typedef int	t_win;
+
+#else
+
+# include "gfx.h"
+
+#endif
 
 struct s_state {
 	t_image			*image;

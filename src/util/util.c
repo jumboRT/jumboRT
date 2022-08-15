@@ -1,5 +1,6 @@
 #include "util.h"
 
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <libft.h>
@@ -26,7 +27,8 @@ void
 	if (!condition)
 	{
 		ft_fprintf(STDERR_FILENO, "assertion failed: %s\n", msg);
-		raise(SIGTRAP);
+		exit(EXIT_FAILURE);
+		/* TODO: raise(SIGTRAP); */
 	}
 }
 

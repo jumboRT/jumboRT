@@ -31,6 +31,7 @@ void
 	int		degenerate;
 	t_vec	bary;
 
+	(void) ray;
 	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
 	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
 	duv02 = vec2_sub(triangle.uvs[0], triangle.uvs[2]);
