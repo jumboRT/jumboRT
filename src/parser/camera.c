@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-/* TODO: check for multiple cameras */
-/* TODO: check FOV in range */
 void
 	rt_exec_camera(t_world *world, t_parse_ctx *ctx)
 {
@@ -13,7 +11,7 @@ void
 
 	pos = rt_vec(ctx);
 	dir = rt_vec_norm(ctx);
-	fov = rt_float(ctx);
+	fov = rt_float_range(ctx, 1.0, 179.0);
 	camera_set(world, &world->camera, pos, dir, fov);
 }
 
