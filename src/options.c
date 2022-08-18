@@ -15,10 +15,15 @@ void
 	opts->width = 1920;
 	opts->height = 1080;
 	opts->backends = RT_BACKEND_THREAD;
+	opts->worker = 0;
+	opts->net_ip = "localhost";
+	opts->net_port = "29300";
 	opts->samples_set = 0;
 	opts->width_set = 0;
 	opts->height_set = 0;
 	opts->backends_set = 0;
+	opts->net_ip_set = 0;
+	opts->net_port_set = 0;
 	i = 1;
 	while (i < argc)
 	{
@@ -61,16 +66,39 @@ void
 			rt_assert(i + 1 < argc, "-r requires an argument");
 			if (!opts->backends_set)
 				opts->backends = 0;
-			if (ft_strcmp(argv[i + 1], "st") == 0)
+			if (ft_strcmp(argv[i + 1], "1") == 0)
 				opts->backends |= RT_BACKEND_SINGLE;
-			else if (ft_strcmp(argv[i + 1], "mt") == 0)
+			else if (ft_strcmp(argv[i + 1], "cpu") == 0)
 				opts->backends |= RT_BACKEND_THREAD;
-			else if (ft_strcmp(argv[i + 1], "cl") == 0)
+			else if (ft_strcmp(argv[i + 1], "gpu") == 0)
 				opts->backends |= RT_BACKEND_OPENCL;
+			else if (ft_strcmp(argv[i + 1], "net") == 0)
+				opts->backends |= RT_BACKEND_SERVER;
 			else
 				rt_assert(0, "invalid rendering backend");
 			opts->backends_set = 1;
 			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-i") == 0)
+		{
+			rt_assert(!opts->net_ip_set, "more than one ip address specified");
+			rt_assert(i + 1 < argc, "-i requires an argument");
+			opts->net_ip = argv[i + 1];
+			opts->net_ip_set = 1;
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-p") == 0)
+		{
+			rt_assert(!opts->net_ip_set, "more than one port specified");
+			rt_assert(i + 1 < argc, "-p requires an argument");
+			opts->net_port = argv[i + 1];
+			opts->net_port_set = 1;
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-W") == 0)
+		{
+			opts->worker = 1;
+			i += 1;
 		}
 		else
 		{
@@ -79,5 +107,13 @@ void
 			i += 1;
 		}
 	}
-	rt_assert(opts->scene_file != NULL, "no scene file specified");
+	if (!opts->worker)
+	{
+		rt_assert(opts->scene_file != NULL, "no scene file specified");
+	}
+	else
+	{
+		rt_assert(opts->scene_file == NULL, "cannot specify scene file in worker mode");
+		rt_assert(~opts->backends & RT_BACKEND_SINGLE, "single threaded backend not allowed in worker mode");
+	}
 }

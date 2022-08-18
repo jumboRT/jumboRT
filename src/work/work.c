@@ -3,7 +3,7 @@
 #include "util.h"
 
 void
-	work_create(t_work *work, t_state *state, int backends)
+	work_create(t_work *work, t_state *state, t_options *opts, struct s_client *client)
 {
 	work->state = state;
 	work->workers = NULL;
@@ -19,7 +19,17 @@ void
 	work->stopped = 0;
 	work->data = NULL;
 	work->capacity = 0;
-	work->backends = backends;
+	work->opts = opts;
+	work->pending = NULL;
+	work->pending_size = 0;
+	work->pending_capacity = 0;
+	work->client = client;
+	work->update_stop = 0;
+	work->update_flag = 0;
+	cond_init(&work->update_cnd);
+	cond_init(&work->progress_cnd);
+	mutex_init(&work->update_mtx);
+	mutex_init(&work->state_mtx);
 	work_int_create(work);
 	work_pause(work);
 }
@@ -67,25 +77,5 @@ void
 	while (work->paused < work->count)
 		cond_wait(&work->cnd, &work->mtx);
 	mutex_unlock(&work->mtx);
-}
-
-void
-	work_update(t_work *work)
-{
-	size_t	i;
-	size_t	n;
-	void	*ptr;
-
-	i = 0;
-	while (i < work->count)
-	{
-		ptr = work->data;
-		n = queue_recv(&work->workers[i]->queue, &ptr, &work->capacity);
-		n /= sizeof(t_result);
-		work->work_progress += n;
-		work->data = ptr;
-		work_done(work, work->data, n);
-		i += 1;
-	}
 }
 

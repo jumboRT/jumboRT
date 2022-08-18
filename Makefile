@@ -1,18 +1,33 @@
 NAME					:= miniRT
 
-UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c writefile.c lib.c atof.c random.c queue.c aabb.c hash.c
+UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
+						   writefile.c lib.c atof.c random.c queue.c aabb.c \
+						   hash.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
-MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c thread_mt.c pool.c pool_mt.c
-WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c context.c int.c
-MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
-							sin.c cos.c tan.c basis.c vec_arith_fast.c vec_constr_fast.c vec_geo_fast.c vec_get_fast.c \
-							vec_size_fast.c sphere.c triangle.c vec_clamp.c vec_clamp_fast.c min.c max.c abs.c vec_set.c \
-							pow.c cylinder.c vec_rotate.c cone.c vec2.c vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c log.c \
-							tangent.c vec_abs_fast.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c size.c accel_algo.c accel_info.c accel_util.c node.c \
-						   bounds.c common.c trace.c camera.c tex_sample.c material.c tex_ppm.c bsdf.c filter.c conversion.c
-PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c sphere.c plane.c cylinder.c cone.c comment.c world.c light.c \
-						   material.c material_table.c texture.c init.c ambient.c
+MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c \
+						   thread_mt.c pool.c pool_mt.c
+WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
+						   context.c int.c server.c update.c
+MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
+						   vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
+						   sin.c cos.c tan.c basis.c vec_arith_fast.c \
+						   vec_constr_fast.c vec_geo_fast.c vec_get_fast.c \
+						   vec_size_fast.c sphere.c triangle.c vec_clamp.c \
+						   vec_clamp_fast.c min.c max.c abs.c vec_set.c \
+						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
+						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
+						   log.c tangent.c vec_abs_fast.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
+						   size.c accel_algo.c accel_info.c accel_util.c \
+						   node.c bounds.c common.c trace.c camera.c \
+						   tex_sample.c material.c tex_ppm.c bsdf.c filter.c \
+						   conversion.c
+PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
+						   sphere.c plane.c cylinder.c cone.c comment.c \
+						   world.c light.c material.c material_table.c \
+						   texture.c init.c ambient.c
+NET_FILES				:= client.c connection.c pack.c packet.c data.c \
+						   handler.c jobs.c string.c size.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
@@ -90,6 +105,7 @@ FILE_NAMES				:= \
 	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
 	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
 	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
+	$(patsubst %.c,net/%.c,$(NET_FILES)) \
 	$(BASE_FILES)
 
 CC						?= clang

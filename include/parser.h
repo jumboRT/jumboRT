@@ -105,4 +105,6 @@ void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);
 
+void			world_load(t_world *world, const char *filename);
+
 #endif

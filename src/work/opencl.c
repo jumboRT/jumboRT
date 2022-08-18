@@ -67,7 +67,7 @@ static void
 	cb_ctx = user_data;
 	worker = cb_ctx->worker;
 	cl_ctx = cb_ctx->cl_ctx;
-	queue_send(&worker->queue, cl_ctx->result, sizeof(*cl_ctx->result) * cb_ctx->size);
+	work_send_results(worker, cl_ctx->result, cb_ctx->size);
 	status = clSetUserEventStatus(cb_ctx->event, CL_COMPLETE);
 	rt_assert(status == CL_SUCCESS, "clSetUserEventStatus work_callback failed");
 }
