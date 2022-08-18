@@ -7,7 +7,7 @@
 # endif
 
 # ifndef RT_WORK_THREAD_CHUNK_SIZE
-#  define RT_WORK_THREAD_CHUNK_SIZE 256
+#  define RT_WORK_THREAD_CHUNK_SIZE 1024
 # endif
 
 static void
@@ -28,7 +28,7 @@ static void
 			result[i] = work_compute(worker->work->state->world, worker->ctx, begin + i);
 			i += 1;
 		}
-		queue_send(&worker->queue, result, sizeof(*result) * (end - begin));
+		work_send_results(worker, result, end - begin);
 	}
 	return (NULL);
 }

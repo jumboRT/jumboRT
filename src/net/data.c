@@ -5,6 +5,10 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <stdlib.h>
+#include <poll.h>
+
+
+#include <stdio.h>
 
 int
 	rt_send(int sockfd, const void *data, uint64_t size, char **error)
@@ -12,7 +16,7 @@ int
 	ssize_t	nwritten;
 
 	nwritten = 0;
-	while (1)
+	while (size > 0)
 	{
 		nwritten = send(sockfd, ((const char *) data) + nwritten, size, MSG_NOSIGNAL);
 		if (nwritten < 0)
@@ -20,17 +24,10 @@ int
 			if (errno == EINTR)
 				continue;
 			if (error != NULL)
-				ft_asprintf(error, "failed to send %llu bytes of data %s\n", size, strerror(errno));
+				ft_asprintf(error, "failed to send %u bytes of data: %s", (uint32_t) size, strerror(errno));
 			return (-1);
 		}
-		else if ((uint64_t) nwritten < size)
-		{
-			size -= nwritten;
-		}
-		else
-		{
-			break;
-		}
+		size -= nwritten;
 	}
 	return (0);
 }
@@ -42,7 +39,7 @@ ssize_t
 	ssize_t	nread;
 
 	total_read = 0;
-	while (1)
+	while (length > 0)
 	{
 		nread = recv(sockfd, ((char *) buffer) + total_read, length, MSG_NOSIGNAL);
 		if (nread < 0)
@@ -50,20 +47,34 @@ ssize_t
 			if (errno == EINTR)
 				continue;
 			if (error != NULL)
-				ft_asprintf(error, "failed to receive %llu bytes of data %s\n", length, strerror(errno));
+				ft_asprintf(error, "failed to receive %u bytes of data %s", (int) length, strerror(errno));
 			return (-1);
 		}
-		else if ((uint64_t) nread < length)
-		{
-			length -= nread;
-			total_read += nread;
-		}
-		else
-		{
-			break;
-		}
+		length -= nread;
+		total_read += nread;
 	}
 	return total_read;
+}
+
+int
+	rt_peek(int sockfd, char **error)
+{
+	struct pollfd	p;
+	int				rc;
+
+	p.fd = sockfd;
+	p.events = POLLIN;
+	while (1)
+	{
+		rc = poll(&p, 1, 1);
+		if (rc < 0 && errno == EINTR)
+			continue;
+		break;
+	}
+	if (rc >= 0)
+		return (rc);
+	ft_asprintf(error, strerror(errno));
+	return (-1);
 }
 
 int
@@ -71,7 +82,6 @@ int
 {
 	int	rc;
 
-	rc = 0;
 	rc = rt_send(sockfd, &packet->size, sizeof(packet->size), error);
 	if (rc >= 0)
 		rc = rt_send(sockfd, &packet->type, sizeof(packet->type), error);
@@ -85,23 +95,31 @@ int
 int
 	rt_recv_packet(int sockfd, struct s_packet *packet, char **error)
 {
-	int	rc;
+	ssize_t	read;
 
-	rc = rt_recv(sockfd, &packet->size, sizeof(packet->size), error);
-	if (rc < 0)
+	read = rt_recv(sockfd, &packet->size, sizeof(packet->size), error);
+	if (read < 0)
 		return (-1);
-	rc = rt_recv(sockfd, &packet->type, sizeof(packet->type), error);
-	if (rc < 0)
+	read = rt_recv(sockfd, &packet->type, sizeof(packet->type), error);
+	if (read < 0)
 		return (-1);
 	packet->data = malloc(packet->size);
 	if (packet->data == NULL)
 	{
 		if (error != NULL)
-			*error = NULL; /* we cannot print use asprintf in this case probable since it allocates */
+			*error = NULL; /* we cannot print use asprintf in this case probably since it allocates */
 		return (-1);
 	}
-	rc = rt_recv(sockfd, packet->data, packet->size, 0);
-	if (rc < 0)
+	read = rt_recv(sockfd, packet->data, packet->size, 0);
+	if (read < 0)
 		return (-1);
+	if ((uint64_t) read != packet->size)
+	{
+		free(packet->data);
+		ft_asprintf(error, "could not read entire %u packet, expected %u bytes\
+ got %u", (unsigned) packet->type, packet->size, (unsigned) read);
+		return (-1);
+	}
+	fprintf(stderr, "size: %lu type: %hhd\n", packet->size, packet->type);
 	return (0);
 }

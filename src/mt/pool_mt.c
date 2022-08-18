@@ -60,8 +60,8 @@ void
 
 	mutex_lock(&pool->mtx);
 	pool->stop = 1;
-	mutex_unlock(&pool->mtx);
 	cond_broadcast(&pool->cnd);
+	mutex_unlock(&pool->mtx);
 	i = 0;
 	while (i < pool->count)
 	{
@@ -91,8 +91,8 @@ void
 	pool->data = rt_reallog(pool->data, &pool->capacity, new_size);
 	rt_memcpy((char *) pool->data + old_size, &item, sizeof(item));
 	pool->size = new_size;
-	mutex_unlock(&pool->mtx);
 	cond_broadcast(&pool->cnd);
+	mutex_unlock(&pool->mtx);
 }
 
 void

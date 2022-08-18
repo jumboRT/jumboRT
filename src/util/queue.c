@@ -48,8 +48,8 @@ size_t
 	if (size != 0)
 		rt_memcpy(*data, queue->data, size);
 	queue->size = 0;
-	mutex_unlock(&queue->mtx);
 	cond_broadcast(&queue->cnd);
+	mutex_unlock(&queue->mtx);
 	return (size);
 }
 

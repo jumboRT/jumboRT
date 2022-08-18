@@ -99,7 +99,6 @@ struct s_context {
 struct s_image_meta {
 	uint64_t	width;
 	uint64_t	height;
-	uint64_t	samples;
 };
 
 struct s_camera {

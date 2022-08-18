@@ -20,10 +20,15 @@ struct s_options {
 	long		width;
 	long		height;
 	int			backends;
+	int			worker;
+	const char	*net_ip;
+	const char	*net_port;
 	int			samples_set;
 	int			width_set;
 	int			height_set;
 	int			backends_set;
+	int			net_ip_set;
+	int			net_port_set;
 };
 
 #ifdef RT_JOINC
@@ -40,11 +45,6 @@ struct s_state {
 	t_image			*image;
 	t_world			*world;
 	t_win			win;
-	int				stop_update;
-	sig_atomic_t	should_exit;
-	t_thread		work_thread;
-	t_mutex			mtx;
-	t_cond			cnd;
 };
 
 void	parse_options(t_options *opts, int argc, char **argv);

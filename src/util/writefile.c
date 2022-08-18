@@ -69,7 +69,7 @@ static ssize_t
 ssize_t
 	rt_writefile(const char *path, char **error, const void *data, size_t size)
 {
-	size_t	nwritten;
+	ssize_t	nwritten;
 	int		fd;
 
 	fd = rt_open(path, error, O_CREAT | O_TRUNC | O_WRONLY, 0664);

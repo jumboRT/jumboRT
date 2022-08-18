@@ -3,7 +3,7 @@ use std::io;
 use std::sync::{Arc, RwLock};
 use std::thread;
 use std::sync::atomic::AtomicU64;
-use crate::client::Client;
+use crate::client::{Client, ClientState};
 
 pub struct Work {
     pub begin: u64,
@@ -12,6 +12,8 @@ pub struct Work {
 
 pub struct Job {
     pub id: u64,
+    pub width: u64,
+    pub height: u64,
     pub scene: String,
     pub work: Vec<Work>,
 }
@@ -44,17 +46,47 @@ impl Server {
                 clients.push(client.clone());
             }
 
-            thread::spawn(move || client.run().unwrap());
+            thread::spawn(move || client.run());
         }
 
         Ok(())
     }
 
     pub fn update_jobs(&self) -> io::Result<()> {
-        Ok(())
+        {
+            let clients = self.clients.read().unwrap();
+            let jobs = self.jobs.read().unwrap();
+
+            if let Some(job) = jobs.first() {
+                for client in clients.iter() {
+                    let state = client.state.read().unwrap();
+
+                    if let ClientState::Worker = *state {
+                        client.send_job(job)?;
+                    }
+                }
+            }
+        }
+
+        self.update_work()
     }
 
     pub fn update_work(&self) -> io::Result<()> {
+        {
+            let clients = self.clients.read().unwrap();
+            let mut jobs = self.jobs.write().unwrap();
+
+            if let Some(job) = jobs.first_mut() {
+                for client in clients.iter() {
+                    let state = client.state.read().unwrap();
+
+                    if let ClientState::Worker = *state {
+                        client.send_work(job)?;
+                    }
+                }
+            }
+        }
+
         Ok(())
     }
 }

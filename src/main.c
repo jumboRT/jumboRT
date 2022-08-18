@@ -4,6 +4,7 @@
 #include "world_impl.h"
 #include "parser.h"
 #include "perf.h"
+#include "net.h"
 
 
 #include <ft_printf.h>
@@ -13,20 +14,6 @@
 
 #include <stdio.h>
 
-#define GEN_MIN_SCALE 0.2
-#define GEN_MIN_ANGLE 0.25
-#define GEN_X_SIZE 1
-#define GEN_Y_SIZE (320 / 4)
-#define GEN_Z_SIZE (180 / 4)
-#define GEN_X_RANGE 0
-#define GEN_Y_RANGE 0
-#define GEN_Z_RANGE 0
-#define GEN_SCALE_FACTOR 3.0
-#define GEN_SCALE (GEN_SCALE_FACTOR / (GEN_X_SIZE + GEN_Y_SIZE + GEN_Z_SIZE))
-#define GEN_SPHERE_CHANCE (0.0 / 3)
-#define GEN_CYLINDER_CHANCE (3.0 / 3)
-#define GEN_CONE_CHANCE (0.0 / 3)
-
 #define FLY_SPEED 1
 
 __attribute__((noreturn))
@@ -34,10 +21,7 @@ int
 	rt_exit(t_work *work)
 {
 	work_pause(work);
-	mutex_lock(&work->mtx);
-	work->state->stop_update = 1;
-	mutex_unlock(&work->mtx);
-	thread_join(&work->state->work_thread);
+	work_update_stop(work);
 	work_destroy(work);
 	exit(EXIT_SUCCESS);
 }
@@ -46,11 +30,11 @@ void
 	rt_work_lock(t_work *work)
 {
 	work_pause(work);
-	mutex_lock(&work->state->mtx);
+	mutex_lock(&work->state_mtx);
 	while (work->work_progress < work->work_index)
-		cond_wait(&work->state->cnd, &work->state->mtx);
+		cond_wait(&work->progress_cnd, &work->state_mtx);
 	work_reset(work);
-	mutex_unlock(&work->state->mtx);
+	mutex_unlock(&work->state_mtx);
 }
 
 void
@@ -94,50 +78,29 @@ static void
 }
 
 static void
-	*rt_work_start(void *arg)
-{
-	t_work *work;
-
-	work = arg;
-	while (1)
-	{
-		mutex_lock(&work->state->mtx);
-		if (work->state->stop_update && work->work_progress >= work->work_index)
-		{
-			mutex_unlock(&work->state->mtx);
-			return (NULL);
-		}
-		work_update(work);
-		cond_broadcast(&work->state->cnd);
-		mutex_unlock(&work->state->mtx);
-		usleep(10000);
-	}
-}
-
-static void
 	main_image(t_work *work, const char *image_file)
 {
 	t_perf	perf;
 
 	setup_sighandlers();
-	thread_create(&work->state->work_thread, rt_work_start, work);
+	work_update_start(work);
 	perf_start(&perf);
 	work_resume(work);
 	while (1)
 	{
-		mutex_lock(&work->state->mtx);
+		mutex_lock(&work->state_mtx);
 		if (work->work_progress >= work->work_size || should_exit(0))
 		{
-			mutex_unlock(&work->state->mtx);
+			mutex_unlock(&work->state_mtx);
 			break ;
 		}
-		mutex_unlock(&work->state->mtx);
+		mutex_unlock(&work->state_mtx);
 		usleep(10000);
 	}
 	perf_split(&perf, "draw image");
-	mutex_lock(&work->state->mtx);
+	mutex_lock(&work->state_mtx);
 	rt_write_ppm(image_file, work->state->image);
-	mutex_unlock(&work->state->mtx);
+	mutex_unlock(&work->state_mtx);
 	perf_split(&perf, "save image");
 	rt_exit(work);
 }
@@ -284,9 +247,9 @@ int
 	work = ctx;
 	if (should_exit(0))
 		rt_exit(work);
-	mutex_lock(&work->state->mtx);
+	mutex_lock(&work->state_mtx);
 	win_put(&work->state->win, work->state->image);
-	mutex_unlock(&work->state->mtx);
+	mutex_unlock(&work->state_mtx);
 	return (0);
 }
 
@@ -294,7 +257,7 @@ static void
 	main_window(t_work *work)
 {
 	setup_sighandlers();
-	thread_create(&work->state->work_thread, rt_work_start, work);
+	work_update_start(work);
 	work_resume(work);
 	win_create(&work->state->win, work->state->image->width, work->state->image->height);
 	win_event_hook(&work->state->win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, work);
@@ -326,16 +289,6 @@ static void
 }
 
 #endif
-
-void
-	world_load(t_world *world, const char *filename)
-{
-	t_parse_ctx	ctx;
-
-	parser_init(&ctx, filename);
-	rt_world(world, &ctx);
-	parser_destroy(&ctx);
-}
 
 /*
 #define RT_VERBOSE
@@ -381,40 +334,62 @@ void
 }
 */
 
-int
-	main(int argc, char **argv)
+void
+	world_load(t_world *world, const char *filename)
+{
+	t_parse_ctx	ctx;
+
+	parser_init(&ctx, filename);
+	rt_world(world, &ctx);
+	parser_destroy(&ctx);
+}
+
+void
+	main_viewer(t_options *options)
 {
 	t_image		image;
 	t_world		world;
 	t_state		state;
 	t_work		work;
-	t_options	options;
 	t_perf		perf;
 
-	parse_options(&options, argc, argv);
-	image.width = options.width;
-	image.height = options.height;
+	image.width = options->width;
+	image.height = options->height;
 	image.data = rt_malloc(sizeof(*image.data) * image.width * image.height);
 	state.image = &image;
 	state.world = &world;
-	state.should_exit = 0;
-	state.stop_update = 0;
 	world_create(&world);
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
-	world.img_meta.samples = options.samples;
-	cond_init(&state.cnd);
-	mutex_init(&state.mtx);
 	perf_start(&perf);
-	world_load(&world, options.scene_file);
+	world_load(&world, options->scene_file);
 	perf_split(&perf, "load world");
 	world_accel(&world);
 	perf_split(&perf, "build tree");
-	work_create(&work, &state, options.backends);
+	work_create(&work, &state, options, NULL);
 	perf_split(&perf, "init device");
-	work.work_size = world.img_meta.width * world.img_meta.height * world.img_meta.samples;
+	work.work_size = world.img_meta.width * world.img_meta.height * options->samples;
 	work_reset(&work);
-	main_run(&options, &work);
+	main_run(options, &work);
+	/* TODO: become thanos */
 	work_destroy(&work);
+}
+
+int
+	main(int argc, char **argv)
+{
+	t_options		options;
+	struct s_client	client;
+
+	parse_options(&options, argc, argv);
+	if (options.worker)
+	{
+		rt_worker_create(&client, options, options.net_ip, options.net_port);
+		rt_client_start(&client);
+	}
+	else
+	{
+		main_viewer(&options);
+	}
 	return (EXIT_SUCCESS);
 }
