@@ -10,108 +10,108 @@
 #include <ft_printf.h>
 
 static int
-	rt_handle_ping(struct s_client *client, struct s_packet packet,
+	rt_handle_ping(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	struct s_packet	response;
 
 	(void) packet;
 	rt_packet_create(&response, 0, RT_PONG_PACKET, NULL);
-	return (rt_send_packet(client, &response, error));
+	return (rt_send_packet(&client->any, &response, error));
 }
 
 static void 
-	rt_create_new_work(struct s_net_worker *worker)
+	rt_create_new_work(union u_client *client)
 {
 	t_state	*state;
 
-	if (worker->work != NULL)
+	if (client->worker.work != NULL)
 	{
-		work_pause(worker->work);
-		work_update_stop(worker->work);
-		rt_free(worker->work->state->world);
-		rt_free(worker->work->state);
+		work_pause(client->worker.work);
+		work_update_stop(client->worker.work);
+		rt_free(client->worker.work->state->world);
+		rt_free(client->worker.work->state);
 		/* TODO: become thanos */
-		work_destroy(worker->work);
-		rt_free(worker->work);
+		work_destroy(client->worker.work);
+		rt_free(client->worker.work);
 	}
-	worker->work = rt_malloc(sizeof(*worker->work));
+	client->worker.work = rt_malloc(sizeof(*client->worker.work));
 	state = rt_malloc(sizeof(*state));
 	state->image = NULL;
 	state->world = rt_malloc(sizeof(*state->world));
 	world_create(state->world);
-	state->world->img_meta.width = worker->opts.width;
-	state->world->img_meta.height = worker->opts.height;
-	world_load(state->world, worker->opts.scene_file);
+	state->world->img_meta.width = client->worker.opts.width;
+	state->world->img_meta.height = client->worker.opts.height;
+	world_load(state->world, client->worker.opts.scene_file);
 	world_accel(state->world);
-	work_create(worker->work, state, &worker->opts, worker->client);
-	work_update_start(worker->work);
-	work_resume(worker->work);
+	work_create(client->worker.work, state, &client->worker.opts, client);
+	work_update_start(client->worker.work);
+	work_resume(client->worker.work);
 }
 
 static int
-	rt_handle_job_request(struct s_client *client, struct s_packet packet,
+	rt_handle_job_request(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	struct s_sjob_request	request;
 
-	if (client->client_type == RT_VIEWER)
+	if (client->any.client_type == RT_VIEWER)
 	{
 		ft_asprintf(error, "received a job-request packet as a viewer");
 		return (-1);
 	}
 	rt_upacksjr(packet.data, &request);
-	client->impl.worker.opts.width = request.width;
-	client->impl.worker.opts.height = request.height;
-	client->impl.worker.opts.scene_file = ft_strdup(request.scene.str);
-	client->seq_id = request.seq_id;
-	rt_create_new_work(&client->impl.worker);
+	client->worker.opts.width = request.width;
+	client->worker.opts.height = request.height;
+	client->worker.opts.scene_file = ft_strdup(request.scene.str);
+	client->any.seq_id = request.seq_id;
+	rt_create_new_work(&client->worker);
 	rt_string_destroy(&request.scene);
 	return (0);
 }
 
 static int
-	rt_handle_send_work(struct s_client *client, struct s_packet packet,
+	rt_handle_send_work(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	struct s_send_work data;
 
-	if (client->client_type == RT_VIEWER)
+	if (client->any.client_type == RT_VIEWER)
 	{
 		ft_asprintf(error, "received send-work packet as a viewer");
 		return (-1);
 	}
 	rt_upacksw(packet.data, &data);
-	work_send(client->impl.worker.work, data.begin, data.end);
+	work_send(client->worker.work, data.begin, data.end);
 	return (0);
 }
 
 static int
-	rt_handle_send_results(struct s_client *client, struct s_packet packet,
+	rt_handle_send_results(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	struct s_send_results	data;
 
-	if (client->client_type == RT_WORKER)
+	if (client->any.client_type == RT_WORKER)
 	{
 		ft_asprintf(error, "received send-results as a worker");
 		return (-1);
 	}
 	rt_upacksr(packet.data, &data);
-	if (data.seq_id == client->seq_id)
+	if (data.seq_id == client->any.seq_id)
 	{
-		work_send_results(client->impl.viewer.worker, data.results, data.count);
-		mutex_lock(&client->impl.viewer.job_mtx);
-		client->impl.viewer.active_work -= data.count;
-		cond_broadcast(&client->impl.viewer.job_cnd);
-		mutex_unlock(&client->impl.viewer.job_mtx);
+		work_send_results(client->viewer.worker, data.results, data.count);
+		mutex_lock(&client->viewer.job_mtx);
+		client->viewer.active_work -= data.count;
+		cond_broadcast(&client->viewer.job_cnd);
+		mutex_unlock(&client->viewer.job_mtx);
 	}
 	rt_free(data.results);
 	return (0);
 }
 
 static int
-	rt_handle_log(struct s_client *client, struct s_packet packet,
+	rt_handle_log(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	(void) error; /* TODO handle this correctly using the new string struct */
@@ -126,7 +126,7 @@ static int
 }
 
 int
-	rt_handle_packet(struct s_client *client, struct s_packet packet,
+	rt_handle_packet(union u_client *client, struct s_packet packet,
 					char **error)
 {
 	if (packet.type == RT_PING_PACKET)

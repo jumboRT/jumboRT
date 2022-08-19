@@ -379,7 +379,7 @@ int
 	main(int argc, char **argv)
 {
 	t_options		options;
-	struct s_client	client;
+	union u_client	client;
 
 	parse_options(&options, argc, argv);
 	if (options.worker)

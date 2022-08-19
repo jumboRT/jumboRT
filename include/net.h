@@ -33,31 +33,33 @@ struct s_packet {
 	void		*data;
 };
 
+struct s_client_base {
+	t_mutex			mtx;
+	uint8_t			client_type;
+	int				sockfd;
+	uint64_t		seq_id;
+	enum e_status	status;
+};
+
 struct s_net_viewer {
-	struct s_client	*client;
-	t_worker		*worker;
-	uint64_t		active_work;
-	t_mutex			job_mtx;
-	t_cond			job_cnd;
-	t_thread		job_thrd;
+	struct s_client_base	base;
+	t_worker				*worker;
+	uint64_t				active_work;
+	t_mutex					job_mtx;
+	t_cond					job_cnd;
+	t_thread				job_thrd;
 };
 
 struct s_net_worker {
-	struct s_client	*client;
-	t_work			*work;
-	t_options		opts;
+	struct s_client_base	base;
+	t_work					*work;
+	t_options				opts;
 };
 
-struct s_client {
-	t_mutex				mtx;
-	uint8_t				client_type;
-	int					sockfd;
-	uint64_t			seq_id;
-	enum e_status		status;
-	union {
-		struct s_net_viewer	viewer;
-		struct s_net_worker	worker;
-	} impl;
+union u_client {
+	struct s_client_base	any;
+	struct s_net_viewer		viewer;
+	struct s_net_worker		worker;
 };
 
 struct s_string {
@@ -99,7 +101,8 @@ ssize_t	rt_recv(int sockfd, void *buffer, uint64_t length, char **error);
 int		rt_peek(int sockfd, char **error);
 int		rt_has_data(int sockfd, int timeout, char **error);
 
-int		rt_send_packet(struct s_client *client, const struct s_packet *packet, char **error);
+int		rt_send_packet(struct s_client_base *client,
+			const struct s_packet *packet, char **error);
 int		rt_recv_packet(int sockfd, struct s_packet *packet, char **error);
 
 void	*rt_packstr(void *dst, struct s_string str);
@@ -122,20 +125,20 @@ void	rt_packet_create(struct s_packet *packet, uint64_t data_size,
 					uint8_t type, void *data);
 void	rt_packet_destroy(struct s_packet *packet);
 
-int		rt_handle_packet(struct s_client *client, struct s_packet packet,
+int		rt_handle_packet(union u_client *client, struct s_packet packet,
 					char **error);
 
-int		rt_worker_create(struct s_client *client, t_options opts,
+int		rt_worker_create(union u_client *client, t_options opts,
 						const char *ip, const char *port);
-int		rt_viewer_create(struct s_client *client,
+int		rt_viewer_create(union u_client *client,
 						const char *ip, const char *port);
-void	rt_client_start(struct s_client *client);
-void	rt_client_set_status(struct s_client *client, enum e_status status);
-void	rt_client_destroy(struct s_client *client);
+void	rt_client_start(union u_client *client);
+void	rt_client_set_status(union u_client *client, enum e_status status);
+void	rt_client_destroy(union u_client *client);
 
 void	*rt_send_jobs_start(void *data);
-int		rt_send_jobs(struct s_client *client, char **error);
-void	rt_send_results(struct s_client *client, t_result *results,
+int		rt_send_jobs(union u_client *client, char **error);
+void	rt_send_results(union u_client *client, t_result *results,
 						uint64_t count);
 
 void	rt_string_create(struct s_string *dst, const char *str);

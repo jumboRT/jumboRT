@@ -101,7 +101,7 @@ static int
 }
 
 int
-	rt_send_packet(struct s_client *client, const struct s_packet *packet,
+	rt_send_packet(struct s_client_base *client, const struct s_packet *packet,
 			char **error)
 {
 	int	rc;

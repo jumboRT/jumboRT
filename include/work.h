@@ -41,7 +41,7 @@ struct s_work {
 	uint64_t		*pending;
 	size_t			pending_size;
 	size_t			pending_capacity;
-	struct s_client	*client;
+	union u_client	*client;
 	int				update_stop;
 	int				update_flag;
 	t_thread		update_thread;
@@ -51,7 +51,7 @@ struct s_work {
 	t_mutex			state_mtx;
 };
 
-void	work_create(t_work *work, t_state *state, t_options *opts, struct s_client *client);
+void	work_create(t_work *work, t_state *state, t_options *opts, union u_client *client);
 void	work_destroy(t_work *work);
 void	work_resume(t_work *work);
 void	work_pause(t_work *work);

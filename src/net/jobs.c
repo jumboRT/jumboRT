@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 static ssize_t 
-	rt_send_job(struct s_client *client, t_work *work, char **error)
+	rt_send_job(union u_client *client, t_work *work, char **error)
 {
 	struct s_send_work	data;
 	struct s_packet		packet;
@@ -14,28 +14,28 @@ static ssize_t
 		return (0);
 	end = rt_packsw(buf, data);
 	rt_packet_create(&packet, end - buf, RT_SEND_WORK_PACKET, buf);
-	if (rt_send_packet(client, &packet, error) < 0)
+	if (rt_send_packet(&client->any, &packet, error) < 0)
 		return (-1);
 	return (data.end - data.begin);
 }
 
 int
-	rt_send_jobs(struct s_client *client, char **error)
+	rt_send_jobs(union u_client *client, char **error)
 {
 	ssize_t	rc;
 
-	while (client->impl.viewer.active_work < RT_NET_MAX_JOBS * RT_NET_JOBSIZE)
+	while (client->viewer.active_work < RT_NET_MAX_JOBS * RT_NET_JOBSIZE)
 	{
-		mutex_unlock(&client->impl.viewer.job_mtx);
+		mutex_unlock(&client->viewer.job_mtx);
 		rc = rt_send_job(client,
-				client->impl.viewer.worker->work, error);
-		mutex_lock(&client->impl.viewer.job_mtx);
+				client->viewer.worker->work, error);
+		mutex_lock(&client->viewer.job_mtx);
 		if (rc <= 0)
 		{
 			rt_client_set_status(client, SQUIT);
 			return (rc);
 		}
-		client->impl.viewer.active_work += rc;
+		client->viewer.active_work += rc;
 	}
 	return (1);
 }
@@ -43,13 +43,13 @@ int
 void
 	*rt_send_jobs_start(void *data)
 {
-	struct s_client		*client;
+	union u_client		*client;
 	struct s_net_viewer	*viewer;
 	int					rc;
 	char				*error;
 
 	client = data;
-	viewer = &client->impl.viewer;
+	viewer = &client->viewer;
 	mutex_lock(&viewer->job_mtx);
 	while (1)
 	{
