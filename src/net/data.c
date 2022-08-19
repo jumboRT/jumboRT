@@ -120,6 +120,5 @@ int
  got %u", (unsigned) packet->type, packet->size, (unsigned) read);
 		return (-1);
 	}
-	fprintf(stderr, "size: %lu type: %hhd\n", packet->size, packet->type);
 	return (0);
 }

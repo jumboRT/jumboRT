@@ -15,22 +15,20 @@ int
 
 	while (1)
 	{
-		fprintf(stderr, "waiting for a packet\n");
 		rc = rt_recv_packet(client->sockfd, &packet, error);
-		fprintf(stderr, "rc: %d\n", rc);
 		if (rc < 0)
 			return (-1);
-		fprintf(stderr, "handling packet\n");
 		if (rt_handle_packet(client, packet, error) < 0)
 		{
-			fprintf(stderr, "failed to handle packet\n");
+			rt_packet_destroy(&packet);
 			return (-1);
 		}
-		fprintf(stderr, "handled packet\n");
 		rc = rt_peek(client->sockfd, error);
-		fprintf(stderr, "peek: %d\n", rc);
 		if (rc <= 0)
+		{
+			rt_packet_destroy(&packet);
 			return (rc);
+		}
 		rt_packet_destroy(&packet);
 	}
 	return (0);
@@ -63,7 +61,6 @@ static void
 	while (client->status == SRUNNING)
 	{
 		mutex_unlock(&client->mtx);
-		fprintf(stderr, "tick\n");
 		rc = proc(client, &error);
 		mutex_lock(&client->mtx);
 		if (rc < 0)
@@ -93,6 +90,7 @@ static int
 		return (-1);
 	if (packet.type != RT_HANDSHAKE_PACKET)
 	{
+		rt_packet_destroy(&packet);
 		ft_asprintf(error, "handshake failed");
 		return (-1);
 	}
@@ -102,10 +100,12 @@ static int
 		{
 			ft_asprintf(error, "handshake packet has wrong size: %u",
 					(int) packet.size);
+			rt_packet_destroy(&packet);
 			return (-1);
 		}
 		rt_upacku64(packet.data, &client->seq_id);
 	}
+	rt_packet_destroy(&packet);
 	return (0);
 }
 
@@ -152,7 +152,6 @@ void
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);
 	rt_packet_create(&packet, size, RT_SEND_RESULTS_PACKET, buf);
-	fprintf(stderr, "got some hot results, comin' right up\n");
 	mutex_lock(&client->mtx);
 	rc = rt_send_packet(client->sockfd, &packet, NULL);
 	mutex_unlock(&client->mtx);
@@ -161,7 +160,7 @@ void
 		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
 		rt_client_set_status(client, SIDLE);
 	}
-	fprintf(stderr, "like hotcakes they go\n");
+	rt_free(buf);
 }
 	
 

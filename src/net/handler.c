@@ -26,7 +26,6 @@ static int
 	if (error != NULL)
 		ft_asprintf(error, "handling of packet type %d is not implemented",
 			packet.type);
-	fprintf(stderr, "yikes\n");
 	return (-1);
 }
 
@@ -113,6 +112,7 @@ static int
 		work_send_results(client->impl.viewer.worker, data.results, data.count);
 		client->impl.viewer.active_work -= data.count;
 	}
+	rt_free(data.results);
 	return (0);
 }
 
@@ -135,7 +135,6 @@ int
 	rt_handle_packet(struct s_client *client, struct s_packet packet,
 					char **error)
 {
-	fprintf(stderr, "got me a %d packet\n", packet.type);
 	if (packet.type == RT_PING_PACKET)
 		return (rt_handle_ping(client, packet, error));
 	if (packet.type == RT_PONG_PACKET)
@@ -148,6 +147,7 @@ int
 		return (rt_handle_send_results(client, packet, error));
 	if (packet.type == RT_LOG_PACKET)
 		return (rt_handle_log(client, packet, error));
-	ft_asprintf(error, "unknown packet type %d\n", packet.type);
+	if (error != NULL)
+		ft_asprintf(error, "unknown packet type %d\n", packet.type);
 	return (-1);
 }
