@@ -15,6 +15,16 @@ int
 
 	while (1)
 	{
+		while (!rt_has_data(client->sockfd, 100))
+		{
+			mutex_lock(&client->mtx);
+			if (client->status == SQUIT)
+			{
+				mutex_unlock(&client->mtx);
+				return 0;
+			}
+			mutex_unlock(&client->mtx);	
+		}
 		rc = rt_recv_packet(client->sockfd, &packet, error);
 		if (rc < 0)
 			return (-1);
