@@ -57,8 +57,9 @@ ssize_t
 }
 
 int
-	rt_peek(int sockfd, char **error)
+	rt_has_data(int sockfd, int timeout)
 {
+
 	struct pollfd	p;
 	int				rc;
 
@@ -66,16 +67,25 @@ int
 	p.events = POLLIN;
 	while (1)
 	{
-		rc = poll(&p, 1, 1);
+		rc = poll(&p, 1, timeout);
 		if (rc < 0 && errno == EINTR)
 			continue;
 		break;
 	}
 	if (rc >= 0)
 		return (rc);
+	/*
 	if (error != NULL)
 		ft_asprintf(error, strerror(errno));
+	*/
 	return (-1);
+}
+
+int
+	rt_peek(int sockfd, char **error)
+{
+	(void) error;
+	return (rt_has_data(sockfd, 1));
 }
 
 static int

@@ -97,6 +97,7 @@ int		rt_connect(const char *ip, const char *port, char **error);
 int		rt_send(int sockfd, const void *data, uint64_t size, char **error);
 ssize_t	rt_recv(int sockfd, void *buffer, uint64_t length, char **error);
 int		rt_peek(int sockfd, char **error);
+int		rt_has_data(int sockfd, int timeout);
 
 int		rt_send_packet(struct s_client *client, const struct s_packet *packet, char **error);
 int		rt_recv_packet(int sockfd, struct s_packet *packet, char **error);
