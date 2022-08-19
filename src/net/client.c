@@ -113,7 +113,7 @@ static int
 }
 
 void
-	rt_send_results(union u_client *client, t_result *results, uint64_t count)
+	rt_send_results_int(union u_client *client, t_result *results, uint64_t count)
 {
 	struct s_packet			packet;
 	struct s_send_results	data;
@@ -137,9 +137,26 @@ void
 		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
 		rt_client_set_status(client, SIDLE);
 	}
+	rt_free(data.zdata);
 	rt_free(buf);
 }
-	
+
+void
+	rt_send_results(union u_client *client, t_result *results, uint64_t count)
+{
+	uint64_t	index;
+	uint64_t	start;
+
+	start = 0;
+	while (start < count)
+	{
+		index = 0;
+		while (start + index < count && results[start].index + index == results[start + index].index)
+			index += 1;
+		rt_send_results_int(client, results + start, index);
+		start += index;
+	}
+}
 
 int
 	rt_worker_create(union u_client *client, t_options opts,

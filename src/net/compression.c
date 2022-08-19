@@ -51,8 +51,7 @@ t_vec
 */
 
 t_result
-	*rt_results_inflate(void *zsrc, size_t zsize, uint64_t index,
-				uint64_t count)
+	*rt_results_inflate(union u_client *client, struct s_send_results packet)
 {
 	void	*pcolors;
 	void	*tmp;
@@ -60,14 +59,14 @@ t_result
 	size_t	idx;
 	t_result *results;
 
-	pcolors = z_inflate(zsrc, zsize, &psize);
+	pcolors = z_inflate(packet.zdata, packet.zsize, &psize);
 	tmp = pcolors;
-	rt_assert(count * sizeof(FLOAT) * 3 == psize, "count != zcount");
-	results = rt_malloc(sizeof(t_result) * count);
+	rt_assert(packet.count * sizeof(FLOAT) * 3 == psize, "count != zcount");
+	results = rt_malloc(sizeof(t_result) * packet.count);
 	idx = 0;
-	while (idx < count)
+	while (idx < packet.count)
 	{
-		results[idx].index = index++;
+		results[idx].index = packet.index++;
 		tmp = rt_upackvec(tmp, &results[idx].color);
 		++idx;
 	}

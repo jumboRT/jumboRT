@@ -23,24 +23,25 @@ static void
 	t_ztree			fixed;
 
 	if (lt == NULL)
-	{
 		ztree_default(&fixed);
+	if (lt == NULL)
 		lt = &fixed;
-	}
-	while (1)
+	value = ztree_get(lt, ib);
+	while (value != 256)
 	{
-		value = ztree_get(lt, ib);
 		if (value < 256)
 			zbuf_write(ob, 8, value);
-		else if (value == 256)
-			break ;
+		if (value < 256)
+			continue ;
+		if (dt == NULL)
+			dist = zbuf_read(ib, 5);
 		else
-		{
 			dist = ztree_get(dt, ib);
-			ztree_decode_length(ib, value, &value);
-			ztree_decode_dist(ib, dist, &dist);
-			zbuf_repeat(ob, dist, value);
-		}
+		rt_assert(dist < 30, "z_inflate_fixed: invalid dist value");
+		ztree_decode_length(ib, value, &value);
+		ztree_decode_dist(ib, dist, &dist);
+		zbuf_repeat(ob, dist, value);
+		value = ztree_get(lt, ib);
 	}
 }
 

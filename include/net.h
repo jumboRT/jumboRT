@@ -123,9 +123,9 @@ void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
 
 void	*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
-t_result	*rt_results_inflate(void *zsrc, size_t zsize, uint64_t index,
-				uint64_t count);
 
+/* TODO make this more pretty */
+t_result *rt_results_inflate(union u_client *client, struct s_send_results packet);
 uint64_t	rt_sizesr(struct s_send_results packet);
 
 void	rt_packet_create(struct s_packet *packet, uint64_t data_size,

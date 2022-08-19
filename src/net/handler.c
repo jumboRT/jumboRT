@@ -101,8 +101,7 @@ static int
 	rt_upacksr(packet.data, &data);
 	if (data.seq_id == client->any.seq_id)
 	{
-		results = rt_results_inflate(data.zdata, data.zsize,
-									data.index, data.count);
+		results = rt_results_inflate(client, data);
 		work_send_results(client->viewer.worker, results, data.count);
 		mutex_lock(&client->viewer.job_mtx);
 		client->viewer.active_work -= data.count;
@@ -110,6 +109,7 @@ static int
 		mutex_unlock(&client->viewer.job_mtx);
 		rt_free(results);
 	}
+	rt_free(data.zdata);
 	return (0);
 }
 
