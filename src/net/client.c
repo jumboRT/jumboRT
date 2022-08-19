@@ -122,8 +122,11 @@ void
 	int						rc;
 
 	data.seq_id = client->any.seq_id;
+	data.index = 0;
+	if (count != 0)
+		data.index = results[0].index;
 	data.count = count;
-	data.results = results;
+	data.zdata = rt_results_deflate(results, count, &data.zsize);
 	size = rt_sizesr(data);
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);

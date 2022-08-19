@@ -27,7 +27,8 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   world.c light.c material.c material_table.c \
 						   texture.c init.c ambient.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
-						   handler.c jobs.c string.c size.c
+						   handler.c jobs.c string.c size.c compression.c
+Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
@@ -106,6 +107,7 @@ FILE_NAMES				:= \
 	$(patsubst %.c,world/%.c,$(WORLD_FILES)) \
 	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
 	$(patsubst %.c,net/%.c,$(NET_FILES)) \
+	$(patsubst %.c,z/%.c,$(Z_FILES)) \
 	$(BASE_FILES)
 
 CC						?= clang

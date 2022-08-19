@@ -213,8 +213,10 @@ impl Client {
 
     pub fn handle_send_results_packet(&self, data: &[u8]) -> io::Result<()> {
         let job_id = ser::read_u64(&data[0..8]);
-        let count = ser::read_u64(&data[8..16]) as usize;
-        let results = &data[16..count * 24 + 16];
+        let index = ser::read_u64(&data[8..16]);
+        let count = ser::read_u64(&data[16..24]);
+        let size = ser::read_u64(&data[24..32]) as usize;
+        let results = &data[32..size + 32];
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
@@ -239,7 +241,9 @@ impl Client {
                 let mut packet = Vec::new();
 
                 ser::write_u64(&mut packet, job_id);
-                ser::write_u64(&mut packet, count as u64);
+                ser::write_u64(&mut packet, index);
+                ser::write_u64(&mut packet, count);
+                ser::write_u64(&mut packet, size as u64);
                 packet.extend(results);
                 client.write_packet(5, &packet)?;
 
