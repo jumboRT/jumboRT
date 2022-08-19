@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <string.h>
 #include <ft_printf.h>
-
+/*
 int
 	rt_recv_packets(struct s_client *client, char **error)
 {
@@ -42,6 +42,23 @@ int
 		rt_packet_destroy(&packet);
 	}
 	return (0);
+}
+*/
+
+int
+	rt_recv_handle_packet(struct s_client *client, char **error)
+{
+	struct	s_packet	packet;
+	int					rc;
+
+	rc = rt_has_data(client->sockfd, 100, error);
+	if (rc <= 0)
+		return (rc);
+	if (rt_recv_packet(client->sockfd, &packet, error) < 0)
+		return (-1);
+	rc = rt_handle_packet(client, packet, error);
+	rt_packet_destroy(&packet);
+	return (rc);
 }
 
 static void
@@ -207,8 +224,8 @@ static void
 	}
 	rt_string_destroy(&request.scene);
 	rt_packet_destroy(&packet);
-	thread_create(&viewer->handler_thread, rt_send_jobs_start, viewer->client);
-	client_loop(viewer->client, rt_recv_packets);
+	thread_create(&viewer->job_thrd, rt_send_jobs_start, viewer->client);
+	client_loop(viewer->client, rt_recv_handle_packet);
 }
 
 void
@@ -222,7 +239,7 @@ void
 	}
 	else
 	{
-		client_loop(client, rt_recv_packets);
+		client_loop(client, rt_recv_handle_packet);
 	}
 }
 
@@ -239,7 +256,7 @@ void
 {
 	rt_client_set_status(client, SQUIT);
 	if (client->client_type == RT_VIEWER)
-		thread_join(&client->impl.viewer.handler_thread);
+		thread_join(&client->impl.viewer.job_thrd);
 	/* This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->mtx);
 }

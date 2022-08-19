@@ -57,7 +57,7 @@ ssize_t
 }
 
 int
-	rt_has_data(int sockfd, int timeout)
+	rt_has_data(int sockfd, int timeout, char **error)
 {
 
 	struct pollfd	p;
@@ -74,18 +74,15 @@ int
 	}
 	if (rc >= 0)
 		return (rc);
-	/*
 	if (error != NULL)
 		ft_asprintf(error, strerror(errno));
-	*/
 	return (-1);
 }
 
 int
 	rt_peek(int sockfd, char **error)
 {
-	(void) error;
-	return (rt_has_data(sockfd, 1));
+	return (rt_has_data(sockfd, 1, error));
 }
 
 static int
