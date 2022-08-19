@@ -3,7 +3,7 @@
 #include "util.h"
 
 void
-	work_create(t_work *work, t_state *state, t_options *opts, struct s_client *client)
+	work_create(t_work *work, t_state *state, t_options *opts, union u_client *client)
 {
 	work->state = state;
 	work->workers = NULL;

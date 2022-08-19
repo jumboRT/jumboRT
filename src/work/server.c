@@ -7,11 +7,11 @@ static void
 	*work_start(void *data)
 {
 	t_worker		*worker;
-	struct s_client	*client;
+	union u_client	*client;
 
 	worker = data;
 	client = worker->ctx;
-	client->impl.viewer.worker = worker;
+	client->viewer.worker = worker;
 	rt_client_start(worker->ctx);
 	return (NULL);
 }
@@ -19,7 +19,7 @@ static void
 void
 	work_int_create_server(t_work *work)
 {
-	struct s_client	*client;
+	union u_client	*client;
 
 	client = rt_malloc(sizeof(*client));
 	rt_viewer_create(client, work->opts->net_ip, work->opts->net_port);
