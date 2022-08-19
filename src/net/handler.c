@@ -17,16 +17,7 @@ static int
 
 	(void) packet;
 	rt_packet_create(&response, 0, RT_PONG_PACKET, NULL);
-	return (rt_send_packet(client->sockfd, &response, error));
-}
-
-static int
-	rt_unimplemented(struct s_packet packet, char **error)
-{
-	if (error != NULL)
-		ft_asprintf(error, "handling of packet type %d is not implemented",
-			packet.type);
-	return (-1);
+	return (rt_send_packet(client, &response, error));
 }
 
 static void 
@@ -110,7 +101,10 @@ static int
 	if (data.seq_id == client->seq_id)
 	{
 		work_send_results(client->impl.viewer.worker, data.results, data.count);
+		mutex_lock(&client->impl.viewer.job_mtx);
 		client->impl.viewer.active_work -= data.count;
+		cond_broadcast(&client->impl.viewer.job_cnd);
+		mutex_unlock(&client->impl.viewer.job_mtx);
 	}
 	rt_free(data.results);
 	return (0);

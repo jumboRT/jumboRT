@@ -140,6 +140,7 @@ void
 	src = rt_upacku64(src, &dst->count);
 	dst->results = rt_malloc(dst->count * sizeof(*dst->results));
 	idx = 0;
+	/* TODO: check packet size, maybe everywhere else too? */
 	while (idx < dst->count)
 	{
 		src = rt_upackres(src, &dst->results[idx]);

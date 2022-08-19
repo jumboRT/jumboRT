@@ -21,7 +21,8 @@ static struct addrinfo
 	if (rc < 0)
 	{
 		if (error != NULL)
-			ft_asprintf(error, "failed to get information about address %s:%s %s\n", ip, port, gai_strerror(rc));
+			ft_asprintf(error, "failed to get information about address: %s",
+					gai_strerror(rc));
 		return (NULL);
 	}
 	return (result);
@@ -64,7 +65,7 @@ int
 	if (sockfd < 0)
 	{
 		if (error != NULL)
-			ft_asprintf(error, "failed to connect to %s:%sn", ip, port);
+			ft_asprintf(error, "failed to connect");
 		return (-1);
 	}
 	return (sockfd);
