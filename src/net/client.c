@@ -34,23 +34,6 @@ int
 	return (0);
 }
 
-static int 
-	viewer_tick(struct s_client *client, char **error)
-{
-	int	rc;
-
-	rc = rt_send_jobs(client, error);
-	if (rc >= 0)
-		rc = rt_recv_packets(client, error);
-	return (rc);
-}
-
-static int
-	worker_tick(struct s_client *client, char **error)
-{
-	return (rt_recv_packets(client, error));
-}
-
 static void
 	client_loop(struct s_client *client, int (*proc)(struct s_client*, char**))
 {
@@ -80,10 +63,13 @@ static int
 
 	rt_packet_create(&packet, sizeof(uint8_t),
 				RT_HANDSHAKE_PACKET, &client->client_type);
-	if (rt_send_packet(client->sockfd, &packet, error) < 0)
+	if (rt_send_packet(client, &packet, error) < 0)
 	{
-		rt_free(*error);
-		ft_asprintf(error, "could not connect");
+		if (error != NULL)
+		{
+			rt_free(*error);
+			ft_asprintf(error, "could not connect");
+		}
 		return (-1);
 	}
 	if (rt_recv_packet(client->sockfd, &packet, error) < 0)
@@ -125,14 +111,15 @@ static int
 {
 	char	*error;
 
+	mutex_init(&client->mtx);
 	if (rt_client_connect(client, ip, port, &error) < 0)
 	{
 		fprintf(stderr, "%s:%s: %s\n", ip, port, error);
+		mutex_destroy(&client->mtx);
 		rt_free(error);
 		return (-1);
 	}
 	client->status = SIDLE;
-	mutex_init(&client->mtx);
 	return (0);
 }
 
@@ -152,9 +139,7 @@ void
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);
 	rt_packet_create(&packet, size, RT_SEND_RESULTS_PACKET, buf);
-	mutex_lock(&client->mtx);
-	rc = rt_send_packet(client->sockfd, &packet, NULL);
-	mutex_unlock(&client->mtx);
+	rc = rt_send_packet(client, &packet, NULL);
 	if (rc < 0)
 	{
 		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
@@ -183,6 +168,9 @@ int
 	client->impl.viewer.active_work = 0;
 	client->impl.viewer.client = client;
 	client->impl.viewer.worker = NULL;
+	/* TODO: these are not destroyed on error */
+	mutex_init(&client->impl.viewer.job_mtx);
+	cond_init(&client->impl.viewer.job_cnd);
 	return (rt_client_create(client, ip, port));
 }
 
@@ -201,7 +189,7 @@ static void
 	data = rt_malloc(sizeof(request.width) * 3 + request.scene.len);
 	end = rt_packcjr(data, request);
 	rt_packet_create(&packet, end - data, RT_JOB_REQUEST_PACKET, data);
-	if (rt_send_packet(viewer->client->sockfd, &packet, &error) < 0)
+	if (rt_send_packet(viewer->client, &packet, &error) < 0)
 	{
 		fprintf(stderr, "failed to start viewer: %s\n", error);
 		rt_free(error);
@@ -209,7 +197,8 @@ static void
 	}
 	rt_string_destroy(&request.scene);
 	rt_packet_destroy(&packet);
-	client_loop(viewer->client, viewer_tick);
+	thread_create(&viewer->handler_thread, rt_send_jobs_start, viewer->client);
+	client_loop(viewer->client, rt_recv_packets);
 }
 
 void
@@ -223,7 +212,7 @@ void
 	}
 	else
 	{
-		client_loop(client, worker_tick);
+		client_loop(client, rt_recv_packets);
 	}
 }
 
@@ -239,5 +228,8 @@ void
 	rt_client_destroy(struct s_client *client)
 {
 	rt_client_set_status(client, SQUIT);
+	if (client->client_type == RT_VIEWER)
+		thread_join(&client->impl.viewer.handler_thread);
+	/* This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->mtx);
 }

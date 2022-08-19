@@ -73,12 +73,13 @@ int
 	}
 	if (rc >= 0)
 		return (rc);
-	ft_asprintf(error, strerror(errno));
+	if (error != NULL)
+		ft_asprintf(error, strerror(errno));
 	return (-1);
 }
 
-int
-	rt_send_packet(int sockfd, const struct s_packet *packet, char **error)
+static int
+	rt_send_packet_int(int sockfd, const struct s_packet *packet, char **error)
 {
 	int	rc;
 
@@ -90,6 +91,18 @@ int
 	if (rc < 0)
 		return (-1);
 	return (0);
+}
+
+int
+	rt_send_packet(struct s_client *client, const struct s_packet *packet,
+			char **error)
+{
+	int	rc;
+
+	mutex_lock(&client->mtx);
+	rc = rt_send_packet_int(client->sockfd, packet, error);
+	mutex_unlock(&client->mtx);
+	return (rc);
 }
 
 int

@@ -37,6 +37,9 @@ struct s_net_viewer {
 	struct s_client	*client;
 	t_worker		*worker;
 	uint64_t		active_work;
+	t_mutex			job_mtx;
+	t_cond			job_cnd;
+	t_thread		handler_thread;/*TODO rename to job_thrd or smth like that*/
 };
 
 struct s_net_worker {
@@ -95,7 +98,7 @@ int		rt_send(int sockfd, const void *data, uint64_t size, char **error);
 ssize_t	rt_recv(int sockfd, void *buffer, uint64_t length, char **error);
 int		rt_peek(int sockfd, char **error);
 
-int		rt_send_packet(int sockfd, const struct s_packet *packet, char **error);
+int		rt_send_packet(struct s_client *client, const struct s_packet *packet, char **error);
 int		rt_recv_packet(int sockfd, struct s_packet *packet, char **error);
 
 void	*rt_packstr(void *dst, struct s_string str);
@@ -129,6 +132,7 @@ void	rt_client_start(struct s_client *client);
 void	rt_client_set_status(struct s_client *client, enum e_status status);
 void	rt_client_destroy(struct s_client *client);
 
+void	*rt_send_jobs_start(void *data);
 int		rt_send_jobs(struct s_client *client, char **error);
 void	rt_send_results(struct s_client *client, t_result *results,
 						uint64_t count);

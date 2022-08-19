@@ -5,6 +5,8 @@ use std::io::{self, Read, Write};
 use crate::ser;
 use crate::server::{Server, Job, Work};
 
+const VERBOSE: bool = false;
+
 pub enum ClientState {
     Unknown,
     Worker,
@@ -91,7 +93,10 @@ impl Client {
                 let n = p.min(w) as usize;
 
                 for work in job.work[0..n].iter() {
-                    println!("[{}] send work begin={} end={}", self.addr, work.begin, work.end);
+                    if VERBOSE {
+                        println!("[{}] send work begin={} end={}", self.addr, work.begin, work.end);
+                    }
+
                     let mut packet = Vec::new();
 
                     ser::write_u64(&mut packet, work.begin);
@@ -108,7 +113,10 @@ impl Client {
 
     pub fn write_packet(&self, packet_id: u8, data: &[u8]) -> io::Result<()> {
         let mut packet = Vec::new();
-        println!("[{}] send packet id={} len={}", self.addr, packet_id, data.len());
+
+        if VERBOSE {
+            println!("[{}] send packet id={} len={}", self.addr, packet_id, data.len());
+        }
 
         ser::write_u64(&mut packet, data.len() as u64);
         ser::write_u8(&mut packet, packet_id);
@@ -184,7 +192,10 @@ impl Client {
         let begin = ser::read_u64(&data[0..8]);
         let end = ser::read_u64(&data[8..16]);
         let server = self.server.upgrade().unwrap();
-        println!("[{}] recv work begin={} end={}", self.addr, begin, end);
+
+        if VERBOSE {
+            println!("[{}] recv work begin={} end={}", self.addr, begin, end);
+        }
 
         {
             let mut server_jobs = server.jobs.write().unwrap();
@@ -205,7 +216,10 @@ impl Client {
         let count = ser::read_u64(&data[8..16]) as usize;
         let results = &data[16..count * 24 + 16];
         let server = self.server.upgrade().unwrap();
-        println!("[{}] results id={} count={}", self.addr, job_id, count);
+
+        if VERBOSE {
+            println!("[{}] results id={} count={}", self.addr, job_id, count);
+        }
 
         {
             let clients = server.clients.read().unwrap();
@@ -247,7 +261,9 @@ impl Client {
     }
 
     pub fn handle_packet(&self, packet_id: u8, data: &[u8]) -> io::Result<()> {
-        println!("[{}] recv packet id={} len={}", self.addr, packet_id, data.len());
+        if VERBOSE {
+            println!("[{}] recv packet id={} len={}", self.addr, packet_id, data.len());
+        }
 
         match packet_id {
             0x00 => self.handle_handshake_packet(data),
