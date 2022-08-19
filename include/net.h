@@ -91,8 +91,10 @@ struct s_sjob_request {
 
 struct s_send_results {
 	uint64_t	seq_id;
+	uint64_t	index;
 	uint64_t	count;
-	t_result	*results;
+	uint64_t	zsize;
+	void		*zdata;
 };
 
 int		rt_connect(const char *ip, const char *port, char **error);
@@ -115,9 +117,14 @@ void	*rt_packcjr(void *dst, struct s_cjob_request packet);
 void	*rt_packsr(void *dst, struct s_send_results packet);
 void	*rt_upackstr(void *src, struct s_string *str);
 void	*rt_upacku64(void *src, uint64_t *i);
+void	*rt_upackvec(void *dst, t_vec *vec);
 void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
+
+void	*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
+t_result	*rt_results_inflate(void *zsrc, size_t zsize, uint64_t index,
+				uint64_t count);
 
 uint64_t	rt_sizesr(struct s_send_results packet);
 

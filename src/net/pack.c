@@ -1,5 +1,6 @@
 #include "net.h"
 
+#include "z.h"
 #include "util.h"
 #include <string.h>
 
@@ -41,15 +42,6 @@ void
 	dst = rt_packfl(dst, x(vec));
 	dst = rt_packfl(dst, y(vec));
 	dst = rt_packfl(dst, z(vec));
-	dst = rt_packfl(dst, w(vec));
-	return (dst);
-}
-
-void
-	*rt_packres(void *dst, t_result result)
-{
-	dst = rt_packu64(dst, result.index);
-	dst = rt_packvec(dst, result.color);
 	return (dst);
 }
 
@@ -77,21 +69,11 @@ void
 	FLOAT	x;
 	FLOAT	y;
 	FLOAT	z;
-	FLOAT	w;
 
 	src = rt_upackfl(src, &x);
 	src = rt_upackfl(src, &y);
 	src = rt_upackfl(src, &z);
-	src = rt_upackfl(src, &w);
-	*dst = vec(x, y, z, w);
-	return (src);
-}
-
-void
-	*rt_upackres(void *src, t_result *result)
-{
-	src = rt_upacku64(src, &result->index);
-	src = rt_upackvec(src, &result->color);
+	*dst = vec(x, y, z, 0.0);
 	return (src);
 }
 
@@ -134,19 +116,13 @@ void
 void
 	*rt_upacksr(void *src, struct s_send_results *dst)
 {
-	size_t	idx;
-
 	src = rt_upacku64(src, &dst->seq_id);
+	src = rt_upacku64(src, &dst->index);
 	src = rt_upacku64(src, &dst->count);
-	dst->results = rt_malloc(dst->count * sizeof(*dst->results));
-	idx = 0;
-	/* TODO: check packet size, maybe everywhere else too? */
-	while (idx < dst->count)
-	{
-		src = rt_upackres(src, &dst->results[idx]);
-		++idx;
-	}
-	return (src);
+	src = rt_upacku64(src, &dst->zsize);
+	dst->zdata = rt_malloc(dst->zsize);
+	memcpy(dst->zdata, src, dst->zsize);
+	return ((char *) src + dst->zsize);
 }
 
 void
@@ -179,15 +155,10 @@ void
 void
 	*rt_packsr(void *dst, struct s_send_results packet)
 {
-	uint64_t	idx;
-
 	dst = rt_packu64(dst, packet.seq_id);
+	dst = rt_packu64(dst, packet.index);
 	dst = rt_packu64(dst, packet.count);
-	idx = 0;
-	while (idx < packet.count)
-	{
-		dst = rt_packres(dst, packet.results[idx]);
-		++idx;
-	}
-	return (dst);
+	dst = rt_packu64(dst, packet.zsize);
+	memcpy(dst, packet.zdata, packet.zsize);
+	return ((char *) dst + packet.zsize);
 }

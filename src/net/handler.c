@@ -91,6 +91,7 @@ static int
 					char **error)
 {
 	struct s_send_results	data;
+	t_result				*results;
 
 	if (client->any.client_type == RT_WORKER)
 	{
@@ -100,13 +101,15 @@ static int
 	rt_upacksr(packet.data, &data);
 	if (data.seq_id == client->any.seq_id)
 	{
-		work_send_results(client->viewer.worker, data.results, data.count);
+		results = rt_results_inflate(data.zdata, data.zsize,
+									data.index, data.count);
+		work_send_results(client->viewer.worker, results, data.count);
 		mutex_lock(&client->viewer.job_mtx);
 		client->viewer.active_work -= data.count;
 		cond_broadcast(&client->viewer.job_cnd);
 		mutex_unlock(&client->viewer.job_mtx);
+		rt_free(results);
 	}
-	rt_free(data.results);
 	return (0);
 }
 
@@ -114,7 +117,7 @@ static int
 	rt_handle_log(union u_client *client, struct s_packet packet,
 					char **error)
 {
-	(void) error; /* TODO handle this correctly using the new string struct */
+	(void) error;
 	(void) client;
 	if (packet.size > INT_MAX)
 	{
