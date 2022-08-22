@@ -28,7 +28,7 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   texture.c init.c ambient.c conditional.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c
-Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c
+Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c lz77.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
