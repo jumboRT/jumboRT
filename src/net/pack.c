@@ -117,8 +117,6 @@ void
 	*rt_upacksr(void *src, struct s_send_results *dst)
 {
 	src = rt_upacku64(src, &dst->seq_id);
-	src = rt_upacku64(src, &dst->index);
-	src = rt_upacku64(src, &dst->count);
 	src = rt_upacku64(src, &dst->zsize);
 	dst->zdata = rt_malloc(dst->zsize);
 	memcpy(dst->zdata, src, dst->zsize);
@@ -156,8 +154,6 @@ void
 	*rt_packsr(void *dst, struct s_send_results packet)
 {
 	dst = rt_packu64(dst, packet.seq_id);
-	dst = rt_packu64(dst, packet.index);
-	dst = rt_packu64(dst, packet.count);
 	dst = rt_packu64(dst, packet.zsize);
 	memcpy(dst, packet.zdata, packet.zsize);
 	return ((char *) dst + packet.zsize);

@@ -7,7 +7,7 @@
 # endif
 
 # ifndef RT_WORK_THREAD_CHUNK_SIZE
-#  define RT_WORK_THREAD_CHUNK_SIZE 1024
+#  define RT_WORK_THREAD_CHUNK_SIZE 4096
 # endif
 
 static void

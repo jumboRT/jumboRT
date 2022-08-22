@@ -23,6 +23,7 @@ struct s_options {
 	int			worker;
 	const char	*net_ip;
 	const char	*net_port;
+	const char	*key;
 	int			samples_set;
 	int			width_set;
 	int			height_set;

@@ -113,7 +113,7 @@ static int
 }
 
 void
-	rt_send_results_int(union u_client *client, t_result *results, uint64_t count)
+	rt_send_results(union u_client *client, t_result *results, uint64_t count)
 {
 	struct s_packet			packet;
 	struct s_send_results	data;
@@ -122,10 +122,6 @@ void
 	int						rc;
 
 	data.seq_id = client->any.seq_id;
-	data.index = 0;
-	if (count != 0)
-		data.index = results[0].index;
-	data.count = count;
 	data.zdata = rt_results_deflate(results, count, &data.zsize);
 	size = rt_sizesr(data);
 	buf = rt_malloc(size);
@@ -139,23 +135,6 @@ void
 	}
 	rt_free(data.zdata);
 	rt_free(buf);
-}
-
-void
-	rt_send_results(union u_client *client, t_result *results, uint64_t count)
-{
-	uint64_t	index;
-	uint64_t	start;
-
-	start = 0;
-	while (start < count)
-	{
-		index = 0;
-		while (start + index < count && results[start].index + index == results[start + index].index)
-			index += 1;
-		rt_send_results_int(client, results + start, index);
-		start += index;
-	}
 }
 
 int

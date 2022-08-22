@@ -33,6 +33,7 @@ static const t_directive	directives[] = {
 	{ "volume", rt_exec_volume },
 	{ "mat_end", rt_exec_mat_end },
 	{ "#", rt_exec_comment },
+	{ "$", rt_exec_conditional },
 #endif
 };
 

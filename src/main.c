@@ -335,11 +335,11 @@ void
 */
 
 void
-	world_load(t_world *world, const char *filename)
+	world_load(t_world *world, const char *filename, const char *key)
 {
 	t_parse_ctx	ctx;
 
-	parser_init(&ctx, filename);
+	parser_init(&ctx, filename, key);
 	rt_world(world, &ctx);
 	parser_destroy(&ctx);
 }
@@ -362,7 +362,7 @@ void
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	perf_start(&perf);
-	world_load(&world, options->scene_file);
+	world_load(&world, options->scene_file, options->key);
 	perf_split(&perf, "load world");
 	world_accel(&world);
 	perf_split(&perf, "build tree");

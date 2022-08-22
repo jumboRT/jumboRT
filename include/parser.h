@@ -39,9 +39,10 @@ struct s_parse_ctx {
 	t_vector	textures;
 	int			mat_use_set;
 	uint32_t	mat_use;
+	const char	*key;
 };
 
-void			parser_init(t_parse_ctx *ctx, const char *filename);
+void			parser_init(t_parse_ctx *ctx, const char *filename, const char *key);
 void			parser_destroy(t_parse_ctx *ctx);
 void			mat_add(t_parse_ctx *ctx, const char *name, uint32_t index);
 void			tex_add(t_parse_ctx *ctx, const char *name, uint32_t index);
@@ -102,9 +103,10 @@ void			rt_exec_bump(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_volume(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_conditional(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);
 
-void			world_load(t_world *world, const char *filename);
+void			world_load(t_world *world, const char *filename, const char *key);
 
 #endif
