@@ -1,36 +1,19 @@
 #include "z.h"
 
+#include "util.h"
+
 void
 	ztree_decode_code(t_zbuf *ib, unsigned int code, unsigned int *n)
 {
 	if (code < 16)
 		*n = 1;
 	else if (code == 16)
-		*n = zbuf_read(ib, 2);
+		*n = zbuf_read(ib, 2) + 3;
 	else if (code == 17)
-		*n = zbuf_read(ib, 3);
+		*n = zbuf_read(ib, 3) + 3;
 	else if (code == 18)
-		*n = zbuf_read(ib, 7);
+		*n = zbuf_read(ib, 7) + 11;
 }
-
-/* 1 3 7 15 31 */
-/*
-void
-	ztree_decode_length(t_zbuf *ib, unsigned int code, unsigned int *value)
-{
-	unsigned int	tmp;
-	unsigned int	a, b, c;
-	if (code <= 264)
-		*value = (code - 267) + 3;
-	if (code == 285)
-		*value = 258;
-	tmp = code - 265;
-	a = tmp / 2;
-	b = tmp % 2;
-	c = a * (
-	*value = (((code - 257) >> 2) - 1) + 11;
-}
-*/
 
 void
 	ztree_decode_length(t_zbuf *ib, unsigned int code, unsigned int *value)
@@ -48,7 +31,7 @@ void
 	code -= 261;
 	extra_bits = code / 4;
 	start_offset = (1 << extra_bits) * (code % 4);
-	block_offset = (4 << extra_bits);
+	block_offset = (4 << extra_bits) - 4;
 	*value = start_offset + block_offset + zbuf_read(ib, extra_bits) + 7;
 }
 
@@ -59,6 +42,7 @@ void
 	unsigned int	start_offset;
 	unsigned int	block_offset;
 
+	rt_assert(code < 30, "z_inflate_fixed: invalid dist value");
 	if (code < 2)
 		*dist = code + 1;
 	if (code < 2)
@@ -66,7 +50,7 @@ void
 	code -= 2;
 	extra_bits = code / 2;
 	start_offset = (1 << extra_bits) * (code % 2);
-	block_offset = (2 << extra_bits);
+	block_offset = (2 << extra_bits) - 2;
 	*dist = start_offset + block_offset + zbuf_read(ib, extra_bits) + 3;
 }
 

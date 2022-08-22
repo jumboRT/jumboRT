@@ -2,6 +2,8 @@
 
 #include "util.h"
 
+static const unsigned int frobnication_table[] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+
 static void
 	z_inflate_none(t_zbuf *ib, t_zbuf *ob)
 {
@@ -26,39 +28,39 @@ static void
 		ztree_default(&fixed);
 	if (lt == NULL)
 		lt = &fixed;
-	value = ztree_get(lt, ib);
-	while (value != 256)
+	while (1)
 	{
+		value = ztree_get(lt, ib);
+		if (value == 256)
+			break ;
 		if (value < 256)
 			zbuf_write(ob, 8, value);
 		if (value < 256)
 			continue ;
+		ztree_decode_length(ib, value, &value);
 		if (dt == NULL)
 			dist = zbuf_read(ib, 5);
 		else
 			dist = ztree_get(dt, ib);
-		rt_assert(dist < 30, "z_inflate_fixed: invalid dist value");
-		ztree_decode_length(ib, value, &value);
 		ztree_decode_dist(ib, dist, &dist);
 		zbuf_repeat(ob, dist, value);
-		value = ztree_get(lt, ib);
 	}
 }
 
 static void
 	z_inflate_tree(t_zbuf *ib, t_ztree *tree, t_ztree *ct)
 {
-	unsigned char	l[286];
+	unsigned char	l[288];
 	unsigned int	i;
 	unsigned int	v;
 	unsigned int	n;
 
 	i = 0;
+	ft_memset(l, 0, 288);
 	while (i < tree->count)
 	{
-		n = 1;
 		if (ct == NULL)
-			v = zbuf_read(ib, 3);
+			l[frobnication_table[i++]] = zbuf_read(ib, 3);
 		else
 		{
 			v = ztree_get(ct, ib);
@@ -68,9 +70,9 @@ static void
 				v = l[i - 1];
 			else if (v == 17 || v == 18)
 				v = 0;
+			while (n-- > 0)
+				l[i++] = v;
 		}
-		while (n-- > 0)
-			l[i++] = v;
 	}
 	ztree_init(tree, l);
 }

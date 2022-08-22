@@ -37,7 +37,7 @@ unsigned int
 		n = 8 - zb->bit;
 		if (count < n)
 			n = count;
-		data |= (zb->data[zb->index] >> zb->bit) << i;
+		data |= ((zb->data[zb->index] >> zb->bit) & ((1U << n) - 1)) << i;
 		i += n;
 		count -= n;
 		zb->bit += n;
@@ -63,7 +63,7 @@ void
 		n = 8 - zb->bit;
 		if (count < n)
 			n = count;
-		zb->data[zb->size - 1] |= data << zb->bit;
+		zb->data[zb->size - 1] |= (data & ((1U << n) - 1)) << zb->bit;
 		data >>= n;
 		count -= n;
 		zb->bit += n;
@@ -86,11 +86,17 @@ void
 void
 	zbuf_repeat(t_zbuf *zb, size_t dist, size_t size)
 {
+	size_t	i;
+
 	rt_assert(zb->bit == 0, "zbuf_repeat: zb->bit != 0");
-	rt_assert(dist >= size, "zbuf_repeat: buffer overflow");
-	rt_assert(dist <= zb->index, "zbuf_repeat: buffer underflow");
+	rt_assert(dist <= zb->size, "zbuf_repeat: buffer underflow");
 	zb->data = rt_reallog(zb->data, &zb->capacity, zb->size + size);
-	rt_memcpy(zb->data + zb->size, zb->data + zb->size - dist, size);
+	i = 0;
+	while (i < size)
+	{
+		zb->data[zb->size + i] = zb->data[zb->size - dist + i];
+		i += 1;
+	}
 	zb->size += size;
 }
 

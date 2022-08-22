@@ -10,6 +10,7 @@
 #include <ft_printf.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "z.h"
 
 
 #include <stdio.h>
@@ -380,6 +381,16 @@ int
 {
 	t_options		options;
 	union u_client	client;
+	
+
+	void	*tmp;
+	size_t	size;
+
+	tmp = lz77_deflate("ababcbababaa", 12, &size);
+	fprintf(stderr, "size:%zu\n", size);
+	write(1, tmp, size * sizeof(t_ztoken));
+	rt_free(tmp);
+	return (0);
 
 	parse_options(&options, argc, argv);
 	if (options.worker)
