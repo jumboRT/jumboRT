@@ -25,7 +25,7 @@ WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
-						   texture.c init.c ambient.c
+						   texture.c init.c ambient.c conditional.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c
 Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c

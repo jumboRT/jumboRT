@@ -42,7 +42,7 @@ static void
 	world_create(state->world);
 	state->world->img_meta.width = client->worker.opts.width;
 	state->world->img_meta.height = client->worker.opts.height;
-	world_load(state->world, client->worker.opts.scene_file);
+	world_load(state->world, client->worker.opts.scene_file, NULL);
 	world_accel(state->world);
 	work_create(client->worker.work, state, &client->worker.opts, client);
 	work_update_start(client->worker.work);
@@ -92,6 +92,7 @@ static int
 {
 	struct s_send_results	data;
 	t_result				*results;
+	size_t					count;
 
 	if (client->any.client_type == RT_WORKER)
 	{
@@ -101,10 +102,10 @@ static int
 	rt_upacksr(packet.data, &data);
 	if (data.seq_id == client->any.seq_id)
 	{
-		results = rt_results_inflate(client, data);
-		work_send_results(client->viewer.worker, results, data.count);
+		results = rt_results_inflate(data, &count);
+		work_send_results(client->viewer.worker, results, count);
 		mutex_lock(&client->viewer.job_mtx);
-		client->viewer.active_work -= data.count;
+		client->viewer.active_work -= count;
 		cond_broadcast(&client->viewer.job_cnd);
 		mutex_unlock(&client->viewer.job_mtx);
 		rt_free(results);

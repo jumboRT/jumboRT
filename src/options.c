@@ -18,6 +18,7 @@ void
 	opts->worker = 0;
 	opts->net_ip = "localhost";
 	opts->net_port = "29300";
+	opts->key = NULL;
 	opts->samples_set = 0;
 	opts->width_set = 0;
 	opts->height_set = 0;
@@ -99,6 +100,13 @@ void
 		{
 			opts->worker = 1;
 			i += 1;
+		}
+		else if (ft_strcmp(argv[i], "-k") == 0)
+		{
+			rt_assert(opts->key == NULL, "more than one key specified");
+			rt_assert(i + 1 < argc, "-k requires an argument");
+			opts->key = argv[i + 1];
+			i += 2;
 		}
 		else
 		{

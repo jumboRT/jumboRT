@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 void
-	parser_init(t_parse_ctx *ctx, const char *filename)
+	parser_init(t_parse_ctx *ctx, const char *filename, const char *key)
 {
 	char	*error;
 
@@ -22,6 +22,9 @@ void
 	ctx->column = 1;
 	ctx->mat = NULL;
 	ctx->mat_use_set = 0;
+	ctx->key = key;
+	if (ctx->key == NULL)
+		ctx->key = "default";
 	vector_create(&ctx->materials, sizeof(t_mat_entry), 0);
 	vector_create(&ctx->textures, sizeof(t_tex_entry), 0);
 }
