@@ -8,7 +8,7 @@ void
 	vector->view.data = rt_malloc(elem_size * capacity);
 	vector->view.size = 0;
 	vector->view.elem_size = elem_size;
-	vector->capacity = capacity;
+	vector->capacity = elem_size * capacity;
 }
 
 void
