@@ -7,7 +7,7 @@
 #include <sys/types.h> /* TODO make this portable */
 
 # define RT_NET_MAX_JOBS		16
-# define RT_NET_JOBSIZE			65536
+# define RT_NET_JOBSIZE			(65536 * 4)
 
 # define RT_HANDSHAKE_PACKET	0x00
 # define RT_PING_PACKET			0x01

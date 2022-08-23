@@ -1,6 +1,7 @@
 #include "z.h"
 #include "vector.h"
 #include "util.h"
+#include "perf.h"
 
 static uint32_t
 	lz_hash(uint64_t data)
@@ -290,11 +291,14 @@ t_ztoken
 {
 	t_zstate	state;
 	t_vector	result;
+	t_perf		perf;
 
+	perf_start(&perf);
 	lz77_init(&state, src, src_size);
 	result = lz77_deflate_int(&state);
 	if (out_count != NULL)
 		*out_count = view_size(result.view);
 	lz77_destroy(&state);
+	perf_split(&perf, "lz77_deflate");
 	return (result.view.data);
 }

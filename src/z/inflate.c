@@ -61,7 +61,6 @@ static void
 	while (i < count)
 	{
 		v = ztree_get(tree, ib);
-		printf("code %d\n", v);
 		zdecode_code(ib, v, &n);
 		rt_assert(i + n <= count, "z_inflate_trees: buffer overflow");
 		rt_assert(v != 16 || i > 0, "z_inflate_trees: buffer underflow");

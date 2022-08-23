@@ -27,8 +27,8 @@ void
 	if (!condition)
 	{
 		ft_fprintf(STDERR_FILENO, "assertion failed: %s\n", msg);
-		exit(EXIT_FAILURE);
-		/* TODO: raise(SIGTRAP); */
+		/* exit(EXIT_FAILURE); */
+		raise(SIGTRAP);
 	}
 }
 

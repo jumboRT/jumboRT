@@ -403,28 +403,16 @@ int
 {
 	t_options		options;
 	union u_client	client;
-	
 
-	void	*tmp;
-	size_t	size;
-	char	*str;
-	size_t	str_size;
-	char	*error;
-	unsigned char	*zdata;
-	size_t	zsize;
+	/*
+	unsigned char	*str;
+	size_t			str_size;
+	char			*error;
 
-	str = rt_readfile("src/main.c", &error, &str_size);
-	printf("%s\n", str);
-	tmp = lz77_deflate(str, str_size, &size);
-	fprintf(stderr, "size:%zu\n", size);
-	print_ztokens(tmp, size);
-	rt_free(tmp);
-	zdata = z_deflate(str, str_size, &zsize);
-	printf("%02x %02x %02x %02x\n", zdata[0], zdata[1], zdata[2], zdata[3]);
-	str = z_inflate(zdata, zsize, &str_size);
-	printf("zsize:%zu\n", zsize);
-	fwrite(str, 1, str_size, stdout);
+	str = (unsigned char *) rt_readfile("packet.bin", &error, &str_size);
+	str = z_inflate(str, str_size, &str_size);
 	return (0);
+	*/
 
 	parse_options(&options, argc, argv);
 	if (options.worker)

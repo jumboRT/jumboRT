@@ -29,8 +29,6 @@ unsigned int
 	int				i;
 	int				n;
 
-	int tmp = count;
-
 	data = 0;
 	i = 0;
 	while (count > 0)
@@ -46,7 +44,6 @@ unsigned int
 		zb->index += zb->bit == 8;
 		zb->bit %= 8;
 	}
-	printf("%d: %d\n", tmp, data);
 	return (data);
 }
 

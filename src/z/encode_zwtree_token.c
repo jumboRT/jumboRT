@@ -3,7 +3,6 @@
 static unsigned int
 	zwtt_write(struct s_zwtree_token *data, unsigned int code, unsigned int value)
 {
-	printf("zwtt %d %d\n", code, value);
 	data->code = code;
 	if (code == 16)
 	{
