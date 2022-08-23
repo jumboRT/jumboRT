@@ -28,7 +28,7 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   texture.c init.c ambient.c conditional.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c
-Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c lz77.c
+Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c lz77_new.c encode.c decode.c wtree.c encode_zwtree_token.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
@@ -110,7 +110,7 @@ FILE_NAMES				:= \
 	$(patsubst %.c,z/%.c,$(Z_FILES)) \
 	$(BASE_FILES)
 
-CC						?= clang
+CC						:= clang
 LINK_CMD				:= $(CC)
 CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic $(ANALYZER)
 LFLAGS					:= -Wall -Wextra $(ANALYZER)

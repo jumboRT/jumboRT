@@ -30,6 +30,22 @@ static void
 }
 
 static void
+	zring_create(t_zring *ring, size_t n)
+{
+	ring->data = rt_malloc(n * sizeof(*ring->data));
+	ring->size = n;
+	ring->index = 0;
+}
+
+static void
+	zring_destroy(t_zring *ring)
+{
+	rt_free(ring->data);
+	ring->size = 0;
+	ring->index = 0;
+}
+
+static void
 	ztable_destroy(t_ztable *table)
 {
 	size_t	idx;
@@ -61,6 +77,13 @@ static t_zchain
 {
 	rt_assert(hash < table->size, "out of bounds access");
 	return (table->data[hash]);
+}
+
+static t_zchain
+	*zring_chain_at(t_zring *ring, size_t index)
+{
+	rt_assert(index < ring->size, "out of bounds access in zring");
+	return (&ring->data[index]);
 }
 
 static void
@@ -107,6 +130,15 @@ static void
 {
 	rt_assert(hash < table->size, "out of bounds access");
 	zchain_push(&table->data[hash], link);
+}
+
+static void
+	lz_push_token(t_zstate *state, size_t offset, uint32_t hash, t_ztoken token)
+{
+	if (ztable_contains(&state->table, hash))
+	{
+
+	}
 }
 
 static size_t
