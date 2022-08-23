@@ -174,8 +174,7 @@ static t_ztoken
 	if (offset_a < offset_b)
 		zswap(&offset_a, &offset_b);
 	offset = 0;
-	/* TODO integer overflow check can probably go away here */
-	while (offset_a + offset >= offset_a && offset_b + offset >= offset_b
+	while (offset < ZTOKEN_MAX_LENGTH
 			&& offset_a + offset < src_size && offset_b + offset < src_size
 			&& src[offset_a + offset] == src[offset_b + offset])
 		offset++;
