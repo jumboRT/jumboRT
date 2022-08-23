@@ -183,6 +183,23 @@ static t_ztoken
 	return (result);
 }
 
+static int
+	ztoken_cmp(t_ztoken a, t_ztoken b)
+{
+	if (a.length < ZTOKEN_MIN_LENGTH)
+		return (-1);
+	if (a.data.distance > ZWINDOW_SIZE)
+		return (-1);
+	if (a.length < b.length)
+		return (-1);
+	if (a.length > b.length)
+		return (1);
+	/* TODO check if greater than might be better for our data */
+	if (a.data.distance < b.data.distance)
+		return (1);
+	return (-1);
+}
+
 static t_ztoken
 	lz_deflate(t_zstate *state, uint32_t hash)
 {
@@ -197,9 +214,13 @@ static t_ztoken
 		current = ztoken_generate(state->src, state->offset, chain->offset,
 				state->src_size);
 		/* TODO favor shorter distances if length is equal */
+		/*
 		if (current.length >= ZTOKEN_MIN_LENGTH
 				&& current.length > best.length
 				&& state->offset - chain->offset < ZWINDOW_SIZE)
+			best = current;
+		*/
+		if (ztoken_cmp(current, best) > 0)
 			best = current;
 		chain = zchain_next(&state->ring, chain);
 	}
