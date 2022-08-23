@@ -7,8 +7,12 @@
 
 #define ZEMPTY 0
 #define ZWINDOW_SIZE 32768 /* TODO USE ACTUAL VALUES */
-#define ZTABLE_SIZE 16777216
+/* #define ZTABLE_SIZE 16777216 */
 #define ZHASH_SIZE 3
+#if ZHASH_SIZE >= 8
+#error "ZHASH_SIZE way to big"
+#endif
+#define ZTABLE_SIZE (2 << ((ZHASH_SIZE * 8) - 1))
 
 typedef struct s_zbuf	t_zbuf;
 typedef struct s_ztree	t_ztree;
