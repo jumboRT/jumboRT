@@ -2,8 +2,8 @@
 
 #include "util.h"
 
-static void
-	ztree_find_counts(unsigned int *counts, unsigned char *lens)
+void
+	ztree_find_counts(unsigned int *counts, unsigned char *lens, unsigned int count)
 {
 	unsigned int	i;
 
@@ -14,7 +14,7 @@ static void
 		i += 1;
 	}
 	i = 0;
-	while (i < 288)
+	while (i < count)
 	{
 		counts[lens[i]] += 1;
 		i += 1;
@@ -22,8 +22,8 @@ static void
 	counts[0] = 0;
 }
 
-static void
-	ztree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens)
+void
+	ztree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens, unsigned int count)
 {
 	unsigned int	indices[17];
 	unsigned int	i;
@@ -36,7 +36,7 @@ static void
 		i += 1;
 	}
 	i = 0;
-	while (i < 288)
+	while (i < count)
 	{
 		if (lens[i] != 0)
 			codes[indices[lens[i]]++] = i;
@@ -45,10 +45,10 @@ static void
 }
 
 void
-	ztree_init(t_ztree *tree, unsigned char *lens)
+	ztree_init(t_ztree *tree, unsigned char *lens, unsigned int count)
 {
-	ztree_find_counts(tree->counts, lens);
-	ztree_find_codes(tree->codes, tree->counts, lens);
+	ztree_find_counts(tree->counts, lens, count);
+	ztree_find_codes(tree->codes, tree->counts, lens, count);
 }
 
 unsigned int

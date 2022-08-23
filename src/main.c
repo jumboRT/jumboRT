@@ -376,6 +376,28 @@ void
 	work_destroy(&work);
 }
 
+static void
+	print_ztokens(t_ztoken *token, size_t count)
+{
+	size_t	idx;
+
+	idx = 0;
+	while (idx < count)
+	{
+		if (token->length == 0)
+		{
+			printf("(0,0,%c)", (char) token->data.character);
+		}
+		else
+		{
+			printf("(%d,%d,\\0)", token->data.distance, token->length);
+		}
+		token++;
+		idx++;
+	}
+	printf("\n");
+}
+
 int
 	main(int argc, char **argv)
 {
@@ -385,11 +407,23 @@ int
 
 	void	*tmp;
 	size_t	size;
+	char	*str;
+	size_t	str_size;
+	char	*error;
+	unsigned char	*zdata;
+	size_t	zsize;
 
-	tmp = lz77_deflate("ababcbababaa", 12, &size);
+	str = rt_readfile("src/main.c", &error, &str_size);
+	printf("%s\n", str);
+	tmp = lz77_deflate(str, str_size, &size);
 	fprintf(stderr, "size:%zu\n", size);
-	write(1, tmp, size * sizeof(t_ztoken));
+	print_ztokens(tmp, size);
 	rt_free(tmp);
+	zdata = z_deflate(str, str_size, &zsize);
+	printf("%02x %02x %02x %02x\n", zdata[0], zdata[1], zdata[2], zdata[3]);
+	str = z_inflate(zdata, zsize, &str_size);
+	printf("zsize:%zu\n", zsize);
+	fwrite(str, 1, str_size, stdout);
 	return (0);
 
 	parse_options(&options, argc, argv);
