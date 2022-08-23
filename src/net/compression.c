@@ -33,6 +33,7 @@ void
 		rt_packu64(tmp, chunk_count);
 	}
 	tmp = z_deflate(data, ptr - data, zsize);
+	printf("results packet uncompressed=%zu compressed=%zu\n", (size_t) (ptr - data), *zsize);
 	rt_free(data);
 	return (tmp);
 }

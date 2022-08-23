@@ -8,7 +8,7 @@ void
 	unsigned int	i;
 
 	i = 0;
-	while (i < 17)
+	while (i < 16)
 	{
 		counts[i] = 0;
 		i += 1;
@@ -25,12 +25,12 @@ void
 void
 	ztree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens, unsigned int count)
 {
-	unsigned int	indices[17];
+	unsigned int	indices[16];
 	unsigned int	i;
 
 	indices[0] = 0;
 	i = 1;
-	while (i < 17)
+	while (i < 16)
 	{
 		indices[i] = indices[i - 1] + counts[i - 1];
 		i += 1;
@@ -65,7 +65,7 @@ unsigned int
 	value = zbuf_read(zb, 1);
 	while (value - code >= tree->counts[bits])
 	{
-		rt_assert(bits < 16, "ztree_get: too many bits in huffman code");
+		rt_assert(bits < 15, "ztree_get: too many bits in huffman code");
 		offset = offset + tree->counts[bits];
 		code = (code + tree->counts[bits]) << 1;
 		bits += 1;

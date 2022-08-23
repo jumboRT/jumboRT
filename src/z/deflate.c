@@ -85,6 +85,7 @@ static unsigned int
 	return (tokens - begin);
 }
 
+/*
 static void
 	z_deflate_plant_special_tree(struct s_zwtree_token *tokens, unsigned int size, t_zwtree *ct)
 {
@@ -106,6 +107,34 @@ static void
 	zwtree_init(ct, weights);
 	ct->count = 19;
 }
+*/
+
+/* TODO: this is a dirty hack that hurts compression quality. it should be
+ * fixed by using a tree generation algorithm that uses a maximum length
+ * like the packet-merge algorithm. */
+static void
+	z_deflate_plant_special_tree(struct s_zwtree_token *tokens, unsigned int size, t_zwtree *ct)
+{
+	size_t			weights[288];
+	unsigned int	i;
+
+	(void) tokens;
+	(void) size;
+	i = 0;
+	while (i < 288)
+	{
+		weights[i] = 0;
+		i += 1;
+	}
+	i = 0;
+	while (i < 19)
+	{
+		weights[i] = 1;
+		i += 1;
+	}
+	zwtree_init(ct, weights);
+	ct->count = 19;
+}
 
 static void
 	z_deflate_trees(t_zbuf *ob, t_zwtree *tree, struct s_zwtree_token *tokens, unsigned int count)
@@ -114,11 +143,13 @@ static void
 
 	i = 0;
 	while (i < tree->count)
+	{
+		rt_assert(tree->lens[zfrob(i)] < 8, "z_deflate_trees: code length length too lengthy");
 		zbuf_write(ob, 3, tree->lens[zfrob(i++)]);
+	}
 	i = 0;
 	while (i < count)
 	{
-		printf("insert code %d l=%d v=%d\n", tokens[i].code, tree->lens[tokens[i].code], tree->codes[tokens[i].code]);
 		zwtree_put(tree, ob, tokens[i].code);
 		zbuf_write(ob, tokens[i].extra_bits, tokens[i].value);
 		i += 1;

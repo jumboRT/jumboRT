@@ -44,7 +44,7 @@ struct s_zbuf {
 
 struct s_ztree {
 	unsigned int	count;
-	unsigned int	counts[17];
+	unsigned int	counts[16];
 	unsigned int	codes[288];
 };
 

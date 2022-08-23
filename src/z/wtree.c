@@ -1,5 +1,7 @@
 #include "z.h"
 
+#include "util.h"
+
 static int
 	zwtree_calculate_least(struct s_zwtree_node *nodes, unsigned int size, struct s_zwtree_node **a, struct s_zwtree_node **b)
 {
@@ -41,8 +43,8 @@ static void
 	}
 	while (zwtree_calculate_least(nodes, i, &a, &b))
 	{
-		nodes[i].weight = a->weight + b->weight;
 		nodes[i].parent = NULL;
+		nodes[i].weight = a->weight + b->weight;
 		a->parent = &nodes[i];
 		b->parent = &nodes[i];
 		i += 1;
@@ -67,7 +69,7 @@ static void
 			lens[i] += 1;
 			node = node->parent;
 		}
-		printf("length of %d = %d\n", i, lens[i]);
+		rt_assert(lens[i] <= 15, "zwtree_find_lens: too many bits in huffman code");
 		i += 1;
 	}
 }
@@ -75,12 +77,12 @@ static void
 void
 	zwtree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens)
 {
-	unsigned int	indices[17];
+	unsigned int	indices[16];
 	unsigned int	i;
 
 	indices[0] = 0;
 	i = 1;
-	while (i < 17)
+	while (i < 16)
 	{
 		indices[i] = (indices[i - 1] + counts[i - 1]) << 1;
 		i += 1;
@@ -92,14 +94,13 @@ void
 			codes[i] = indices[lens[i]]++;
 		i += 1;
 	}
-	
 }
 
 void
 	zwtree_init(t_zwtree *tree, size_t *weights)
 {
 	struct s_zwtree_node	nodes[575];
-	unsigned int			counts[17];
+	unsigned int			counts[16];
 	unsigned int			i;
 
 	zwtree_init_nodes(nodes, weights);

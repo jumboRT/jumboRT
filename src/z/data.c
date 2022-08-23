@@ -44,7 +44,7 @@ void
 void
 	zwtree_default(t_zwtree *tree, t_zwtree **dst)
 {
-	unsigned int	counts[17];
+	unsigned int	counts[16];
 
 	if (dst == NULL || *dst == NULL)
 	{
