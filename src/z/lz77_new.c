@@ -3,6 +3,7 @@
 #include "util.h"
 #include "perf.h"
 
+
 // 1. chains genereren voor herhalende data
 // 2. in ztoken_generate gaan er dingen fout als de offset standaard op ZHASH_SIZE staat
 // 3. er kunnen erg veel sanity checks weg voor performance, want het is veel te traag
@@ -97,13 +98,11 @@ static uint64_t
 	size_t		extra;
 
 	//rt_assert(offset < src_size, "read on empty buffer");
-	rt_assert(src_size - offset >= ZPEEK_SIZE, "cannot peek past end of buffer");
-	// TODO: remove some checks if this assert never triggers ^^
+	//rt_assert(src_size - offset >= ZHASH_SIZE, "cannot peek past end of buffer"); // this assert makes the code faster !?!?!
 	extra = 0;
 	result = 0;
-	// TODO: integer overflow check can be removed
-	while (extra < ZPEEK_SIZE && offset + extra >= offset
-			&& offset + extra < src_size)
+	(void) src_size;
+	while (extra < ZHASH_SIZE)
 	{
 		result |= src[offset + extra] << (extra * 8);
 		extra++;
@@ -111,26 +110,57 @@ static uint64_t
 	return (result);
 }
 
-// TODO: token is never used in chain
+static size_t
+	ztoken_mismatch(t_zstate *state, size_t offset_a,
+			size_t offset_b, size_t min)
+{
+	const unsigned char	*a;
+	const unsigned char *end_a;
+	const unsigned char	*b;
+	size_t				max_offset;
+
+	max_offset = state->src_size - offset_a;
+	if (ZTOKEN_MAX_LENGTH < max_offset)
+		max_offset = ZTOKEN_MAX_LENGTH;
+	a = state->src + offset_a;
+	b = state->src + offset_b;
+	end_a = a + max_offset;
+	a += min;
+	b += min;
+	while (a + 7 < end_a && *(uint64_t *) a == *(uint64_t *) b)
+	{
+		a += 8;
+		b += 8;
+	}
+	while (a + 0 < end_a && *(uint8_t *) a == *(uint8_t *) b)
+	{
+		a += 1;
+		b += 1;
+	}
+	return (a - (state->src + offset_a));
+}
+
 static void
 	lz_push(t_zstate *state, uint32_t hash, size_t offset)
 {
 	t_zchain	*link;
-	uint32_t	old_hash;
+	t_zchain	*last;
 
 	link = zring_at(&state->ring, state->ring.index);
 	if (zring_isfull(&state->ring))
-	{
-		old_hash = lz_hash(lz_peek_next(state->src, link->offset,
-					state->src_size));
-		state->table.data[old_hash].first = link->next;
-	}
+		state->table.data[link->hash].first = link->next;
 	link->offset = offset;
+	link->hash = hash;
 	link->next = ZEMPTY;
+	link->next_match = 0;
 	if (ztable_at(&state->table, hash) == ZEMPTY)
 		state->table.data[hash].first = state->ring.index;
 	else
-		zring_at(&state->ring, state->table.data[hash].last)->next = state->ring.index;
+	{
+		last = zring_at(&state->ring, state->table.data[hash].last);
+		last->next = state->ring.index;
+		last->next_match = ztoken_mismatch(state, offset, last->offset, ZHASH_SIZE);
+	}
 	state->table.data[hash].last = state->ring.index;
 	zring_advance(&state->ring);
 }
@@ -147,29 +177,12 @@ static t_ztoken
 }
 
 static t_ztoken
-	ztoken_generate(const unsigned char *src, size_t offset_a,
-			size_t offset_b, size_t src_size)
+	ztoken_generate(t_zstate *state, size_t offset_a,
+			size_t offset_b)
 {
-	const unsigned char	*a;
-	const unsigned char *end_a;
-	const unsigned char	*b;
-	t_ztoken			result;
-	size_t				max_offset;
+	t_ztoken	result;
 
-	max_offset = src_size - offset_a;
-	if (ZTOKEN_MAX_LENGTH < max_offset)
-		max_offset = ZTOKEN_MAX_LENGTH;
-	a = src + offset_a;
-	b = src + offset_b;
-	end_a = a + max_offset;
-	a += ZHASH_SIZE;
-	b += ZHASH_SIZE;
-	while (a != end_a && *a == *b)
-	{
-		a += 1;
-		b += 1;
-	}
-	result.length = a - (src + offset_a);
+	result.length = ztoken_mismatch(state, offset_a, offset_b, ZHASH_SIZE);
 	result.data.distance = offset_a - offset_b;
 	return (result);
 }
@@ -179,16 +192,7 @@ static int
 {
 	if (a.length < ZTOKEN_MIN_LENGTH)
 		return (-1);
-	if (a.data.distance > ZWINDOW_SIZE)
-		return (-1);
-	if (a.length < b.length)
-		return (-1);
-	if (a.length > b.length)
-		return (1);
-	/* TODO check if greater than might be better for our data */
-	if (a.data.distance < b.data.distance)
-		return (1);
-	return (-1);
+	return ((a.length > b.length) - (a.length < b.length));
 }
 
 static t_ztoken
@@ -197,15 +201,22 @@ static t_ztoken
 	t_zchain	*chain;
 	t_ztoken	current;
 	t_ztoken	best;
+	size_t		prev_match;
 
 	best = ztoken_at(state, state->offset);
 	chain = zring_at(&state->ring, ztable_at(&state->table, hash));
+	current.length = ZHASH_SIZE;
+	prev_match = ZHASH_SIZE;
 	while (chain != NULL)
 	{
-		current = ztoken_generate(state->src, state->offset, chain->offset,
-				state->src_size);
-		if (ztoken_cmp(current, best) > 0)
+		if (prev_match == current.length)
+			current.length = ztoken_mismatch(state, state->offset, chain->offset, current.length);
+		else if (prev_match < current.length)
+			current.length = prev_match;
+		current.data.distance = state->offset - chain->offset;
+		if (ztoken_cmp(current, best) >= 0)
 			best = current;
+		prev_match = chain->next_match;
 		chain = zchain_next(&state->ring, chain);
 	}
 	return (best);
