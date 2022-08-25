@@ -82,36 +82,12 @@ static int16_t
 	return (table->data[hash].first);
 }
 
-static void
-	ztable_put(t_ztable *table, uint32_t hash, int16_t value)
-{
-	//rt_assert(hash < table->size, "out of bounds access in ztable_put");
-	table->data[hash].first = value;
-}
-
 static t_zchain
 	*zchain_next(t_zring *ring, t_zchain *current)
 {
 	if (current->next == -1)
 		return (NULL);
 	return (zring_at(ring, current->next));
-}
-
-static void
-	zchain_push(t_zring *ring, uint16_t index, uint16_t link)
-{
-	t_zchain	*chain;
-
-	//rt_assert(link < ring->size, "invalid link index in zchain_push");
-	//rt_assert(zring_at(ring, link)->next == ZEMPTY, "next is not initialized");
-	/* //rt_assert(index != link, "circle"); */
-	if (index == link)
-		return;
-	
-	chain = zring_at(ring, index);
-	while (chain->next != ZEMPTY)
-		chain = zchain_next(ring, chain);
-	chain->next = link;
 }
 
 static uint64_t
@@ -121,8 +97,11 @@ static uint64_t
 	size_t		extra;
 
 	//rt_assert(offset < src_size, "read on empty buffer");
+	rt_assert(src_size - offset >= ZPEEK_SIZE, "cannot peek past end of buffer");
+	// TODO: remove some checks if this assert never triggers ^^
 	extra = 0;
 	result = 0;
+	// TODO: integer overflow check can be removed
 	while (extra < ZPEEK_SIZE && offset + extra >= offset
 			&& offset + extra < src_size)
 	{
@@ -132,8 +111,9 @@ static uint64_t
 	return (result);
 }
 
+// TODO: token is never used in chain
 static void
-	lz_push(t_zstate *state, uint32_t hash, t_ztoken token)
+	lz_push(t_zstate *state, uint32_t hash, size_t offset)
 {
 	t_zchain	*link;
 	uint32_t	old_hash;
@@ -145,8 +125,7 @@ static void
 					state->src_size));
 		state->table.data[old_hash].first = link->next;
 	}
-	link->offset = state->offset;
-	link->token = token;
+	link->offset = offset;
 	link->next = ZEMPTY;
 	if (ztable_at(&state->table, hash) == ZEMPTY)
 		state->table.data[hash].first = state->ring.index;
@@ -167,29 +146,30 @@ static t_ztoken
 	return (result);
 }
 
-static void
-	zswap(size_t *a, size_t *b)
-{
-	size_t	tmp;
-	
-	tmp = *a;
-	*a = * b;
-	*b = tmp;
-}
-
 static t_ztoken
 	ztoken_generate(const unsigned char *src, size_t offset_a,
 			size_t offset_b, size_t src_size)
 {
-	t_ztoken	result;
-	size_t		offset;
+	const unsigned char	*a;
+	const unsigned char *end_a;
+	const unsigned char	*b;
+	t_ztoken			result;
+	size_t				max_offset;
 
-	offset = 0;
-	while (offset < ZTOKEN_MAX_LENGTH
-			&& offset_a + offset < src_size
-			&& src[offset_a + offset] == src[offset_b + offset])
-		offset++;
-	result.length = offset;
+	max_offset = src_size - offset_a;
+	if (ZTOKEN_MAX_LENGTH < max_offset)
+		max_offset = ZTOKEN_MAX_LENGTH;
+	a = src + offset_a;
+	b = src + offset_b;
+	end_a = a + max_offset;
+	a += ZHASH_SIZE;
+	b += ZHASH_SIZE;
+	while (a != end_a && *a == *b)
+	{
+		a += 1;
+		b += 1;
+	}
+	result.length = a - (src + offset_a);
 	result.data.distance = offset_a - offset_b;
 	return (result);
 }
@@ -224,13 +204,6 @@ static t_ztoken
 	{
 		current = ztoken_generate(state->src, state->offset, chain->offset,
 				state->src_size);
-		/* TODO favor shorter distances if length is equal */
-		/*
-		if (current.length >= ZTOKEN_MIN_LENGTH
-				&& current.length > best.length
-				&& state->offset - chain->offset < ZWINDOW_SIZE)
-			best = current;
-		*/
 		if (ztoken_cmp(current, best) > 0)
 			best = current;
 		chain = zchain_next(&state->ring, chain);
@@ -242,7 +215,6 @@ static t_ztoken
 	lz_encode(t_zstate *state, uint32_t hash, t_vector *out)
 {
 	t_ztoken	token;
-	t_ztoken	temp;
 	size_t		length;
 	size_t		offset;
 
@@ -250,13 +222,11 @@ static t_ztoken
 	vector_push(out, &token);
 	offset = 0;
 	length = token.length;
-	temp = token;
-	while (offset < length)
+	while (offset < length && state->offset + offset + ZHASH_SIZE - 1 < state->src_size)
 	{
-		lz_push(state, hash, temp);
-		temp = ztoken_at(state, state->offset + offset);
 		hash = lz_hash(lz_peek_next(state->src, state->offset + offset,
 					state->src_size));
+		lz_push(state, hash, state->offset + offset);
 		offset += 1;
 	}
 	return (token);
@@ -279,11 +249,17 @@ static t_vector
 	t_vector	result;
 
 	vector_create(&result, sizeof(t_ztoken), 0);
-	while (state->offset < state->src_size)
+	while (state->offset + ZHASH_SIZE - 1 < state->src_size)
 	{
 		next = lz_peek_next(state->src, state->offset, state->src_size);
 		hash = lz_hash(next);
 		encoded = lz_encode(state, hash, &result);
+		lz_advance(state, encoded.length);
+	}
+	while (state->offset < state->src_size)
+	{
+		encoded = ztoken_at(state, state->offset);
+		vector_push(&result, &encoded);
 		lz_advance(state, encoded.length);
 	}
 	return (result);
