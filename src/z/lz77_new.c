@@ -96,6 +96,10 @@ static void
 
 	rt_assert(link < ring->size, "invalid link index in zchain_push");
 	rt_assert(zring_at(ring, link)->next == ZEMPTY, "next is not initialized");
+	/* rt_assert(index != link, "circle"); */
+	if (index == link)
+		return;
+	
 	chain = zring_at(ring, index);
 	while (chain->next != ZEMPTY)
 		chain = zchain_next(ring, chain);
@@ -129,7 +133,7 @@ static void
 	link = zring_at(&state->ring, state->ring.index);
 	if (zring_isfull(&state->ring))
 	{
-		old_hash = lz_hash(lz_peek_next(state->src, state->offset,
+		old_hash = lz_hash(lz_peek_next(state->src, link->offset,
 					state->src_size));
 		ztable_put(&state->table, old_hash, link->next);
 	}
@@ -142,6 +146,17 @@ static void
 		zchain_push(&state->ring, ztable_at(&state->table, hash),
 				state->ring.index);
 	zring_advance(&state->ring);
+}
+
+static t_ztoken
+	ztoken_at(t_zstate *state, size_t offset)
+{
+	t_ztoken result;
+
+	result.length = 0;
+	result.data.distance = 0;
+	result.data.character = state->src[offset];
+	return (result);
 }
 
 static t_ztoken
@@ -229,12 +244,26 @@ static t_ztoken
 }
 
 static t_ztoken 
-	lz_encode(t_zstate *state, uint32_t hash)
+	lz_encode(t_zstate *state, uint32_t hash, t_vector *out)
 {
 	t_ztoken	token;
+	size_t length;
+	size_t offset;
 
 	token = lz_deflate(state, hash);
-	lz_push(state, hash, token);
+	vector_push(out, &token);
+	length = token.length;
+	offset = ZHASH_SIZE;
+	while (1)
+	{
+		lz_push(state, hash, token);
+		if (length <= ZHASH_SIZE || length - offset <= ZHASH_SIZE)
+			break;
+		token = ztoken_at(state, state->offset + offset);
+		hash = lz_hash(lz_peek_next(state->src, state->offset + offset,
+					    state->src_size));
+		offset += 1;
+	}
 	return (token);
 }
 
@@ -259,12 +288,11 @@ static t_vector
 	{
 		next = lz_peek_next(state->src, state->offset, state->src_size);
 		hash = lz_hash(next);
-		encoded = lz_encode(state, hash);
+		encoded = lz_encode(state, hash, &result);
 		if (encoded.length == 0)
 			lz_advance(state, 1);
 		else
 			lz_advance(state, encoded.length);
-		vector_push(&result, &encoded);
 	}
 	return (result);
 }
