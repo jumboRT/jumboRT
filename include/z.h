@@ -6,7 +6,7 @@
 
 #define ZWINDOW_SIZE (32768)
 #define ZEMPTY ((int16_t) -1)
-#define ZHASH_SIZE 3
+#define ZHASH_SIZE 2
 #define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
 #define ZHASH_MASK (ZTABLE_SIZE - 1)
 #define ZTOKEN_MIN_LENGTH 3

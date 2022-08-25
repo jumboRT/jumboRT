@@ -177,45 +177,30 @@ static t_ztoken
 }
 
 static t_ztoken
-	ztoken_generate(t_zstate *state, size_t offset_a,
-			size_t offset_b)
-{
-	t_ztoken	result;
-
-	result.length = ztoken_mismatch(state, offset_a, offset_b, ZHASH_SIZE);
-	result.data.distance = offset_a - offset_b;
-	return (result);
-}
-
-static int
-	ztoken_cmp(t_ztoken a, t_ztoken b)
-{
-	if (a.length < ZTOKEN_MIN_LENGTH)
-		return (-1);
-	return ((a.length > b.length) - (a.length < b.length));
-}
-
-static t_ztoken
 	lz_deflate(t_zstate *state, uint32_t hash)
 {
 	t_zchain	*chain;
-	t_ztoken	current;
 	t_ztoken	best;
+	size_t		current_length;
 	size_t		prev_match;
 
 	best = ztoken_at(state, state->offset);
 	chain = zring_at(&state->ring, ztable_at(&state->table, hash));
-	current.length = ZHASH_SIZE;
+	current_length = ZHASH_SIZE;
 	prev_match = ZHASH_SIZE;
 	while (chain != NULL)
 	{
-		if (prev_match == current.length)
-			current.length = ztoken_mismatch(state, state->offset, chain->offset, current.length);
-		else if (prev_match < current.length)
-			current.length = prev_match;
-		current.data.distance = state->offset - chain->offset;
-		if (ztoken_cmp(current, best) >= 0)
-			best = current;
+		if (prev_match == current_length)
+		{
+			current_length = ztoken_mismatch(state, state->offset, chain->offset, current_length);
+			if (current_length >= ZTOKEN_MIN_LENGTH && current_length >= best.length)
+			{
+				best.length = current_length;
+				best.data.distance = state->offset - chain->offset;
+			}
+		}
+		else if (prev_match < current_length)
+			current_length = prev_match;
 		prev_match = chain->next_match;
 		chain = zchain_next(&state->ring, chain);
 	}
@@ -306,3 +291,4 @@ t_ztoken
 	lz77_destroy(&state);
 	return (result.view.data);
 }
+

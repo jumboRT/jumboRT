@@ -32,8 +32,18 @@ void
 void
 	*rt_packfl(void *dst, FLOAT f)
 {
-	memcpy(dst, &f, sizeof(f));
-	return ((char *) dst + sizeof(f));
+	union {
+		FLOAT f;
+		uint32_t i;
+	} conv;
+	uint16_t tmp;
+	
+	conv.f = f;
+
+	tmp = ((conv.i>>16)&0x8000)|
+		((((conv.i&0x7f800000)-0x38000000)>>13)&0x7c00)|((conv.i>>13)&0x03ff);
+	memcpy(dst, &tmp, sizeof(tmp));
+	return ((char *) dst + sizeof(tmp));
 }
 
 void
@@ -59,8 +69,17 @@ void
 void
 	*rt_upackfl(void *src, FLOAT *f)
 {
-	memcpy(f, src, sizeof(*f));
-	return ((char *) src + sizeof(*f));
+
+	union {
+		FLOAT f;
+		uint32_t i;
+	} conv;
+	uint16_t	tmp;
+
+	memcpy(&tmp, src, sizeof(tmp));
+	conv.i = ((tmp&0x8000)<<16)|(((tmp&0x7c00)+0x1c000)<<13)|((tmp & 0x03ff)<<13);
+	*f = conv.f;
+	return ((char *) src + sizeof(tmp));
 }
 
 void
