@@ -37,8 +37,8 @@ static t_zchain
 {
 	if (index == ZEMPTY)
 		return (NULL);
-	rt_assert(index >= 0, "out of bounds access in zring_at");
-	rt_assert((uint16_t) index < ring->size, "out of bounds acces in zring_at");
+	//rt_assert(index >= 0, "out of bounds access in zring_at");
+	//rt_assert((uint16_t) index < ring->size, "out of bounds acces in zring_at");
 	return (&ring->data[index]);
 }
 
@@ -62,7 +62,10 @@ static void
 	table->data = rt_malloc(sizeof(*table->data) * n);
 	table->size = n;
 	while (n--)
-		table->data[n] = ZEMPTY;
+	{
+		table->data[n].first = ZEMPTY;
+		table->data[n].last = ZEMPTY;
+	}
 }
 
 static void
@@ -75,15 +78,15 @@ static void
 static int16_t
 	ztable_at(t_ztable *table, uint32_t hash)
 {
-	rt_assert(hash < table->size, "out of bounds access in ztable_at");
-	return (table->data[hash]);
+	//rt_assert(hash < table->size, "out of bounds access in ztable_at");
+	return (table->data[hash].first);
 }
 
 static void
 	ztable_put(t_ztable *table, uint32_t hash, int16_t value)
 {
-	rt_assert(hash < table->size, "out of bounds access in ztable_put");
-	table->data[hash] = value;
+	//rt_assert(hash < table->size, "out of bounds access in ztable_put");
+	table->data[hash].first = value;
 }
 
 static t_zchain
@@ -99,9 +102,9 @@ static void
 {
 	t_zchain	*chain;
 
-	rt_assert(link < ring->size, "invalid link index in zchain_push");
-	rt_assert(zring_at(ring, link)->next == ZEMPTY, "next is not initialized");
-	/* rt_assert(index != link, "circle"); */
+	//rt_assert(link < ring->size, "invalid link index in zchain_push");
+	//rt_assert(zring_at(ring, link)->next == ZEMPTY, "next is not initialized");
+	/* //rt_assert(index != link, "circle"); */
 	if (index == link)
 		return;
 	
@@ -117,7 +120,7 @@ static uint64_t
 	uint64_t	result;
 	size_t		extra;
 
-	rt_assert(offset < src_size, "read on empty buffer");
+	//rt_assert(offset < src_size, "read on empty buffer");
 	extra = 0;
 	result = 0;
 	while (extra < ZPEEK_SIZE && offset + extra >= offset
@@ -140,16 +143,16 @@ static void
 	{
 		old_hash = lz_hash(lz_peek_next(state->src, link->offset,
 					state->src_size));
-		ztable_put(&state->table, old_hash, link->next);
+		state->table.data[old_hash].first = link->next;
 	}
 	link->offset = state->offset;
 	link->token = token;
 	link->next = ZEMPTY;
 	if (ztable_at(&state->table, hash) == ZEMPTY)
-		ztable_put(&state->table, hash, state->ring.index);
+		state->table.data[hash].first = state->ring.index;
 	else
-		zchain_push(&state->ring, ztable_at(&state->table, hash),
-				state->ring.index);
+		zring_at(&state->ring, state->table.data[hash].last)->next = state->ring.index;
+	state->table.data[hash].last = state->ring.index;
 	zring_advance(&state->ring);
 }
 
@@ -181,11 +184,9 @@ static t_ztoken
 	t_ztoken	result;
 	size_t		offset;
 
-	if (offset_a < offset_b)
-		zswap(&offset_a, &offset_b);
 	offset = 0;
 	while (offset < ZTOKEN_MAX_LENGTH
-			&& offset_a + offset < src_size && offset_b + offset < src_size
+			&& offset_a + offset < src_size
 			&& src[offset_a + offset] == src[offset_b + offset])
 		offset++;
 	result.length = offset;
@@ -264,8 +265,8 @@ static t_ztoken
 static void
 	lz_advance(t_zstate *state, size_t amount)
 {
-	rt_assert(state->offset + amount >= state->offset, "src buffer overflow");
-	rt_assert(state->offset + amount <= state->src_size, "src buffer overflow");
+	//rt_assert(state->offset + amount >= state->offset, "src buffer overflow");
+	//rt_assert(state->offset + amount <= state->src_size, "src buffer overflow");
 	state->offset += amount;
 }
 

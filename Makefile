@@ -198,8 +198,8 @@ else ifeq ($(config), release)
 	CFLAGS		+= -g3 -O2 -DRT_DEBUG=1
 	LFLAGS		+= -g3 -O2 -DRT_DEBUG=1
 else ifeq ($(config), profile)
-	CFLAGS		+= -g3 -O2 -pg
-	LFLAGS		+= -g3 -O2 -pg
+	CFLAGS		+= -g3 -Ofast -pg -flto -march=native
+	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
 		CFLAGS		+= -g0 -Ofast -flto -march=native
