@@ -55,8 +55,15 @@ struct s_zwtree {
 };
 
 struct s_zwtree_node {
-	struct s_zwtree_node	*parent;
+	struct s_zwtree_node	*left;
+	struct s_zwtree_node	*right;
 	size_t					weight;
+	unsigned int			code;
+};
+
+struct s_zwtree_list {
+	struct s_zwtree_node	nodes[575];
+	size_t					size;
 };
 
 struct s_zwtree_token {
@@ -134,7 +141,7 @@ unsigned int	ztree_get(t_ztree *tree, t_zbuf *zb);
 
 void			zwtree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens);
 void			zwtree_default(t_zwtree *tree, t_zwtree **dst);
-void			zwtree_init(t_zwtree *tree, size_t *weights);
+void			zwtree_init(t_zwtree *tree, size_t *weights, unsigned int max_len);
 void			zwtree_put(t_zwtree *tree, t_zbuf *zb, unsigned int value);
 
 void			*z_deflate(void *src, size_t src_size, size_t *dst_size);
