@@ -60,8 +60,8 @@ static void
 		i += 1;
 	}
 	lt_weights[256] += 1;
-	zwtree_init(lt, lt_weights);
-	zwtree_init(dt, dt_weights);
+	zwtree_init(lt, lt_weights, 15);
+	zwtree_init(dt, dt_weights, 15);
 	dt->count += dt->count == 0;
 }
 
@@ -85,7 +85,6 @@ static unsigned int
 	return (tokens - begin);
 }
 
-/*
 static void
 	z_deflate_plant_special_tree(struct s_zwtree_token *tokens, unsigned int size, t_zwtree *ct)
 {
@@ -104,35 +103,7 @@ static void
 		weights[tokens[i].code] += 1;
 		i += 1;
 	}
-	zwtree_init(ct, weights);
-	ct->count = 19;
-}
-*/
-
-/* TODO: this is a dirty hack that hurts compression quality. it should be
- * fixed by using a tree generation algorithm that uses a maximum length
- * like the packet-merge algorithm. */
-static void
-	z_deflate_plant_special_tree(struct s_zwtree_token *tokens, unsigned int size, t_zwtree *ct)
-{
-	size_t			weights[288];
-	unsigned int	i;
-
-	(void) tokens;
-	(void) size;
-	i = 0;
-	while (i < 288)
-	{
-		weights[i] = 0;
-		i += 1;
-	}
-	i = 0;
-	while (i < 19)
-	{
-		weights[i] = 1;
-		i += 1;
-	}
-	zwtree_init(ct, weights);
+	zwtree_init(ct, weights, 7);
 	ct->count = 19;
 }
 
