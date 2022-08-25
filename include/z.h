@@ -4,21 +4,13 @@
 #include "vector.h"
 #include <stdlib.h>
 
-#define ZWINDOW_SIZE 32768
-
+#define ZWINDOW_SIZE (16)
 #define ZEMPTY ((int16_t) -1)
-#ifdef SOMETHING
-#define ZHASH_SIZE 1
-#define ZPEEK_SIZE ZHASH_SIZE
-#define ZHASH_MASK 0xFF
-#define ZTOKEN_MIN_LENGTH 1
-#else
 #define ZHASH_SIZE 3
 #define ZPEEK_SIZE 3
 #define ZHASH_MASK 0x0000000000FFFFFF
 #define ZTOKEN_MIN_LENGTH 3
 #define ZTOKEN_MAX_LENGTH 258
-#endif
 
 #if ZHASH_SIZE >= 8
 #error "ZHASH_SIZE way to big"
@@ -102,7 +94,6 @@ struct s_ztable {
 struct s_zchain {
 	size_t		offset;
 	int16_t		next;
-	t_ztoken	token;
 };
 
 struct s_zring {

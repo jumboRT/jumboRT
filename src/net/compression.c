@@ -50,9 +50,12 @@ t_result
 	uint64_t		chunk_count;
 	t_result		*result;
 
+	char *error;
+
 	*count = 0;
 	result = NULL;
 	data = z_inflate(packet.zdata, packet.zsize, &size);
+	//rt_writefile("packet.bin", &error, data, size);
 	ptr = data;
 	while ((size_t) (ptr - data) < size)
 	{
