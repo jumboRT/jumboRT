@@ -158,20 +158,9 @@ static t_ztoken
 {
 	t_ztoken result;
 
-	result.length = 0;
+	result.length = 1;
 	result.data.distance = 0;
 	result.data.character = state->src[offset];
-	return (result);
-}
-
-static t_ztoken
-	ztoken_single(t_zstate *state)
-{
-	t_ztoken	result;
-
-	result.length = 0;
-	result.data.distance = 0;
-	result.data.character = state->src[state->offset];
 	return (result);
 }
 
@@ -228,7 +217,7 @@ static t_ztoken
 	t_ztoken	current;
 	t_ztoken	best;
 
-	best = ztoken_single(state);
+	best = ztoken_at(state, state->offset);
 	chain = zring_at(&state->ring, ztable_at(&state->table, hash));
 	while (chain != NULL)
 	{
@@ -258,17 +247,15 @@ static t_ztoken
 
 	token = lz_deflate(state, hash);
 	vector_push(out, &token);
+	offset = 0;
 	length = token.length;
-	lz_push(state, hash, token);
-	if (length == 0)
-		return (token);
-	offset = 1;
+	temp = token;
 	while (offset < length)
 	{
+		lz_push(state, hash, temp);
 		temp = ztoken_at(state, state->offset + offset);
 		hash = lz_hash(lz_peek_next(state->src, state->offset + offset,
 					state->src_size));
-		lz_push(state, hash, temp);
 		offset += 1;
 	}
 	return (token);
