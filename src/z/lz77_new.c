@@ -283,10 +283,7 @@ static t_vector
 		next = lz_peek_next(state->src, state->offset, state->src_size);
 		hash = lz_hash(next);
 		encoded = lz_encode(state, hash, &result);
-		if (encoded.length == 0)
-			lz_advance(state, 1);
-		else
-			lz_advance(state, encoded.length);
+		lz_advance(state, encoded.length);
 	}
 	return (result);
 }
