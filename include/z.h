@@ -89,9 +89,14 @@ struct s_ztoken_data {
 	unsigned int	dist_value;
 };
 
+struct s_ztable_entry {
+	int16_t	first;
+	int16_t	last;
+};
+
 struct s_ztable {
-	int16_t	*data;
-	size_t	size;
+	struct s_ztable_entry	*data;
+	size_t					size;
 };
 
 struct s_zchain {
