@@ -4,6 +4,93 @@
 #include "util.h"
 #include <string.h>
 
+static uint32_t
+	get_mantissa(uint16_t i)
+{
+	uint32_t	m;
+	uint32_t	e;
+
+	if (i == 0)
+		return (0);
+	if (i >= 1024)
+		return (0x38000000 + ((i - 1024) << 13));
+	m = i << 13;
+	e = 0;
+	while (!(m & 0x00800000))
+	{
+		e -= 0x00800000;
+		m <<= 1;
+	}
+	m &= 0x00800000;
+	e += 0x38800000;
+	return (m | e);
+}
+
+static uint32_t
+	get_exponent(uint16_t i)
+{
+	if (i == 0)
+		return (0);
+	else if (i == 32)
+		return (0x80000000);
+	else if (i == 31)
+		return (0x47800000);
+	else if (i == 63)
+		return (0xc7800000);
+	else if (i < 32)
+		return ((uint32_t) i << 23);
+	else
+		return (0x80000000 + ((i - 32) << 23));
+}
+
+static uint32_t
+	get_offset(uint16_t i)
+{
+	if (i == 0 || i == 32)
+		return (0);
+	else
+		return (1024);
+}
+
+static uint16_t
+	get_base(uint32_t i)
+{
+	uint16_t	b;
+
+	if (i < 103)
+		b = 0;
+	else if (i < 113)
+		b = 0x0400 >> (113 - i);
+	else if (i < 142)
+		b = (i - 113) << 10;
+	else if (i < 255)
+		b = 0x7c00;
+	else
+		b = 0x7c00;
+	if (i & 0x100)
+		b |= 0x8000;
+	return (b);
+	
+}
+
+static uint16_t
+	get_shift(uint32_t i)
+{
+	uint16_t	b;
+
+	if (i < 103)
+		b = 24;
+	else if (i < 113)
+		b = 126 - i;
+	else if (i < 142)
+		b = 13;
+	else if (i < 255)
+		b = 24;
+	else
+		b = 13;
+	return (b);
+}
+
 void
 	*rt_packu64(void *dst, uint64_t i)
 {
@@ -32,18 +119,13 @@ void
 void
 	*rt_packfl(void *dst, FLOAT f)
 {
-	union {
-		FLOAT f;
-		uint32_t i;
-	} conv;
-	uint16_t tmp;
-	
-	conv.f = f;
+	uint16_t	h;
+	uint32_t	i;
 
-	tmp = ((conv.i>>16)&0x8000)|
-		((((conv.i&0x7f800000)-0x38000000)>>13)&0x7c00)|((conv.i>>13)&0x03ff);
-	memcpy(dst, &tmp, sizeof(tmp));
-	return ((char *) dst + sizeof(tmp));
+	i = *(uint32_t *) &f;
+	h = get_base((i >> 23) & 0x1ff) + ((i & 0x007fffff) >> get_shift((i >> 23) & 0x1ff));
+	memcpy(dst, &h, sizeof(h));
+	return ((char *) dst + sizeof(h));
 }
 
 void
@@ -69,17 +151,13 @@ void
 void
 	*rt_upackfl(void *src, FLOAT *f)
 {
+	uint16_t	h;
+	uint32_t	i;
 
-	union {
-		FLOAT f;
-		uint32_t i;
-	} conv;
-	uint16_t	tmp;
-
-	memcpy(&tmp, src, sizeof(tmp));
-	conv.i = ((tmp&0x8000)<<16)|(((tmp&0x7c00)+0x1c000)<<13)|((tmp & 0x03ff)<<13);
-	*f = conv.f;
-	return ((char *) src + sizeof(tmp));
+	memcpy(&h, src, sizeof(h));
+	i = get_mantissa(get_offset(h >> 10) + (h & 0x3ff)) + get_exponent(h >> 10);
+	*(uint32_t *) f = i;
+	return ((char *) src + sizeof(h));
 }
 
 void

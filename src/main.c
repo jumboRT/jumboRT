@@ -406,14 +406,13 @@ int
 	t_options		options;
 	union u_client	client;
 
-	/*
 	unsigned char	*str;
 	size_t			str_size;
 	char			*error;
 	t_ztoken		*tokens;
 	size_t			tok_count;
 
-	str = (unsigned char *) rt_readfile("packet.bin", &error, &str_size);
+	str = (unsigned char *) rt_readfile("packet16.bin", &error, &str_size);
 	//tokens = lz77_deflate(str, str_size, &tok_count);
 	//printf("token count: %zu\n", tok_count);
 	printf("uncompressed size: %zu\n", str_size);
@@ -426,7 +425,6 @@ int
 	str = z_inflate(str, str_size, &str_size);
 	printf("decompressed size: %zu\n", str_size);
 	return (0);
-	*/
 
 	parse_options(&options, argc, argv);
 	if (options.worker)
