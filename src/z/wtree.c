@@ -3,75 +3,122 @@
 #include "util.h"
 
 static int
-	zwtree_calculate_least(struct s_zwtree_node *nodes, unsigned int size, struct s_zwtree_node **a, struct s_zwtree_node **b)
+	zwtree_node_cmp(const void *a_ptr, const void *b_ptr)
 {
-	unsigned int	i;
+	const struct s_zwtree_node	*a;
+	const struct s_zwtree_node	*b;
 
-	*a = NULL;
-	*b = NULL;
-	i = 0;
-	while (i < size)
-	{
-		if (nodes[i].parent == NULL && nodes[i].weight != 0)
-		{
-			if (*a == NULL || nodes[i].weight < (*a)->weight)
-			{
-				*b = *a;
-				*a = &nodes[i];
-			}
-			else if (*b == NULL || nodes[i].weight < (*b)->weight)
-				*b = &nodes[i];
-		}
-		i += 1;
-	}
-	return (*a != NULL && *b != NULL);
+	a = a_ptr;
+	b = b_ptr;
+	return ((a->weight > b->weight) - (a->weight < b->weight));
 }
 
 static void
-	zwtree_init_nodes(struct s_zwtree_node *nodes, size_t *weights)
+	zwtree_init_nodes(struct s_zwtree_list *lists, size_t *weights, unsigned int max_len)
 {
-	struct s_zwtree_node	*a;
-	struct s_zwtree_node	*b;
-	unsigned int			i;
+	size_t	i;
 
+	i = 0;
+	while (i <= max_len)
+	{
+		lists[i].size = 0;
+		i += 1;
+	}
 	i = 0;
 	while (i < 288)
 	{
-		nodes[i].parent = NULL;
-		nodes[i].weight = weights[i];
+		if (weights[i] != 0)
+		{
+			lists[0].nodes[lists[0].size].left = NULL;
+			lists[0].nodes[lists[0].size].right = NULL;
+			lists[0].nodes[lists[0].size].weight = weights[i];
+			lists[0].nodes[lists[0].size].code = i;
+			lists[0].size += 1;
+		}
 		i += 1;
 	}
-	while (zwtree_calculate_least(nodes, i, &a, &b))
-	{
-		nodes[i].parent = NULL;
-		nodes[i].weight = a->weight + b->weight;
-		a->parent = &nodes[i];
-		b->parent = &nodes[i];
-		i += 1;
-	}
-	if (i == 288 && a != NULL)
-		a->parent = &nodes[288];
+	view_sort_array(lists[0].nodes, lists[0].size, sizeof(lists[0].nodes[0]), zwtree_node_cmp);
 }
 
 static void
-	zwtree_find_lens(unsigned char *lens, struct s_zwtree_node *nodes)
+	zwtree_package_merge(struct s_zwtree_list *lists, unsigned int max_len)
 {
-	unsigned int			i;
-	struct s_zwtree_node	*node;
+	unsigned int	l;
+	size_t			i;
+	size_t			j;
+
+	l = 0;
+	while (l < max_len)
+	{
+		i = 0;
+		j = 0;
+		while (i < lists[0].size && l != max_len - 1)
+		{
+			if (j / 2 < lists[l].size / 2 && lists[l].nodes[j + 0].weight + lists[l].nodes[j + 1].weight < lists[0].nodes[i].weight)
+			{
+				lists[l + 1].nodes[lists[l + 1].size].left = &lists[l].nodes[j + 0];
+				lists[l + 1].nodes[lists[l + 1].size].right = &lists[l].nodes[j + 1];
+				lists[l + 1].nodes[lists[l + 1].size].weight = lists[l].nodes[j + 0].weight + lists[l].nodes[j + 1].weight;
+				lists[l + 1].nodes[lists[l + 1].size].code = 0;
+				lists[l + 1].size += 1;
+				j += 2;
+			}
+			else
+			{
+				lists[l + 1].nodes[lists[l + 1].size].left = NULL;
+				lists[l + 1].nodes[lists[l + 1].size].right = NULL;
+				lists[l + 1].nodes[lists[l + 1].size].weight = lists[0].nodes[i].weight;
+				lists[l + 1].nodes[lists[l + 1].size].code = lists[0].nodes[i].code;
+				lists[l + 1].size += 1;
+				i += 1;
+			}
+		}
+		while (j / 2 < lists[l].size / 2)
+		{
+			lists[l + 1].nodes[lists[l + 1].size].left = &lists[l].nodes[j + 0];
+			lists[l + 1].nodes[lists[l + 1].size].right = &lists[l].nodes[j + 1];
+			lists[l + 1].nodes[lists[l + 1].size].weight = lists[l].nodes[j + 0].weight + lists[l].nodes[j + 1].weight;
+			lists[l + 1].nodes[lists[l + 1].size].code = 0;
+			lists[l + 1].size += 1;
+			j += 2;
+		}
+		l += 1;
+	}
+}
+
+static void
+	zwtree_find_lens_node(unsigned char *lens, struct s_zwtree_node *node)
+{
+	if (node->left == NULL && node->right == NULL)
+		lens[node->code] += 1;
+	else
+	{
+		zwtree_find_lens_node(lens, node->left);
+		zwtree_find_lens_node(lens, node->right);
+	}
+}
+
+static void
+	zwtree_find_lens(unsigned char *lens, struct s_zwtree_list *lists, unsigned int max_len)
+{
+	size_t	i;
 
 	i = 0;
 	while (i < 288)
 	{
 		lens[i] = 0;
-		node = nodes[i].parent;
-		while (node != NULL)
-		{
-			lens[i] += 1;
-			node = node->parent;
-		}
-		rt_assert(lens[i] <= 15, "zwtree_find_lens: too many bits in huffman code");
 		i += 1;
 	}
+	i = 0;
+	while (i < lists[max_len].size)
+	{
+		zwtree_find_lens_node(lens, &lists[max_len].nodes[i]);
+		i += 1;
+	}
+	if (lists[max_len].size == 0 && lists[0].size > 0)
+		lens[lists[0].nodes[0].code] += 1;
+	else if (lists[max_len].size == 0 && lists[0].size == 0)
+		lens[0] += 1;
 }
 
 void
@@ -97,14 +144,15 @@ void
 }
 
 void
-	zwtree_init(t_zwtree *tree, size_t *weights)
+	zwtree_init(t_zwtree *tree, size_t *weights, unsigned int max_len)
 {
-	struct s_zwtree_node	nodes[575];
+	struct s_zwtree_list	lists[16];
 	unsigned int			counts[16];
 	unsigned int			i;
 
-	zwtree_init_nodes(nodes, weights);
-	zwtree_find_lens(tree->lens, nodes);
+	zwtree_init_nodes(lists, weights, max_len);
+	zwtree_package_merge(lists, max_len);
+	zwtree_find_lens(tree->lens, lists, max_len);
 	ztree_find_counts(counts, tree->lens, 288);
 	zwtree_find_codes(tree->codes, counts, tree->lens);
 	tree->count = 0;

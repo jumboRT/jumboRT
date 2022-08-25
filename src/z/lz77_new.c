@@ -3,6 +3,11 @@
 #include "util.h"
 #include "perf.h"
 
+// 1. chains genereren voor herhalende data
+// 2. in ztoken_generate gaan er dingen fout als de offset standaard op ZHASH_SIZE staat
+// 3. er kunnen erg veel sanity checks weg voor performance, want het is veel te traag
+// 4. 
+
 static uint32_t
 	lz_hash(uint64_t data)
 {
@@ -129,7 +134,7 @@ static void
 	link = zring_at(&state->ring, state->ring.index);
 	if (zring_isfull(&state->ring))
 	{
-		old_hash = lz_hash(lz_peek_next(state->src, state->offset,
+		old_hash = lz_hash(lz_peek_next(state->src, link->offset,
 					state->src_size));
 		ztable_put(&state->table, old_hash, link->next);
 	}
