@@ -252,21 +252,23 @@ static t_ztoken
 	lz_encode(t_zstate *state, uint32_t hash, t_vector *out)
 {
 	t_ztoken	token;
-	size_t length;
-	size_t offset;
+	t_ztoken	temp;
+	size_t		length;
+	size_t		offset;
 
 	token = lz_deflate(state, hash);
 	vector_push(out, &token);
 	length = token.length;
-	offset = ZHASH_SIZE;
-	while (1)
+	lz_push(state, hash, token);
+	if (length == 0)
+		return (token);
+	offset = 1;
+	while (offset < length)
 	{
-		lz_push(state, hash, token);
-		if (length <= ZHASH_SIZE || length - offset <= ZHASH_SIZE)
-			break;
-		token = ztoken_at(state, state->offset + offset);
+		temp = ztoken_at(state, state->offset + offset);
 		hash = lz_hash(lz_peek_next(state->src, state->offset + offset,
-					    state->src_size));
+					state->src_size));
+		lz_push(state, hash, temp);
 		offset += 1;
 	}
 	return (token);
