@@ -202,11 +202,11 @@ else ifeq ($(config), profile)
 	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
-		CFLAGS		+= -g0 -Ofast -flto -march=native
-		LFLAGS		+= -g0 -Ofast -flto -march=native
+		CFLAGS		+= -g3 -Ofast -flto -march=native
+		LFLAGS		+= -g3 -Ofast -flto -march=native
 	else
-		CFLAGS		+= -g0 -Ofast
-		LFLAGS		+= -g0 -Ofast
+		CFLAGS		+= -g3 -Ofast
+		LFLAGS		+= -g3 -Ofast
 	endif
 else
 $(error "invalid config $(config"))
