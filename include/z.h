@@ -97,7 +97,7 @@ struct s_ztable {
 struct s_zchain {
 	size_t		offset;
 	uint64_t	hash;
-	size_t		next_match;
+	size_t		next_length;
 	int16_t		next;
 };
 

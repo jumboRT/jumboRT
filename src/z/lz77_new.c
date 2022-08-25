@@ -3,12 +3,6 @@
 #include "util.h"
 #include "perf.h"
 
-
-// 1. chains genereren voor herhalende data
-// 2. in ztoken_generate gaan er dingen fout als de offset standaard op ZHASH_SIZE staat
-// 3. er kunnen erg veel sanity checks weg voor performance, want het is veel te traag
-// 4. 
-
 static uint32_t
 	lz_hash(uint64_t data)
 {
@@ -152,14 +146,14 @@ static void
 	link->offset = offset;
 	link->hash = hash;
 	link->next = ZEMPTY;
-	link->next_match = 0;
+	link->next_length = 0;
 	if (ztable_at(&state->table, hash) == ZEMPTY)
 		state->table.data[hash].first = state->ring.index;
 	else
 	{
 		last = zring_at(&state->ring, state->table.data[hash].last);
 		last->next = state->ring.index;
-		last->next_match = ztoken_mismatch(state, offset, last->offset, ZHASH_SIZE);
+		last->next_length = ztoken_mismatch(state, offset, last->offset, ZHASH_SIZE);
 	}
 	state->table.data[hash].last = state->ring.index;
 	zring_advance(&state->ring);
@@ -182,15 +176,15 @@ static t_ztoken
 	t_zchain	*chain;
 	t_ztoken	best;
 	size_t		current_length;
-	size_t		prev_match;
+	size_t		prev_length;
 
 	best = ztoken_at(state, state->offset);
 	chain = zring_at(&state->ring, ztable_at(&state->table, hash));
 	current_length = ZHASH_SIZE;
-	prev_match = ZHASH_SIZE;
+	prev_length = ZHASH_SIZE;
 	while (chain != NULL)
 	{
-		if (prev_match == current_length)
+		if (prev_length == current_length)
 		{
 			current_length = ztoken_mismatch(state, state->offset, chain->offset, current_length);
 			if (current_length >= ZTOKEN_MIN_LENGTH && current_length >= best.length)
@@ -199,9 +193,9 @@ static t_ztoken
 				best.data.distance = state->offset - chain->offset;
 			}
 		}
-		else if (prev_match < current_length)
-			current_length = prev_match;
-		prev_match = chain->next_match;
+		else if (prev_length < current_length)
+			current_length = prev_length;
+		prev_length = chain->next_length;
 		chain = zchain_next(&state->ring, chain);
 	}
 	return (best);
