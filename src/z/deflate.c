@@ -1,6 +1,7 @@
 #include "z.h"
 
 #include "util.h"
+#include "perf.h"
 
 static void
 	z_deflate_fixed(t_ztoken *tokens, size_t count, t_zbuf *ob, t_zwtree *lt, t_zwtree *dt)
@@ -159,13 +160,17 @@ void
 	t_zbuf		ob;
 	t_ztoken	*tokens;
 	size_t		count;
+	t_perf		perf;
 
 	zbuf_create(&ib, src, src_size);
 	zbuf_create(&ob, NULL, 0);
+	perf_start(&perf);
 	tokens = lz77_deflate(src, src_size, &count);
+	perf_split(&perf, "lz77_deflate");
 	zbuf_write(&ob, 1, 1);
 	zbuf_write(&ob, 2, 2);
 	z_deflate_dynamic(tokens, count, &ob);
+	perf_split(&perf, "z_deflate_dynamic");
 	rt_free(tokens);
 	*dst_size = ob.size;
 	return (ob.data);
