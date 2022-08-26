@@ -374,7 +374,7 @@ void
 	work.work_size = world.img_meta.width * world.img_meta.height * options->samples;
 	work_reset(&work);
 	main_run(options, &work);
-	/* TODO: become thanos */
+	world_destroy(&world);
 	work_destroy(&work);
 }
 
