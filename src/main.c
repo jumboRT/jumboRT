@@ -15,8 +15,6 @@
 
 #include <stdio.h>
 
-#include <valgrind/callgrind.h>
-
 #define FLY_SPEED 1
 
 __attribute__((noreturn))
