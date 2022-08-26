@@ -215,6 +215,8 @@ void
 {
 	src = rt_upacku64(src, &dst->seq_id);
 	src = rt_upacku64(src, &dst->zsize);
+	src = rt_upacku64(src, &dst->begin);
+	src = rt_upacku64(src, &dst->end);
 	dst->zdata = rt_malloc(dst->zsize);
 	memcpy(dst->zdata, src, dst->zsize);
 	return ((char *) src + dst->zsize);
@@ -252,6 +254,8 @@ void
 {
 	dst = rt_packu64(dst, packet.seq_id);
 	dst = rt_packu64(dst, packet.zsize);
+	dst = rt_packu64(dst, packet.begin);
+	dst = rt_packu64(dst, packet.end);
 	memcpy(dst, packet.zdata, packet.zsize);
 	return ((char *) dst + packet.zsize);
 }

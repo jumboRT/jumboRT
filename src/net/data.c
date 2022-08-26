@@ -123,7 +123,7 @@ int
 	read = rt_recv(sockfd, &packet->type, sizeof(packet->type), error);
 	if (read < 0)
 		return (-1);
-	packet->data = malloc(packet->size);
+	packet->data = malloc(packet->size); /* ODOT: Change to rt_malloc? */
 	if (packet->data == NULL)
 	{
 		if (error != NULL)

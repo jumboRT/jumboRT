@@ -3,11 +3,13 @@
 
 #include "mt.h"
 #include "work.h"
+#include "pool.h"
 #include <stdint.h>
 #include <sys/types.h> /* TODO make this portable */
 
 # define RT_NET_MAX_JOBS		16
 # define RT_NET_JOBSIZE			(65536 * 4)
+# define RT_NET_POOL_SIZE		8
 
 # define RT_HANDSHAKE_PACKET	0x00
 # define RT_PING_PACKET			0x01
@@ -54,6 +56,7 @@ struct s_net_worker {
 	struct s_client_base	base;
 	t_work					*work;
 	t_options				opts;
+	t_pool					pool;
 };
 
 union u_client {
@@ -91,8 +94,17 @@ struct s_sjob_request {
 
 struct s_send_results {
 	uint64_t	seq_id;
+	uint64_t	begin;
+	uint64_t	end;
 	uint64_t	zsize;
 	void		*zdata;
+};
+
+struct s_send_results_ctx {
+	union u_client	*client;
+	t_result		*results;
+	uint64_t		begin;
+	uint64_t		end;
 };
 
 int		rt_connect(const char *ip, const char *port, char **error);
@@ -120,10 +132,8 @@ void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
 
-void	*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
-
-/* TODO make this more pretty */
-t_result *rt_results_inflate(struct s_send_results packet, size_t *count);
+void		*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
+t_result	*rt_results_inflate(struct s_send_results packet);
 uint64_t	rt_sizesr(struct s_send_results packet);
 
 void	rt_packet_create(struct s_packet *packet, uint64_t data_size,
@@ -144,7 +154,7 @@ void	rt_client_destroy(union u_client *client);
 void	*rt_send_jobs_start(void *data);
 int		rt_send_jobs(union u_client *client, char **error);
 void	rt_send_results(union u_client *client, t_result *results,
-						uint64_t count);
+						uint64_t begin, uint64_t end);
 
 void	rt_string_create(struct s_string *dst, const char *str);
 void	rt_string_destroy(struct s_string *string);

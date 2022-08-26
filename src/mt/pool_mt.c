@@ -26,7 +26,12 @@ static void
 		mutex_lock(&pool->mtx);
 		item.task->done += 1;
 		if (item.task->done == item.task->count)
-			cond_broadcast(&pool->cnd);
+		{
+			if (item.task->detached)
+				rt_free(item.task);
+			else
+				cond_broadcast(&pool->cnd);
+		}
 	}
 	mutex_unlock(&pool->mtx);
 	return (NULL);
@@ -101,6 +106,16 @@ void
 	mutex_lock(&pool->mtx);
 	while (task->done < task->count)
 		cond_wait(&pool->cnd, &pool->mtx);
+	mutex_unlock(&pool->mtx);
+}
+
+void
+	pool_detach(t_pool *pool, t_task *task)
+{
+	mutex_lock(&pool->mtx);
+	task->detached = 1;
+	if (task->done >= task->count)
+		rt_free(task);
 	mutex_unlock(&pool->mtx);
 }
 

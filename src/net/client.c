@@ -112,29 +112,58 @@ static int
 	return (0);
 }
 
-void
-	rt_send_results(union u_client *client, t_result *results, uint64_t count)
+static void
+	rt_send_results_task(void *ctx, size_t id)
 {
-	struct s_packet			packet;
-	struct s_send_results	data;
-	uint64_t				size;
-	void					*buf;
-	int						rc;
+	struct s_send_results_ctx	*info;
+	struct s_packet				packet;
+	struct s_send_results		data;
+	uint64_t					size;
+	void						*buf;
+	int							rc;
+	(void) id;
 
-	data.seq_id = client->any.seq_id;
-	data.zdata = rt_results_deflate(results, count, &data.zsize);
+	info = ctx;
+	data.seq_id = info->client->any.seq_id;
+	data.zdata = rt_results_deflate(info->results,
+			info->end - info->begin, &data.zsize);
+	data.begin = info->begin;
+	data.end = info->end;
 	size = rt_sizesr(data);
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);
 	rt_packet_create(&packet, size, RT_SEND_RESULTS_PACKET, buf);
-	rc = rt_send_packet(&client->any, &packet, NULL);
+	rc = rt_send_packet(&info->client->any, &packet, NULL);
 	if (rc < 0)
 	{
 		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
-		rt_client_set_status(client, SIDLE);
+		rt_client_set_status(info->client, SIDLE);
 	}
 	rt_free(data.zdata);
 	rt_free(buf);
+	rt_free(info->results);
+	rt_free(info);
+	info = ctx;
+}
+
+void
+	rt_send_results(union u_client *client, t_result *results, uint64_t begin,
+			uint64_t end)
+{
+	struct s_send_results_ctx	*ctx;
+	t_task						*task;
+
+	rt_assert(client->any.client_type == RT_WORKER,
+			"tried to send results as viewer");
+	task = rt_malloc(sizeof(*task));
+	ctx = rt_malloc(sizeof(*ctx));
+	ctx->client = client;
+	ctx->results = results;
+	ctx->begin = begin;
+	ctx->end = end;
+	task_init(task, rt_send_results_task, ctx);
+	pool_fork(&client->worker.pool, task);
+	pool_detach(&client->worker.pool, task);
 }
 
 int
@@ -144,6 +173,7 @@ int
 	client->any.client_type = RT_WORKER;
 	client->worker.work = NULL;
 	client->worker.opts = opts;
+	pool_create(&client->worker.pool, RT_NET_POOL_SIZE);
 	return (rt_client_create(&client->any, ip, port));
 }
 
@@ -217,6 +247,8 @@ void
 	rt_client_set_status(client, SQUIT);
 	if (client->any.client_type == RT_VIEWER)
 		thread_join(&client->viewer.job_thrd);
+	else
+		pool_destroy(&client->worker.pool);
 	/* This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->any.mtx);
 }

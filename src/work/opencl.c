@@ -51,7 +51,8 @@ struct s_opencl_callback_ctx {
 	struct s_opencl_ctx	*cl_ctx;
 	int					id;
 	cl_event			event;
-	size_t				size;
+	uint64_t			begin;
+	uint64_t			end;
 };
 
 static void
@@ -67,7 +68,7 @@ static void
 	cb_ctx = user_data;
 	worker = cb_ctx->worker;
 	cl_ctx = cb_ctx->cl_ctx;
-	work_send_results(worker, cl_ctx->result, cb_ctx->size);
+	work_send_results(worker, cl_ctx->result, cb_ctx->begin, cb_ctx->end);
 	status = clSetUserEventStatus(cb_ctx->event, CL_COMPLETE);
 	rt_assert(status == CL_SUCCESS, "clSetUserEventStatus work_callback failed");
 }
@@ -106,7 +107,8 @@ static void
 		rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 3 failed");
 		status = clSetKernelArg(cl_ctx->work_kernel, 4, sizeof(cl_mem), &cl_ctx->result_mem[id]);
 		rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 4 failed");
-		cb_ctx[id].size = end - begin;
+		cb_ctx[id].begin = begin;
+		cb_ctx[id].end = end;
 		status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 0, NULL, &kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
@@ -130,7 +132,8 @@ static void
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 3 failed");
 			status = clSetKernelArg(cl_ctx->work_kernel, 4, sizeof(cl_mem), &cl_ctx->result_mem[id]);
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 4 failed");
-			cb_ctx[id].size = end - begin;
+			cb_ctx[id].begin = begin;
+			cb_ctx[id].end = end;
 			status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 1, &kernel_event[1 - id], &kernel_event[id]);
 			rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 			status = clReleaseEvent(kernel_event[1 - id]);

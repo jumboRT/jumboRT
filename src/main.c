@@ -413,7 +413,7 @@ int
 	t_ztoken		*tokens;
 	size_t			tok_count;
 
-	str = (unsigned char *) rt_readfile("packet16.bin", &error, &str_size);
+	str = (unsigned char *) rt_readfile("packet.bin", &error, &str_size);
 	//tokens = lz77_deflate(str, str_size, &tok_count);
 	//printf("token count: %zu\n", tok_count);
 	printf("uncompressed size: %zu\n", str_size);

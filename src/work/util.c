@@ -86,26 +86,29 @@ int
 }
 
 void
-	work_done(t_work *work, t_result *results, size_t size)
+	work_done(t_work *work, t_result *results, uint64_t begin, uint64_t end)
 {
-	t_pixel	*data;
-	size_t	i;
+	t_pixel		*data;
+	uint64_t	i;
+	uint64_t	index;
 
 	if (work->opts->worker)
 	{
-		if (size != 0)
-			rt_send_results(work->client, results, size);
+		if (end != begin)
+			rt_send_results(work->client, results, begin, end);
 	}
 	else
 	{
 		i = 0;
-		while (i < size)
+		while (i < end - begin)
 		{
-			data = &work->state->image->data[results[i].index];
+			index = project_index(work->state->world, i + begin);
+			data = &work->state->image->data[index];
 			data->color = vec_add(data->color, results[i].color);
 			data->samples += 1;
 			i += 1;
 		}
+		rt_free(results);
 	}
 }
 

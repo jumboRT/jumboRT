@@ -90,7 +90,6 @@ struct s_trace_ctx {
 
 struct s_result {
 	t_vec		color;
-	uint64_t	index;
 };
 
 struct s_context {
@@ -292,7 +291,8 @@ struct s_world {
 	GLOBAL t_bxdf_any		*bxdfs;
 };
 
-t_ray	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index);
+uint64_t	project_index(const GLOBAL t_world *world, uint64_t index);
+t_ray		project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index);
 
 uint64_t	world_primitive_size(uint8_t shape_type);
 
