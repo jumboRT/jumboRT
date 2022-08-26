@@ -3,7 +3,6 @@
 #include "z.h"
 #include "util.h"
 
-/* TODO: make sure all memory access happens within the buffer */
 void
 	*rt_results_deflate(t_result *results, size_t count, size_t *zsize)
 {

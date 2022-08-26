@@ -8,7 +8,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-/* TODO: don't use varargs in mandatory */
 void
 	rt_parse_error(t_parse_ctx *ctx, const char *fmt, ...)
 {
