@@ -5,7 +5,7 @@
 # include <errno.h>
 # include <string.h>
 # include <stdlib.h>
-# define READ_SIZE 1024
+# define READ_SIZE 1000000
 
 char
 	*rt_readfile(const char *path, char **error, size_t *len)
