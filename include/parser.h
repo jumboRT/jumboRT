@@ -7,8 +7,7 @@
 # include <stddef.h>
 
 typedef struct s_directive	t_directive;
-typedef struct s_mat_entry	t_mat_entry;
-typedef struct s_mat_entry	t_tex_entry;
+typedef struct s_entry		t_entry;
 typedef struct s_parse_ctx	t_parse_ctx;
 
 struct s_directive {
@@ -16,15 +15,9 @@ struct s_directive {
 	void		(*exec)(t_world *world, t_parse_ctx *ctx);
 };
 
-struct s_mat_entry {
+struct s_entry {
 	uint32_t	index;
-	const char	*name;
-	t_vec		color;
-};
-
-struct s_tex_entry {
-	uint32_t	index;
-	const char	*name;
+	char		*name;
 	t_vec		color;
 };
 
