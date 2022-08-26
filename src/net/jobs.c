@@ -24,7 +24,7 @@ int
 {
 	ssize_t	rc;
 
-	while (client->viewer.active_work < RT_NET_MAX_JOBS * RT_NET_JOBSIZE)
+	while (client->viewer.active_work < (uint64_t) client->viewer.worker->work->opts->net_jobs * RT_NET_JOBSIZE)
 	{
 		mutex_unlock(&client->viewer.job_mtx);
 		rc = rt_send_job(client,

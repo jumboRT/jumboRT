@@ -105,17 +105,19 @@ impl Client {
     pub fn send_job(&self, job: &Job) -> io::Result<()> {
         let mut job_id_opt = self.job_id.write().unwrap();
         let mut packet = Vec::new();
-        let scene_name = job.scene.as_bytes();
         
         if *job_id_opt != Some(job.id) {
-            println!("[{}] send job id={} scene={}", self.addr, job.id, job.scene);
+            println!("[{}] send job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={}", self.addr, job.id, job.width, job.height, job.cam_pos, job.cam_rot, job.cam_fov, job.scene, job.key);
             *job_id_opt = Some(job.id);
             self.work.store(4, Ordering::SeqCst);
             ser::write_u64(&mut packet, job.id);
             ser::write_u64(&mut packet, job.width);
             ser::write_u64(&mut packet, job.height);
-            ser::write_u64(&mut packet, scene_name.len() as u64);
-            packet.extend(scene_name);
+            ser::write_vec(&mut packet, job.cam_pos);
+            ser::write_vec(&mut packet, job.cam_rot);
+            ser::write_f32(&mut packet, job.cam_fov);
+            ser::write_str(&mut packet, &job.scene);
+            ser::write_str(&mut packet, &job.key);
             self.write_packet(3, &packet)?;
         }
 
@@ -164,7 +166,7 @@ impl Client {
 
         ser::write_u64(&mut packet, data.len() as u64);
         ser::write_u8(&mut packet, packet_id);
-        packet.extend(data);
+        ser::write_buf(&mut packet, data);
 
         let _lock = self.mutex.lock();
         match (&self.stream).write_all(&packet) {
@@ -176,8 +178,8 @@ impl Client {
         }
     }
 
-    pub fn handle_handshake_packet(&self, data: &[u8]) -> io::Result<()> {
-        let new_state = ser::read_u8(&data[0..1]);
+    pub fn handle_handshake_packet(&self, mut data: &[u8]) -> io::Result<()> {
+        let new_state = ser::read_u8(&mut data);
         let server = self.server.upgrade().unwrap();
 
         {
@@ -188,10 +190,7 @@ impl Client {
                     ClientState::Worker
                 },
                 1 => {
-                    let mut packet = Vec::new();
-                    let job_id = self.update_job_id()?;
-                    ser::write_u64(&mut packet, job_id);
-                    self.write_packet(0, &packet)?;
+                    self.write_packet(0, &[])?;
                     println!("[{}] handshake viewer", self.addr);
                     ClientState::Viewer
                 },
@@ -213,34 +212,44 @@ impl Client {
         self.write_packet(2, data)
     }
 
-    pub fn handle_job_request_packet(&self, data: &[u8]) -> io::Result<()> {
-        let width = ser::read_u64(&data[0..8]);
-        let height = ser::read_u64(&data[8..16]);
-        let length = ser::read_u64(&data[16..24]) as usize;
-        let scene = std::str::from_utf8(&data[24..length + 24]).unwrap().to_string();
+    pub fn handle_job_request_packet(&self, mut data: &[u8]) -> io::Result<()> {
+        let width = ser::read_u64(&mut data);
+        let height = ser::read_u64(&mut data);
+        let cam_pos = ser::read_vec(&mut data);
+        let cam_rot = ser::read_vec(&mut data);
+        let cam_fov = ser::read_f32(&mut data);
+        let scene = ser::read_str(&mut data);
+        let key = ser::read_str(&mut data);
         let server = self.server.upgrade().unwrap();
 
         {
+            let job_id = self.update_job_id()?;
             let mut server_jobs = server.jobs.write().unwrap();
-            let job_id_opt = self.job_id.read().unwrap();
-            let job_id = job_id_opt.unwrap();
-            println!("[{}] recv job id={} scene={}", self.addr, job_id, scene);
+            println!("[{}] recv job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={}", self.addr, job_id, width, height, cam_pos, cam_rot, cam_fov, scene, key);
 
             server_jobs.push(Job {
                 id: job_id,
                 width,
                 height,
+                cam_pos,
+                cam_rot,
+                cam_fov,
                 scene,
+                key,
                 work: Vec::new(),
             });
+
+            let mut packet = Vec::new();
+            ser::write_u64(&mut packet, job_id);
+            self.write_packet(3, &packet)?;
         }
 
         server.update_jobs()
     }
 
-    pub fn handle_send_work_packet(&self, data: &[u8]) -> io::Result<()> {
-        let begin = ser::read_u64(&data[0..8]);
-        let end = ser::read_u64(&data[8..16]);
+    pub fn handle_send_work_packet(&self, mut data: &[u8]) -> io::Result<()> {
+        let begin = ser::read_u64(&mut data);
+        let end = ser::read_u64(&mut data);
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
@@ -261,12 +270,12 @@ impl Client {
         server.update_work()
     }
 
-    pub fn handle_send_results_packet(&self, data: &[u8]) -> io::Result<()> {
-        let job_id = ser::read_u64(&data[0..8]);
-        let size = ser::read_u64(&data[8..16]) as usize;
-        let begin = ser::read_u64(&data[16..24]);
-        let end = ser::read_u64(&data[24..32]);
-        let results = &data[32..size + 32];
+    pub fn handle_send_results_packet(&self, mut data: &[u8]) -> io::Result<()> {
+        let job_id = ser::read_u64(&mut data);
+        let size = ser::read_u64(&mut data) as usize;
+        let begin = ser::read_u64(&mut data);
+        let end = ser::read_u64(&mut data);
+        let results = &data[..size];
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
@@ -308,7 +317,7 @@ impl Client {
                             ser::write_u64(&mut packet, ri.data.len() as u64);
                             ser::write_u64(&mut packet, ri.begin);
                             ser::write_u64(&mut packet, ri.end);
-                            packet.extend(&ri.data);
+                            ser::write_buf(&mut packet, &ri.data);
 
                             client.write_packet(5, &packet)?;
                         }
@@ -330,9 +339,8 @@ impl Client {
         server.update_work()
     }
 
-    pub fn handle_log_packet(&self, data: &[u8]) -> io::Result<()> {
-        let length = ser::read_u64(&data[0..8]) as usize;
-        let string = std::str::from_utf8(&data[8..length + 8]).unwrap();
+    pub fn handle_log_packet(&self, mut data: &[u8]) -> io::Result<()> {
+        let string = ser::read_str(&mut data);
         println!("[{}] log {:?}", self.addr, string);
 
         Ok(())
@@ -367,14 +375,15 @@ impl Client {
             }
 
             while packet_buffer.len() >= 9 {
-                let length = ser::read_u64(&packet_buffer[0..8]) as usize;
-                let packet_id = ser::read_u8(&packet_buffer[8..9]);
+                let mut packet_reader = &packet_buffer[..];
+                let length = ser::read_u64(&mut packet_reader) as usize;
+                let packet_id = ser::read_u8(&mut packet_reader);
 
                 if packet_buffer.len() < 9 + length {
                     break
                 }
 
-                self.handle_packet(packet_id, &packet_buffer[9..length + 9])?;
+                self.handle_packet(packet_id, ser::read_buf(&mut packet_reader, length))?;
                 packet_buffer.drain(0..length + 9);
             }
         }

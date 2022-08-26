@@ -15,7 +15,7 @@ void
 	index = 0;
 	while (index < count)
 	{
-		ptr = rt_packvec(ptr, results[index].color);
+		ptr = rt_packhvec(ptr, results[index].color);
 		index += 1;
 	}
 	ptr = z_deflate(data, ptr - data, zsize);
@@ -40,7 +40,7 @@ t_result
 	index = 0;
 	while (index < packet.end - packet.begin)
 	{
-		ptr = rt_upackvec(ptr, &result[index].color);
+		ptr = rt_upackhvec(ptr, &result[index].color);
 		index += 1;
 	}
 	rt_free(data);

@@ -15,7 +15,11 @@ pub struct Job {
     pub id: u64,
     pub width: u64,
     pub height: u64,
+    pub cam_pos: [f32; 3],
+    pub cam_rot: [f32; 3],
+    pub cam_fov: f32,
     pub scene: String,
+    pub key: String,
     pub work: Vec<Work>,
 }
 
