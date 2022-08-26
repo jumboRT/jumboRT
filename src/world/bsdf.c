@@ -93,20 +93,50 @@ static FLOAT
 }
 
 static void
-	eta_del(t_trace_ctx *trace_ctx, const void *object)
+	eta_del(t_trace_ctx *trace_ctx, uint32_t mat)
 {
 	int32_t idx;
 
 	idx = eta_top(trace_ctx);
-	while (idx >= 0 && trace_ctx->etas[idx].object != object)
+	while (idx >= 0 && trace_ctx->etas[idx].mat != mat)
 		idx = trace_ctx->etas[idx].prev;
 	if (idx < 0)
 		return;
 	eta_del_link(trace_ctx, idx);
 }	
 
+static int
+	eta_has(t_trace_ctx *trace_ctx, uint32_t mat)
+{
+	int32_t	idx;
+
+	idx = 0;
+	while (idx >= 0)
+	{
+		if (trace_ctx->etas[idx].mat == mat)
+			return (1);
+		idx = trace_ctx->etas[idx].next;
+	}
+	return (0);
+}
+
+static int32_t
+	eta_get(t_trace_ctx *trace_ctx, uint32_t mat)
+{
+	int32_t	idx;
+
+	idx = 0;
+	while (idx >= 0)
+	{
+		if (trace_ctx->etas[idx].mat == mat)
+			break;
+		idx = trace_ctx->etas[idx].next;
+	}
+	return (idx);
+}
+
 static void
-	eta_push(t_trace_ctx *trace_ctx, const void *object, FLOAT eta)
+	eta_push(t_trace_ctx *trace_ctx, uint32_t mat, FLOAT eta, uint32_t bxdf_idx)
 {
 	int32_t idx;
 
@@ -116,8 +146,9 @@ static void
 	trace_ctx->etas[idx].next = idx + 1;
 	trace_ctx->etas[idx + 1].prev = idx;
 	trace_ctx->etas[idx + 1].next = -1;
-	trace_ctx->etas[idx + 1].object = object;
+	trace_ctx->etas[idx + 1].mat = mat;
 	trace_ctx->etas[idx + 1].eta = eta;
+	trace_ctx->etas[idx + 1].bxdf = bxdf_idx;
 }
 
 void
@@ -125,8 +156,9 @@ void
 {
 	trace_ctx->etas[0].prev = -1;
 	trace_ctx->etas[0].next = -1;
-	trace_ctx->etas[0].object = (const void *) 0;
+	trace_ctx->etas[0].mat = -1;
 	trace_ctx->etas[0].eta = eta;
+	trace_ctx->etas[0].bxdf = -1;
 }
 	
 static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx,
@@ -157,9 +189,9 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 		*wow = vec_norm(refract(wiw, hit.rel_shading_normal, etai_etat));
 		*wow = clip(*wow, vec_neg(hit.rel_geometric_normal));
 		if (entering)
-			eta_push(trace_ctx, hit.prim, bxdf->eta);
+			eta_push(trace_ctx, prim_mat(hit.prim), bxdf->eta, (const t_bxdf_any *) bxdf - world->bxdfs);
 		else
-			eta_del(trace_ctx, hit.prim);
+			eta_del(trace_ctx, prim_mat(hit.prim));
 		return (filter_sample(world, bxdf->refraction_tex, hit.hit.uv));
 	}
 }
@@ -187,6 +219,11 @@ t_vec
 	idx = bsdf.begin;
 	rand = rt_random_float_range(&ctx->seed, 0.0, bsdf.weight);
 	type = 0;
+	if (vec_dot(wiw, hit.hit.geometric_normal) > 0 && eta_has(trace_ctx, prim_mat(hit.prim)))
+	{
+		return (vec_scale(f_bxdf_sample(world, ctx, trace_ctx,
+						get_bxdf_const(world, trace_ctx->etas[eta_get(trace_ctx, prim_mat(hit.prim))].bxdf), hit, wiw, wow), bsdf.weight));
+	}
 	while (type < RT_BXDF_COUNT)
 	{
 		while (idx < bsdf.end)

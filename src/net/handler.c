@@ -64,8 +64,8 @@ static int
 	client->worker.opts.width = request.width;
 	client->worker.opts.height = request.height;
 	client->worker.opts.scene_file = ft_strdup(request.scene.str);
-	client->any.seq_id = request.seq_id;
 	rt_create_new_work(client);
+	client->any.seq_id = request.seq_id;
 	rt_string_destroy(&request.scene);
 	return (0);
 }

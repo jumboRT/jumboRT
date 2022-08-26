@@ -406,6 +406,7 @@ int
 	t_options		options;
 	union u_client	client;
 
+	/*
 	unsigned char	*str;
 	size_t			str_size;
 	char			*error;
@@ -425,6 +426,7 @@ int
 	str = z_inflate(str, str_size, &str_size);
 	printf("decompressed size: %zu\n", str_size);
 	return (0);
+	*/
 
 	parse_options(&options, argc, argv);
 	if (options.worker)
