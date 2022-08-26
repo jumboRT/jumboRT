@@ -4,6 +4,8 @@
 #include "util.h"
 #include <string.h>
 
+#define RT_HALF_FLOAT_SCALE (1.0)
+
 static uint32_t
 	get_mantissa(uint16_t i)
 {
@@ -122,6 +124,7 @@ void
 	uint16_t	h;
 	uint32_t	i;
 
+	f *= RT_HALF_FLOAT_SCALE;
 	i = *(uint32_t *) &f;
 	h = get_base((i >> 23) & 0x1ff) + ((i & 0x007fffff) >> get_shift((i >> 23) & 0x1ff));
 	memcpy(dst, &h, sizeof(h));
@@ -173,6 +176,7 @@ void
 	memcpy(&h, src, sizeof(h));
 	i = get_mantissa(get_offset(h >> 10) + (h & 0x3ff)) + get_exponent(h >> 10);
 	*(uint32_t *) f = i;
+	*f /= RT_HALF_FLOAT_SCALE;
 	return ((char *) src + sizeof(h));
 }
 
