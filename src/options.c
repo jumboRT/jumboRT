@@ -90,7 +90,7 @@ void
 		}
 		else if (ft_strcmp(argv[i], "-p") == 0)
 		{
-			rt_assert(!opts->net_ip_set, "more than one port specified");
+			rt_assert(!opts->net_port_set, "more than one port specified");
 			rt_assert(i + 1 < argc, "-p requires an argument");
 			opts->net_port = argv[i + 1];
 			opts->net_port_set = 1;
