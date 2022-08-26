@@ -242,7 +242,7 @@ else ifeq ($(platform), linux)
 	COMPILER_CFLAGS	+= -DRT_LINUX
 	COMPILER_EXE := compile
 else ifeq ($(platform), win)
-	FRAMEWORKS	:= /usr/lib/wine/x86_64-windows/opencl.dll -lws2_32
+	FRAMEWORKS	:= /usr/lib/wine/x86_64-windows/opencl.dll -lws2_32 -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
 	CFLAGS		+= -DRT_WINDOWS
 	COMPILER_CFLAGS	+= -DRT_WINDOWS
 	COMPILER_EXE := compile.exe
