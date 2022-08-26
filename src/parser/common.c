@@ -59,10 +59,10 @@ unsigned int
 	return ((unsigned int) result);
 }
 
-FLOAT
+float
 	rt_float(t_parse_ctx *ctx)
 {
-	FLOAT	result;
+	float	result;
 
 	rt_skip(ctx, ft_isspace);
 	if (!ft_isdigit(*ctx->data) && *ctx->data != '-')
@@ -82,10 +82,10 @@ FLOAT
 	return (result);
 }
 
-FLOAT
-	rt_float_range(t_parse_ctx *ctx, FLOAT min, FLOAT max)
+float
+	rt_float_range(t_parse_ctx *ctx, float min, float max)
 {
-	FLOAT	result;
+	float	result;
 
 	result = rt_float(ctx);
 	if (result < min || result > max)
@@ -95,7 +95,7 @@ FLOAT
 	return (result);
 }
 
-static FLOAT
+static float
 	rt_color_part(t_parse_ctx *ctx)
 {
 	unsigned int	ival;
@@ -107,16 +107,16 @@ static FLOAT
 		rt_parse_error(ctx, "%d exceeds max value for color byte: 255", ival);
 	}
 	if (ival > 0)
-		return ((FLOAT) ival / 255.0);
+		return ((float) ival / 255.0);
 	return (0.0);
 }
 
 t_vec
 	rt_color(t_parse_ctx *ctx)
 {
-	FLOAT	red;
-	FLOAT	green;
-	FLOAT	blue;
+	float	red;
+	float	green;
+	float	blue;
 	t_vec	result;
 
 	rt_skip(ctx, ft_isspace);
@@ -147,9 +147,9 @@ t_vec
 t_vec
 	rt_vec(t_parse_ctx *ctx)
 {
-	FLOAT	x;
-	FLOAT	y;
-	FLOAT	z;
+	float	x;
+	float	y;
+	float	z;
 
 	x = rt_float(ctx);
 	rt_expect(ctx, ',');
@@ -162,8 +162,8 @@ t_vec
 t_vec2
 	rt_vec2(t_parse_ctx *ctx)
 {
-	FLOAT	x;
-	FLOAT	y;
+	float	x;
+	float	y;
 
 	rt_skip(ctx, ft_isspace);
 	x = rt_float(ctx);

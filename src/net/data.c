@@ -1,11 +1,17 @@
 #include "net.h"
 
+#ifdef RT_WINDOWS
+# include <winsock2.h>
+# include <winsock.h>
+#else
+# include <sys/socket.h>
+# include <poll.h>
+#endif
+
 #include <ft_printf.h>
 #include <errno.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <stdlib.h>
-#include <poll.h>
 
 
 #include <stdio.h>
@@ -18,7 +24,11 @@ int
 	nwritten = 0;
 	while (size > 0)
 	{
+#if defined RT_WINDOWS
+		nwritten = send(sockfd, ((const char *) data) + nwritten, size, 0);
+#else
 		nwritten = send(sockfd, ((const char *) data) + nwritten, size, MSG_NOSIGNAL);
+#endif
 		if (nwritten < 0)
 		{
 			if (errno == EINTR)
@@ -41,7 +51,11 @@ ssize_t
 	total_read = 0;
 	while (length > 0)
 	{
+#if defined RT_WINDOWS
+		nread = recv(sockfd, ((char *) buffer) + total_read, length, 0);
+#else
 		nread = recv(sockfd, ((char *) buffer) + total_read, length, MSG_NOSIGNAL);
+#endif
 		if (nread < 0)
 		{
 			if (errno == EINTR)
@@ -59,7 +73,6 @@ ssize_t
 int
 	rt_has_data(int sockfd, int timeout, char **error)
 {
-
 	struct pollfd	p;
 	int				rc;
 
@@ -67,7 +80,11 @@ int
 	p.events = POLLIN;
 	while (1)
 	{
+#if defined RT_WINDOWS
+		rc = WSAPoll(&p, 1, timeout);
+#else
 		rc = poll(&p, 1, timeout);
+#endif
 		if (rc < 0 && errno == EINTR)
 			continue;
 		break;

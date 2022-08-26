@@ -15,7 +15,7 @@
 
 typedef struct s_image t_image;
 
-int		rt_atof(const char *str, FLOAT *dst);
+int		rt_atof(const char *str, float *dst);
 int		rt_atol(const char *str, unsigned long *dst);
 
 void	*rt_malloc(size_t size) __attribute__ ((malloc));

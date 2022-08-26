@@ -4,28 +4,28 @@
 
 # include <math.h>
 
-FLOAT
-	rt_tan(FLOAT a)
+float
+	rt_tan(float a)
 {
 	return (tanf(a));
 }
 
-FLOAT
-	rt_atan(FLOAT a)
+float
+	rt_atan(float a)
 {
 	return (atanf(a));
 }
 
-FLOAT
-	rt_atan2(FLOAT y, FLOAT x)
+float
+	rt_atan2(float y, float x)
 {
 	return (atan2f(y, x));
 }
 
 #else
 
-FLOAT
-	rt_tan(FLOAT a)
+float
+	rt_tan(float a)
 {
 	return (tan(a));
 }
@@ -36,8 +36,8 @@ float
 	return (atan(a));
 }
 
-FLOAT
-	rt_atan2(FLOAT y, FLOAT x)
+float
+	rt_atan2(float y, float x)
 {
 	return (atan2(y, x));
 }

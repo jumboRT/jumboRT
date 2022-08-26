@@ -6,10 +6,10 @@ static t_vec
 	return (vec_sub(wiw, vec_scale(n, 2.0 * vec_dot(wiw, n))));
 }
 
-static FLOAT
-	reflectance(FLOAT costheta, FLOAT etai_etat)
+static float
+	reflectance(float costheta, float etai_etat)
 {
-	FLOAT	r0;
+	float	r0;
 	
 	r0 = (1.0 - etai_etat) / (1.0 + etai_etat);
 	r0 = r0 * r0;
@@ -19,7 +19,7 @@ static FLOAT
 static t_vec
 	clip(t_vec v, t_vec n)
 {
-	FLOAT	dot;
+	float	dot;
 
 	dot = vec_dot(v, n);
 	if (dot >= 0)
@@ -47,10 +47,10 @@ static t_vec
 }
 
 static t_vec
-	refract(t_vec wi, t_vec n, FLOAT etai_etat)
+	refract(t_vec wi, t_vec n, float etai_etat)
 {
-	FLOAT	costheta;
-	FLOAT	tmp;
+	float	costheta;
+	float	tmp;
 	t_vec	rperp;
 	t_vec	rparl;
 
@@ -81,7 +81,7 @@ static int32_t
 	return (idx);
 }
 
-static FLOAT
+static float
 	eta_secondf(t_trace_ctx *trace_ctx)
 {
 	int32_t	idx;
@@ -136,7 +136,7 @@ static int32_t
 }
 
 static void
-	eta_push(t_trace_ctx *trace_ctx, uint32_t mat, FLOAT eta, uint32_t bxdf_idx)
+	eta_push(t_trace_ctx *trace_ctx, uint32_t mat, float eta, uint32_t bxdf_idx)
 {
 	int32_t idx;
 
@@ -152,7 +152,7 @@ static void
 }
 
 void
-	eta_init(t_trace_ctx *trace_ctx, FLOAT eta)
+	eta_init(t_trace_ctx *trace_ctx, float eta)
 {
 	trace_ctx->etas[0].prev = -1;
 	trace_ctx->etas[0].next = -1;
@@ -164,11 +164,11 @@ void
 static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx,
 					  const GLOBAL t_bxdf_transmissive *bxdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
-	FLOAT	etai_etat;
-	FLOAT	costheta;
-	FLOAT	sintheta;
+	float	etai_etat;
+	float	costheta;
+	float	sintheta;
 	int		entering;
-	FLOAT	etai;
+	float	etai;
 	
 	etai = eta_secondf(trace_ctx);
 	etai_etat = bxdf->eta / etai;
@@ -212,7 +212,7 @@ t_vec
 	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, t_bsdf bsdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
 	uint32_t			idx;
-	FLOAT				rand;
+	float				rand;
 	const GLOBAL t_bxdf	*bxdf;
 	uint32_t			type;
 

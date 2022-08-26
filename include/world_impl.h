@@ -12,7 +12,7 @@
 /* TODO set these values to something good */
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
-# define RT_EMPTY_BONUS (FLOAT) 0.3
+# define RT_EMPTY_BONUS (float) 0.3
 # define RT_MAX_PRIMITIVES 20
 
 # define ACCEL_BELOW 0
@@ -57,13 +57,13 @@ struct s_node_info {
 };
 
 struct s_split {
-	FLOAT		offset;
-	FLOAT		cost;
+	float		offset;
+	float		cost;
 	uint8_t		axis;
 };
 
 struct s_edge {
-	FLOAT		offset;
+	float		offset;
 	uint32_t	index : 31;
 	uint32_t	type : 1;
 };
@@ -99,6 +99,6 @@ const t_primitive	*get_primitive(const t_tree_info *info, size_t index);
 t_bounds			get_bounds(const t_world *world, const t_primitive *primitive);
 void				interior_node_init(t_node_info *parent_info, const t_node_info *above_info, const t_split *split);
 void				leaf_node_init(t_node_info *node_info);
-FLOAT				get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]);
+float				get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]);
 
 #endif

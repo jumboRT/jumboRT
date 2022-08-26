@@ -1,7 +1,7 @@
 #include "rtmath.h"
 
 t_vec
-	vec_set(t_vec v, int axis, FLOAT val)
+	vec_set(t_vec v, int axis, float val)
 {
 	if (axis == 0) {
 		return (vec(val, y(v), z(v), w(v)));

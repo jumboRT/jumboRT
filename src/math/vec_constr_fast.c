@@ -3,7 +3,7 @@
 #if defined RT_VECTORIZE
 
 t_vec
-	vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w)
+	vec(float x, float y, float z, float w)
 {
 	t_vec_conv	conv;
 
@@ -15,7 +15,7 @@ t_vec
 }
 
 t_vec
-	vec3(FLOAT x, FLOAT y, FLOAT z)
+	vec3(float x, float y, float z)
 {
 	return (vec(x, y, z, 0.0));
 }
@@ -27,25 +27,25 @@ t_vec
 }
 
 t_vec
-	vec_x(FLOAT x)
+	vec_x(float x)
 {
 	return (vec(x, 0.0, 0.0, 0.0));
 }
 
 t_vec
-	vec_y(FLOAT y)
+	vec_y(float y)
 {
 	return (vec(0.0, y, 0.0, 0.0));
 }
 
 t_vec
-	vec_z(FLOAT z)
+	vec_z(float z)
 {
 	return (vec(0.0, 0.0, z, 0.0));
 }
 
 t_vec
-	vec_w(FLOAT w)
+	vec_w(float w)
 {
 	return (vec(0.0, 0.0, 0.0, w));
 }

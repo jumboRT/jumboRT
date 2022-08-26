@@ -25,8 +25,8 @@ typedef unsigned long	uint64_t;
 typedef uint64_t			t_seed;
 
 t_seed	rt_random(GLOBAL t_seed *seed);
-FLOAT	rt_random_float(GLOBAL t_seed *seed);
-FLOAT	rt_random_float_range(GLOBAL t_seed *seed, FLOAT min, FLOAT max);
+float	rt_random_float(GLOBAL t_seed *seed);
+float	rt_random_float_range(GLOBAL t_seed *seed, float min, float max);
 t_vec	rt_random_in_sphere(GLOBAL t_seed *seed);
 t_vec	rt_random_on_hemi(GLOBAL t_seed *seed, t_vec normal);
 

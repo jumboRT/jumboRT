@@ -33,7 +33,7 @@ t_vec
 }
 
 t_vec
-	vec_clamp(t_vec v, FLOAT min, FLOAT max)
+	vec_clamp(t_vec v, float min, float max)
 {
 	t_vec_conv	conv;
 

@@ -23,7 +23,7 @@ t_vec
 }
 
 t_vec
-	vec_clamp(t_vec v, FLOAT min, FLOAT max)
+	vec_clamp(t_vec v, float min, float max)
 {
 	v.x = rt_max(rt_min(v.x, max), min);
 	v.y = rt_max(rt_min(v.y, max), min);

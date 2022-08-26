@@ -1,7 +1,7 @@
 #include "rtmath.h"
 
 t_sphere
-	sphere(t_vec pos, FLOAT radius)
+	sphere(t_vec pos, float radius)
 {
 	t_sphere	result;
 
@@ -21,8 +21,8 @@ t_vec2
 void
 	sphere_hit_info(t_ray ray, t_sphere sphere, t_hit *hit)
 {
-	FLOAT		cosphi, sinphi;
-	FLOAT		theta;
+	float		cosphi, sinphi;
+	float		theta;
 
 	(void) ray;
 	cosphi = x(hit->pos) / sphere.radius;
@@ -35,11 +35,11 @@ void
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 int
-	ray_sphere_intersect(t_ray ray, t_sphere sphere, FLOAT min, t_hit *hit)
+	ray_sphere_intersect(t_ray ray, t_sphere sphere, float min, t_hit *hit)
 {
 	t_quadratic	quadratic;
 	t_vec		oc;
-	FLOAT		t[2];
+	float		t[2];
 
 	oc = vec_sub(ray.org, sphere.pos);
 	quadratic.a = 1.0;

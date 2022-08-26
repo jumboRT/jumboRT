@@ -33,7 +33,7 @@ static t_triangle
 }
 
 int
-	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit)
+	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, float min, t_world_hit *hit)
 {
 	int	did_hit;
 

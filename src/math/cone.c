@@ -1,10 +1,10 @@
 #include "rtmath.h"
 
 static int
-	ray_infinite_cone_intersect(t_ray ray, t_cone cone, FLOAT intersections[2])
+	ray_infinite_cone_intersect(t_ray ray, t_cone cone, float intersections[2])
 {
 	t_quadratic	quadratic;
-	FLOAT		costheta2;
+	float		costheta2;
 	t_vec		co;
 
 	co = vec_sub(ray.org, cone.pos);
@@ -20,7 +20,7 @@ static int
 static int
 	hit_on_finite_cone(t_vec hit, t_cone cone)
 {
-	FLOAT	dot;
+	float	dot;
 
 	dot = vec_dot(vec_sub(hit, cone.pos), cone.dir);
 	return (dot >= 0 && dot <= cone.height);
@@ -36,7 +36,7 @@ static t_vec
 }
 
 static t_vec2
-	cone_uv_mantle(t_cone cone, FLOAT radius, t_vec point)
+	cone_uv_mantle(t_cone cone, float radius, t_vec point)
 {
 	t_vec op;
 
@@ -45,7 +45,7 @@ static t_vec2
 }
 
 static t_vec2
-	cone_uv_cap(t_cone cone, FLOAT radius, t_vec point)
+	cone_uv_cap(t_cone cone, float radius, t_vec point)
 {
 	t_vec	op;
 	t_vec	tangent;
@@ -68,11 +68,11 @@ void
 }
 
 int
-	ray_cone_intersect(t_ray ray, t_cone cone, FLOAT min, t_hit *hit)
+	ray_cone_intersect(t_ray ray, t_cone cone, float min, t_hit *hit)
 {
-	FLOAT	t_side[2];
+	float	t_side[2];
 	t_hit	end_hit;
-	FLOAT	radius;
+	float	radius;
 
 	if (!ray_infinite_cone_intersect(ray, cone, t_side))
 		return (0);

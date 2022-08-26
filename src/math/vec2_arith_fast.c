@@ -12,7 +12,7 @@ t_vec2
 
 __attribute__ ((const))
 t_vec2
-	vec2_scale(t_vec2 v, FLOAT s)
+	vec2_scale(t_vec2 v, float s)
 {
 	t_vec2	b;
 

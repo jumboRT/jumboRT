@@ -119,7 +119,7 @@ int		rt_recv_packet(int sockfd, struct s_packet *packet, char **error);
 
 void	*rt_packstr(void *dst, struct s_string str);
 void	*rt_packu64(void *dst, uint64_t i);
-void	*rt_packfl(void *dst, FLOAT f);
+void	*rt_packfl(void *dst, float f);
 void	*rt_packvec(void *dst, t_vec vec);
 void	*rt_packhs(void *dst, struct s_handshake packet);
 void	*rt_packsw(void *dst, struct s_send_work packet);

@@ -1,7 +1,7 @@
 #include "rtmath.h"
 
 t_cylinder
-	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius)
+	cylinder(t_vec pos, t_vec dir, float height, float radius)
 {
 	t_cylinder result;
 
@@ -15,8 +15,8 @@ t_cylinder
 static t_vec2
 	cylinder_uv_mantle(t_cylinder cylinder, t_vec rel_point)
 {
-	FLOAT	u;
-	FLOAT	v;
+	float	u;
+	float	v;
 
 	u = rt_atan2(vec_dot(rel_point, vec_x(1.0)), vec_dot(rel_point, vec_y(1.0))) / RT_2PI;
 	v = (vec_dot(rel_point, vec_z(1.0)) / cylinder.height) + 0.0;
@@ -36,7 +36,7 @@ static t_vec2
 }
 
 static int
-	ray_cylinder_intersect_parallel(t_ray relative_ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+	ray_cylinder_intersect_parallel(t_ray relative_ray, t_cylinder cylinder, float min, t_hit *hit)
 {
 	if (vec_mag2(relative_ray.org) > cylinder.radius * cylinder.radius)
 		return (0);
@@ -58,7 +58,7 @@ static int
 }
 
 static int
-	between(FLOAT a, FLOAT b, FLOAT c)
+	between(float a, float b, float c)
 {
 	if (a < b && a > c)
 		return (1);
@@ -68,7 +68,7 @@ static int
 }
 
 static int
-	ray_infinite_cylinder_intersect(t_ray relative_ray, FLOAT radius, FLOAT intersections[2])
+	ray_infinite_cylinder_intersect(t_ray relative_ray, float radius, float intersections[2])
 {
 	t_quadratic	quadratic;
 
@@ -82,14 +82,14 @@ static int
 }
 
 static int
-	ray_cylinder_intersect_normal(t_ray relative_ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+	ray_cylinder_intersect_normal(t_ray relative_ray, t_cylinder cylinder, float min, t_hit *hit)
 {
-	FLOAT	t_side[2];
-	FLOAT	z_side[2];
-	FLOAT	t_end[2];
-	FLOAT	height;
+	float	t_side[2];
+	float	z_side[2];
+	float	t_end[2];
+	float	height;
 	t_vec	axis;
-	FLOAT	angle;
+	float	angle;
 
 	if (!ray_infinite_cylinder_intersect(relative_ray, cylinder.radius, t_side))
 		return (0);
@@ -147,11 +147,11 @@ void
 }
 
 int
-	ray_cylinder_intersect(t_ray ray, t_cylinder cylinder, FLOAT min, t_hit *hit)
+	ray_cylinder_intersect(t_ray ray, t_cylinder cylinder, float min, t_hit *hit)
 {
 	t_ray	relative_ray;
 	t_vec	axis;
-	FLOAT	angle;
+	float	angle;
 
 	vec_angles(vec_z(1), cylinder.dir, &axis, &angle);
 	relative_ray.org = vec_rotate(axis, vec_sub(ray.org, cylinder.pos), -angle);

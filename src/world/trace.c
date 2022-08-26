@@ -1,7 +1,7 @@
 #include "world.h"
 
 static void
-	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size, const GLOBAL t_material *mat, FLOAT norm_dir)
+	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size, const GLOBAL t_material *mat, float norm_dir)
 {
 	uint32_t	volume_index;
 
@@ -27,12 +27,12 @@ static void
 }
 
 static const GLOBAL t_material
-	*intersect_volume(const GLOBAL t_material **volumes, uint32_t volume_size, GLOBAL t_context *ctx, FLOAT *max_t)
+	*intersect_volume(const GLOBAL t_material **volumes, uint32_t volume_size, GLOBAL t_context *ctx, float *max_t)
 {
 	uint32_t				volume_index;
 	const GLOBAL t_material	*mat;
-	FLOAT					t;
-	FLOAT					t2;
+	float					t;
+	float					t2;
 
 	volume_index = 0;
 	mat = 0;
@@ -53,8 +53,8 @@ static const GLOBAL t_material
 t_vec
 	bump(const GLOBAL t_world *world, uint32_t bump_map, t_vec2 uv)
 {
-	FLOAT	dfdx;
-	FLOAT	dfdy;
+	float	dfdx;
+	float	dfdy;
 
 	dfdx = sample_float_offset(world, bump_map, uv, vec2(10, 0)); /* TODO check lower offset values */
 	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 10));

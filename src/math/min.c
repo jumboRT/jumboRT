@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_min(FLOAT a, FLOAT b)
+float
+	rt_min(float a, float b)
 {
 	return (fmin(a, b));
 }
 
 #else
 
-FLOAT
-	rt_min(FLOAT a, FLOAT b)
+float
+	rt_min(float a, float b)
 {
 	return (fmin(a, b));
 }

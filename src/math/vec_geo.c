@@ -2,7 +2,7 @@
 
 #if !defined RT_VECTORIZE
 
-FLOAT
+float
 	vec_dot(t_vec a, t_vec b)
 {
 	return (0

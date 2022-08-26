@@ -58,11 +58,11 @@ void leaf_node_init(t_node_info *node_info) {
 	}
 }
 
-static inline FLOAT calculate_cost(FLOAT total_sa, const FLOAT sub_sa[2], const uint32_t primitive_count[2]) {
-	FLOAT	inv_total_sa;
-	FLOAT	below_chance;
-	FLOAT	above_chance;
-	FLOAT	cost;
+static inline float calculate_cost(float total_sa, const float sub_sa[2], const uint32_t primitive_count[2]) {
+	float	inv_total_sa;
+	float	below_chance;
+	float	above_chance;
+	float	cost;
 
 	inv_total_sa = 1.0 / total_sa;
 	below_chance = sub_sa[ACCEL_BELOW] * inv_total_sa;
@@ -75,7 +75,7 @@ static inline FLOAT calculate_cost(FLOAT total_sa, const FLOAT sub_sa[2], const 
 	return (cost);
 }
 
-static void get_surface_areas(const t_bounds bounds, const FLOAT offset, const int axis, FLOAT out[2]) {
+static void get_surface_areas(const t_bounds bounds, const float offset, const int axis, float out[2]) {
 	t_vec	diagonal;
 	int		other_axis0;
 	int		other_axis1;
@@ -93,15 +93,15 @@ static void get_surface_areas(const t_bounds bounds, const FLOAT offset, const i
 		 (xyz(diagonal, other_axis0) + xyz(diagonal, other_axis1)));
 }
 
-FLOAT get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]) {
-	FLOAT		surface_areas[2];
+float get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]) {
+	float		surface_areas[2];
 
 	get_surface_areas(bounds, split->offset, split->axis, surface_areas);
 	return (calculate_cost(bounds_surf(bounds), surface_areas, primitive_counts));
 }
 
 uint32_t world_max_depth(size_t prims_count) {
-	return (8.0 + 1.3 * log2((FLOAT) prims_count));
+	return (8.0 + 1.3 * log2((float) prims_count));
 }
 
 uint32_t	new_node(t_world *world) {
@@ -111,9 +111,9 @@ uint32_t	new_node(t_world *world) {
 
 int world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index) {
 	t_bounds	prim_bounds;
-	FLOAT		min_offset;
-	FLOAT		max_offset;
-	FLOAT		axis_offset;
+	float		min_offset;
+	float		max_offset;
+	float		axis_offset;
 
 	prim_bounds = tree->prims[index].bounds;
 	max_offset = xyz(prim_bounds.max, split->axis);

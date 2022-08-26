@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_max(FLOAT a, FLOAT b)
+float
+	rt_max(float a, float b)
 {
 	return (fmax(a, b));
 }
 
 #else
 
-FLOAT
-	rt_max(FLOAT a, FLOAT b)
+float
+	rt_max(float a, float b)
 {
 	return (fmax(a, b));
 }

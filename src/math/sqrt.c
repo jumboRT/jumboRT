@@ -4,28 +4,28 @@
 
 # include <math.h>
 
-FLOAT
-	rt_sqrt(FLOAT a)
+float
+	rt_sqrt(float a)
 {
 	return (sqrtf(a));
 }
 
-FLOAT
-	rt_cbrt(FLOAT a)
+float
+	rt_cbrt(float a)
 {
 	return (cbrtf(a));
 }
 
 #else
 
-FLOAT
-	rt_sqrt(FLOAT a)
+float
+	rt_sqrt(float a)
 {
 	return (sqrt(a));
 }
 
-FLOAT
-	rt_cbrt(FLOAT a)
+float
+	rt_cbrt(float a)
 {
 	return (cbrt(a));
 }

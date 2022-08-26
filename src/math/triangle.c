@@ -27,7 +27,7 @@ void
 	t_vec	dp02;
 	t_vec	dp12;
 	t_vec	tmp;
-	FLOAT	determinant;
+	float	determinant;
 	int		degenerate;
 	t_vec	bary;
 
@@ -80,12 +80,12 @@ void
 }
 
 int
-	ray_triangle_intersect(t_ray ray, t_triangle triangle, FLOAT min, t_hit *hit)
+	ray_triangle_intersect(t_ray ray, t_triangle triangle, float min, t_hit *hit)
 {
 	t_vec	normal;
 	t_vec	v0, v1, v2;
-	FLOAT	d00, d01, d11, d20, d21;
-	FLOAT	denom;
+	float	d00, d01, d11, d20, d21;
+	float	denom;
 
 	normal = vec_norm2(vec_cross(
 				vec_sub(triangle.vertices[2], triangle.vertices[0]),

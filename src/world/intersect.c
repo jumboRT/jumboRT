@@ -10,7 +10,7 @@
 
 struct s_stack_node {
 	uint32_t	index;
-	FLOAT		max;
+	float		max;
 };
 
 static void
@@ -59,13 +59,13 @@ static void
 	uint32_t					iprim;
 	const GLOBAL uint32_t		*prims;
 	uint32_t					nprim;
-	FLOAT						org_t;
-	FLOAT						dir_t;
-	FLOAT						split_t;
-	FLOAT						min_t;
-	FLOAT						max_t;
-	FLOAT						plane_t;
-	FLOAT						tmp;
+	float						org_t;
+	float						dir_t;
+	float						split_t;
+	float						min_t;
+	float						max_t;
+	float						plane_t;
+	float						tmp;
 	uint32_t					next_child;
 	t_world_hit					current;
 

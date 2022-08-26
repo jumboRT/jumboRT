@@ -3,17 +3,17 @@
 #include <math.h>
 
 void
-    camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, FLOAT fov)
+    camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, float fov)
 {
 
-	FLOAT	half;
-	FLOAT	aspect;
+	float	half;
+	float	aspect;
 
 	camera->dir = dir;
 	camera->org = org;
 	camera->fov = fov;
 	half = tan(fov / 360 * RT_PI);
-	aspect = (FLOAT) world->img_meta.width / world->img_meta.height;
+	aspect = (float) world->img_meta.width / world->img_meta.height;
 	camera->u = vec_norm(vec_cross(dir, vec(0, 0, 1, 0)));
 	camera->v = vec_norm(vec_cross(dir, camera->u));
 	camera->u = vec_scale(camera->u, -half);

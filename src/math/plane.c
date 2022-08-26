@@ -29,11 +29,11 @@ void
 }
 
 int
-	ray_plane_intersect(t_ray ray, t_plane plane, FLOAT min, t_hit *hit)
+	ray_plane_intersect(t_ray ray, t_plane plane, float min, t_hit *hit)
 {
-	FLOAT	divisor;
-	FLOAT	dividend;
-	FLOAT	t;
+	float	divisor;
+	float	dividend;
+	float	t;
 
 	divisor = vec_dot(ray.dir, plane.normal);
 	if (divisor == 0.0)

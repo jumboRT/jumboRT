@@ -24,7 +24,7 @@ static t_vec
 static t_vec
 	sample_checker(const GLOBAL t_world *world, t_tex tex, t_vec2 uv, t_vec2 offset)
 {
-	FLOAT sines;
+	float sines;
 
 	sines = rt_sin(w(tex.a.checker.odd_color) * (u(uv) + u(offset))) * rt_sin(w(tex.a.checker.even_color) * (v(uv) + v(offset)));
 	if (sines < 0.0)
@@ -54,7 +54,7 @@ t_vec
 	return (vec(x(v) * x(v), y(v) * y(v), z(v) * z(v), w(v)));
 }
 
-FLOAT
+float
 	sample_float_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset)
 {
 	t_vec	v;
@@ -75,7 +75,7 @@ t_vec
 	return (sample_color_offset(world, id, uv, vec2(0, 0)));
 }
 
-FLOAT
+float
 	sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv)
 {
 	return (sample_float_offset(world, id, uv, vec2(0, 0)));
