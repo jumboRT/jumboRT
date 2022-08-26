@@ -29,10 +29,10 @@ static void
 	{
 		work_pause(client->worker.work);
 		work_update_stop(client->worker.work);
-		rt_free(client->worker.work->state->world);
-		rt_free(client->worker.work->state);
 		world_destroy(client->worker.work->state->world);
 		work_destroy(client->worker.work);
+		rt_free(client->worker.work->state->world);
+		rt_free(client->worker.work->state);
 		rt_free(client->worker.work);
 	}
 	client->worker.work = rt_malloc(sizeof(*client->worker.work));
