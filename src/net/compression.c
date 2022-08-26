@@ -8,9 +8,11 @@ void
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
+	size_t			size;
 	size_t			index;
 
-	data = rt_malloc(6 * count);
+	size = 6 * count;
+	data = rt_malloc(size);
 	ptr = data;
 	index = 0;
 	while (index < count)
@@ -19,7 +21,7 @@ void
 		index += 1;
 	}
 	ptr = z_deflate(data, ptr - data, zsize);
-	printf("results packet uncompressed=%zu compressed=%zu\n", 6 * count, *zsize);
+	printf("results packet uncompressed=%zu compressed=%zu\n", size, *zsize);
 	rt_free(data);
 	return (ptr);
 }
