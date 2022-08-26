@@ -2,6 +2,7 @@
 *.txt
 *.o
 *.d
+*.bin
 /compile_commands.json
 /miniRT
 /.vscode
