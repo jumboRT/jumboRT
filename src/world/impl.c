@@ -37,6 +37,10 @@ void
 	rt_free(world->vertices);
 	rt_free(world->accel_nodes);
 	rt_free(world->accel_indices);
+	rt_free(world->accel_degenerates);
+	rt_free(world->textures);
+	rt_free(world->texture_data);
+	rt_free(world->bxdfs);
 }
 
 void

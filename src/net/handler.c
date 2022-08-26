@@ -31,7 +31,7 @@ static void
 		work_update_stop(client->worker.work);
 		rt_free(client->worker.work->state->world);
 		rt_free(client->worker.work->state);
-		/* TODO: become thanos */
+		world_destroy(client->worker.work->state->world);
 		work_destroy(client->worker.work);
 		rt_free(client->worker.work);
 	}
