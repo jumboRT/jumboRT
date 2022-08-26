@@ -9,7 +9,7 @@ t_vec
 }
 
 t_vec
-	vec_scale(t_vec v, FLOAT s)
+	vec_scale(t_vec v, float s)
 {
 	t_vec	b;
 

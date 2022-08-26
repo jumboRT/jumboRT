@@ -1,7 +1,7 @@
 #include "rtmath.h"
 
-FLOAT
-	rt_clamp(FLOAT arg, FLOAT min, FLOAT max)
+float
+	rt_clamp(float arg, float min, float max)
 {
 	if (arg <= min)
 		return (min);

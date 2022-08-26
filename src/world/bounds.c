@@ -16,8 +16,8 @@ static inline t_bounds get_bounds_triangle(const t_world *world, const t_shape_t
 }
 
 static t_bounds get_bounds_cylinder(const t_shape_cylinder *cylinder) {
-	FLOAT	radius;
-	FLOAT	dot;
+	float	radius;
+	float	dot;
 	t_vec	top;
 	t_vec	dif;
 	t_vec	box;
@@ -43,8 +43,8 @@ static inline t_bounds get_bounds_sphere(const t_shape_sphere *sphere) {
 }
 
 static t_bounds get_bounds_cone(const t_shape_cone *shape) {
-	FLOAT	radius;
-	FLOAT	dot;
+	float	radius;
+	float	dot;
 	t_vec	top;
 	t_vec	dif;
 	t_vec	box;

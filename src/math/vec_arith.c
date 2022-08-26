@@ -12,7 +12,7 @@ t_vec
 }
 
 t_vec
-	vec_scale(t_vec v, FLOAT s)
+	vec_scale(t_vec v, float s)
 {
 	return (vec(x(v) * s, y(v) * s, z(v) * s));
 }

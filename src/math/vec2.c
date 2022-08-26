@@ -3,7 +3,7 @@
 #if !defined RT_VECTORIZE
 
 t_vec2
-	vec2(FLOAT x, FLOAT y)
+	vec2(float x, float y)
 {
 	t_vec2	result;
 

@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_exp(FLOAT arg)
+float
+	rt_exp(float arg)
 {
 	return (exp(arg));
 }
 
 #else
 
-FLOAT
-	rt_exp(FLOAT arg)
+float
+	rt_exp(float arg)
 {
 	return (exp(arg));
 }

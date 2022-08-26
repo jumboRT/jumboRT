@@ -9,14 +9,14 @@ t_seed
 	return (*seed * (((t_seed) 0x2545F491 << 32) | 0x4F6CDD1D));
 }
 
-FLOAT
+float
 	rt_random_float(GLOBAL t_seed *seed)
 {
 	return (rt_random(seed) / 18446744073709551616.0);
 }
 
-FLOAT
-	rt_random_float_range(GLOBAL t_seed *seed, FLOAT min, FLOAT max)
+float
+	rt_random_float_range(GLOBAL t_seed *seed, float min, float max)
 {
 	return (min + (max - min) * (rt_random_float(seed)));
 }
@@ -25,7 +25,7 @@ t_vec
 	rt_random_in_sphere(GLOBAL t_seed *seed)
 {
 	t_vec	result;
-	FLOAT	len;
+	float	len;
 
 	while (1)
 	{

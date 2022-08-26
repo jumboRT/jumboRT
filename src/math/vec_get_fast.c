@@ -2,7 +2,7 @@
 
 #if defined RT_VECTORIZE
 
-FLOAT
+float
 	x(t_vec v)
 {
 	t_vec_conv	conv;
@@ -11,7 +11,7 @@ FLOAT
 	return (conv.elem[0]);
 }
 
-FLOAT
+float
 	y(t_vec v)
 {
 	t_vec_conv	conv;
@@ -20,7 +20,7 @@ FLOAT
 	return (conv.elem[1]);
 }
 
-FLOAT
+float
 	z(t_vec v)
 {
 	t_vec_conv	conv;
@@ -29,7 +29,7 @@ FLOAT
 	return (conv.elem[2]);
 }
 
-FLOAT
+float
 	w(t_vec v)
 {
 	t_vec_conv	conv;
@@ -38,7 +38,7 @@ FLOAT
 	return (conv.elem[3]);
 }
 
-FLOAT
+float
 	u(t_vec2 v)
 {
 	t_vec2_conv	conv;
@@ -47,7 +47,7 @@ FLOAT
 	return (conv.elem[0]);
 }
 
-FLOAT
+float
 	v(t_vec2 v)
 {
 	t_vec2_conv	conv;
@@ -56,7 +56,7 @@ FLOAT
 	return (conv.elem[1]);
 }
 
-FLOAT
+float
 	xyz(t_vec v, int i)
 {
 	if (i == 0)

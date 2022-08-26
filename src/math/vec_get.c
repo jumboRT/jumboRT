@@ -2,25 +2,25 @@
 
 #if !defined RT_VECTORIZE
 
-FLOAT
+float
 	x(t_vec v)
 {
 	return (v.x);
 }
 
-FLOAT
+float
 	y(t_vec v)
 {
 	return (v.y);
 }
 
-FLOAT
+float
 	z(t_vec v)
 {
 	return (v.z);
 }
 
-FLOAT
+float
 	xyz(t_vec v, int i)
 {
 	if (i == 0)

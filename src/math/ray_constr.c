@@ -11,7 +11,7 @@ t_ray
 }
 
 t_vec
-	ray_at(t_ray ray, FLOAT t)
+	ray_at(t_ray ray, float t)
 {
 	return (vec_add(ray.org, vec_scale(ray.dir, t)));
 }

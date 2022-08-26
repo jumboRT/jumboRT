@@ -7,7 +7,7 @@ void
 {
 	t_vec pos;
 	t_vec dir;
-	FLOAT fov;
+	float fov;
 
 	pos = rt_vec(ctx);
 	dir = rt_vec_norm(ctx);

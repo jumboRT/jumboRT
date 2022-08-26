@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_log(FLOAT arg)
+float
+	rt_log(float arg)
 {
 	return (log(arg));
 }
 
 #else
 
-FLOAT
-	rt_log(FLOAT arg)
+float
+	rt_log(float arg)
 {
 	return (log(arg));
 }

@@ -117,7 +117,7 @@ void
 }
 
 void
-	*rt_packfl(void *dst, FLOAT f)
+	*rt_packfl(void *dst, float f)
 {
 	uint16_t	h;
 	uint32_t	i;
@@ -149,7 +149,7 @@ void
 }
 
 void
-	*rt_upackfl(void *src, FLOAT *f)
+	*rt_upackfl(void *src, float *f)
 {
 	uint16_t	h;
 	uint32_t	i;
@@ -163,9 +163,9 @@ void
 void
 	*rt_upackvec(void *src, t_vec *dst)
 {
-	FLOAT	x;
-	FLOAT	y;
-	FLOAT	z;
+	float	x;
+	float	y;
+	float	z;
 
 	src = rt_upackfl(src, &x);
 	src = rt_upackfl(src, &y);

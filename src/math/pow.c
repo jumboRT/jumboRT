@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_pow(FLOAT x, FLOAT y)
+float
+	rt_pow(float x, float y)
 {
 	return (powf(x, y));
 }
 
 #else
 
-FLOAT
-	rt_pow(FLOAT x, FLOAT y)
+float
+	rt_pow(float x, float y)
 {
 	return (pow(x, y));
 }

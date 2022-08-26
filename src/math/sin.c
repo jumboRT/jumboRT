@@ -4,28 +4,28 @@
 
 # include <math.h>
 
-FLOAT
-	rt_sin(FLOAT a)
+float
+	rt_sin(float a)
 {
 	return (sinf(a));
 }
 
-FLOAT
-	rt_asin(FLOAT a)
+float
+	rt_asin(float a)
 {
 	return (asinf(a));
 }
 
 #else
 
-FLOAT
-	rt_sin(FLOAT a)
+float
+	rt_sin(float a)
 {
 	return (sin(a));
 }
 
-FLOAT
-	rt_asin(FLOAT a)
+float
+	rt_asin(float a)
 {
 	return (asin(a));
 }

@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_abs(FLOAT a)
+float
+	rt_abs(float a)
 {
 	return (fabs(a));
 }
 
 #else
 
-FLOAT
-	rt_abs(FLOAT a)
+float
+	rt_abs(float a)
 {
 	return (fabs(a));
 }

@@ -2,10 +2,13 @@
 #include <sys/types.h>
 #if defined RT_WINDOWS
 #include <winsock.h>
+#include <ws2def.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #else
 #include <sys/socket.h>
-#endif
 #include <netdb.h>
+#endif
 #include <ft_printf.h>
 #include <unistd.h>
 

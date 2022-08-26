@@ -1,12 +1,12 @@
 #include "rtmath.h"
 
 int
-	quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2])
+	quadratic_solve(const t_quadratic *quadratic, float solutions[2])
 {
-	FLOAT	a;
-	FLOAT	b;
-	FLOAT	c;
-	FLOAT	discriminant;
+	float	a;
+	float	b;
+	float	c;
+	float	discriminant;
 
 	a = quadratic->a;
 	b = quadratic->b;

@@ -74,7 +74,7 @@ typedef struct s_eta_link			t_eta_link;
 struct s_eta_link {
 	int64_t		mat;
 	uint32_t	bxdf;
-	FLOAT		eta;
+	float		eta;
 	int32_t		next;
 	int32_t		prev;
 };
@@ -107,7 +107,7 @@ struct s_camera {
 	t_vec	dir;
 	t_vec	u;
 	t_vec	v;
-	FLOAT	fov;
+	float	fov;
 };
 
 struct s_vertex {
@@ -144,7 +144,7 @@ struct s_filter {
 struct s_bxdf {
 	uint32_t	type;
 	t_filter	tex;
-	FLOAT		weight;
+	float		weight;
 };
 
 struct s_bxdf_diffuse {
@@ -153,26 +153,26 @@ struct s_bxdf_diffuse {
 
 struct s_bxdf_reflective {
 	t_bxdf		base;
-	FLOAT		fuzzy;
+	float		fuzzy;
 };
 
 struct s_bxdf_transmissive {
 	t_bxdf		base;
 	t_filter	refraction_tex;
-	FLOAT		eta;
+	float		eta;
 };
 
 struct s_bxdf_mf_reflective {
 	t_bxdf		base;
-	FLOAT		alphax;
-	FLOAT		alphay;
+	float		alphax;
+	float		alphay;
 };
 
 struct s_bxdf_cook_torrance {
 	t_bxdf		base;
-	FLOAT		roughness;
-	FLOAT		eta;
-	FLOAT		k;
+	float		roughness;
+	float		eta;
+	float		k;
 };
 
 union u_bxdf_any {
@@ -186,7 +186,7 @@ union u_bxdf_any {
 struct s_bsdf {
 	uint32_t	begin;
 	uint32_t	end;
-	FLOAT		weight;
+	float		weight;
 };
 
 struct s_material {
@@ -195,10 +195,10 @@ struct s_material {
 	t_bsdf		volume;
 	t_filter	alpha;
 	t_filter	emission;
-	FLOAT		brightness;
+	float		brightness;
 	uint32_t	normal_map;
 	uint32_t	bump_map;
-	FLOAT		density;
+	float		density;
 };
 
 struct s_shape_triangle {
@@ -210,7 +210,7 @@ struct s_shape_triangle {
 
 struct s_shape_sphere {
 	t_primitive	base;
-	FLOAT		radius;
+	float		radius;
 	t_vec		pos;
 };
 
@@ -231,7 +231,7 @@ struct s_shape_cone {
 
 struct s_accel_node {
 	union {
-		FLOAT		split;
+		float		split;
 		uint32_t	one_primitive;
 		uint32_t	primitive_ioffset;
 	}	a;
@@ -313,31 +313,31 @@ t_vec						get_vertex(const t_world *world, uint32_t index);
 t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
 t_vec						local_to_world(t_world_hit hit, t_vec v);
 t_vec						world_to_local(t_world_hit hit, t_vec v);
-void eta_init(t_trace_ctx *trace_ctx, FLOAT eta);
+void eta_init(t_trace_ctx *trace_ctx, float eta);
 
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
-int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, FLOAT min, t_world_hit *hit);
+int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, float min, t_world_hit *hit);
 void		prim_hit_info(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
 t_vec		filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset);
 t_vec		filter_sample(const GLOBAL t_world *world, t_filter filter, t_vec2 uv);
 t_vec		sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
 t_vec		sample_color_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
-FLOAT		sample_float_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
+float		sample_float_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
 t_vec		sample_vector(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
 t_vec		sample_color(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
-FLOAT		sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
+float		sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
 void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 void		world_accel(t_world *world);
 void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
-void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, FLOAT offset);
+void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, float offset);
 
-void		camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, FLOAT fov);
+void		camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, float fov);
 
-FLOAT		split_pos(t_accel_node node);
+float		split_pos(t_accel_node node);
 uint32_t	nprims(t_accel_node node);
 uint32_t	split_axis(t_accel_node node);
 uint32_t	is_leaf(t_accel_node node);

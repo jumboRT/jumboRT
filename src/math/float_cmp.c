@@ -2,7 +2,7 @@
 
 /* https://bitbashing.io/comparing-floats.html */
 int
-	float_eq(FLOAT a, FLOAT b, FLOAT error)
+	float_eq(float a, float b, float error)
 {
 
 }

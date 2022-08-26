@@ -5,31 +5,31 @@
 #include <stdlib.h>
 #include <math.h>
 
-static FLOAT
+static float
 	rt_magnitude(const char **str)
 {
-	FLOAT	magnitude;
+	float	magnitude;
 
 	magnitude = 0.0;
 	while (ft_isdigit(*(*str)))
 	{
-		magnitude = magnitude * 10 + ((FLOAT) (int) *(*str) - '0');
+		magnitude = magnitude * 10 + ((float) (int) *(*str) - '0');
 		*str += 1;
 	}
 	return (magnitude);
 }
 
-static FLOAT
+static float
 	rt_mantissa(const char **str)
 {
-	FLOAT	mantissa;
-	FLOAT	exp;
+	float	mantissa;
+	float	exp;
 
 	mantissa = 0.0;
 	exp = 10.0;
 	while (ft_isdigit(*(*str)))
 	{
-		mantissa = mantissa + (((FLOAT) (int) *(*str) - '0') / exp);
+		mantissa = mantissa + (((float) (int) *(*str) - '0') / exp);
 		*str += 1;
 		exp *= 10.0;
 	}
@@ -37,11 +37,11 @@ static FLOAT
 }
 
 int
-	rt_atof(const char *str, FLOAT *dst)
+	rt_atof(const char *str, float *dst)
 {
-	FLOAT	magnitude;
-	FLOAT	mantissa;
-	FLOAT	sign;
+	float	magnitude;
+	float	mantissa;
+	float	sign;
 
 	sign = 1.0;
 	magnitude = 0.0;

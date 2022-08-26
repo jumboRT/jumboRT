@@ -1,6 +1,6 @@
 #include "world.h"
 
-FLOAT
+float
 	split_pos(t_accel_node node)
 {
 	return (node.a.split);

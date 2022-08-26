@@ -4,16 +4,16 @@
 
 # include <math.h>
 
-FLOAT
-	rt_mod(FLOAT a, FLOAT b)
+float
+	rt_mod(float a, float b)
 {
 	return (fmod(a, b));
 }
 
 #else
 
-FLOAT
-	rt_mod(FLOAT a, FLOAT b)
+float
+	rt_mod(float a, float b)
 {
 	return (fmod(a, b));
 }

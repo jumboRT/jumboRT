@@ -13,7 +13,7 @@
 #include "z.h"
 
 #if defined RT_WINDOWS
-#include <win/sock.h>
+#include <winsock.h>
 #endif
 
 
@@ -410,7 +410,7 @@ int
 #if defined RT_WINDOWS
 	WSADATA			wsaData;
 
-	if (WSAStartup(MAKEWORK(2,0), &wsaData) != 0) {
+	if (WSAStartup(MAKEWORD(2,0), &wsaData) != 0) {
 		fprintf(stderr, "WSAStartup failed\n");
 		return (EXIT_FAILURE);
 	}

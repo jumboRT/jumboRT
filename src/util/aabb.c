@@ -27,7 +27,7 @@ t_bounds
 	return (bounds(vec_min(a.min, b.min), vec_max(a.max, b.max)));
 }
 
-FLOAT
+float
 	bounds_surf(t_bounds a)
 {
 	t_vec	s;

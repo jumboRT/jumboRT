@@ -7,25 +7,22 @@
 # define RT_1_PI 0.31831 
 # define RT_PI 3.14159
 # define RT_2PI 6.28319
-# if !defined FLOAT
-#  define FLOAT float
-# endif
 
 # define RT_VECTORIZE
 
 # if defined RT_VECTORIZE
-typedef FLOAT				t_vec __attribute__ ((vector_size(16)));
+typedef float				t_vec __attribute__ ((vector_size(16)));
 typedef int					t_ivec __attribute__ ((vector_size(16))); /* TODO can probably be removed */
-typedef FLOAT				t_vec2 __attribute__ ((vector_size(8)));
+typedef float				t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
 	t_vec	vec;
-	FLOAT	elem[4];
+	float	elem[4];
 }	t_vec_conv;
 
 typedef union u_vec2_conv {
 	t_vec2	vec;
-	FLOAT	elem[2];
+	float	elem[2];
 }	t_vec2_conv;
 # endif
 
@@ -45,15 +42,15 @@ typedef struct s_quadratic	t_quadratic;
 
 # if !defined RT_VECTORIZE
 typedef struct __attribute__((aligned(16))) s_vec {
-	FLOAT	x;
-	FLOAT	y;
-	FLOAT	z;
-	FLOAT	w;
+	float	x;
+	float	y;
+	float	z;
+	float	w;
 }	t_vec;
 
 typedef struct s_vec2 {
-	FLOAT	x;
-	FLOAT	y;
+	float	x;
+	float	y;
 }	t_vec2;
 # endif
 
@@ -63,9 +60,9 @@ struct s_ray {
 };
 
 struct __attribute__((aligned(16))) s_quadratic {
-	FLOAT	a;
-	FLOAT	b;
-	FLOAT	c;
+	float	a;
+	float	b;
+	float	c;
 };
 
 struct s_plane {
@@ -82,21 +79,21 @@ struct s_triangle {
 
 struct s_sphere {
 	t_vec	pos;
-	FLOAT	radius;
+	float	radius;
 };
 
 struct s_cylinder {
 	t_vec	pos;
 	t_vec	dir;
-	FLOAT	height;
-	FLOAT	radius;
+	float	height;
+	float	radius;
 };
 
 struct s_cone {
 	t_vec	pos;
 	t_vec	dir;
-	FLOAT	height;
-	FLOAT	angle;
+	float	height;
+	float	angle;
 };
 
 struct s_hit {
@@ -106,71 +103,71 @@ struct s_hit {
 	t_vec	dpdu;
 	t_vec	dpdv;
 	t_vec2	uv;
-	FLOAT	t;
+	float	t;
 	union {
 		struct {
-			FLOAT	bc_u;
-			FLOAT	bc_v;
-			FLOAT	bc_w;
+			float	bc_u;
+			float	bc_v;
+			float	bc_w;
 		} tr;
 	} ctx;
 };
 
-FLOAT		rt_sqrt(FLOAT a);
-FLOAT		rt_cbrt(FLOAT a);
-FLOAT		rt_sin(FLOAT a);
-FLOAT		rt_asin(FLOAT a);
-FLOAT		rt_cos(FLOAT a);
-FLOAT		rt_acos(FLOAT a);
-FLOAT		rt_tan(FLOAT a);
-FLOAT		rt_atan(FLOAT a);
-FLOAT		rt_atan2(FLOAT y, FLOAT x);
-FLOAT		rt_abs(FLOAT a);
-FLOAT		rt_min(FLOAT a, FLOAT b);
-FLOAT		rt_max(FLOAT a, FLOAT b);
-FLOAT		rt_pow(FLOAT x, FLOAT y);
-FLOAT		rt_mod(FLOAT a, FLOAT b);
-FLOAT		rt_exp(FLOAT arg);
-FLOAT		rt_clamp(FLOAT arg, FLOAT min, FLOAT max);
-FLOAT		rt_log(FLOAT arg);
+float		rt_sqrt(float a);
+float		rt_cbrt(float a);
+float		rt_sin(float a);
+float		rt_asin(float a);
+float		rt_cos(float a);
+float		rt_acos(float a);
+float		rt_tan(float a);
+float		rt_atan(float a);
+float		rt_atan2(float y, float x);
+float		rt_abs(float a);
+float		rt_min(float a, float b);
+float		rt_max(float a, float b);
+float		rt_pow(float x, float y);
+float		rt_mod(float a, float b);
+float		rt_exp(float arg);
+float		rt_clamp(float arg, float min, float max);
+float		rt_log(float arg);
 
-int			float_eq(FLOAT a, FLOAT b, FLOAT error);
+int			float_eq(float a, float b, float error);
 
-FLOAT		x(t_vec v);
-FLOAT		y(t_vec v);
-FLOAT		z(t_vec v);
-FLOAT		w(t_vec v);
-FLOAT		xyz(t_vec v, int i);
+float		x(t_vec v);
+float		y(t_vec v);
+float		z(t_vec v);
+float		w(t_vec v);
+float		xyz(t_vec v, int i);
 
-t_vec		vec_set(t_vec v, int axis, FLOAT val);
+t_vec		vec_set(t_vec v, int axis, float val);
 
-t_vec		vec(FLOAT x, FLOAT y, FLOAT z, FLOAT w);
-t_vec		vec3(FLOAT x, FLOAT y, FLOAT z);
+t_vec		vec(float x, float y, float z, float w);
+t_vec		vec3(float x, float y, float z);
 t_vec		vec_0(void);
-t_vec		vec_x(FLOAT x);
-t_vec		vec_y(FLOAT y);
-t_vec		vec_z(FLOAT z);
+t_vec		vec_x(float x);
+t_vec		vec_y(float y);
+t_vec		vec_z(float z);
 
-t_vec2		vec2(FLOAT x, FLOAT y);
+t_vec2		vec2(float x, float y);
 t_vec		vec2_0(void);
-t_vec		vec2_x(FLOAT x);
-t_vec		vec2_y(FLOAT y);
+t_vec		vec2_x(float x);
+t_vec		vec2_y(float y);
 
-FLOAT		u(t_vec2 v);
-FLOAT		v(t_vec2 v);
+float		u(t_vec2 v);
+float		v(t_vec2 v);
 
 t_plane		plane(t_vec pos, t_vec normal);
 t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n1, t_vec n2, t_vec n3, int is_smooth);
-t_sphere	sphere(t_vec pos, FLOAT radius);
-t_cylinder	cylinder(t_vec pos, t_vec dir, FLOAT height, FLOAT radius);
-t_cone		cone(t_vec pos, t_vec dir, FLOAT height, FLOAT angle); 
+t_sphere	sphere(t_vec pos, float radius);
+t_cylinder	cylinder(t_vec pos, t_vec dir, float height, float radius);
+t_cone		cone(t_vec pos, t_vec dir, float height, float angle); 
 
-FLOAT		vec_dot(t_vec a, t_vec b);
-FLOAT		vec_mag2(t_vec a);
-FLOAT		vec_mag(t_vec a);
+float		vec_dot(t_vec a, t_vec b);
+float		vec_mag2(t_vec a);
+float		vec_mag(t_vec a);
 
 t_vec		vec_neg(t_vec v);
-t_vec		vec_scale(t_vec v, FLOAT s);
+t_vec		vec_scale(t_vec v, float s);
 t_vec		vec_cross(t_vec a, t_vec b);
 t_vec		vec_add(t_vec a, t_vec b);
 t_vec		vec_sub(t_vec a, t_vec b);
@@ -178,7 +175,7 @@ t_vec		vec_mul(t_vec a, t_vec b);
 t_vec		vec_norm(t_vec v);
 
 t_vec2		vec2_neg(t_vec2 v);
-t_vec2		vec2_scale(t_vec2 v, FLOAT s);
+t_vec2		vec2_scale(t_vec2 v, float s);
 t_vec2		vec2_add(t_vec2 a, t_vec2 b);
 t_vec2		vec2_sub(t_vec2 a, t_vec2 b);
 t_vec2		vec2_mul(t_vec2 a, t_vec2 b);
@@ -187,32 +184,32 @@ t_vec		vec_norm2(t_vec v);
 
 t_vec		vec_min(t_vec a, t_vec b);
 t_vec		vec_max(t_vec a, t_vec b);
-t_vec		vec_clamp(t_vec v, FLOAT min, FLOAT max);
+t_vec		vec_clamp(t_vec v, float min, float max);
 t_vec		vec_abs(t_vec a);
 
 t_vec		vec_tangent(t_vec v);
-t_vec		vec_rotate(t_vec axis, t_vec v, FLOAT angle);
-void		vec_angles(t_vec basis, t_vec v, t_vec *out_vec, FLOAT *out_angle);
+t_vec		vec_rotate(t_vec axis, t_vec v, float angle);
+void		vec_angles(t_vec basis, t_vec v, t_vec *out_vec, float *out_angle);
 
 t_vec2		vec_change_basis2(t_vec v, t_vec tangent, t_vec bit_tangent);
 
 int			vec_eq(t_vec a, t_vec b);
 
 t_ray		ray(t_vec org, t_vec dir);
-t_vec		ray_at(t_ray ray, FLOAT t);
+t_vec		ray_at(t_ray ray, float t);
 
 t_vec2		sphere_uv_at(t_vec point);
 
 int			ray_plane_intersect(t_ray ray,
-				t_plane plane, FLOAT min, t_hit *hit);
+				t_plane plane, float min, t_hit *hit);
 int			ray_triangle_intersect(t_ray ray,
-				t_triangle triangle, FLOAT min, t_hit *hit);
+				t_triangle triangle, float min, t_hit *hit);
 int			ray_sphere_intersect(t_ray ray,
-				t_sphere sphere, FLOAT min, t_hit *hit);
+				t_sphere sphere, float min, t_hit *hit);
 int			ray_cylinder_intersect(t_ray ray,
-				t_cylinder cylinder, FLOAT min, t_hit *hit);
+				t_cylinder cylinder, float min, t_hit *hit);
 int			ray_cone_intersect(t_ray ray,
-				t_cone cone, FLOAT min, t_hit *hit);
+				t_cone cone, float min, t_hit *hit);
 
 void		plane_hit_info(t_ray ray,
 				t_plane plane, t_hit *hit);
@@ -225,5 +222,5 @@ void		cylinder_hit_info(t_ray ray,
 void		cone_hit_info(t_ray ray,
 				t_cone cone, t_hit *hit);
 
-int			quadratic_solve(const t_quadratic *quadratic, FLOAT solutions[2]);
+int			quadratic_solve(const t_quadratic *quadratic, float solutions[2]);
 #endif
