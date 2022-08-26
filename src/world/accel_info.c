@@ -71,6 +71,7 @@ void
 	size_t		offset;
 	t_primitive	*primitive;
 	t_prim_info	prim;
+	uint32_t	new_depth;
 
 	offset = 0;
 	while (offset < world->primitives_size)
@@ -85,6 +86,15 @@ void
 			world_info_add_prim(tree, node, prim);
 		}
 		offset += world_primitive_size(prim_type(primitive));
+	}
+	new_depth = world_max_depth(tree->prims_count);
+	offset = 0;
+	while (node->depth - offset > new_depth)
+	{
+		rt_free(tree->edges[node->depth - offset].edges[AXIS_X]);
+		rt_free(tree->edges[node->depth - offset].edges[AXIS_Y]);
+		rt_free(tree->edges[node->depth - offset].edges[AXIS_Z]);
+		offset += 1;
 	}
 	node->depth = world_max_depth(tree->prims_count);
 	view_sort_array(tree->edges[0].edges[AXIS_X], tree->edges[0].count,
