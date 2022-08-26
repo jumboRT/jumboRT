@@ -249,6 +249,11 @@ void
 		thread_join(&client->viewer.job_thrd);
 	else
 		pool_destroy(&client->worker.pool);
+#if defined RT_WINDOWS
+	closesocket(client->any.sockfd);
+#else
+	close(client->any.sockfd);
+#endif
 	/* This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->any.mtx);
 }

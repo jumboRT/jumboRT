@@ -1,6 +1,10 @@
 #include "net.h"
 #include <sys/types.h>
+#if defined RT_WINDOWS
+#include <winsock.h>
+#else
 #include <sys/socket.h>
+#endif
 #include <netdb.h>
 #include <ft_printf.h>
 #include <unistd.h>
@@ -43,13 +47,16 @@ static int
 			rc = connect(sockfd, info->ai_addr, info->ai_addrlen);
 			if (rc == 0)
 				break;
+#if defined RT_WINDOWS
+			closesocket(sockfd);
+#else
 			close(sockfd);
+#endif
 		}
 		info = info->ai_next;
 	}
 	return (sockfd);
 }
-
 
 int
 	rt_connect(const char *ip, const char *port, char **error)

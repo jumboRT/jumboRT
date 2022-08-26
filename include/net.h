@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <sys/types.h> /* TODO make this portable */
 
-# define RT_NET_MAX_JOBS		16
+# define RT_NET_MAX_JOBS		32
 # define RT_NET_JOBSIZE			(65536 * 4)
 # define RT_NET_POOL_SIZE		8
 
