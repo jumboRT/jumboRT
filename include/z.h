@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #define ZWINDOW_SIZE (32768)
+//#define ZWINDOW_SIZE (4096)
 #define ZEMPTY ((int16_t) -1)
 #define ZHASH_SIZE 2
 #define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
@@ -99,6 +100,8 @@ struct s_zchain {
 	uint64_t	hash;
 	size_t		next_length;
 	int16_t		next;
+	size_t		next_best_length;
+	int16_t		next_best;
 };
 
 struct s_zring {

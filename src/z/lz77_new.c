@@ -147,6 +147,8 @@ static void
 	link->hash = hash;
 	link->next = ZEMPTY;
 	link->next_length = 0;
+	link->next_best = ZEMPTY;
+	link->next_best_length = 0;
 	if (ztable_at(&state->table, hash) == ZEMPTY)
 		state->table.data[hash].first = state->ring.index;
 	else
@@ -174,12 +176,14 @@ static t_ztoken
 	lz_deflate(t_zstate *state, uint32_t hash)
 {
 	t_zchain	*chain;
+	t_zchain	*chain_ref;
 	t_ztoken	best;
 	size_t		current_length;
 	size_t		prev_length;
 
 	best = ztoken_at(state, state->offset);
 	chain = zring_at(&state->ring, ztable_at(&state->table, hash));
+	chain_ref = NULL;
 	current_length = ZHASH_SIZE;
 	prev_length = ZHASH_SIZE;
 	while (chain != NULL)
@@ -187,16 +191,33 @@ static t_ztoken
 		if (prev_length == current_length)
 		{
 			current_length = ztoken_mismatch(state, state->offset, chain->offset, current_length);
-			if (current_length >= ZTOKEN_MIN_LENGTH && current_length >= best.length)
+			if (current_length >= best.length)
 			{
-				best.length = current_length;
-				best.data.distance = state->offset - chain->offset;
+				if (chain_ref != NULL)
+				{
+					chain_ref->next_best = chain - state->ring.data;
+					chain_ref->next_best_length = best.length;
+				}
+				chain_ref = chain;
+				if (current_length >= ZTOKEN_MIN_LENGTH)
+				{
+					best.length = current_length;
+					best.data.distance = state->offset - chain->offset;
+				}
 			}
 		}
 		else if (prev_length < current_length)
 			current_length = prev_length;
-		prev_length = chain->next_length;
-		chain = zchain_next(&state->ring, chain);
+		if (chain->next_best != ZEMPTY && chain->next_best_length == current_length)
+		{
+			prev_length = chain->next_best_length;
+			chain = zring_at(&state->ring, chain->next_best);
+		}
+		else
+		{
+			prev_length = chain->next_length;
+			chain = zring_at(&state->ring, chain->next);
+		}
 	}
 	return (best);
 }
