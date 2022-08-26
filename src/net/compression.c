@@ -9,67 +9,40 @@ void
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
-	unsigned char	*tmp;
 	size_t			index;
-	size_t			chunk_offset;
-	size_t			chunk_count;
 
-	data = rt_malloc(28 * count);
+	data = rt_malloc(6 * count);
 	ptr = data;
 	index = 0;
 	while (index < count)
 	{
-		chunk_offset = results[index].index;
-		chunk_count = 0;
-		ptr = rt_packu64(ptr, chunk_offset);
-		tmp = ptr;
-		ptr = rt_packu64(ptr, chunk_count);
-		while (index < count && results[index].index == chunk_offset + chunk_count)
-		{
-			ptr = rt_packvec(ptr, results[index].color);
-			index += 1;
-			chunk_count += 1;
-		}
-		rt_packu64(tmp, chunk_count);
+		ptr = rt_packvec(ptr, results[index].color);
+		index += 1;
 	}
-	tmp = z_deflate(data, ptr - data, zsize);
-	printf("results packet uncompressed=%zu compressed=%zu\n", (size_t) (ptr - data), *zsize);
+	ptr = z_deflate(data, ptr - data, zsize);
+	printf("results packet uncompressed=%zu compressed=%zu\n", 6 * count, *zsize);
 	rt_free(data);
-	return (tmp);
+	return (ptr);
 }
 
 /* TODO: make sure all memory access happens within the buffer */
 t_result
-	*rt_results_inflate(struct s_send_results packet, size_t *count)
+	*rt_results_inflate(struct s_send_results packet)
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
-	size_t			size;
 	size_t			index;
-	uint64_t		chunk_offset;
-	uint64_t		chunk_count;
+	size_t			size;
 	t_result		*result;
 
-	char *error;
-
-	*count = 0;
-	result = NULL;
 	data = z_inflate(packet.zdata, packet.zsize, &size);
-	//rt_writefile("packet.bin", &error, data, size);
+	result = rt_malloc((packet.end - packet.begin) * sizeof(*result));
 	ptr = data;
-	while ((size_t) (ptr - data) < size)
+	index = 0;
+	while (index < packet.end - packet.begin)
 	{
-		ptr = rt_upacku64(ptr, &chunk_offset);
-		ptr = rt_upacku64(ptr, &chunk_count);
-		result = rt_realloc(result, (*count) * sizeof(*result), (*count + chunk_count) * sizeof(*result));
-		index = 0;
-		while (index < chunk_count)
-		{
-			result[*count + index].index = chunk_offset + index;
-			ptr = rt_upackvec(ptr, &result[*count + index].color);
-			index += 1;
-		}
-		*count += chunk_count;
+		ptr = rt_upackvec(ptr, &result[index].color);
+		index += 1;
 	}
 	rt_free(data);
 	return (result);

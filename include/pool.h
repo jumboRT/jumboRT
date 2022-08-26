@@ -27,6 +27,7 @@ struct s_task {
 	void			*ctx;
 	size_t			count;
 	size_t			done;
+	int				detached;
 };
 
 struct s_task_item {
@@ -39,5 +40,6 @@ void	pool_create(t_pool *pool, size_t count);
 void	pool_destroy(t_pool *pool);
 void	pool_fork(t_pool *pool, t_task *task);
 void	pool_join(t_pool *pool, t_task *task);
+void	pool_detach(t_pool *pool, t_task *task);
 
 #endif

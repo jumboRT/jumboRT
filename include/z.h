@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 //#define ZWINDOW_SIZE (32768)
-#define ZWINDOW_SIZE (256)
+#define ZWINDOW_SIZE (1024)
 #define ZEMPTY ((int16_t) -1)
 #define ZHASH_SIZE 2
 #define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))

@@ -187,7 +187,6 @@ void
 			depth = 0;
 		if (depth == 0)
 		{
-			results[index].index = (begin + index) % (world->img_meta.width * world->img_meta.height);
 			results[index].color = tctx.tail;
 			index += stride;
 		}

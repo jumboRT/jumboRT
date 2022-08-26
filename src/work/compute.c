@@ -42,6 +42,12 @@ __kernel void
 
 #endif
 
+uint64_t
+	project_index(const GLOBAL t_world *world, uint64_t index)
+{
+	return (index % (world->img_meta.width * world->img_meta.height));
+}
+
 t_ray
 	project(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
@@ -50,11 +56,11 @@ t_ray
 	t_vec						u;
 	t_vec						v;
 
-	(void) ctx;
 	cam = &world->camera;
 	meta = &world->img_meta;
-	u = vec_scale(cam->u, rt_random_float(&ctx->seed) + index % meta->width);
-	v = vec_scale(cam->v, rt_random_float(&ctx->seed) + index / meta->width % meta->height);
+	index = project_index(world, index);
+	u = vec_scale(cam->u, rt_random_float(&ctx->seed) + (uint64_t) (index % meta->width));
+	v = vec_scale(cam->v, rt_random_float(&ctx->seed) + (uint64_t) (index / meta->width));
 	return (ray(cam->org, vec_norm(vec_add(cam->base, vec_add(u, v)))));
 }
 
@@ -66,7 +72,6 @@ t_result
 
 	ray = project(world, ctx, index);
 	result.color = world_trace(world, ctx, ray, RT_MAX_DEPTH);
-	result.index = index % (world->img_meta.width * world->img_meta.height);
 	return (result);
 }
 

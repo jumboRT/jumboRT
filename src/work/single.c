@@ -22,7 +22,7 @@ void
 	while (work->work_index < work->work_size)
 	{
 		result = work_compute(work->state->world, &ctx, work->work_index);
-		work_done(work, &result, 1);
+		work_done(work, &result, work->work_index, work->work_index + 1);
 		work->work_index += 1;
 		work->work_progress += 1;
 	}

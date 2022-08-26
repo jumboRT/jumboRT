@@ -1,9 +1,12 @@
 #include "work.h"
 
+#include "util.h"
+
 void
 	work_update(t_work *work)
 {
 	size_t	i;
+	size_t	j;
 	size_t	n;
 	void	*ptr;
 
@@ -12,10 +15,15 @@ void
 	{
 		ptr = work->data;
 		n = queue_recv(&work->workers[i]->queue, &ptr, &work->capacity);
-		n /= sizeof(t_result);
-		work->work_progress += n;
+		n /= sizeof(t_result_block);
 		work->data = ptr;
-		work_done(work, work->data, n);
+		j = 0;
+		while (j < n)
+		{
+			work->work_progress += work->data[j].end - work->data[j].begin;
+			work_done(work, work->data[j].results, work->data[j].begin, work->data[j].end);
+			j += 1;
+		}
 		i += 1;
 	}
 }
@@ -60,9 +68,14 @@ void
 }
 
 void
-	work_send_results(t_worker *worker, t_result *results, size_t count)
+	work_send_results(t_worker *worker, t_result *results, uint64_t begin, uint64_t end)
 {
-	queue_send(&worker->queue, results, sizeof(*results) * count);
+	t_result_block	block;
+
+	block.results = rt_memdup(results, (end - begin) * sizeof(*results));
+	block.begin = begin;
+	block.end = end;
+	queue_send(&worker->queue, &block, sizeof(block));
 	mutex_lock(&worker->work->update_mtx);
 	worker->work->update_flag = 1;
 	cond_broadcast(&worker->work->update_cnd);

@@ -28,7 +28,7 @@ static void
 			result[i] = work_compute(worker->work->state->world, worker->ctx, begin + i);
 			i += 1;
 		}
-		work_send_results(worker, result, end - begin);
+		work_send_results(worker, result, begin, end);
 	}
 	return (NULL);
 }

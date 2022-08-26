@@ -7,6 +7,7 @@ void
 	task->ctx = ctx;
 	task->count = 0;
 	task->done = 0;
+	task->detached = 0;
 }
 
 #ifndef RT_MT
@@ -37,6 +38,14 @@ void
 {
 	(void) pool;
 	(void) task;
+}
+
+void
+	pool_detach(t_pool *pool, t_task *task)
+{
+	(void) pool;
+	task->detached = 1;
+	rt_free(task);
 }
 
 #endif

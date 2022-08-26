@@ -220,7 +220,9 @@ impl Client {
     pub fn handle_send_results_packet(&self, data: &[u8]) -> io::Result<()> {
         let job_id = ser::read_u64(&data[0..8]);
         let size = ser::read_u64(&data[8..16]) as usize;
-        let results = &data[16..size + 16];
+        let begin = ser::read_u64(&data[16..24]);
+        let end = ser::read_u64(&data[24..32]);
+        let results = &data[32..size + 32];
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
@@ -246,6 +248,8 @@ impl Client {
 
                 ser::write_u64(&mut packet, job_id);
                 ser::write_u64(&mut packet, size as u64);
+                ser::write_u64(&mut packet, begin);
+                ser::write_u64(&mut packet, end);
                 packet.extend(results);
                 client.write_packet(5, &packet)?;
 

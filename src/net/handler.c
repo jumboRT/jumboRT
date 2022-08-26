@@ -92,7 +92,6 @@ static int
 {
 	struct s_send_results	data;
 	t_result				*results;
-	size_t					count;
 
 	if (client->any.client_type == RT_WORKER)
 	{
@@ -102,10 +101,10 @@ static int
 	rt_upacksr(packet.data, &data);
 	if (data.seq_id == client->any.seq_id)
 	{
-		results = rt_results_inflate(data, &count);
-		work_send_results(client->viewer.worker, results, count);
+		results = rt_results_inflate(data);
+		work_send_results(client->viewer.worker, results, data.begin, data.end);
 		mutex_lock(&client->viewer.job_mtx);
-		client->viewer.active_work -= count;
+		client->viewer.active_work -= data.end - data.begin;
 		cond_broadcast(&client->viewer.job_cnd);
 		mutex_unlock(&client->viewer.job_mtx);
 		rt_free(results);
