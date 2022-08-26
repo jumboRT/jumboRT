@@ -12,6 +12,10 @@
 #include <unistd.h>
 #include "z.h"
 
+#if defined RT_WINDOWS
+#include <win/sock.h>
+#endif
+
 
 #include <stdio.h>
 
@@ -403,7 +407,14 @@ int
 {
 	t_options		options;
 	union u_client	client;
+#if defined RT_WINDOWS
+	WSADATA			wsaData;
 
+	if (WSAStartup(MAKEWORK(2,0), &wsaData) != 0) {
+		fprintf(stderr, "WSAStartup failed\n");
+		return (EXIT_FAILURE);
+	}
+#endif
 	/*
 	unsigned char	*str;
 	size_t			str_size;
@@ -426,6 +437,7 @@ int
 	return (0);
 	*/
 
+
 	parse_options(&options, argc, argv);
 	if (options.worker)
 	{
@@ -436,5 +448,8 @@ int
 	{
 		main_viewer(&options);
 	}
+#if defined RT_WINDOWS
+	WSACleanup();
+#endif
 	return (EXIT_SUCCESS);
 }
