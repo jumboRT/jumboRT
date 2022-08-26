@@ -5,6 +5,7 @@ use std::thread;
 use std::sync::atomic::AtomicU64;
 use crate::client::{Client, ClientState};
 
+#[derive(Copy, Clone)]
 pub struct Work {
     pub begin: u64,
     pub end: u64,
