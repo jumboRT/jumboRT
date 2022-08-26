@@ -13,6 +13,18 @@ pub enum ClientState {
     Viewer,
 }
 
+pub struct ResultItem {
+    pub begin: u64,
+    pub end: u64,
+    pub data: Vec<u8>,
+}
+
+pub struct WorkItem {
+    pub work: Work,
+    pub finished_business: Vec<ResultItem>,
+    pub totally_finished_business: u64,
+}
+
 pub struct Client {
     pub server: Weak<Server>,
     pub addr: SocketAddr,
@@ -21,6 +33,7 @@ pub struct Client {
     pub state: RwLock<ClientState>,
     pub job_id: RwLock<Option<u64>>,
     pub work: AtomicU64,
+    pub unfinished_business: RwLock<Vec<WorkItem>>,
 }
 
 impl Client {
@@ -36,6 +49,7 @@ impl Client {
             state: RwLock::new(ClientState::Unknown),
             job_id: RwLock::new(None),
             work: AtomicU64::new(0),
+            unfinished_business: RwLock::new(Vec::new()),
         }))
     }
 
@@ -64,6 +78,30 @@ impl Client {
         Ok(job_id)
     }
 
+    pub fn stop_job(&self) -> io::Result<()> {
+        let server = self.server.upgrade().unwrap();
+
+        {
+            let job_id_opt = self.job_id.read().unwrap();
+
+            if let Some(job_id) = *job_id_opt {
+                let mut server_jobs = server.jobs.write().unwrap();
+                let mut unfinished_business = self.unfinished_business.write().unwrap();
+                let job = server_jobs.iter_mut().find(|j| j.id == job_id);
+
+                if let Some(job) = job {
+                    for wi in unfinished_business.iter() {
+                        job.work.insert(0, wi.work);
+                    }
+                }
+
+                unfinished_business.clear();
+            }
+        }
+
+        server.update_work()
+    }
+
     pub fn send_job(&self, job: &Job) -> io::Result<()> {
         let mut job_id_opt = self.job_id.write().unwrap();
         let mut packet = Vec::new();
@@ -86,26 +124,32 @@ impl Client {
 
     pub fn send_work(&self, job: &mut Job) -> io::Result<()> {
         let job_id_opt = self.job_id.read().unwrap();
+        let mut unfinished_business = self.unfinished_business.write().unwrap();
         let w = job.work.len() as u64;
 
         if *job_id_opt == Some(job.id) {
-            if let Ok(p) = self.work.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |v| Some(v.max(w) - w)) {
-                let n = p.min(w) as usize;
+            let p = self.work.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |v| Some(v.max(w) - w)).unwrap();
+            let n = p.min(w) as usize;
 
-                for work in job.work[0..n].iter() {
-                    if VERBOSE {
-                        println!("[{}] send work begin={} end={}", self.addr, work.begin, work.end);
-                    }
-
-                    let mut packet = Vec::new();
-
-                    ser::write_u64(&mut packet, work.begin);
-                    ser::write_u64(&mut packet, work.end);
-                    self.write_packet(4, &packet)?;
+            for work in job.work[0..n].iter() {
+                if VERBOSE {
+                    println!("[{}] send work begin={} end={}", self.addr, work.begin, work.end);
                 }
 
-                job.work.drain(0..n);
+                let mut packet = Vec::new();
+
+                ser::write_u64(&mut packet, work.begin);
+                ser::write_u64(&mut packet, work.end);
+                self.write_packet(4, &packet)?;
+
+                unfinished_business.push(WorkItem {
+                    work: *work,
+                    finished_business: Vec::new(),
+                    totally_finished_business: 0,
+                });
             }
+
+            job.work.drain(0..n);
         }
 
         Ok(())
@@ -226,36 +270,60 @@ impl Client {
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
-            println!("[{}] results id={} size={}", self.addr, job_id, size);
+            println!("[{}] results id={} begin={} end={} size={}", self.addr, job_id, begin, end, size);
         }
 
         {
-            let clients = server.clients.read().unwrap();
-            let job_id_opt = self.job_id.read().unwrap();
+            let mut unfinished_business = self.unfinished_business.write().unwrap();
 
-            let client = clients.iter().find(|c| {
-                let client_job_id_opt = c.job_id.read().unwrap();
-                let client_state = c.state.read().unwrap();
+            if let Some(begin) = {
+                let work_item = unfinished_business.iter_mut().find(|wi| wi.work.begin <= begin && end <= wi.work.end).unwrap();
 
-                match *client_state {
-                    ClientState::Viewer => *client_job_id_opt == Some(job_id),
-                    _ => false,
+                work_item.totally_finished_business += end - begin;
+                work_item.finished_business.push(ResultItem {
+                    begin,
+                    end,
+                    data: results.to_vec(),
+                });
+
+                if work_item.totally_finished_business >= work_item.work.end - work_item.work.begin {
+                    let clients = server.clients.read().unwrap();
+                    let job_id_opt = self.job_id.read().unwrap();
+
+                    let client = clients.iter().find(|c| {
+                        let client_job_id_opt = c.job_id.read().unwrap();
+                        let client_state = c.state.read().unwrap();
+
+                        match *client_state {
+                            ClientState::Viewer => *client_job_id_opt == Some(job_id),
+                            _ => false,
+                        }
+                    });
+
+                    if let Some(client) = client {
+                        for ri in &work_item.finished_business {
+                            let mut packet = Vec::new();
+
+                            ser::write_u64(&mut packet, job_id);
+                            ser::write_u64(&mut packet, ri.data.len() as u64);
+                            ser::write_u64(&mut packet, ri.begin);
+                            ser::write_u64(&mut packet, ri.end);
+                            packet.extend(&ri.data);
+
+                            client.write_packet(5, &packet)?;
+                        }
+
+                        if *job_id_opt == Some(job_id) {
+                            self.work.fetch_add(1, Ordering::SeqCst);
+                        }
+                    }
+
+                    Some(work_item.work.begin)
+                } else {
+                    None
                 }
-            });
-
-            if let Some(client) = client {
-                let mut packet = Vec::new();
-
-                ser::write_u64(&mut packet, job_id);
-                ser::write_u64(&mut packet, size as u64);
-                ser::write_u64(&mut packet, begin);
-                ser::write_u64(&mut packet, end);
-                packet.extend(results);
-                client.write_packet(5, &packet)?;
-
-                if *job_id_opt == Some(job_id) {
-                    self.work.fetch_add(1, Ordering::SeqCst);
-                }
+            } {
+                unfinished_business.retain(|wi| wi.work.begin != begin);
             }
         }
 
@@ -313,7 +381,7 @@ impl Client {
     }
 
     pub fn run(self: Arc<Self>) {
-        let mut result = self.run_int();
+        let result = self.run_int();
         let server = self.server.upgrade().unwrap();
         let state = self.state.read().unwrap();
 
@@ -322,9 +390,11 @@ impl Client {
             clients.retain(|c| Arc::as_ptr(c) != Arc::as_ptr(&self));
         }
 
-        if let ClientState::Viewer = *state {
-            result = result.and(self.cancel_job());
-        }
+        let result = match *state {
+            ClientState::Viewer => result.and(self.cancel_job()),
+            ClientState::Worker => result.and(self.stop_job()),
+            _ => result,
+        };
 
         if let Err(err) = result {
             eprintln!("[{}] {}", self.addr, err);
