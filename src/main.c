@@ -128,7 +128,7 @@ int
 		rt_exit(work);
 	camera = &work->state->world->camera;
 	org = camera->org;
-	dir = work->state->world->camera.dir;
+	dir = camera->dir;
 	left = vec_norm(vec_cross(dir, vec_z(1.0)));
 	if (keycode == RT_KEY_R)
 	{

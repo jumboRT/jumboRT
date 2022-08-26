@@ -117,7 +117,7 @@ void
 }
 
 void
-	*rt_packfl(void *dst, float f)
+	*rt_packhfl(void *dst, float f)
 {
 	uint16_t	h;
 	uint32_t	i;
@@ -126,6 +126,22 @@ void
 	h = get_base((i >> 23) & 0x1ff) + ((i & 0x007fffff) >> get_shift((i >> 23) & 0x1ff));
 	memcpy(dst, &h, sizeof(h));
 	return ((char *) dst + sizeof(h));
+}
+
+void
+	*rt_packfl(void *dst, float f)
+{
+	memcpy(dst, &f, sizeof(f));
+	return ((char *) dst + sizeof(f));
+}
+
+void
+	*rt_packhvec(void *dst, t_vec vec)
+{
+	dst = rt_packhfl(dst, x(vec));
+	dst = rt_packhfl(dst, y(vec));
+	dst = rt_packhfl(dst, z(vec));
+	return (dst);
 }
 
 void
@@ -149,7 +165,7 @@ void
 }
 
 void
-	*rt_upackfl(void *src, float *f)
+	*rt_upackhfl(void *src, float *f)
 {
 	uint16_t	h;
 	uint32_t	i;
@@ -158,6 +174,27 @@ void
 	i = get_mantissa(get_offset(h >> 10) + (h & 0x3ff)) + get_exponent(h >> 10);
 	*(uint32_t *) f = i;
 	return ((char *) src + sizeof(h));
+}
+
+void
+	*rt_upackfl(void *src, float *f)
+{
+	memcpy(f, src, sizeof(*f));
+	return ((char *) src + sizeof(*f));
+}
+
+void
+	*rt_upackhvec(void *src, t_vec *dst)
+{
+	float	x;
+	float	y;
+	float	z;
+
+	src = rt_upackhfl(src, &x);
+	src = rt_upackhfl(src, &y);
+	src = rt_upackhfl(src, &z);
+	*dst = vec(x, y, z, 0.0);
+	return (src);
 }
 
 void
@@ -198,7 +235,11 @@ void
 	src = rt_upacku64(src, &dst->seq_id);
 	src = rt_upacku64(src, &dst->width);
 	src = rt_upacku64(src, &dst->height);
-	src = rt_upackstr(src, &dst->scene);
+	src = rt_upackvec(src, &dst->cam_pos);
+	src = rt_upackvec(src, &dst->cam_dir);
+	src = rt_upackfl(src, &dst->cam_fov);
+	src = rt_upackstr(src, &dst->scene_file);
+	src = rt_upackstr(src, &dst->scene_key);
 	return (src);
 }
 
@@ -245,7 +286,11 @@ void
 {
 	dst = rt_packu64(dst, packet.width);
 	dst = rt_packu64(dst, packet.height);
-	dst = rt_packstr(dst, packet.scene);
+	dst = rt_packvec(dst, packet.cam_pos);
+	dst = rt_packvec(dst, packet.cam_dir);
+	dst = rt_packfl(dst, packet.cam_fov);
+	dst = rt_packstr(dst, packet.scene_file);
+	dst = rt_packstr(dst, packet.scene_key);
 	return (dst);
 }
 

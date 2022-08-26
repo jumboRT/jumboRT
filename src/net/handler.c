@@ -21,52 +21,96 @@ static int
 }
 
 static void 
-	rt_create_new_work(union u_client *client)
+	rt_create_new_work(struct s_net_worker *worker, struct s_sjob_request request)
 {
 	t_state	*state;
 
-	if (client->worker.work != NULL)
+	if (worker->work != NULL 
+			&& ft_strcmp(worker->opts.scene_file, request.scene_file.str) == 0
+			&& ft_strcmp(worker->opts.key, request.scene_key.str) == 0
+			&& (uint64_t) worker->opts.width == request.width
+			&& (uint64_t) worker->opts.height == request.height)
 	{
-		work_pause(client->worker.work);
-		work_update_stop(client->worker.work);
-		world_destroy(client->worker.work->state->world);
-		work_destroy(client->worker.work);
-		rt_free(client->worker.work->state->world);
-		rt_free(client->worker.work->state);
-		rt_free(client->worker.work);
+		state = worker->work->state;
+		rt_work_lock(worker->work);
+		camera_set(state->world, &state->world->camera, request.cam_pos,
+				request.cam_dir, request.cam_fov);
+		worker->work->work_size = 0;
+		rt_work_unlock(worker->work);
+		return;
 	}
-	client->worker.work = rt_malloc(sizeof(*client->worker.work));
+	if (worker->work != NULL)
+	{
+		work_pause(worker->work);
+		work_update_stop(worker->work);
+		world_destroy(worker->work->state->world);
+		work_destroy(worker->work);
+		rt_free(worker->work->state->world);
+		rt_free(worker->work->state);
+		rt_free(worker->work);
+		rt_free((char *) worker->work->opts->scene_file);
+		rt_free((char *) worker->work->opts->key);
+	}
+	worker->work = rt_malloc(sizeof(*worker->work));
 	state = rt_malloc(sizeof(*state));
 	state->image = NULL;
 	state->world = rt_malloc(sizeof(*state->world));
 	world_create(state->world);
-	state->world->img_meta.width = client->worker.opts.width;
-	state->world->img_meta.height = client->worker.opts.height;
-	world_load(state->world, client->worker.opts.scene_file, NULL);
+	state->world->img_meta.width = request.width;
+	state->world->img_meta.height = request.height;
+	world_load(state->world, request.scene_file.str, request.scene_key.str);
 	world_accel(state->world);
-	work_create(client->worker.work, state, &client->worker.opts, client);
-	work_update_start(client->worker.work);
-	work_resume(client->worker.work);
+	camera_set(state->world, &state->world->camera, request.cam_pos, request.cam_dir, request.cam_fov);
+	work_create(worker->work, state, &worker->opts, (union u_client *) worker);
+	work_update_start(worker->work);
+	worker->opts.width = request.width;
+	worker->opts.height = request.height;
+	worker->opts.scene_file = ft_strdup(request.scene_file.str);
+	worker->opts.key = ft_strdup(request.scene_key.str);
+	work_resume(worker->work);
+}
+
+static int
+	rt_handle_job_request_worker(struct s_net_worker *client,
+					struct s_packet packet, char **error)
+{
+	struct s_sjob_request	request;
+
+	rt_upacksjr(packet.data, &request);
+	rt_create_new_work(client, request);
+	client->base.seq_id = request.seq_id;
+	rt_string_destroy(&request.scene_file);
+	rt_string_destroy(&request.scene_key);
+	(void) error;
+	return (0);
+}
+
+static int
+	rt_handle_job_request_viewer(struct s_net_viewer *client,
+					struct s_packet packet, char **error)
+{
+	uint64_t	seq_id;
+
+	(void) error;
+	rt_upacku64(packet.data, &seq_id);
+	mutex_lock(&client->base.mtx);
+	client->base.seq_id = seq_id;
+	mutex_unlock(&client->base.mtx);
+	return (0);
 }
 
 static int
 	rt_handle_job_request(union u_client *client, struct s_packet packet,
 					char **error)
 {
-	struct s_sjob_request	request;
-
 	if (client->any.client_type == RT_VIEWER)
 	{
-		ft_asprintf(error, "received a job-request packet as a viewer");
-		return (-1);
+		return (rt_handle_job_request_viewer(&client->viewer, packet, error));
 	}
-	rt_upacksjr(packet.data, &request);
-	client->worker.opts.width = request.width;
-	client->worker.opts.height = request.height;
-	client->worker.opts.scene_file = ft_strdup(request.scene.str);
-	rt_create_new_work(client);
-	client->any.seq_id = request.seq_id;
-	rt_string_destroy(&request.scene);
+	else
+	{
+		return (rt_handle_job_request_worker(&client->worker, packet, error));
+	}
 	return (0);
 }
 

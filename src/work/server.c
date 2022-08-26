@@ -43,9 +43,47 @@ void
 	}
 }
 
+static struct s_packet 
+	work_int_create_request_packet(t_work *work)
+{
+	struct s_packet			packet;
+	struct s_cjob_request	request;
+
+	request.width = work->opts->width;
+	request.height = work->opts->height;
+	request.cam_pos = work->state->world->camera.org;
+	request.cam_dir = work->state->world->camera.dir;
+	request.cam_fov = work->state->world->camera.fov;
+	rt_string_create(&request.scene_file, work->opts->scene_file);
+	rt_string_create(&request.scene_key, work->opts->key);
+	packet.size = rt_sizecjr(request);
+	packet.type = RT_JOB_REQUEST_PACKET;
+	packet.data = rt_malloc(packet.size);
+	rt_packcjr(packet.data, request);
+	rt_string_destroy(&request.scene_file);
+	rt_string_destroy(&request.scene_key);
+	return (packet);
+}
+
 void
 	work_int_resume_server(t_work *work)
 {
-	(void) work;
+	struct s_packet	packet;
+	union u_client	*client;
+	size_t			i;
+	char			*error;
+
+	i = 0;
+	packet = work_int_create_request_packet(work);
+	while (i < work->count)
+	{
+		if (work->workers[i]->backend == RT_BACKEND_SERVER)
+		{
+			client = work->workers[i]->ctx;
+			rt_send_packet((struct s_client_base *) client, &packet, &error);
+		}
+		i += 1;
+	}
+	rt_packet_destroy(&packet);
 }
 

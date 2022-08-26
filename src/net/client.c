@@ -69,17 +69,7 @@ static int
 		ft_asprintf(error, "handshake failed");
 		return (-1);
 	}
-	if (client->client_type == RT_VIEWER)
-	{
-		if (packet.size != 8)
-		{
-			ft_asprintf(error, "handshake packet has wrong size: %u",
-					(int) packet.size);
-			rt_packet_destroy(&packet);
-			return (-1);
-		}
-		rt_upacku64(packet.data, &client->seq_id);
-	}
+	client->seq_id = -1;
 	rt_packet_destroy(&packet);
 	return (0);
 }
@@ -193,27 +183,6 @@ int
 static void
 	rt_viewer_start(union u_client *client)
 {
-	struct s_cjob_request	request;
-	struct s_packet			packet;
-	unsigned char			*data;
-	unsigned char			*end;
-	char 					*error;
-
-	rt_string_create(&request.scene,
-			client->viewer.worker->work->opts->scene_file);
-	request.width = client->viewer.worker->work->opts->width;
-	request.height = client->viewer.worker->work->opts->height;
-	data = rt_malloc(sizeof(request.width) * 3 + request.scene.len);
-	end = rt_packcjr(data, request);
-	rt_packet_create(&packet, end - data, RT_JOB_REQUEST_PACKET, data);
-	if (rt_send_packet(&client->any, &packet, &error) < 0)
-	{
-		fprintf(stderr, "failed to start viewer: %s\n", error);
-		rt_free(error);
-		return;
-	}
-	rt_string_destroy(&request.scene);
-	rt_packet_destroy(&packet);
 	thread_create(&client->viewer.job_thrd, rt_send_jobs_start, client);
 	client_loop(client, rt_recv_handle_packet);
 }

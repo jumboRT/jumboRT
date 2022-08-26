@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <sys/types.h> /* TODO make this portable */
 
-# define RT_NET_MAX_JOBS		32
 # define RT_NET_JOBSIZE			(65536 * 4)
 # define RT_NET_POOL_SIZE		8
 
@@ -82,14 +81,22 @@ struct s_send_work {
 struct s_cjob_request {
 	uint64_t		width;
 	uint64_t		height;
-	struct s_string	scene;
+	t_vec			cam_pos;
+	t_vec			cam_dir;
+	float			cam_fov;
+	struct s_string	scene_file;
+	struct s_string	scene_key;
 };
 
 struct s_sjob_request {
 	uint64_t		seq_id;
 	uint64_t		width;
 	uint64_t		height;
-	struct s_string	scene;
+	t_vec			cam_pos;
+	t_vec			cam_dir;
+	float			cam_fov;
+	struct s_string	scene_file;
+	struct s_string	scene_key;
 };
 
 struct s_send_results {
@@ -121,13 +128,18 @@ void	*rt_packstr(void *dst, struct s_string str);
 void	*rt_packu64(void *dst, uint64_t i);
 void	*rt_packfl(void *dst, float f);
 void	*rt_packvec(void *dst, t_vec vec);
+void	*rt_packhfl(void *dst, float f);
+void	*rt_packhvec(void *dst, t_vec vec);
 void	*rt_packhs(void *dst, struct s_handshake packet);
 void	*rt_packsw(void *dst, struct s_send_work packet);
 void	*rt_packcjr(void *dst, struct s_cjob_request packet);
 void	*rt_packsr(void *dst, struct s_send_results packet);
 void	*rt_upackstr(void *src, struct s_string *str);
 void	*rt_upacku64(void *src, uint64_t *i);
+void	*rt_upackfl(void *dst, float *f);
 void	*rt_upackvec(void *dst, t_vec *vec);
+void	*rt_upackhfl(void *dst, float *f);
+void	*rt_upackhvec(void *dst, t_vec *vec);
 void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
@@ -135,6 +147,7 @@ void	*rt_upacksw(void *src, struct s_send_work *dst);
 void		*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
 t_result	*rt_results_inflate(struct s_send_results packet);
 uint64_t	rt_sizesr(struct s_send_results packet);
+uint64_t	rt_sizecjr(struct s_cjob_request packet);
 
 void	rt_packet_create(struct s_packet *packet, uint64_t data_size,
 					uint8_t type, void *data);

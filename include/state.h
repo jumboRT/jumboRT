@@ -23,6 +23,7 @@ struct s_options {
 	int			worker;
 	const char	*net_ip;
 	const char	*net_port;
+	long		net_jobs;
 	const char	*key;
 	int			samples_set;
 	int			width_set;
@@ -30,6 +31,7 @@ struct s_options {
 	int			backends_set;
 	int			net_ip_set;
 	int			net_port_set;
+	int			net_jobs_set;
 };
 
 #ifdef RT_JOINC

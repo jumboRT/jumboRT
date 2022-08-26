@@ -5,3 +5,9 @@ uint64_t
 {
 	return (32 + packet.zsize);
 }
+
+uint64_t
+	rt_sizecjr(struct s_cjob_request packet)
+{
+	return (60 + packet.scene_file.len + packet.scene_key.len);
+}

@@ -18,6 +18,7 @@ void
 	opts->worker = 0;
 	opts->net_ip = "localhost";
 	opts->net_port = "29300";
+	opts->net_jobs = 4;
 	opts->key = NULL;
 	opts->samples_set = 0;
 	opts->width_set = 0;
@@ -25,6 +26,7 @@ void
 	opts->backends_set = 0;
 	opts->net_ip_set = 0;
 	opts->net_port_set = 0;
+	opts->net_jobs_set = 0;
 	i = 1;
 	while (i < argc)
 	{
@@ -96,6 +98,15 @@ void
 			opts->net_port_set = 1;
 			i += 2;
 		}
+		else if (ft_strcmp(argv[i], "-j") == 0)
+		{
+			rt_assert(opts->key == NULL, "more than one net job count specified");
+			rt_assert(i + 1 < argc, "-j requires an argument");
+			opts->net_jobs = ft_atoi(argv[i + 1]);
+			rt_assert(opts->net_jobs > 0, "invalid net job count");
+			opts->net_jobs_set = 1;
+			i += 2;
+		}
 		else if (ft_strcmp(argv[i], "-W") == 0)
 		{
 			opts->worker = 1;
@@ -124,4 +135,6 @@ void
 		rt_assert(opts->scene_file == NULL, "cannot specify scene file in worker mode");
 		rt_assert(~opts->backends & RT_BACKEND_SINGLE, "single threaded backend not allowed in worker mode");
 	}
+	if (opts->key == NULL)
+		opts->key = "default";
 }
