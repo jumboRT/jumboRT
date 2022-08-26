@@ -25,7 +25,6 @@ void
 	return (ptr);
 }
 
-/* TODO: make sure all memory access happens within the buffer */
 t_result
 	*rt_results_inflate(struct s_send_results packet)
 {
@@ -37,6 +36,7 @@ t_result
 
 	data = z_inflate(packet.zdata, packet.zsize, &size);
 	result = rt_malloc((packet.end - packet.begin) * sizeof(*result));
+	rt_assert(size == (packet.end - packet.begin) * 6, "corrupted packet");
 	ptr = data;
 	index = 0;
 	while (index < packet.end - packet.begin)
