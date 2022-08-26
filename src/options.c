@@ -100,7 +100,7 @@ void
 		}
 		else if (ft_strcmp(argv[i], "-j") == 0)
 		{
-			rt_assert(opts->key == NULL, "more than one net job count specified");
+			rt_assert(!opts->net_jobs_set, "more than one net job count specified");
 			rt_assert(i + 1 < argc, "-j requires an argument");
 			opts->net_jobs = ft_atoi(argv[i + 1]);
 			rt_assert(opts->net_jobs > 0, "invalid net job count");
