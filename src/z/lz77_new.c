@@ -208,7 +208,7 @@ static t_ztoken
 		}
 		else if (prev_length < current_length)
 			current_length = prev_length;
-		if (chain->next_best != ZEMPTY && chain->next_best_length == current_length)
+		if (chain->next_best != ZEMPTY && current_length == chain->next_best_length)
 		{
 			prev_length = chain->next_best_length;
 			chain = zring_at(&state->ring, chain->next_best);
