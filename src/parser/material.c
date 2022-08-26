@@ -20,16 +20,19 @@ uint32_t
 	rt_texture(t_world *world, t_parse_ctx *ctx)
 {
 	char		*keyword;
+	uint32_t	result;
 
 	if (has_prefix(ctx, "tex_"))
 	{
 		keyword = rt_keyword(ctx, "tex_");
-		return (tex_by_name(world, ctx, keyword));
+		result = tex_by_name(world, ctx, keyword);
+		rt_free(keyword);
 	}
 	else
 	{
-		return (tex_by_color(world, ctx, rt_color(ctx)));
+		result = tex_by_color(world, ctx, rt_color(ctx));
 	}
+	return (result);
 }
 
 t_filter
