@@ -25,15 +25,24 @@ void
 	ctx->key = key;
 	if (ctx->key == NULL)
 		ctx->key = "default";
-	vector_create(&ctx->materials, sizeof(t_mat_entry), 0);
-	vector_create(&ctx->textures, sizeof(t_tex_entry), 0);
+	vector_create(&ctx->materials, sizeof(t_entry), 0);
+	vector_create(&ctx->textures, sizeof(t_entry), 0);
+}
+
+static void
+	destroy_entry(void *ctx)
+{
+	t_entry	*entry;
+
+	entry = ctx;
+	rt_free(entry->name);
 }
 
 /* TODO: free individual materials */
 void
 	parser_destroy(t_parse_ctx *ctx)
 {
-	vector_destroy(&ctx->materials, NULL);
-	vector_destroy(&ctx->textures, NULL);
+	vector_destroy(&ctx->materials, destroy_entry);
+	vector_destroy(&ctx->textures, destroy_entry);
 	rt_free(ctx->begin);
 }

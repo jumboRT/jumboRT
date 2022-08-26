@@ -7,7 +7,7 @@
 void
 	mat_add(t_parse_ctx *ctx, const char *name, uint32_t index)
 {
-	t_mat_entry	new_entry;
+	t_entry	new_entry;
 
 	new_entry.index = index;
 	new_entry.name = ft_strdup(name);
@@ -17,7 +17,7 @@ void
 void
 	tex_add(t_parse_ctx *ctx, const char *name, uint32_t index)
 {
-	t_mat_entry	new_entry;
+	t_entry	new_entry;
 
 	new_entry.index = index;
 	new_entry.name = ft_strdup(name);
@@ -28,7 +28,7 @@ uint32_t
 	mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name)
 {
 	size_t		i;
-	t_mat_entry	*entry;
+	t_entry	*entry;
 
 	(void) world;
 	i = 0;
@@ -47,7 +47,7 @@ uint32_t
 	tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name)
 {
 	size_t		i;
-	t_tex_entry	*entry;
+	t_entry	*entry;
 
 	(void) world;
 	i = 0;
@@ -66,8 +66,8 @@ uint32_t
 	mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color)
 {
 	size_t			i;
-	t_mat_entry		*entry;
-	t_mat_entry		new_entry;
+	t_entry		*entry;
+	t_entry		new_entry;
 	t_material		material;
 	t_bxdf_diffuse	bxdf;
 
@@ -96,8 +96,8 @@ uint32_t
 	tex_by_color(t_world *world, t_parse_ctx *ctx, t_vec color)
 {
 	size_t		i;
-	t_tex_entry *entry;
-	t_tex_entry	new_entry;
+	t_entry *entry;
+	t_entry	new_entry;
 	t_tex		texture;
 
 	i = 0;
