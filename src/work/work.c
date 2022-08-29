@@ -28,8 +28,8 @@ void
 	work->update_flag = 0;
 	cond_init(&work->update_cnd);
 	cond_init(&work->progress_cnd);
-	mutex_init(&work->update_mtx);
 	mutex_init(&work->state_mtx);
+	mutex_init(&work->update_mtx);
 	work_int_create(work);
 	work_pause(work);
 }

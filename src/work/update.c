@@ -39,7 +39,9 @@ static void
 	{
 		if (work->update_flag)
 		{
+			mutex_lock(&work->state_mtx);
 			work_update(work);
+			mutex_unlock(&work->state_mtx);
 			cond_broadcast(&work->progress_cnd);
 		}
 		if (work->update_stop && work->work_progress >= work->work_index)
