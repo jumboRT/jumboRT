@@ -31,7 +31,7 @@ void
 		ptr = rt_packhvec(ptr, color);
 	}
 	packet->zdata = z_deflate(data, ptr - data, &packet->zsize);
-	printf("deflated size: %zu | batch_size=%zu\n", packet->zsize, batch_size);
+	// printf("deflated size: %zu\n", packet->zsize, batch_size);
 	rt_free(data);
 }
 

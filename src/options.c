@@ -18,8 +18,10 @@ void
 	opts->worker = 0;
 	opts->net_ip = "localhost";
 	opts->net_port = "29300";
-	opts->net_jobs = 4;
+	opts->net_jobs = 64;
 	opts->key = NULL;
+	opts->threads = 8;
+	opts->batch_size = 16;
 	opts->samples_set = 0;
 	opts->width_set = 0;
 	opts->height_set = 0;
@@ -27,6 +29,8 @@ void
 	opts->net_ip_set = 0;
 	opts->net_port_set = 0;
 	opts->net_jobs_set = 0;
+	opts->threads_set = 0;
+	opts->batch_size_set = 0;
 	i = 1;
 	while (i < argc)
 	{
@@ -117,6 +121,24 @@ void
 			rt_assert(opts->key == NULL, "more than one key specified");
 			rt_assert(i + 1 < argc, "-k requires an argument");
 			opts->key = argv[i + 1];
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-t") == 0)
+		{
+			rt_assert(!opts->threads_set, "more than one thread count specified");
+			rt_assert(i + 1 < argc, "-t requires an argument");
+			opts->threads = ft_atoi(argv[i + 1]);
+			rt_assert(opts->threads > 0, "invalid thread count");
+			opts->threads_set = 1;
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-b") == 0)
+		{
+			rt_assert(!opts->batch_size_set, "more than one batch size specified");
+			rt_assert(i + 1 < argc, "-b requires an argument");
+			opts->batch_size = ft_atoi(argv[i + 1]);
+			rt_assert(opts->batch_size > 0, "invalid batch size");
+			opts->batch_size_set = 1;
 			i += 2;
 		}
 		else
