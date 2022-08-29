@@ -96,6 +96,7 @@ void
 	{
 		if (end != begin)
 			rt_send_results(work->client, results, begin, end);
+		// TODO: free?
 	}
 	else
 	{
