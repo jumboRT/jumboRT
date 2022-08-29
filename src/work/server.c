@@ -54,6 +54,8 @@ static struct s_packet
 	request.cam_pos = work->state->world->camera.org;
 	request.cam_dir = work->state->world->camera.dir;
 	request.cam_fov = work->state->world->camera.fov;
+	request.cam_focus = work->state->world->camera.focus;
+	request.cam_blur = work->state->world->camera.blur;
 	rt_string_create(&request.scene_file, work->opts->scene_file);
 	rt_string_create(&request.scene_key, work->opts->key);
 	request.render_mode = work->state->world->render_mode;
