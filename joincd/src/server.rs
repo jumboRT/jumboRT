@@ -18,6 +18,8 @@ pub struct Job {
     pub cam_pos: [f32; 3],
     pub cam_rot: [f32; 3],
     pub cam_fov: f32,
+    pub cam_focus: f32,
+    pub cam_blur: f32,
     pub scene: String,
     pub key: String,
     pub render_mode: u64,

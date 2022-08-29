@@ -116,6 +116,8 @@ impl Client {
             ser::write_vec(&mut packet, job.cam_pos);
             ser::write_vec(&mut packet, job.cam_rot);
             ser::write_f32(&mut packet, job.cam_fov);
+            ser::write_f32(&mut packet, job.cam_focus);
+            ser::write_f32(&mut packet, job.cam_blur);
             ser::write_str(&mut packet, &job.scene);
             ser::write_str(&mut packet, &job.key);
             ser::write_u64(&mut packet, job.render_mode);
@@ -220,6 +222,8 @@ impl Client {
         let cam_pos = ser::read_vec(&mut data);
         let cam_rot = ser::read_vec(&mut data);
         let cam_fov = ser::read_f32(&mut data);
+        let cam_focus = ser::read_f32(&mut data);
+        let cam_blur = ser::read_f32(&mut data);
         let scene = ser::read_str(&mut data);
         let key = ser::read_str(&mut data);
         let render_mode = ser::read_u64(&mut data);
@@ -238,6 +242,8 @@ impl Client {
                 cam_pos,
                 cam_rot,
                 cam_fov,
+                cam_focus,
+                cam_blur,
                 scene,
                 key,
                 render_mode,

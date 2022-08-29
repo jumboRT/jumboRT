@@ -107,7 +107,11 @@ struct s_camera {
 	t_vec	dir;
 	t_vec	u;
 	t_vec	v;
+	t_vec	u_norm;
+	t_vec	v_norm;
 	float	fov;
+	float	focus;
+	float	blur;
 };
 
 struct s_vertex {
@@ -336,7 +340,7 @@ void		world_accel(t_world *world);
 void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
 void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_child, float offset);
 
-void		camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, float fov);
+void		camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, float fov, float focus, float blur);
 
 float		split_pos(t_accel_node node);
 uint32_t	nprims(t_accel_node node);
