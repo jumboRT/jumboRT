@@ -107,7 +107,7 @@ impl Client {
         let mut packet = Vec::new();
         
         if *job_id_opt != Some(job.id) {
-            println!("[{}] send job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={}", self.addr, job.id, job.width, job.height, job.cam_pos, job.cam_rot, job.cam_fov, job.scene, job.key);
+            println!("[{}] send job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={} render_mode={} batch_size={}", self.addr, job.id, job.width, job.height, job.cam_pos, job.cam_rot, job.cam_fov, job.scene, job.key, job.render_mode, job.batch_size);
             *job_id_opt = Some(job.id);
             self.work.store(4, Ordering::SeqCst);
             ser::write_u64(&mut packet, job.id);
@@ -118,6 +118,8 @@ impl Client {
             ser::write_f32(&mut packet, job.cam_fov);
             ser::write_str(&mut packet, &job.scene);
             ser::write_str(&mut packet, &job.key);
+            ser::write_u64(&mut packet, job.render_mode);
+            ser::write_u64(&mut packet, job.batch_size);
             self.write_packet(3, &packet)?;
         }
 
@@ -220,12 +222,14 @@ impl Client {
         let cam_fov = ser::read_f32(&mut data);
         let scene = ser::read_str(&mut data);
         let key = ser::read_str(&mut data);
+        let render_mode = ser::read_u64(&mut data);
+        let batch_size = ser::read_u64(&mut data);
         let server = self.server.upgrade().unwrap();
 
         {
             let job_id = self.update_job_id()?;
             let mut server_jobs = server.jobs.write().unwrap();
-            println!("[{}] recv job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={}", self.addr, job_id, width, height, cam_pos, cam_rot, cam_fov, scene, key);
+            println!("[{}] recv job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={} render_mode={} batch_size={}", self.addr, job_id, width, height, cam_pos, cam_rot, cam_fov, scene, key, render_mode, batch_size);
 
             server_jobs.push(Job {
                 id: job_id,
@@ -236,6 +240,8 @@ impl Client {
                 cam_fov,
                 scene,
                 key,
+                render_mode,
+                batch_size,
                 work: Vec::new(),
             });
 

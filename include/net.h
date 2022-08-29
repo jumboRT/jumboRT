@@ -86,6 +86,8 @@ struct s_cjob_request {
 	float			cam_fov;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
+	uint64_t		render_mode;
+	uint64_t		batch_size;
 };
 
 struct s_sjob_request {
@@ -97,6 +99,8 @@ struct s_sjob_request {
 	float			cam_fov;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
+	uint64_t		render_mode;
+	uint64_t		batch_size;
 };
 
 struct s_send_results {
@@ -149,8 +153,8 @@ void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
 
-void		*rt_results_deflate(t_result *results, size_t count, size_t *zsize);
-t_result	*rt_results_inflate(struct s_send_results packet);
+void		rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results);
+t_result	*rt_results_inflate(struct s_send_results packet, size_t batch_size);
 uint64_t	rt_sizesr(struct s_send_results packet);
 uint64_t	rt_sizecjr(struct s_cjob_request packet);
 

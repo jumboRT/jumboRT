@@ -33,6 +33,8 @@ static void
 	{
 		state = worker->work->state;
 		rt_work_lock(worker->work);
+		state->world->render_mode = request.render_mode;
+		state->world->batch_size = request.batch_size;
 		camera_set(state->world, &state->world->camera, request.cam_pos,
 				request.cam_dir, request.cam_fov);
 		worker->work->work_size = 0;
@@ -56,6 +58,8 @@ static void
 	state->image = NULL;
 	state->world = rt_malloc(sizeof(*state->world));
 	world_create(state->world);
+	state->world->render_mode = request.render_mode;
+	state->world->batch_size = request.batch_size;
 	state->world->img_meta.width = request.width;
 	state->world->img_meta.height = request.height;
 	world_load(state->world, request.scene_file.str, request.scene_key.str);
@@ -142,7 +146,7 @@ static void
 	rt_upacksr(info->packet.data, &data);
 	if (data.seq_id == info->client->any.seq_id)
 	{
-		results = rt_results_inflate(data);
+		results = rt_results_inflate(data, info->client->viewer.worker->work->state->world->batch_size);
 		work_send_results(info->client->viewer.worker, results, data.begin, data.end);
 		mutex_lock(&info->client->viewer.job_mtx);
 		info->client->viewer.active_work -= data.end - data.begin;

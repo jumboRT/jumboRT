@@ -177,6 +177,8 @@ void
 	src = rt_upackfl(src, &dst->cam_fov);
 	src = rt_upackstr(src, &dst->scene_file);
 	src = rt_upackstr(src, &dst->scene_key);
+	src = rt_upacku64(src, &dst->render_mode);
+	src = rt_upacku64(src, &dst->batch_size);
 	return (src);
 }
 
@@ -228,6 +230,8 @@ void
 	dst = rt_packfl(dst, packet.cam_fov);
 	dst = rt_packstr(dst, packet.scene_file);
 	dst = rt_packstr(dst, packet.scene_key);
+	dst = rt_packu64(dst, packet.render_mode);
+	dst = rt_packu64(dst, packet.batch_size);
 	return (dst);
 }
 
