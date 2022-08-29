@@ -89,6 +89,7 @@ char
 {
 	int		fd;
 	size_t	size_int;
+	char	*result;
 
 	if (size == NULL)
 		size = &size_int;
@@ -99,7 +100,10 @@ char
 		ft_asprintf(error, "Unable to open '%s': %s", path, strerror(errno));
 		return (NULL);
 	}
-	return (rt_readfile_fd(fd, error, size));
+	result = rt_readfile_fd(fd, error, size);
+	if (fd >= 0)
+		close(fd);
+	return (result);
 }
 #endif
 
