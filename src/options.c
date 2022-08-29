@@ -3,6 +3,8 @@
 #include "work.h"
 
 #include <libft.h>
+#include <ft_printf.h>
+#include <stdlib.h>
 
 void
 	parse_options(t_options *opts, int argc, char **argv)
@@ -140,6 +142,11 @@ void
 			rt_assert(opts->batch_size > 0, "invalid batch size");
 			opts->batch_size_set = 1;
 			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-v") == 0)
+		{
+			ft_printf("v%d.%d.%d\n", RT_PATCH_VER, RT_MINOR_VER, RT_MAJOR_VER);
+			exit(EXIT_SUCCESS);
 		}
 		else
 		{
