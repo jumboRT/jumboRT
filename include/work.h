@@ -48,8 +48,8 @@ struct s_work {
 	t_thread		update_thread;
 	t_cond			update_cnd;
 	t_cond			progress_cnd;
-	t_mutex			update_mtx;
 	t_mutex			state_mtx;
+	t_mutex			update_mtx;
 };
 
 struct s_result_block {

@@ -84,7 +84,8 @@ void
 		if (work->workers[i]->backend == RT_BACKEND_SERVER)
 		{
 			client = work->workers[i]->ctx;
-			rt_send_packet((struct s_client_base *) client, &packet, &error);
+			if (rt_send_packet((struct s_client_base *) client, &packet, &error) < 0)
+				rt_free(error);
 		}
 		i += 1;
 	}
