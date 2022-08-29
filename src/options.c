@@ -6,6 +6,7 @@
 #include <ft_printf.h>
 #include <stdlib.h>
 
+/* TODO: dynamic job allocation */
 /* TODO: flag to disable compression */
 void
 	parse_options(t_options *opts, int argc, char **argv)
