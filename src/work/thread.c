@@ -2,12 +2,8 @@
 
 #include "util.h"
 
-# ifndef RT_WORK_THREAD_COUNT
-#  define RT_WORK_THREAD_COUNT 8
-# endif
-
 # ifndef RT_WORK_THREAD_CHUNK_SIZE
-#  define RT_WORK_THREAD_CHUNK_SIZE 4096
+#  define RT_WORK_THREAD_CHUNK_SIZE 65536
 # endif
 
 static void
@@ -37,10 +33,10 @@ void
 	work_int_create_thread(t_work *work)
 {
 	t_context	*ctx;
-	size_t		i;
+	int			i;
 
 	i = 0;
-	while (i < RT_WORK_THREAD_COUNT)
+	while (i < work->opts->threads)
 	{
 		ctx = rt_malloc(sizeof(*ctx));
 		ctx_init(ctx);
