@@ -86,11 +86,10 @@ void
 	size_t		old_size;
 	size_t		new_size;
 
+	mutex_lock(&pool->mtx);
 	item.task = task;
 	item.id = task->count;
 	task->count += 1;
-
-	mutex_lock(&pool->mtx);
 	old_size = pool->size;
 	new_size = old_size + sizeof(item);
 	rt_assert(new_size / sizeof(item) <= RT_POOL_MAX_TASKS, "pool_fork: too many tasks in pool");

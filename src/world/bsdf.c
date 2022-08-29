@@ -189,7 +189,7 @@ static t_vec f_bxdf_transmissive_sample(const GLOBAL t_world *world, GLOBAL t_co
 		*wow = vec_norm(refract(wiw, hit.rel_shading_normal, etai_etat));
 		*wow = clip(*wow, vec_neg(hit.rel_geometric_normal));
 		if (entering)
-			eta_push(trace_ctx, prim_mat(hit.prim), bxdf->eta, (const t_bxdf_any *) bxdf - world->bxdfs);
+			eta_push(trace_ctx, prim_mat(hit.prim), bxdf->eta, (const GLOBAL t_bxdf_any *) bxdf - world->bxdfs);
 		else
 			eta_del(trace_ctx, prim_mat(hit.prim));
 		return (filter_sample(world, bxdf->refraction_tex, hit.hit.uv));
