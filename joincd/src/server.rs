@@ -20,6 +20,8 @@ pub struct Job {
     pub cam_fov: f32,
     pub scene: String,
     pub key: String,
+    pub render_mode: u64,
+    pub batch_size: u64,
     pub work: Vec<Work>,
 }
 

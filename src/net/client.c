@@ -115,10 +115,9 @@ static void
 	(void) id;
 	info = ctx;
 	data.seq_id = info->client->any.seq_id;
-	data.zdata = rt_results_deflate(info->results,
-			info->end - info->begin, &data.zsize);
 	data.begin = info->begin;
 	data.end = info->end;
+	rt_results_deflate(&data, info->client->worker.work->state->world->batch_size, info->results);
 	size = rt_sizesr(data);
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);

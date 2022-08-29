@@ -56,6 +56,8 @@ static struct s_packet
 	request.cam_fov = work->state->world->camera.fov;
 	rt_string_create(&request.scene_file, work->opts->scene_file);
 	rt_string_create(&request.scene_key, work->opts->key);
+	request.render_mode = work->state->world->render_mode;
+	request.batch_size = work->state->world->batch_size;
 	packet.size = rt_sizecjr(request);
 	packet.type = RT_JOB_REQUEST_PACKET;
 	packet.data = rt_malloc(packet.size);

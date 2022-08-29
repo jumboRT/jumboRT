@@ -254,6 +254,7 @@ struct s_world {
 	t_camera				camera;
 	t_filter				ambient_filter;
 	uint32_t				render_mode;
+	uint64_t				batch_size;
 	uint32_t				primitives_count;
 	uint32_t				materials_count;
 	uint32_t				vertices_count;

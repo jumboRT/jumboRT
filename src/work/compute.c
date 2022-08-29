@@ -45,7 +45,7 @@ __kernel void
 uint64_t
 	project_index(const GLOBAL t_world *world, uint64_t index)
 {
-	return (index % (world->img_meta.width * world->img_meta.height));
+	return (index / world->batch_size % (world->img_meta.width * world->img_meta.height));
 }
 
 t_ray

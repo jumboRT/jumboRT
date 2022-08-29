@@ -11,7 +11,7 @@ void
 
 	opts->scene_file = NULL;
 	opts->image_file = NULL;
-	opts->samples = 1000000;
+	opts->samples = 1048576;
 	opts->width = 1920;
 	opts->height = 1080;
 	opts->backends = RT_BACKEND_THREAD;
