@@ -419,24 +419,20 @@ int
 	unsigned char	*str;
 	size_t			str_size;
 	char			*error;
-	t_ztoken		*tokens;
-	size_t			tok_count;
+	t_perf			perf;
 
-	str = (unsigned char *) rt_readfile("packet.bin", &error, &str_size);
-	//tokens = lz77_deflate(str, str_size, &tok_count);
-	//printf("token count: %zu\n", tok_count);
+	perf_start(&perf);
+	str = (unsigned char *) rt_readfile("san-miguel/san-miguel-low-poly.rt", &error, &str_size);
+	perf_split(&perf, "rt_readfile");
 	printf("uncompressed size: %zu\n", str_size);
-	CALLGRIND_START_INSTRUMENTATION;
-	CALLGRIND_TOGGLE_COLLECT;
 	str = z_deflate(str, str_size, &str_size);
-	CALLGRIND_TOGGLE_COLLECT;
-	CALLGRIND_STOP_INSTRUMENTATION;
+	perf_split(&perf, "z_deflate");
 	printf("compressed size: %zu\n", str_size);
 	str = z_inflate(str, str_size, &str_size);
+	perf_split(&perf, "z_inflate");
 	printf("decompressed size: %zu\n", str_size);
 	return (0);
 	*/
-
 
 	parse_options(&options, argc, argv);
 	if (options.worker)

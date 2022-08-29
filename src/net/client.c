@@ -111,8 +111,8 @@ static void
 	uint64_t					size;
 	void						*buf;
 	int							rc;
-	(void) id;
 
+	(void) id;
 	info = ctx;
 	data.seq_id = info->client->any.seq_id;
 	data.zdata = rt_results_deflate(info->results,
@@ -133,7 +133,6 @@ static void
 	rt_free(buf);
 	rt_free(info->results);
 	rt_free(info);
-	info = ctx;
 }
 
 void
@@ -152,8 +151,8 @@ void
 	ctx->begin = begin;
 	ctx->end = end;
 	task_init(task, rt_send_results_task, ctx);
-	pool_fork(&client->worker.pool, task);
-	pool_detach(&client->worker.pool, task);
+	pool_fork(&client->any.pool, task);
+	pool_detach(&client->any.pool, task);
 }
 
 int
@@ -163,7 +162,7 @@ int
 	client->any.client_type = RT_WORKER;
 	client->worker.work = NULL;
 	client->worker.opts = opts;
-	pool_create(&client->worker.pool, RT_NET_POOL_SIZE);
+	pool_create(&client->any.pool, RT_NET_POOL_SIZE);
 	return (rt_client_create(&client->any, ip, port));
 }
 
@@ -177,6 +176,7 @@ int
 	/* TODO: these are not destroyed on error */
 	mutex_init(&client->viewer.job_mtx);
 	cond_init(&client->viewer.job_cnd);
+	pool_create(&client->any.pool, RT_NET_POOL_SIZE);
 	return (rt_client_create(&client->any, ip, port));
 }
 
@@ -216,8 +216,7 @@ void
 	rt_client_set_status(client, SQUIT);
 	if (client->any.client_type == RT_VIEWER)
 		thread_join(&client->viewer.job_thrd);
-	else
-		pool_destroy(&client->worker.pool);
+	pool_destroy(&client->any.pool);
 #if defined RT_WINDOWS
 	closesocket(client->any.sockfd);
 #else

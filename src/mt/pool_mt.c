@@ -93,6 +93,7 @@ void
 	mutex_lock(&pool->mtx);
 	old_size = pool->size;
 	new_size = old_size + sizeof(item);
+	rt_assert(new_size / sizeof(item) <= RT_POOL_MAX_TASKS, "pool_fork: too many tasks in pool");
 	pool->data = rt_reallog(pool->data, &pool->capacity, new_size);
 	rt_memcpy((char *) pool->data + old_size, &item, sizeof(item));
 	pool->size = new_size;

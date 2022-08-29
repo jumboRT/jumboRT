@@ -21,7 +21,7 @@ void
 		index += 1;
 	}
 	ptr = z_deflate(data, ptr - data, zsize);
-	printf("results packet uncompressed=%zu compressed=%zu\n", size, *zsize);
+	//printf("results packet uncompressed=%zu compressed=%zu\n", size, *zsize);
 	rt_free(data);
 	return (ptr);
 }

@@ -29,13 +29,13 @@ unsigned int
 void
 	ztree_default(t_ztree *tree, t_ztree **dst)
 {
-	unsigned char	lens[288];
+	unsigned int	counts[16];
 
 	if (dst == NULL || *dst == NULL)
 	{
-		default_lengths(lens);
-		ztree_find_counts(tree->counts, lens, 288);
-		ztree_find_codes(tree->codes, tree->counts, lens, 288);
+		default_lengths(tree->lens);
+		ztree_find_counts(counts, tree->lens, 288);
+		ztree_find_codes(tree->codes, counts, tree->lens, 288);
 		if (dst != NULL)
 			*dst = tree;
 	}

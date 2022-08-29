@@ -40,6 +40,7 @@ struct s_client_base {
 	int				sockfd;
 	uint64_t		seq_id;
 	enum e_status	status;
+	t_pool			pool;
 };
 
 struct s_net_viewer {
@@ -55,7 +56,6 @@ struct s_net_worker {
 	struct s_client_base	base;
 	t_work					*work;
 	t_options				opts;
-	t_pool					pool;
 };
 
 union u_client {
@@ -112,6 +112,11 @@ struct s_send_results_ctx {
 	t_result		*results;
 	uint64_t		begin;
 	uint64_t		end;
+};
+
+struct s_handle_send_results_ctx {
+	union u_client	*client;
+	struct s_packet	packet;
 };
 
 int		rt_connect(const char *ip, const char *port, char **error);

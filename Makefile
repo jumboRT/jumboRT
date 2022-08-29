@@ -28,7 +28,9 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   texture.c init.c ambient.c conditional.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c
-Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c lz77_new.c encode.c decode.c wtree.c encode_zwtree_token.c
+Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
+						   lz77_new.c encode.c decode.c wtree.c \
+						   encode_zwtree_token.c util.c
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
@@ -202,8 +204,8 @@ else ifeq ($(config), profile)
 	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
-		CFLAGS		+= -g3 -Ofast -flto -march=native
-		LFLAGS		+= -g3 -Ofast -flto -march=native
+		CFLAGS		+= -g3 -Ofast -flto -march=native -mavx2
+		LFLAGS		+= -g3 -Ofast -flto -march=native -mavx2
 	else
 		CFLAGS		+= -g3 -Ofast
 		LFLAGS		+= -g3 -Ofast

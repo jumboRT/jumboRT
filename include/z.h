@@ -40,8 +40,8 @@ struct s_zbuf {
 
 struct s_ztree {
 	unsigned int	count;
-	unsigned int	counts[16];
-	unsigned int	codes[288];
+	unsigned char	lens[288];
+	unsigned short	codes[32768];
 };
 
 struct s_zwtree {
@@ -124,7 +124,10 @@ unsigned int	zfrob(unsigned int x);
 void			zbuf_create(t_zbuf *zb, void *data, size_t size);
 void			zbuf_next(t_zbuf *zb);
 unsigned int	zbuf_read(t_zbuf *zb, int count);
+void			zbuf_skip(t_zbuf *zb, int count);
+unsigned int	zbuf_peek(t_zbuf *zb, int count, int *i);
 void			zbuf_write(t_zbuf *zb, int count, unsigned int data);
+void			zbuf_write_aligned(t_zbuf *zb, int count, unsigned int data);
 void			zbuf_copy(t_zbuf *zb, t_zbuf *src, size_t size);
 void			zbuf_repeat(t_zbuf *zb, size_t dist, size_t size);
 
@@ -138,7 +141,7 @@ struct s_ztoken_data
 unsigned int	zencode_zwtree_token(struct s_zwtree_token *data, unsigned int length, unsigned int count);
 
 void			ztree_find_counts(unsigned int *counts, unsigned char *lens, unsigned int count);
-void			ztree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens, unsigned int count);
+void			ztree_find_codes(unsigned short *codes, unsigned int *counts, unsigned char *lens, unsigned int count);
 void			ztree_default(t_ztree *tree, t_ztree **dst);
 void			ztree_init(t_ztree *tree, unsigned char *lens, unsigned int count);
 unsigned int	ztree_get(t_ztree *tree, t_zbuf *zb);
@@ -153,5 +156,7 @@ void			*z_inflate(void *src, size_t src_size, size_t *dst_size);
 
 t_ztoken		*lz77_deflate(const void *src, size_t src_size,
 					size_t *dst_size);
+
+unsigned int	reverse_bits(unsigned int x, unsigned int n);
 
 #endif
