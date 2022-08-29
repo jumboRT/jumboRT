@@ -27,6 +27,7 @@ struct s_parse_ctx {
 	const char	*filename;
 	int			line;
 	int			column;
+	int			cam_set;
 	t_material	*mat;
 	t_vector	materials;
 	t_vector	textures;
@@ -95,6 +96,8 @@ void			rt_exec_normal(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_bump(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_volume(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cam_focus(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_cam_blur(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_conditional(t_world *world, t_parse_ctx *ctx);
 

@@ -84,6 +84,8 @@ struct s_cjob_request {
 	t_vec			cam_pos;
 	t_vec			cam_dir;
 	float			cam_fov;
+	float			cam_focus;
+	float			cam_blur;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
 	uint64_t		render_mode;
@@ -97,6 +99,8 @@ struct s_sjob_request {
 	t_vec			cam_pos;
 	t_vec			cam_dir;
 	float			cam_fov;
+	float			cam_focus;
+	float			cam_blur;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
 	uint64_t		render_mode;

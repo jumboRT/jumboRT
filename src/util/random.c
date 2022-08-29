@@ -51,3 +51,18 @@ t_vec
 	return (result);
 }
 
+/* https://stats.stackexchange.com/a/481544 */
+t_vec
+	rt_random_in_disk(GLOBAL t_seed *seed, t_vec right, t_vec up, float radius)
+{
+	float	r;
+	float	alpha;
+	float	x;
+	float	y;
+
+	r = rt_sqrt(rt_random_float_range(seed, 0.0, radius * radius));
+	alpha = rt_random_float_range(seed, 0.0, RT_2PI);
+	x = r * rt_cos(alpha);
+	y = r * rt_sin(alpha);
+	return (vec_add(vec_scale(right, x), vec_scale(up, y)));
+}

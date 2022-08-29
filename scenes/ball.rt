@@ -1,4 +1,5 @@
 C 0,0,0 1,0,0 90
+cam_blur 0.02
 
 tex_def tex_checker assets/checker.bmp
 tex_def tex_bump assets/bricky.bmp

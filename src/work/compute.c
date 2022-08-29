@@ -55,13 +55,18 @@ t_ray
 	const GLOBAL t_image_meta	*meta;
 	t_vec						u;
 	t_vec						v;
+	t_vec						blur;
+	t_ray						ray;
 
 	cam = &world->camera;
 	meta = &world->img_meta;
 	index = project_index(world, index);
 	u = vec_scale(cam->u, rt_random_float(&ctx->seed) + (uint64_t) (index % meta->width));
 	v = vec_scale(cam->v, rt_random_float(&ctx->seed) + (uint64_t) (index / meta->width));
-	return (ray(cam->org, vec_norm(vec_add(cam->base, vec_add(u, v)))));
+	blur = rt_random_in_disk(&ctx->seed, cam->u_norm, cam->v_norm, cam->blur);
+	ray.org = vec_add(cam->org, blur);
+	ray.dir = vec_norm(vec_sub(vec_add(cam->base, vec_add(u, v)), blur));
+	return (ray);
 }
 
 t_result

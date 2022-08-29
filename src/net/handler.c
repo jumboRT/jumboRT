@@ -36,7 +36,7 @@ static void
 		state->world->render_mode = request.render_mode;
 		state->world->batch_size = request.batch_size;
 		camera_set(state->world, &state->world->camera, request.cam_pos,
-				request.cam_dir, request.cam_fov);
+				request.cam_dir, request.cam_fov, request.cam_focus, request.cam_blur);
 		worker->work->work_size = 0;
 		rt_work_unlock(worker->work);
 		return;
@@ -64,7 +64,7 @@ static void
 	state->world->img_meta.height = request.height;
 	world_load(state->world, request.scene_file.str, request.scene_key.str);
 	world_accel(state->world);
-	camera_set(state->world, &state->world->camera, request.cam_pos, request.cam_dir, request.cam_fov);
+	camera_set(state->world, &state->world->camera, request.cam_pos, request.cam_dir, request.cam_fov, request.cam_focus, request.cam_blur);
 	work_create(worker->work, state, &worker->opts, (union u_client *) worker);
 	work_update_start(worker->work);
 	worker->opts.width = request.width;

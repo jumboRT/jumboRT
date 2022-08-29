@@ -29,5 +29,6 @@ float	rt_random_float(GLOBAL t_seed *seed);
 float	rt_random_float_range(GLOBAL t_seed *seed, float min, float max);
 t_vec	rt_random_in_sphere(GLOBAL t_seed *seed);
 t_vec	rt_random_on_hemi(GLOBAL t_seed *seed, t_vec normal);
+t_vec	rt_random_in_disk(GLOBAL t_seed *seed, t_vec right, t_vec up, float radius);
 
 #endif

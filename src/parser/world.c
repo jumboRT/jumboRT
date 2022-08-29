@@ -32,6 +32,8 @@ static const t_directive	directives[] = {
 	{ "bump", rt_exec_bump },
 	{ "volume", rt_exec_volume },
 	{ "mat_end", rt_exec_mat_end },
+	{ "cam_focus", rt_exec_cam_focus },
+	{ "cam_blur", rt_exec_cam_blur },
 	{ "#", rt_exec_comment },
 	{ "$", rt_exec_conditional },
 #endif

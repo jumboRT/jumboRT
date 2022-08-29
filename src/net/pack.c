@@ -175,6 +175,8 @@ void
 	src = rt_upackvec(src, &dst->cam_pos);
 	src = rt_upackvec(src, &dst->cam_dir);
 	src = rt_upackfl(src, &dst->cam_fov);
+	src = rt_upackfl(src, &dst->cam_focus);
+	src = rt_upackfl(src, &dst->cam_blur);
 	src = rt_upackstr(src, &dst->scene_file);
 	src = rt_upackstr(src, &dst->scene_key);
 	src = rt_upacku64(src, &dst->render_mode);
@@ -228,6 +230,8 @@ void
 	dst = rt_packvec(dst, packet.cam_pos);
 	dst = rt_packvec(dst, packet.cam_dir);
 	dst = rt_packfl(dst, packet.cam_fov);
+	dst = rt_packfl(dst, packet.cam_focus);
+	dst = rt_packfl(dst, packet.cam_blur);
 	dst = rt_packstr(dst, packet.scene_file);
 	dst = rt_packstr(dst, packet.scene_key);
 	dst = rt_packu64(dst, packet.render_mode);

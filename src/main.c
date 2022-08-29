@@ -133,77 +133,76 @@ int
 	if (keycode == RT_KEY_R)
 	{
 		rt_work_lock(work);
-		printf("%f %f %f %f\n", x(org), y(org), z(org), camera->fov);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_LEFT)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / (12 * (90.0 / camera->fov)));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_RIGHT)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, RT_PI / (12 * (90.0 / camera->fov)));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_UP)
 	{
 		dir = vec_rotate(left, dir, RT_PI / (12 * (90 / camera->fov)));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_DOWN)
 	{
 		dir = vec_rotate(left, dir, -RT_PI / (12 * (90 / camera->fov)));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_S)
 	{
 		org = vec_add(org, vec_scale(vec_neg(dir), FLY_SPEED));	    
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_W)
 	{
 		org = vec_add(org, vec_scale(dir, FLY_SPEED));	    
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_A)
 	{
 		org = vec_add(org, vec_scale(left, FLY_SPEED));
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, camera->fov);
+		camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_D)
 	{
 	    org = vec_add(org, vec_scale(vec_neg(left), FLY_SPEED));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, camera->fov);
+	    camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SPACE)
 	{
 	    org = vec_add(org, vec_z(FLY_SPEED));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, camera->fov);
+	    camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_SHIFT)
 	{
 	    org = vec_add(org, vec_neg(vec_z(FLY_SPEED)));
 	    rt_work_lock(work);
-	    camera_set(work->state->world, camera, org, dir, camera->fov);
+	    camera_set(work->state->world, camera, org, dir, camera->fov, camera->focus, camera->blur);
 	    rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_1)
@@ -233,12 +232,12 @@ int
 	if (keycode == RT_KEY_Z)
 	{
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, rt_max(5.0, camera->fov - 5));
+		camera_set(work->state->world, camera, org, dir, rt_max(5.0, camera->fov - 5), camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	if (keycode == RT_KEY_X) {
 		rt_work_lock(work);
-		camera_set(work->state->world, camera, org, dir, rt_min(179.0, camera->fov + 5));
+		camera_set(work->state->world, camera, org, dir, rt_min(179.0, camera->fov + 5), camera->focus, camera->blur);
 		rt_work_unlock(work);
 	}
 	return (0);
