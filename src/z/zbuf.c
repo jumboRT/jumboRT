@@ -27,24 +27,72 @@ unsigned int
 {
 	unsigned int	data;
 	int				i;
-	int				n;
 
-	data = 0;
-	i = 0;
-	while (count > 0)
-	{
-		rt_assert(zb->index < zb->size, "zbuf_read: buffer overflow");
-		n = 8 - zb->bit;
-		if (count < n)
-			n = count;
-		data |= ((zb->data[zb->index] >> zb->bit) & ((1U << n) - 1)) << i;
-		i += n;
-		count -= n;
-		zb->bit += n;
-		zb->index += zb->bit == 8;
-		zb->bit %= 8;
-	}
+	data = zbuf_peek(zb, count, &i);
+	zbuf_skip(zb, count);
 	return (data);
+}
+
+void
+	zbuf_skip(t_zbuf *zb, int count)
+{
+	rt_assert((zb->size - zb->index) * 8 - zb->bit >= (unsigned) count, "zbuf_skip: buffer overflow");
+	zb->bit += count;
+	zb->index += zb->bit / 8;
+	zb->bit %= 8;
+}
+
+unsigned int
+	zbuf_peek(t_zbuf *zb, int count, int *i)
+{
+	unsigned int	data;
+
+	rt_assert(count <= 16, "zbuf_peek: can peek at most 16 bits");
+	if (zb->index + 3 < zb->size)
+	{
+		data = *(uint32_t *) (zb->data + zb->index) >> zb->bit;
+		*i = count;
+	}
+	else
+	{
+		data = 0;
+		*i = 0;
+		if (zb->index + 0 < zb->size)
+		{
+			data |= (unsigned int) zb->data[zb->index + 0] << 0 >> zb->bit;
+			*i += 8;
+		}
+		if (zb->index + 1 < zb->size)
+		{
+			data |= (unsigned int) zb->data[zb->index + 1] << 8 >> zb->bit;
+			*i += 8;
+		}
+		if (zb->index + 2 < zb->size)
+		{
+			data |= (unsigned int) zb->data[zb->index + 2] << 16 >> zb->bit;
+			*i += 8;
+		}
+		if (count < *i)
+			*i = count;
+	}
+	return (data & ((1 << count) - 1));
+}
+
+void
+	zbuf_write_aligned(t_zbuf *zb, int count, unsigned int data)
+{
+	int	i;
+
+	rt_assert(zb->bit == 0, "zbuf_write_aligned: zb->bit != 0");
+	rt_assert(count % 8 == 0, "zbuf_write_aligned: count % 8 != 0");
+	zb->data = rt_reallog(zb->data, &zb->capacity, zb->size + count / 8);
+	i = 0;
+	while (i < count)
+	{
+		zb->data[zb->size] = (data >> i) & 0xFF;
+		zb->size += 1;
+		i += 8;
+	}
 }
 
 void
@@ -84,19 +132,29 @@ void
 }
 
 void
+	zbuf_copy_forward(void *dst, const void *src, size_t size)
+{
+	unsigned char		*dst_cpy;
+	const unsigned char	*src_cpy;
+
+	dst_cpy = dst;
+	src_cpy = src;
+	while (size)
+	{
+		*dst_cpy = *src_cpy;
+		dst_cpy += 1;
+		src_cpy += 1;
+		size -= 1;
+	}
+}
+
+void
 	zbuf_repeat(t_zbuf *zb, size_t dist, size_t size)
 {
-	size_t	i;
-
 	rt_assert(zb->bit == 0, "zbuf_repeat: zb->bit != 0");
 	rt_assert(dist <= zb->size, "zbuf_repeat: buffer underflow");
 	zb->data = rt_reallog(zb->data, &zb->capacity, zb->size + size);
-	i = 0;
-	while (i < size)
-	{
-		zb->data[zb->size + i] = zb->data[zb->size - dist + i];
-		i += 1;
-	}
+	zbuf_copy_forward(zb->data + zb->size, zb->data + zb->size - dist, sizeof(zb->data[0]) * size);
 	zb->size += size;
 }
 

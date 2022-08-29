@@ -3,95 +3,10 @@
 #include "z.h"
 #include "util.h"
 #include <string.h>
+#include <math.h>
 
-#define RT_HALF_FLOAT_SCALE (1.0)
-
-static uint32_t
-	get_mantissa(uint16_t i)
-{
-	uint32_t	m;
-	uint32_t	e;
-
-	if (i == 0)
-		return (0);
-	if (i >= 1024)
-		return (0x38000000 + ((i - 1024) << 13));
-	m = i << 13;
-	e = 0;
-	while (!(m & 0x00800000))
-	{
-		e -= 0x00800000;
-		m <<= 1;
-	}
-	m &= 0x00800000;
-	e += 0x38800000;
-	return (m | e);
-}
-
-static uint32_t
-	get_exponent(uint16_t i)
-{
-	if (i == 0)
-		return (0);
-	else if (i == 32)
-		return (0x80000000);
-	else if (i == 31)
-		return (0x47800000);
-	else if (i == 63)
-		return (0xc7800000);
-	else if (i < 32)
-		return ((uint32_t) i << 23);
-	else
-		return (0x80000000 + ((i - 32) << 23));
-}
-
-static uint32_t
-	get_offset(uint16_t i)
-{
-	if (i == 0 || i == 32)
-		return (0);
-	else
-		return (1024);
-}
-
-static uint16_t
-	get_base(uint32_t i)
-{
-	uint16_t	b;
-
-	if (i < 103)
-		b = 0;
-	else if (i < 113)
-		b = 0x0400 >> (113 - i);
-	else if (i < 142)
-		b = (i - 113) << 10;
-	else if (i < 255)
-		b = 0x7c00;
-	else
-		b = 0x7c00;
-	if (i & 0x100)
-		b |= 0x8000;
-	return (b);
-	
-}
-
-static uint16_t
-	get_shift(uint32_t i)
-{
-	uint16_t	b;
-
-	if (i < 103)
-		b = 24;
-	else if (i < 113)
-		b = 126 - i;
-	else if (i < 142)
-		b = 13;
-	else if (i < 255)
-		b = 24;
-	else
-		b = 13;
-	return (b);
-}
+#define RT_FLOAT_MANTISSA_BITS 8
+#define RT_FLOAT_EXPONENT_BITS 8
 
 void
 	*rt_packu64(void *dst, uint64_t i)
@@ -121,12 +36,22 @@ void
 void
 	*rt_packhfl(void *dst, float f)
 {
+	float		m;
+	int			e;
 	uint16_t	h;
-	uint32_t	i;
 
-	f *= RT_HALF_FLOAT_SCALE;
-	i = *(uint32_t *) &f;
-	h = get_base((i >> 23) & 0x1ff) + ((i & 0x007fffff) >> get_shift((i >> 23) & 0x1ff));
+	m = frexpf(f, &e);
+	e += (1 << RT_FLOAT_EXPONENT_BITS) / 2 - 1;
+	if (m == 0 || e < 0)
+		h = 0;
+	else
+	{
+		m *= 2;
+		rt_assert(m >= 1, "rt_packhfl: negative number");
+		rt_assert(e < (1 << RT_FLOAT_EXPONENT_BITS), "rt_packhfl: exponent too large");
+		h = e << RT_FLOAT_MANTISSA_BITS;
+		h |= (uint16_t) ((m - 1) * (1 << RT_FLOAT_MANTISSA_BITS));
+	}
 	memcpy(dst, &h, sizeof(h));
 	return ((char *) dst + sizeof(h));
 }
@@ -170,13 +95,21 @@ void
 void
 	*rt_upackhfl(void *src, float *f)
 {
+	float		m;
+	int			e;
 	uint16_t	h;
-	uint32_t	i;
 
 	memcpy(&h, src, sizeof(h));
-	i = get_mantissa(get_offset(h >> 10) + (h & 0x3ff)) + get_exponent(h >> 10);
-	*(uint32_t *) f = i;
-	*f /= RT_HALF_FLOAT_SCALE;
+	if (h == 0)
+		*f = 0;
+	else
+	{
+		m = (h & ((1 << RT_FLOAT_MANTISSA_BITS) - 1)) / (float) (1 << RT_FLOAT_MANTISSA_BITS) + 1;
+		e = h >> RT_FLOAT_MANTISSA_BITS;
+		e -= (1 << RT_FLOAT_EXPONENT_BITS) / 2 - 1;
+		m /= 2;
+		*f = ldexpf(m, e);
+	}
 	return ((char *) src + sizeof(h));
 }
 

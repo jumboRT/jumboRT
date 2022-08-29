@@ -1,6 +1,8 @@
 #ifndef POOL_H
 # define POOL_H
 
+# define RT_POOL_MAX_TASKS 1024
+
 # include "mt.h"
 # include "queue.h"
 

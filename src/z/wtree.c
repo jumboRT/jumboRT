@@ -138,7 +138,7 @@ void
 	while (i < 288)
 	{
 		if (lens[i] != 0)
-			codes[i] = indices[lens[i]]++;
+			codes[i] = reverse_bits(indices[lens[i]]++, lens[i]);
 		i += 1;
 	}
 }
@@ -168,12 +168,5 @@ void
 void
 	zwtree_put(t_zwtree *tree, t_zbuf *zb, unsigned int value)
 {
-	unsigned int	i;
-
-	i = 0;
-	while (i < tree->lens[value])
-	{
-		zbuf_write(zb, 1, (tree->codes[value] >> (tree->lens[value] - i - 1)) & 1);
-		i += 1;
-	}
+	zbuf_write(zb, tree->lens[value], tree->codes[value]);
 }

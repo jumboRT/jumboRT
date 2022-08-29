@@ -31,7 +31,7 @@ static void
 		if (value == 256)
 			break ;
 		if (value < 256)
-			zbuf_write(ob, 8, value);
+			zbuf_write_aligned(ob, 8, value);
 		if (value < 256)
 			continue ;
 		zdecode_length(ib, value, &value);
