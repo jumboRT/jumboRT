@@ -34,6 +34,10 @@ Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 GFX_FILES				:= win.c
 BASE_FILES				:= main.c options.c perf.c
 
+PATCH_VERSION				:= 0
+MINOR_VERSION				:= 1
+MAJOR_VERSION				:= 0
+
 OPENCL_FILES			:= \
 	src/util/random.c \
 	src/work/compute.c \
@@ -114,7 +118,8 @@ FILE_NAMES				:= \
 
 CC						:= clang
 LINK_CMD				:= $(CC)
-CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic $(ANALYZER)
+CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic -DRT_PATCH_VER=$(PATCH_VERSION) \
+					   -DRT_MINOR_VER=$(MINOR_VERSION) -DRT_MAJOR_VER=$(MAJOR_VERSION) $(ANALYZER)
 LFLAGS					:= -Wall -Wextra $(ANALYZER)
 
 SRC_DIR					:= src
