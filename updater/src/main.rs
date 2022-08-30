@@ -6,38 +6,42 @@ use std::io::{stdin, stdout, Write};
 use std::path::Path;
 use std::process::Command;
 
+type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
+
 const REPO_DIR: &str = ".miniRT/";
-const REPO_URL: &str = "https://github.com/Hyxogen/miniRT.git";
+const REPO_URL: &str = "https://github.com/DutChen18/42-miniRT.git";
 const DEFAULT_HOST: &str = "localhost";
 const DEFAULT_PORT: &str = "29300";
 const KERNELS_FILE: &str = "kernels.txt";
 const ARGS_FILE: &str = "args.txt";
-const REPO_BRANCH: &str = if cfg!(target_os = "windows") {
-    "windows"
-} else {
-    "unix"
-};
-const COMPILER_EXEC: &str = if cfg!(target_os = "windows") {
-    "compile.exe"
-} else {
-    "compile"
-};
-const RT_EXEC: &str = if cfg!(target_os = "windows") {
-    "miniRT.exe"
-} else {
-    "miniRT"
-};
 
-fn get_repo() -> Result<Repository, git2::Error> {
-    Repository::open(REPO_DIR)
+#[cfg(windows)]
+mod config {
+    pub const REPO_BRANCH: &str = "windows";
+    pub const COMPILER_EXEC: &str = "compile.exe";
+    pub const RT_EXEC: &str = "miniRT.exe";
 }
 
-fn fast_forward_repo(repo: &Repository, commit: git2::AnnotatedCommit) -> Result<(), git2::Error> {
+#[cfg(not(windows))]
+mod config {
+    pub const REPO_BRANCH: &str = "unix";
+    pub const COMPILER_EXEC: &str = "compile";
+    pub const RT_EXEC: &str = "miniRT";
+}
+
+use config::*;
+
+fn get_repo() -> DynResult<Repository> {
+    Ok(Repository::open(REPO_DIR)?)
+}
+
+fn fast_forward_repo(repo: &Repository, commit: git2::AnnotatedCommit) -> DynResult<()> {
     let refname = format!("refs/heads{}", REPO_BRANCH);
     let mut reference = repo.find_reference(&refname)?;
     reference.set_target(commit.id(), "Fast-Forward")?;
     repo.set_head(&refname)?;
-    repo.checkout_head(Some(git2::build::CheckoutBuilder::default().force()))
+    repo.checkout_head(Some(git2::build::CheckoutBuilder::default().force()))?;
+    Ok(())
 }
 
 fn transfer_progress_callback() -> git2::RemoteCallbacks<'static> {
@@ -74,7 +78,7 @@ fn transfer_progress_callback() -> git2::RemoteCallbacks<'static> {
     callback
 }
 
-fn fetch_repo(repo: &Repository) -> Result<(), Box<dyn std::error::Error>> {
+fn fetch_repo(repo: &Repository) -> DynResult<()> {
     let callback = transfer_progress_callback();
 
     let mut options = git2::FetchOptions::new();
@@ -84,7 +88,7 @@ fn fetch_repo(repo: &Repository) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn update_repo(repo: Repository) -> Result<(), Box<dyn std::error::Error>> {
+fn update_repo(repo: Repository) -> DynResult<()> {
     fetch_repo(&repo)?;
     let fetch_head = repo.find_reference("FETCH_HEAD")?;
     let fetch_commit = repo.reference_to_annotated_commit(&fetch_head)?;
@@ -97,7 +101,7 @@ fn update_repo(repo: Repository) -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-fn clone_repo() -> Result<Repository, git2::Error> {
+fn clone_repo() -> DynResult<Repository> {
     let callback = transfer_progress_callback();
 
     let mut options = git2::FetchOptions::new();
@@ -112,40 +116,38 @@ fn clone_repo() -> Result<Repository, git2::Error> {
     Ok(repo)
 }
 
-fn reset_repo(repo: &Repository) -> Result<(), git2::Error> {
+fn reset_repo(repo: &Repository) -> DynResult<()> {
     let head = repo.find_reference("HEAD")?;
     let object = head.peel(git2::ObjectType::Commit)?;
     repo.reset(&object, git2::ResetType::Hard, None)?;
     Ok(())
 }
 
-fn get_host(stdin: &std::io::Stdin) -> Result<String, Box<dyn std::error::Error>> {
+fn get_host(stdin: &std::io::Stdin) -> DynResult<String> {
     print!("enter hostname (enter nothing for: {}): ", DEFAULT_HOST);
     stdout().flush().unwrap();
     let mut buffer = String::new();
     stdin.read_line(&mut buffer)?;
 
-    if buffer.trim().is_empty() {
-        Ok(DEFAULT_HOST.to_string())
-    } else {
-        Ok(buffer)
+    match buffer.trim() {
+        b if b.is_empty() => Ok(DEFAULT_HOST.to_string()),
+        b => Ok(b.to_string()),
     }
 }
 
-fn get_port(stdin: &std::io::Stdin) -> Result<String, Box<dyn std::error::Error>> {
+fn get_port(stdin: &std::io::Stdin) -> DynResult<String> {
     print!("enter port (enter nothing for: {}): ", DEFAULT_PORT);
     stdout().flush().unwrap();
     let mut buffer = String::new();
     stdin.read_line(&mut buffer)?;
 
-    if buffer.trim().is_empty() {
-        Ok(DEFAULT_PORT.to_string())
-    } else {
-        Ok(buffer)
+    match buffer.trim() {
+        b if b.is_empty() => Ok(DEFAULT_PORT.to_string()),
+        b => Ok(b.to_string()),
     }
 }
 
-fn compile_kernels() -> Result<(), Box<dyn std::error::Error>> {
+fn compile_kernels() -> DynResult<()> {
     let cwd = std::env::current_dir()?;
     let files = fs::read_dir(cwd)?;
     let re = Regex::new(r".+\.bin").unwrap();
@@ -160,10 +162,12 @@ fn compile_kernels() -> Result<(), Box<dyn std::error::Error>> {
     cwd.push(REPO_DIR);
     cwd.push(KERNELS_FILE);
     let kernels_file = fs::read_to_string(cwd.as_path())?;
+    println!("{}", kernels_file);
     loop {
-        let status = Command::new(COMPILER_EXEC)
+        let status = Command::new(fs::canonicalize(format!("{}/{}", REPO_DIR, COMPILER_EXEC))?)
             .args(kernels_file.split_whitespace())
-            .status()?;
+            .current_dir(REPO_DIR)
+            .status().unwrap();
 
         if status.success() {
             break Ok(());
@@ -171,18 +175,19 @@ fn compile_kernels() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-fn run_program(host: &str, port: &str) -> Result<bool, Box<dyn std::error::Error>> {
+fn run_program(host: &str, port: &str) -> DynResult<bool> {
     let mut dir = std::env::current_dir()?;
     dir.push(REPO_DIR);
     dir.push(ARGS_FILE);
-    let args = fs::read_to_string(dir.as_path())?;
-    Ok(Command::new(RT_EXEC)
+    let args = fs::read_to_string(dir.as_path()).unwrap();
+    Ok(Command::new(fs::canonicalize(format!("{}/{}", REPO_DIR, RT_EXEC))?)
         .args(args.replace("HOST", host).replace("PORT", port).split_whitespace())
-        .status()?
+        .current_dir(REPO_DIR)
+        .status().unwrap()
         .success())
 }
 
-fn update_and_run(host: String, port: String) -> Result<(), Box<dyn std::error::Error>> {
+fn update_and_run(host: String, port: String) -> DynResult<()> {
     loop {
         let repo = get_repo().or_else(|_| clone_repo())?;
         reset_repo(&repo)?;
@@ -194,7 +199,7 @@ fn update_and_run(host: String, port: String) -> Result<(), Box<dyn std::error::
     }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> DynResult<()> {
     let stdin = stdin();
     let host = get_host(&stdin)?;
     let port = get_port(&stdin)?;
