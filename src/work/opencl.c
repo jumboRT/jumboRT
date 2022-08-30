@@ -524,10 +524,10 @@ void
 				ctx_destroy(&cl_ctx->ctx[j]);
 				j += 1;
 			}
+			rt_free(cl_ctx);
 		}
 		i += 1;
 	}
-	rt_free(cl_ctx);
 }
 
 void

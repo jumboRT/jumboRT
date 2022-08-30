@@ -57,7 +57,6 @@ void
 		{
 			ctx_destroy(work->workers[i]->ctx);
 			rt_free(work->workers[i]->ctx);
-			rt_free(work->workers[i]);
 		}
 		i += 1;
 	}
