@@ -56,12 +56,14 @@ ssize_t
 #else
 		nread = recv(sockfd, ((char *) buffer) + total_read, length, MSG_NOSIGNAL);
 #endif
-		if (nread < 0)
+		if (nread < 0 && errno == EINTR)
+			continue;
+		if (nread <= 0)
 		{
-			if (errno == EINTR)
-				continue;
-			if (error != NULL)
+			if (error != NULL && nread < 0)
 				ft_asprintf(error, "failed to receive %u bytes of data %s", (int) length, strerror(errno));
+			if (error != NULL && nread == 0)
+				ft_asprintf(error, "failed to receive %u bytes of data", (int) length);
 			return (-1);
 		}
 		length -= nread;

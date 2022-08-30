@@ -440,6 +440,7 @@ int
 	{
 		rt_worker_create(&client, options, options.net_ip, options.net_port);
 		rt_client_start(&client);
+		rt_client_destroy(&client);
 	}
 	else
 	{

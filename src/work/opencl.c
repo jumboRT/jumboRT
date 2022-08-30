@@ -1,8 +1,14 @@
 #include "work.h"
 #include "util.h"
 
-
+#include <libft.h>
 #include <ft_printf.h>
+
+#ifndef RT_USE_OPENCL
+# define RT_USE_OPENCL 1
+#endif
+
+#if RT_USE_OPENCL
 
 # if defined RT_LINUX
 #  include <CL/cl.h>
@@ -54,6 +60,79 @@ struct s_opencl_callback_ctx {
 	uint64_t			begin;
 	uint64_t			end;
 };
+
+static char
+	*platform_name(cl_platform_id platform)
+{
+	cl_int	status;
+	char	*name;
+	size_t	size;
+
+	status = clGetPlatformInfo(platform, CL_PLATFORM_NAME, 0, NULL, &size);
+	rt_assert(status == CL_SUCCESS, "clGetPlatformInfo failed");
+	name = rt_malloc(size + 1);
+	status = clGetPlatformInfo(platform, CL_PLATFORM_NAME, size, name, NULL);
+	rt_assert(status == CL_SUCCESS, "clGetPlatformInfo failed");
+	name[size] = '\0';
+	return (name);
+}
+
+static char
+	*device_name(cl_device_id device)
+{
+	cl_int	status;
+	char	*name;
+	size_t	size;
+
+	status = clGetDeviceInfo(device, CL_DEVICE_NAME, 0, NULL, &size);
+	rt_assert(status == CL_SUCCESS, "clGetDeviceInfo failed");
+	name = rt_malloc(size + 1);
+	status = clGetDeviceInfo(device, CL_DEVICE_NAME, size, name, NULL);
+	rt_assert(status == CL_SUCCESS, "clGetDeviceInfo failed");
+	name[size] = '\0';
+	return (name);
+}
+
+static char
+	*clean_name(char *name)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (name[i] != '\0')
+	{
+		if (ft_isalnum(name[i]))
+			name[j++] = name[i];
+		i++;
+	}
+	name[j] = '\0';
+	return (name);
+}
+
+static char
+	*device_file(cl_platform_id platform, cl_device_id device)
+{
+	size_t	size;
+	char	*pname;
+	char	*dname;
+	char	*file;
+
+	pname = clean_name(platform_name(platform));
+	dname = clean_name(device_name(device));
+	size = ft_strlen(pname) + ft_strlen(dname) + 13;
+	file = rt_malloc(size);
+	file[0] = '\0';
+	ft_strlcat(file, "kernel-", size);
+	ft_strlcat(file, pname, size);
+	ft_strlcat(file, "-", size);
+	ft_strlcat(file, dname, size);
+	ft_strlcat(file, ".bin", size);
+	rt_free(pname);
+	rt_free(dname);
+	return (file);
+}
 
 static void
 	work_callback(cl_event event, cl_int event_command_status, void *user_data)
@@ -230,8 +309,9 @@ static void
 }
 
 static void
-	work_create_program(struct s_opencl_ctx *cl_ctx, cl_device_id device)
+	work_create_program(struct s_opencl_ctx *cl_ctx, cl_platform_id platform, cl_device_id device)
 {
+	char	*file;
 	char	*string;
 	size_t	length;
 	cl_int	bin_status;
@@ -240,7 +320,9 @@ static void
 	char	*str;
 	size_t	size;
 
-	string = rt_readfile("kernel.bin", &error, &length);
+	file = device_file(platform, device);
+	string = rt_readfile(file, &error, &length);
+	rt_free(file);
 	rt_assert(string != NULL, error);
 	cl_ctx->program = clCreateProgramWithBinary(cl_ctx->context, 1, &device, &length, (const unsigned char **) &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS, "clCreateProgramWithBinary failed");
@@ -267,11 +349,13 @@ static cl_command_queue
 	cl_command_queue	result;
 	cl_queue_properties	queue_props[3];
 
-	/* TODO: try changing to default properties? */
 	queue_props[0] = CL_QUEUE_PROPERTIES;
 	queue_props[1] = props;
 	queue_props[2] = 0;
-	result = clCreateCommandQueueWithProperties(context, device, queue_props, &status);
+	if (props == 0)
+		result = clCreateCommandQueueWithProperties(context, device, NULL, &status);
+	else
+		result = clCreateCommandQueueWithProperties(context, device, queue_props, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateCommandQueue failed");
 	return (result);
 }
@@ -309,11 +393,11 @@ static void
 	context_props[0] = CL_CONTEXT_PLATFORM;
 	context_props[1] = (cl_context_properties) platform;
 	context_props[2] = 0;
-	cl_ctx->context = clCreateContextFromType(context_props, CL_DEVICE_TYPE_DEFAULT, NULL, NULL, &status);
+	cl_ctx->context = clCreateContextFromType(context_props, CL_DEVICE_TYPE_ALL, NULL, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateContextFromType failed");
 	cl_ctx->command_queue[0] = work_create_queue(cl_ctx->context, device, 0);
 	cl_ctx->command_queue[1] = work_create_queue(cl_ctx->context, device, 0);
-	work_create_program(cl_ctx, device);
+	work_create_program(cl_ctx, platform, device);
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");
 	cl_ctx->world_mem = NULL;
@@ -332,20 +416,63 @@ static void
 	work_add(work, work_start, cl_ctx, RT_BACKEND_OPENCL);
 }
 
-void
-	work_int_create_opencl(t_work *work)
+static void
+	work_int_create_opencl_default(t_work *work)
 {
+	cl_int			status;
 	cl_platform_id	platform;
 	cl_device_id	device;
-	cl_int			status;
 
-	/* TODO: device selection */
-	/* TODO: version that compiles without opencl */
 	status = clGetPlatformIDs(1, &platform, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
 	work_setup(work, platform, device);
+}
+
+static void
+	work_int_create_opencl_platform(t_work *work, cl_platform_id platform, int i)
+{
+	cl_int			status;
+	cl_uint			num_devices;
+	cl_device_id	*devices;
+
+	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
+	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
+	devices = rt_malloc(sizeof(*devices) * num_devices);
+	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, num_devices, devices, NULL);
+	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
+	rt_assert(work->opts->cl_devices[i] < (int) num_devices, "opencl device index out of range");
+	work_setup(work, platform, devices[work->opts->cl_devices[i]]);
+	rt_free(devices);
+}
+
+void
+	work_int_create_opencl(t_work *work)
+{
+	cl_int			status;
+	cl_uint			num_platforms;
+	cl_platform_id	*platforms;
+	int				i;
+
+	if (work->opts->cl_device_count == 0)
+	{
+		work_int_create_opencl_default(work);
+		return ;
+	}
+	status = clGetPlatformIDs(0, NULL, &num_platforms);
+	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
+	platforms = rt_malloc(sizeof(*platforms) * num_platforms);
+	status = clGetPlatformIDs(num_platforms, platforms, NULL);
+	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
+	i = 0;
+	while (i < work->opts->cl_device_count)
+	{
+		rt_assert(work->opts->cl_platforms[i] < (int) num_platforms, "opencl platform index out of range");
+		work_int_create_opencl_platform(work, platforms[work->opts->cl_platforms[i]], i);
+		i += 1;
+	}
+	rt_free(platforms);
 }
 
 static void
@@ -421,4 +548,29 @@ void
 		i += 1;
 	}
 }
+
+#else
+
+void
+	work_int_create_opencl(t_work *work)
+{
+	(void) work;
+	rt_assert(0, "not compiled with opencl support");
+}
+
+void
+	work_int_destroy_opencl(t_work *work)
+{
+	(void) work;
+	rt_assert(0, "not compiled with opencl support");
+}
+
+void
+	work_int_resume_opencl(t_work *work)
+{
+	(void) work;
+	rt_assert(0, "not compiled with opencl support");
+}
+
+#endif
 

@@ -39,7 +39,6 @@ static void
 	rt_free(entry->name);
 }
 
-/* TODO: free individual materials */
 void
 	parser_destroy(t_parse_ctx *ctx)
 {

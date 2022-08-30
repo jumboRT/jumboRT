@@ -24,9 +24,13 @@ struct s_options {
 	const char	*net_ip;
 	const char	*net_port;
 	long		net_jobs;
+	long		req_jobs;
 	const char	*key;
 	int			threads;
 	long		batch_size;
+	int			compression;
+	int			cl_platforms[16];
+	int			cl_devices[16];
 	int			samples_set;
 	int			width_set;
 	int			height_set;
@@ -34,8 +38,11 @@ struct s_options {
 	int			net_ip_set;
 	int			net_port_set;
 	int			net_jobs_set;
+	int			req_jobs_set;
 	int			threads_set;
 	int			batch_size_set;
+	int			cl_device_count;
+
 };
 
 #ifdef RT_JOINC

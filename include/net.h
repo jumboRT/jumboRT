@@ -70,7 +70,9 @@ struct s_string {
 };
 
 struct s_handshake {
-	uint8_t	client_type;
+	uint8_t		client_type;
+	uint64_t	protover;
+	uint64_t	req_jobs;
 };
 
 struct s_send_work {
@@ -143,7 +145,7 @@ void	*rt_packfl(void *dst, float f);
 void	*rt_packvec(void *dst, t_vec vec);
 void	*rt_packhfl(void *dst, float f);
 void	*rt_packhvec(void *dst, t_vec vec);
-void	*rt_packhs(void *dst, struct s_handshake packet);
+void	*rt_packhs(void *dst, struct s_handshake packet, int type);
 void	*rt_packsw(void *dst, struct s_send_work packet);
 void	*rt_packcjr(void *dst, struct s_cjob_request packet);
 void	*rt_packsr(void *dst, struct s_send_results packet);
@@ -157,7 +159,7 @@ void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
 
-void		rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results);
+void		rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results, int level);
 t_result	*rt_results_inflate(struct s_send_results packet, size_t batch_size);
 uint64_t	rt_sizesr(struct s_send_results packet);
 uint64_t	rt_sizecjr(struct s_cjob_request packet);

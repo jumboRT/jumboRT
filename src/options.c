@@ -6,8 +6,17 @@
 #include <ft_printf.h>
 #include <stdlib.h>
 
+#ifndef RT_MAJOR_VER
+# define RT_MAJOR_VER 0
+#endif
+#ifndef RT_MINOR_VER
+# define RT_MINOR_VER 0
+#endif
+#ifndef RT_PATCH_VER
+# define RT_PATCH_VER 0
+#endif
+
 /* TODO: dynamic job allocation */
-/* TODO: flag to disable compression */
 void
 	parse_options(t_options *opts, int argc, char **argv)
 {
@@ -23,9 +32,11 @@ void
 	opts->net_ip = "localhost";
 	opts->net_port = "29300";
 	opts->net_jobs = 64;
+	opts->req_jobs = 4;
 	opts->key = NULL;
 	opts->threads = 8;
 	opts->batch_size = 16;
+	opts->compression = 1;
 	opts->samples_set = 0;
 	opts->width_set = 0;
 	opts->height_set = 0;
@@ -33,8 +44,10 @@ void
 	opts->net_ip_set = 0;
 	opts->net_port_set = 0;
 	opts->net_jobs_set = 0;
+	opts->req_jobs_set = 0;
 	opts->threads_set = 0;
 	opts->batch_size_set = 0;
+	opts->cl_device_count = 0;
 	i = 1;
 	while (i < argc)
 	{
@@ -111,8 +124,17 @@ void
 			rt_assert(!opts->net_jobs_set, "more than one net job count specified");
 			rt_assert(i + 1 < argc, "-j requires an argument");
 			opts->net_jobs = ft_atoi(argv[i + 1]);
-			rt_assert(opts->net_jobs > 0, "invalid net job count");
+			rt_assert(opts->net_jobs > 0 && opts->net_jobs <= 256, "invalid net job count");
 			opts->net_jobs_set = 1;
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-J") == 0)
+		{
+			rt_assert(!opts->req_jobs_set, "more than one request job count specified");
+			rt_assert(i + 1 < argc, "-J requires an argument");
+			opts->req_jobs = ft_atoi(argv[i + 1]);
+			rt_assert(opts->req_jobs > 0 && opts->req_jobs <= 16, "invalid request job count");
+			opts->req_jobs_set = 1;
 			i += 2;
 		}
 		else if (ft_strcmp(argv[i], "-W") == 0)
@@ -144,6 +166,22 @@ void
 			rt_assert(opts->batch_size > 0, "invalid batch size");
 			opts->batch_size_set = 1;
 			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-u") == 0)
+		{
+			opts->compression = 0;
+			i += 1;
+		}
+		else if (ft_strcmp(argv[i], "-d") == 0)
+		{
+			rt_assert(opts->cl_device_count < 16, "too many opencl devices specified");
+			rt_assert(i + 2 < argc, "-d requires two arguments");
+			opts->cl_platforms[opts->cl_device_count] = ft_atoi(argv[i + 1]);
+			opts->cl_devices[opts->cl_device_count] = ft_atoi(argv[i + 2]);
+			rt_assert(opts->cl_platforms[opts->cl_device_count] >= 0, "invalid opencl platform specified");
+			rt_assert(opts->cl_devices[opts->cl_device_count] >= 0, "invalid opencl device specified");
+			opts->cl_device_count += 1;
+			i += 3;
 		}
 		else if (ft_strcmp(argv[i], "-v") == 0)
 		{

@@ -53,6 +53,12 @@ void
 		i += 1;
 	}
 	work_int_destroy(work);
+	i = 0;
+	while (i < work->count)
+	{
+		rt_free(work->workers[i]);
+		i += 1;
+	}
 	rt_free(work->workers);
 	rt_free(work->data);
 	mutex_destroy(&work->mtx);

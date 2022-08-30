@@ -1,9 +1,9 @@
+use crate::client::{Client, ClientState};
+use crate::DynResult;
 use std::net::{TcpListener, ToSocketAddrs};
-use std::io;
+use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, RwLock};
 use std::thread;
-use std::sync::atomic::AtomicU64;
-use crate::client::{Client, ClientState};
 
 #[derive(Copy, Clone)]
 pub struct Work {
@@ -35,7 +35,7 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new<A: ToSocketAddrs>(addr: A) -> io::Result<Arc<Server>> {
+    pub fn new<A: ToSocketAddrs>(addr: A) -> DynResult<Arc<Server>> {
         let listener = TcpListener::bind(addr)?;
 
         Ok(Arc::new(Server {
@@ -46,7 +46,7 @@ impl Server {
         }))
     }
 
-    pub fn run(self: Arc<Self>) -> io::Result<()> {
+    pub fn run(self: Arc<Self>) -> DynResult<()> {
         for stream in self.listener.incoming() {
             let client = Client::new(Arc::downgrade(&self), stream?)?;
 
@@ -61,7 +61,7 @@ impl Server {
         Ok(())
     }
 
-    pub fn update_jobs(&self) -> io::Result<()> {
+    pub fn update_jobs(&self) -> DynResult<()> {
         {
             let clients = self.clients.read().unwrap();
             let jobs = self.jobs.read().unwrap();
@@ -80,7 +80,7 @@ impl Server {
         self.update_work()
     }
 
-    pub fn update_work(&self) -> io::Result<()> {
+    pub fn update_work(&self) -> DynResult<()> {
         {
             let clients = self.clients.read().unwrap();
             let mut jobs = self.jobs.write().unwrap();
