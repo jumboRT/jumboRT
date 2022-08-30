@@ -6,6 +6,7 @@
 #include "perf.h"
 #include "net.h"
 
+/* TODO: credits for all the people who helped render images */
 
 #include <ft_printf.h>
 #include <stdlib.h>

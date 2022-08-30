@@ -267,6 +267,7 @@ static cl_command_queue
 	cl_command_queue	result;
 	cl_queue_properties	queue_props[3];
 
+	/* TODO: try changing to default properties? */
 	queue_props[0] = CL_QUEUE_PROPERTIES;
 	queue_props[1] = props;
 	queue_props[2] = 0;
@@ -338,6 +339,8 @@ void
 	cl_device_id	device;
 	cl_int			status;
 
+	/* TODO: device selection */
+	/* TODO: version that compiles without opencl */
 	status = clGetPlatformIDs(1, &platform, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
