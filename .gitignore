@@ -17,4 +17,8 @@ tags
 kernel*.bin
 compile
 /san-miguel
+/sibenik
 /mc
+*.zip
+*.bat
+*.gz
