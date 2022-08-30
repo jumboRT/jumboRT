@@ -5,7 +5,12 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #include <ft_printf.h>
+
+#define PROTOVER 1
+
+/* TODO: network ping and timeout */
 
 int
 	rt_recv_handle_packet(union u_client *client, char **error)
@@ -39,20 +44,36 @@ static void
 			client->any.status = SDIED;
 	}
 	if (client->any.status == SDIED)
+	{
 		fprintf(stderr, "An unrecoverable error has occurred while synching \
 with the server. Safely terminate this program as soon as \
 is possble.\n%s\n", error);
+		rt_free(error);
+	}
 	mutex_unlock(&client->any.mtx);
 }
 
 static int
-	rt_handshake(struct s_client_base *client, char **error)
+	rt_handshake(union u_client *client, char **error)
 {
-	struct s_packet packet;
+	unsigned char		buf[17];
+	struct s_handshake	data;
+	struct s_packet		packet;
 
-	rt_packet_create(&packet, sizeof(uint8_t),
-				RT_HANDSHAKE_PACKET, &client->client_type);
-	if (rt_send_packet(client, &packet, error) < 0)
+	data.client_type = client->any.client_type;
+	data.protover = PROTOVER;
+	if (client->any.client_type == RT_WORKER)
+	{
+		data.req_jobs = client->worker.opts.req_jobs;
+		rt_packhs(buf, data, RT_WORKER);
+		rt_packet_create(&packet, 17, RT_HANDSHAKE_PACKET, buf);
+	}
+	else
+	{
+		rt_packhs(buf, data, RT_VIEWER);
+		rt_packet_create(&packet, 9, RT_HANDSHAKE_PACKET, buf);
+	}
+	if (rt_send_packet(&client->any, &packet, error) < 0)
 	{
 		if (error != NULL)
 		{
@@ -61,7 +82,7 @@ static int
 		}
 		return (-1);
 	}
-	if (rt_recv_packet(client->sockfd, &packet, error) < 0)
+	if (rt_recv_packet(client->any.sockfd, &packet, error) < 0)
 		return (-1);
 	if (packet.type != RT_HANDSHAKE_PACKET)
 	{
@@ -69,36 +90,34 @@ static int
 		ft_asprintf(error, "handshake failed");
 		return (-1);
 	}
-	client->seq_id = -1;
+	client->any.seq_id = -1;
 	rt_packet_destroy(&packet);
 	return (0);
 }
 
 static int 
-	rt_client_connect(struct s_client_base *client, const char *ip, const char *port,
+	rt_client_connect(union u_client *client, const char *ip, const char *port,
 					char **error)
 {
-	client->sockfd = rt_connect(ip, port, error);
-	if (client->sockfd < 0)
+	client->any.sockfd = rt_connect(ip, port, error);
+	if (client->any.sockfd < 0)
 		return (-1);
 	return (rt_handshake(client, error));
 }
 
 static int
-	rt_client_create(struct s_client_base *client,
+	rt_client_create(union u_client *client,
 					const char *ip, const char *port)
 {
 	char	*error;
 
-	mutex_init(&client->mtx);
+	mutex_init(&client->any.mtx);
 	if (rt_client_connect(client, ip, port, &error) < 0)
 	{
 		fprintf(stderr, "%s:%s: %s\n", ip, port, error);
-		mutex_destroy(&client->mtx);
-		rt_free(error);
-		return (-1);
+		exit(EXIT_FAILURE);
 	}
-	client->status = SIDLE;
+	client->any.status = SIDLE;
 	return (0);
 }
 
@@ -117,7 +136,7 @@ static void
 	data.seq_id = info->client->any.seq_id;
 	data.begin = info->begin;
 	data.end = info->end;
-	rt_results_deflate(&data, info->client->worker.work->state->world->batch_size, info->results);
+	rt_results_deflate(&data, info->client->worker.work->state->world->batch_size, info->results, info->client->worker.opts.compression);
 	size = rt_sizesr(data);
 	buf = rt_malloc(size);
 	rt_packsr(buf, data);
@@ -125,6 +144,7 @@ static void
 	rc = rt_send_packet(&info->client->any, &packet, NULL);
 	if (rc < 0)
 	{
+		/* TODO: replace all the printf's with ft_printf's */
 		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
 		rt_client_set_status(info->client, SIDLE);
 	}
@@ -162,7 +182,7 @@ int
 	client->worker.work = NULL;
 	client->worker.opts = opts;
 	pool_create(&client->any.pool, RT_NET_POOL_SIZE);
-	return (rt_client_create(&client->any, ip, port));
+	return (rt_client_create(client, ip, port));
 }
 
 int
@@ -172,11 +192,10 @@ int
 	client->any.client_type = RT_VIEWER;
 	client->viewer.active_work = 0;
 	client->viewer.worker = NULL;
-	/* TODO: these are not destroyed on error */
 	mutex_init(&client->viewer.job_mtx);
 	cond_init(&client->viewer.job_cnd);
 	pool_create(&client->any.pool, RT_NET_POOL_SIZE);
-	return (rt_client_create(&client->any, ip, port));
+	return (rt_client_create(client, ip, port));
 }
 
 static void
@@ -189,7 +208,6 @@ static void
 void
 	rt_client_start(union u_client *client)
 {
-
 	client->any.status = SRUNNING;
 	if (client->any.client_type == RT_VIEWER)
 	{
@@ -215,12 +233,20 @@ void
 	rt_client_set_status(client, SQUIT);
 	if (client->any.client_type == RT_VIEWER)
 		thread_join(&client->viewer.job_thrd);
+	else if (client->any.client_type == RT_WORKER)
+	{
+		if (client->worker.work != NULL)
+		{
+			rt_free((void *) client->worker.opts.scene_file);
+			rt_free((void *) client->worker.opts.key);
+		}
+	}
 	pool_destroy(&client->any.pool);
 #if defined RT_WINDOWS
 	closesocket(client->any.sockfd);
 #else
 	close(client->any.sockfd);
 #endif
-	/* This is not ok, we cannot destroy the mutex before it is actually done */
+	/* TODO: This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->any.mtx);
 }

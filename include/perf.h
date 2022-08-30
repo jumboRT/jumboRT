@@ -9,6 +9,7 @@ struct s_perf {
 	struct timeval	tv;
 };
 
+double	perf_time(void);
 void	perf_start(t_perf *perf);
 void	perf_split(t_perf *perf, const char *name);
 

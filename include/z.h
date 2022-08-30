@@ -151,7 +151,7 @@ void			zwtree_default(t_zwtree *tree, t_zwtree **dst);
 void			zwtree_init(t_zwtree *tree, size_t *weights, unsigned int max_len);
 void			zwtree_put(t_zwtree *tree, t_zbuf *zb, unsigned int value);
 
-void			*z_deflate(void *src, size_t src_size, size_t *dst_size);
+void			*z_deflate(void *src, size_t src_size, size_t *dst_size, int level);
 void			*z_inflate(void *src, size_t src_size, size_t *dst_size);
 
 t_ztoken		*lz77_deflate(const void *src, size_t src_size,

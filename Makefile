@@ -180,6 +180,12 @@ else
 $(error "unknown target $(target)")
 endif
 
+ifdef use_opencl
+	ifeq ($(use_opencl),0)
+		CFLAGS += -DRT_USE_OPENCL=0
+	endif
+endif
+
 ifndef config
 	config = distr
 endif
@@ -297,7 +303,7 @@ clean:
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
 	$(SILENT)rm -f $(NAME)
-	$(SILENT)rm -f compile kernel.bin
+	$(SILENT)rm -f compile kernel-*.bin
 
 re: fclean
 	$(MAKE) all

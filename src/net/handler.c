@@ -3,6 +3,7 @@
 #include "util.h"
 #include "parser.h"
 #include "world_impl.h"
+#include "perf.h"
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
@@ -25,6 +26,7 @@ static void
 {
 	t_state	*state;
 
+	ft_printf("NEW JOB %s:%s\n", request.scene_file.str, request.scene_key.str);
 	if (worker->work != NULL 
 			&& ft_strcmp(worker->opts.scene_file, request.scene_file.str) == 0
 			&& ft_strcmp(worker->opts.key, request.scene_key.str) == 0

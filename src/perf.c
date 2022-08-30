@@ -1,8 +1,16 @@
 #include "perf.h"
 
-
 #include <stdlib.h>
 #include <ft_printf.h>
+
+double
+	perf_time(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000000.0 + tv.tv_usec);
+}
 
 void
 	perf_start(t_perf *perf)

@@ -205,12 +205,15 @@ void
 }
 
 void
-	*rt_packhs(void *dst, struct s_handshake packet)
+	*rt_packhs(void *dst, struct s_handshake packet, int type)
 {
 	unsigned char *buf;
 
 	buf = dst;
 	*buf++ = packet.client_type;
+	buf = rt_packu64(buf, packet.protover);
+	if (type == RT_WORKER)
+		buf = rt_packu64(buf, packet.req_jobs);
 	return (buf);
 }
 

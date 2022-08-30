@@ -1,11 +1,13 @@
-use std::net::{TcpStream, SocketAddr};
-use std::sync::{Arc, Weak, RwLock, Mutex};
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::io::{self, Read, Write};
 use crate::ser;
-use crate::server::{Server, Job, Work};
+use crate::server::{Job, Server, Work};
+use crate::DynResult;
+use std::io::{Read, Write};
+use std::net::{SocketAddr, TcpStream};
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex, RwLock, Weak};
 
 const VERBOSE: bool = false;
+const PROTOVER: u64 = 1;
 
 pub enum ClientState {
     Unknown,
@@ -32,12 +34,12 @@ pub struct Client {
     pub mutex: Mutex<()>,
     pub state: RwLock<ClientState>,
     pub job_id: RwLock<Option<u64>>,
-    pub work: AtomicU64,
+    pub work_req: AtomicU64,
     pub unfinished_business: RwLock<Vec<WorkItem>>,
 }
 
 impl Client {
-    pub fn new(server: Weak<Server>, stream: TcpStream) -> io::Result<Arc<Client>> {
+    pub fn new(server: Weak<Server>, stream: TcpStream) -> DynResult<Arc<Client>> {
         let addr = stream.peer_addr()?;
         println!("[{}] connected", addr);
 
@@ -48,12 +50,12 @@ impl Client {
             mutex: Mutex::new(()),
             state: RwLock::new(ClientState::Unknown),
             job_id: RwLock::new(None),
-            work: AtomicU64::new(0),
+            work_req: AtomicU64::new(0),
             unfinished_business: RwLock::new(Vec::new()),
         }))
     }
 
-    pub fn cancel_job(&self) -> io::Result<()> {
+    pub fn cancel_job(&self) -> DynResult<()> {
         let server = self.server.upgrade().unwrap();
 
         {
@@ -65,11 +67,11 @@ impl Client {
                 server_jobs.retain(|j| j.id != job_id);
             }
         }
-        
+
         server.update_jobs()
     }
 
-    pub fn update_job_id(&self) -> io::Result<u64> {
+    pub fn update_job_id(&self) -> DynResult<u64> {
         self.cancel_job()?;
         let server = self.server.upgrade().unwrap();
         let job_id = server.job_seq.fetch_add(1, Ordering::SeqCst);
@@ -78,7 +80,7 @@ impl Client {
         Ok(job_id)
     }
 
-    pub fn stop_job(&self) -> io::Result<()> {
+    pub fn stop_job(&self) -> DynResult<()> {
         let server = self.server.upgrade().unwrap();
 
         {
@@ -102,14 +104,13 @@ impl Client {
         server.update_work()
     }
 
-    pub fn send_job(&self, job: &Job) -> io::Result<()> {
+    pub fn send_job(&self, job: &Job) -> DynResult<()> {
         let mut job_id_opt = self.job_id.write().unwrap();
         let mut packet = Vec::new();
-        
+
         if *job_id_opt != Some(job.id) {
             println!("[{}] send job id={} width={} height={} pos={:?} dir={:?} fov={} scene={} key={} render_mode={} batch_size={}", self.addr, job.id, job.width, job.height, job.cam_pos, job.cam_rot, job.cam_fov, job.scene, job.key, job.render_mode, job.batch_size);
             *job_id_opt = Some(job.id);
-            self.work.store(4, Ordering::SeqCst);
             ser::write_u64(&mut packet, job.id);
             ser::write_u64(&mut packet, job.width);
             ser::write_u64(&mut packet, job.height);
@@ -128,18 +129,20 @@ impl Client {
         Ok(())
     }
 
-    pub fn send_work(&self, job: &mut Job) -> io::Result<()> {
+    pub fn send_work(&self, job: &mut Job) -> DynResult<()> {
         let job_id_opt = self.job_id.read().unwrap();
         let mut unfinished_business = self.unfinished_business.write().unwrap();
-        let w = job.work.len() as u64;
 
         if *job_id_opt == Some(job.id) {
-            let p = self.work.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |v| Some(v.max(w) - w)).unwrap();
-            let n = p.min(w) as usize;
+            let n = self.work_req.load(Ordering::SeqCst) as usize - unfinished_business.len();
+            let n = n.min(job.work.len());
 
             for work in job.work[0..n].iter() {
                 if VERBOSE {
-                    println!("[{}] send work begin={} end={}", self.addr, work.begin, work.end);
+                    println!(
+                        "[{}] send work begin={} end={}",
+                        self.addr, work.begin, work.end
+                    );
                 }
 
                 let mut packet = Vec::new();
@@ -161,11 +164,16 @@ impl Client {
         Ok(())
     }
 
-    pub fn write_packet(&self, packet_id: u8, data: &[u8]) -> io::Result<()> {
+    pub fn write_packet(&self, packet_id: u8, data: &[u8]) -> DynResult<()> {
         let mut packet = Vec::new();
 
         if VERBOSE {
-            println!("[{}] send packet id={} len={}", self.addr, packet_id, data.len());
+            println!(
+                "[{}] send packet id={} len={}",
+                self.addr,
+                packet_id,
+                data.len()
+            );
         }
 
         ser::write_u64(&mut packet, data.len() as u64);
@@ -178,56 +186,67 @@ impl Client {
             Err(err) => {
                 eprintln!("[{}] {}", self.addr, err);
                 Ok(())
-            },
+            }
         }
     }
 
-    pub fn handle_handshake_packet(&self, mut data: &[u8]) -> io::Result<()> {
-        let new_state = ser::read_u8(&mut data);
+    pub fn handle_handshake_packet(&self, mut data: &[u8]) -> DynResult<()> {
+        let new_state = ser::read_u8(&mut data)?;
+        let protover = ser::read_u64(&mut data)?;
         let server = self.server.upgrade().unwrap();
+
+        if protover != PROTOVER {
+            return Err(format!(
+                "protocol version mismatch server={} client={}",
+                PROTOVER, protover
+            )
+            .into());
+        }
 
         {
             let new_state = match new_state {
                 0 => {
+                    let work_req = ser::read_u64(&mut data)?;
+                    self.work_req.store(work_req, Ordering::SeqCst);
                     self.write_packet(0, &[])?;
                     println!("[{}] handshake worker", self.addr);
                     ClientState::Worker
-                },
+                }
                 1 => {
                     self.write_packet(0, &[])?;
                     println!("[{}] handshake viewer", self.addr);
                     ClientState::Viewer
-                },
+                }
                 x => {
                     println!("[{}] handshake unknown({})", self.addr, x);
                     ClientState::Unknown
-                },
+                }
             };
-            
+
             let mut state = self.state.write().unwrap();
             *state = new_state;
         }
-        
+
         server.update_jobs()
     }
 
-    pub fn handle_ping_packet(&self, data: &[u8]) -> io::Result<()> {
+    pub fn handle_ping_packet(&self, data: &[u8]) -> DynResult<()> {
         println!("[{}] ping", self.addr);
         self.write_packet(2, data)
     }
 
-    pub fn handle_job_request_packet(&self, mut data: &[u8]) -> io::Result<()> {
-        let width = ser::read_u64(&mut data);
-        let height = ser::read_u64(&mut data);
-        let cam_pos = ser::read_vec(&mut data);
-        let cam_rot = ser::read_vec(&mut data);
-        let cam_fov = ser::read_f32(&mut data);
-        let cam_focus = ser::read_f32(&mut data);
-        let cam_blur = ser::read_f32(&mut data);
-        let scene = ser::read_str(&mut data);
-        let key = ser::read_str(&mut data);
-        let render_mode = ser::read_u64(&mut data);
-        let batch_size = ser::read_u64(&mut data);
+    pub fn handle_job_request_packet(&self, mut data: &[u8]) -> DynResult<()> {
+        let width = ser::read_u64(&mut data)?;
+        let height = ser::read_u64(&mut data)?;
+        let cam_pos = ser::read_vec(&mut data)?;
+        let cam_rot = ser::read_vec(&mut data)?;
+        let cam_fov = ser::read_f32(&mut data)?;
+        let cam_focus = ser::read_f32(&mut data)?;
+        let cam_blur = ser::read_f32(&mut data)?;
+        let scene = ser::read_str(&mut data)?;
+        let key = ser::read_str(&mut data)?;
+        let render_mode = ser::read_u64(&mut data)?;
+        let batch_size = ser::read_u64(&mut data)?;
         let server = self.server.upgrade().unwrap();
 
         {
@@ -259,9 +278,9 @@ impl Client {
         server.update_jobs()
     }
 
-    pub fn handle_send_work_packet(&self, mut data: &[u8]) -> io::Result<()> {
-        let begin = ser::read_u64(&mut data);
-        let end = ser::read_u64(&mut data);
+    pub fn handle_send_work_packet(&self, mut data: &[u8]) -> DynResult<()> {
+        let begin = ser::read_u64(&mut data)?;
+        let end = ser::read_u64(&mut data)?;
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
@@ -282,23 +301,29 @@ impl Client {
         server.update_work()
     }
 
-    pub fn handle_send_results_packet(&self, mut data: &[u8]) -> io::Result<()> {
-        let job_id = ser::read_u64(&mut data);
-        let size = ser::read_u64(&mut data) as usize;
-        let begin = ser::read_u64(&mut data);
-        let end = ser::read_u64(&mut data);
+    pub fn handle_send_results_packet(&self, mut data: &[u8]) -> DynResult<()> {
+        let job_id = ser::read_u64(&mut data)?;
+        let size = ser::read_u64(&mut data)? as usize;
+        let begin = ser::read_u64(&mut data)?;
+        let end = ser::read_u64(&mut data)?;
         let results = &data[..size];
         let server = self.server.upgrade().unwrap();
 
         if VERBOSE {
-            println!("[{}] results id={} begin={} end={} size={}", self.addr, job_id, begin, end, size);
+            println!(
+                "[{}] results id={} begin={} end={} size={}",
+                self.addr, job_id, begin, end, size
+            );
         }
 
         {
             let mut unfinished_business = self.unfinished_business.write().unwrap();
 
             if let Some(begin) = {
-                let work_item = unfinished_business.iter_mut().find(|wi| wi.work.begin <= begin && end <= wi.work.end).unwrap();
+                let work_item = unfinished_business
+                    .iter_mut()
+                    .find(|wi| wi.work.begin <= begin && end <= wi.work.end)
+                    .ok_or("invalid work unit begin and end")?;
 
                 work_item.totally_finished_business += end - begin;
                 work_item.finished_business.push(ResultItem {
@@ -307,9 +332,9 @@ impl Client {
                     data: results.to_vec(),
                 });
 
-                if work_item.totally_finished_business >= work_item.work.end - work_item.work.begin {
+                if work_item.totally_finished_business >= work_item.work.end - work_item.work.begin
+                {
                     let clients = server.clients.read().unwrap();
-                    let job_id_opt = self.job_id.read().unwrap();
 
                     let client = clients.iter().find(|c| {
                         let client_job_id_opt = c.job_id.read().unwrap();
@@ -333,10 +358,6 @@ impl Client {
 
                             client.write_packet(5, &packet)?;
                         }
-
-                        if *job_id_opt == Some(job_id) {
-                            self.work.fetch_add(1, Ordering::SeqCst);
-                        }
                     }
 
                     Some(work_item.work.begin)
@@ -351,16 +372,21 @@ impl Client {
         server.update_work()
     }
 
-    pub fn handle_log_packet(&self, mut data: &[u8]) -> io::Result<()> {
-        let string = ser::read_str(&mut data);
+    pub fn handle_log_packet(&self, mut data: &[u8]) -> DynResult<()> {
+        let string = ser::read_str(&mut data)?;
         println!("[{}] log {:?}", self.addr, string);
 
         Ok(())
     }
 
-    pub fn handle_packet(&self, packet_id: u8, data: &[u8]) -> io::Result<()> {
+    pub fn handle_packet(&self, packet_id: u8, data: &[u8]) -> DynResult<()> {
         if VERBOSE {
-            println!("[{}] recv packet id={} len={}", self.addr, packet_id, data.len());
+            println!(
+                "[{}] recv packet id={} len={}",
+                self.addr,
+                packet_id,
+                data.len()
+            );
         }
 
         match packet_id {
@@ -370,11 +396,11 @@ impl Client {
             0x04 => self.handle_send_work_packet(data),
             0x05 => self.handle_send_results_packet(data),
             0xFF => self.handle_log_packet(data),
-            _ => Ok(())
+            _ => Ok(()),
         }
     }
 
-    pub fn run_int(&self) -> io::Result<()> {
+    pub fn run_int(&self) -> DynResult<()> {
         let mut packet_buffer = Vec::new();
         let mut read_buffer = [0; 4096];
 
@@ -388,14 +414,14 @@ impl Client {
 
             while packet_buffer.len() >= 9 {
                 let mut packet_reader = &packet_buffer[..];
-                let length = ser::read_u64(&mut packet_reader) as usize;
-                let packet_id = ser::read_u8(&mut packet_reader);
+                let length = ser::read_u64(&mut packet_reader)? as usize;
+                let packet_id = ser::read_u8(&mut packet_reader)?;
 
                 if packet_buffer.len() < 9 + length {
-                    break
+                    break;
                 }
 
-                self.handle_packet(packet_id, ser::read_buf(&mut packet_reader, length))?;
+                self.handle_packet(packet_id, ser::read_buf(&mut packet_reader, length)?)?;
                 packet_buffer.drain(0..length + 9);
             }
         }

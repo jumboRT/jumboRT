@@ -4,6 +4,27 @@
 #include "perf.h"
 
 static void
+	z_deflate_none(t_zbuf *ib, t_zbuf *ob)
+{
+	while (ib->index + 65535 < ib->size)
+	{
+		zbuf_write(ob, 1, 0);
+		zbuf_write(ob, 2, 0);
+		ob->bit = 0;
+		zbuf_write(ob, 16, 65535);
+		zbuf_write(ob, 16, 0);
+		zbuf_copy(ob, ib, 65535);
+		ib->index += 65535;
+	}
+	zbuf_write(ob, 1, 1);
+	zbuf_write(ob, 2, 0);
+	ob->bit = 0;
+	zbuf_write(ob, 16, ib->size - ib->index);
+	zbuf_write(ob, 16, ~(ib->size - ib->index));
+	zbuf_copy(ob, ib, ib->size - ib->index);
+}
+
+static void
 	z_deflate_fixed(t_ztoken *tokens, size_t count, t_zbuf *ob, t_zwtree *lt, t_zwtree *dt)
 {
 	struct s_ztoken_data	data;
@@ -154,24 +175,27 @@ static void
 }
 
 void
-	*z_deflate(void *src, size_t src_size, size_t *dst_size)
+	*z_deflate(void *src, size_t src_size, size_t *dst_size, int level)
 {
 	t_zbuf		ib;
 	t_zbuf		ob;
 	t_ztoken	*tokens;
 	size_t		count;
-	//t_perf		perf;
 
-	zbuf_create(&ib, src, src_size);
 	zbuf_create(&ob, NULL, 0);
-	//perf_start(&perf);
-	tokens = lz77_deflate(src, src_size, &count);
-	//perf_split(&perf, "lz77_deflate");
-	zbuf_write(&ob, 1, 1);
-	zbuf_write(&ob, 2, 2);
-	z_deflate_dynamic(tokens, count, &ob);
-	//perf_split(&perf, "z_deflate_dynamic");
-	rt_free(tokens);
+	if (level == 0)
+	{
+		zbuf_create(&ib, src, src_size);
+		z_deflate_none(&ib, &ob);
+	}
+	else
+	{
+		tokens = lz77_deflate(src, src_size, &count);
+		zbuf_write(&ob, 1, 1);
+		zbuf_write(&ob, 2, 2);
+		z_deflate_dynamic(tokens, count, &ob);
+		rt_free(tokens);
+	}
 	*dst_size = ob.size;
 	return (ob.data);
 }

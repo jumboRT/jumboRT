@@ -14,7 +14,7 @@ tags
 *.exe
 /image.ppm
 /image.png
-kernel.bin
+kernel*.bin
 compile
 /san-miguel
 /mc

@@ -4,7 +4,7 @@
 #include "util.h"
 
 void
-	rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results)
+	rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results, int level)
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
@@ -30,7 +30,7 @@ void
 		color = vec_scale(color, 1.0 / samples);
 		ptr = rt_packhvec(ptr, color);
 	}
-	packet->zdata = z_deflate(data, ptr - data, &packet->zsize);
+	packet->zdata = z_deflate(data, ptr - data, &packet->zsize, level);
 	// printf("deflated size: %zu\n", packet->zsize, batch_size);
 	rt_free(data);
 }
