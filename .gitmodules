@@ -1,0 +1,3 @@
+[submodule "scenes"]
+	path = scenes
+	url = git@github.com:jumboRT/scenes.git
