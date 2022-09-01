@@ -4,3 +4,6 @@
 [submodule "joincd"]
 	path = joincd
 	url = git@github.com:jumboRT/joincd.git
+[submodule "jup"]
+	path = jup
+	url = git@github.com:jumboRT/jup.git
