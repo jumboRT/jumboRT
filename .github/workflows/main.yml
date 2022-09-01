@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: 
+        run: |
           sudo apt-get intall opencl-c-headers
           make config=distr target=joinc
 
