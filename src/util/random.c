@@ -6,7 +6,7 @@ t_seed
 	*seed ^= *seed << 12;
 	*seed ^= *seed >> 25;
 	*seed ^= *seed << 27;
-	return ((*seed >> 32) * 0x4F6CDD1DULL + (*seed & 0xFFFFFFFF) * 0x2545F491);
+	return (*seed * (((t_seed) 0x2545F491 << 32) | 0x4F6CDD1D));
 }
 
 float
