@@ -6,7 +6,7 @@ t_seed
 	*seed ^= *seed << 12;
 	*seed ^= *seed >> 25;
 	*seed ^= *seed << 27;
-	return (*seed * (((t_seed) 0x2545F491 << 32) | 0x4F6CDD1D));
+	return ((*seed >> 32) * 0x4F6CDD1DULL + (*seed & 0xFFFFFFFF) * 0x2545F491);
 }
 
 float
@@ -29,11 +29,7 @@ t_vec
 
 	while (1)
 	{
-		result = vec(
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				rt_random_float_range(seed, -1, 1),
-				0.0);
+		result = vec(rt_random_float_range(seed, -1, 1), rt_random_float_range(seed, -1, 1), rt_random_float_range(seed, -1, 1), 0.0);
 		len = vec_mag(result);
 		if (len <= 1)
 			return (result);

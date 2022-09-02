@@ -16,7 +16,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
-						   log.c tangent.c vec_abs_fast.c
+						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \
@@ -61,9 +61,11 @@ OPENCL_FILES			:= \
 	src/math/vec2.c \
 	src/math/vec2_fast.c \
 	src/math/vec2_arith_fast.c \
+	src/math/vec2_arith.c \
 	src/math/vec_rotate.c \
 	src/math/vec_set.c \
 	src/math/vec_abs_fast.c \
+	src/math/vec_abs.c \
 	src/math/tangent.c \
 	src/math/clamp.c \
 	src/math/basis.c \
@@ -283,7 +285,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -i -f Makefile.gen -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC) 2>/dev/null
+	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
 # TODO: unhardcode these files
 compile: compiler/main.c

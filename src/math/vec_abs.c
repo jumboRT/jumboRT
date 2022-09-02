@@ -1,6 +1,6 @@
 #include "rtmath.h"
 
-#if defined RT_VECTORIZE
+#if !defined RT_VECTORIZE
 
 t_vec
 	vec_abs(t_vec v)

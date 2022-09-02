@@ -21,6 +21,24 @@ float
 }
 
 float
+	w(t_vec v)
+{
+	return (v.w);
+}
+
+float
+	u(t_vec2 v)
+{
+	return (v.x);
+}
+
+float
+	v(t_vec2 v)
+{
+	return (v.y);
+}
+
+float
 	xyz(t_vec v, int i)
 {
 	if (i == 0)

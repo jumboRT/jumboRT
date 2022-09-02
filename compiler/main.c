@@ -5,13 +5,13 @@
 #include <ctype.h>
 #include <string.h>
 
-# if defined RT_LINUX
-#  include <CL/cl.h>
-# elif defined RT_WINDOWS
-#  include <CL/cl.h>
-# else
-#  include <OpenCL/cl.h>
-# endif
+#if defined RT_LINUX
+# include <CL/cl.h>
+#elif defined RT_WINDOWS
+# include <CL/cl.h>
+#else
+# include <OpenCL/cl.h>
+#endif
 
 #define READ_SIZE 1024
 #define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
@@ -97,13 +97,16 @@ void
 	free(len);
 }
 
-void
+int
 	check_program(cl_program program, cl_device_id device)
 {
-	cl_int	status;
-	size_t	size;
-	char	*str;
+	cl_int			status;
+	cl_build_status	build_status;
+	size_t			size;
+	char			*str;
 
+	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_STATUS, sizeof(build_status), &build_status, NULL);
+	assert(status == CL_SUCCESS);
 	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
 	assert(status == CL_SUCCESS);
 	str = malloc(size);
@@ -111,8 +114,9 @@ void
 	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, size, str, NULL);
 	assert(status == CL_SUCCESS);
 	write(STDOUT_FILENO, str, size);
+	write(STDOUT_FILENO, "\n", 1);
 	free(str);
-	exit(EXIT_FAILURE);
+	return (status == CL_BUILD_SUCCESS);
 }
 
 char
@@ -190,22 +194,46 @@ char
 }
 
 void
-	write_program(cl_program program, cl_platform_id platform, cl_device_id device)
+	write_binary(unsigned char *bin, size_t size, cl_platform_id platform, cl_device_id device)
 {
-	cl_int			status;
-	unsigned char	*bin;
-	size_t			size;
-	char			*file;
+	char	*file;
 
-	status = clGetProgramInfo(program, CL_PROGRAM_BINARY_SIZES, sizeof(size), &size, NULL);
-	assert(status == CL_SUCCESS);
-	bin = malloc(size);
-	assert(bin != NULL);
-	status = clGetProgramInfo(program, CL_PROGRAM_BINARIES, sizeof(bin), &bin, NULL);
-	assert(status == CL_SUCCESS);
 	file = device_file(platform, device);
 	write_file((char *) bin, size, file);
 	free(file);
+}
+
+void
+	write_binaries(cl_program program, cl_platform_id platform, cl_uint num_devices, cl_device_id *devices)
+{
+	cl_int			status;
+	cl_uint			index;
+	unsigned char	**bin;
+	size_t			*size;
+
+	size = malloc(sizeof(*size) * num_devices);
+	bin = malloc(sizeof(*bin) * num_devices);
+	assert(size != NULL && bin != NULL);
+	status = clGetProgramInfo(program, CL_PROGRAM_BINARY_SIZES, sizeof(*size) * num_devices, size, NULL);
+	assert(status == CL_SUCCESS);
+	index = 0;
+	while (index < num_devices)
+	{
+		bin[index] = malloc(size[index]);
+		assert(bin[index] != NULL);
+		index += 1;
+	}
+	status = clGetProgramInfo(program, CL_PROGRAM_BINARIES, sizeof(*bin) * num_devices, bin, NULL);
+	assert(status == CL_SUCCESS);
+	index = 0;
+	while (index < num_devices)
+	{
+		if (check_program(program, devices[index]))
+			write_binary(bin[index], size[index], platform, devices[index]);
+		free(bin[index]);
+		index += 1;
+	}
+	free(size);
 	free(bin);
 }
 
@@ -215,7 +243,7 @@ cl_context
 	cl_int					status;
 	cl_context_properties	context_props[3];
 	cl_context				context;
-	
+
 	context_props[0] = CL_CONTEXT_PLATFORM;
 	context_props[1] = (cl_context_properties) platform;
 	context_props[2] = 0;
@@ -236,10 +264,25 @@ cl_program
 	program = clCreateProgramWithSource(context, count, (const char **) strings, lengths, &status);
 	assert(status == CL_SUCCESS);
 	status = clBuildProgram(program, 1, &device, BUILD_FLAGS, NULL, NULL);
-	if (status != CL_SUCCESS)
-		check_program(program, device);
 	free_files(strings, lengths, count);
 	return (program);
+}
+
+void
+	process_program(cl_program program, cl_platform_id platform)
+{
+	cl_int			status;
+	cl_uint			num_devices;
+	cl_device_id	*devices;
+
+	status = clGetProgramInfo(program, CL_PROGRAM_NUM_DEVICES, sizeof(num_devices), &num_devices, NULL);
+	assert(status == CL_SUCCESS);
+	devices = malloc(sizeof(*devices) * num_devices);
+	assert(devices != NULL);
+	status = clGetProgramInfo(program, CL_PROGRAM_DEVICES, sizeof(*devices) * num_devices, devices, NULL);
+	assert(status == CL_SUCCESS);
+	write_binaries(program, platform, num_devices, devices);
+	free(devices);
 }
 
 void
@@ -248,10 +291,10 @@ void
 	cl_int			status;
 	cl_context		context;
 	cl_program		program;
-	
+
 	context = create_context(platform);
 	program = create_program(context, device, argv + 1, argc - 1);
-	write_program(program, platform, device);
+	process_program(program, platform);
 	status = clReleaseProgram(program);
 	assert(status == CL_SUCCESS);
 	status = clReleaseContext(context);
@@ -265,7 +308,7 @@ void
 	cl_uint			index;
 	cl_uint			num_devices;
 	cl_device_id	*devices;
-	
+
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
 	assert(status == CL_SUCCESS);
 	devices = malloc(sizeof(*devices) * num_devices);

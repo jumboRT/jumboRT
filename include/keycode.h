@@ -31,14 +31,16 @@
 #  define RT_KEY_D 2
 #  define RT_KEY_UP 126
 #  define RT_KEY_DOWN 125
+#  define RT_KEY_Z 6
+#  define RT_KEY_X 7
 #  define RT_KEY_LEFT 123
 #  define RT_KEY_RIGHT 124
 #  define RT_KEY_SPACE 49
 #  define RT_KEY_SHIFT 56
-#  define RT_KEY_NUMPAD_1 0
-#  define RT_KEY_NUMPAD_2 0
-#  define RT_KEY_NUMPAD_3 0
-#  define RT_KEY_NUMPAD_4 0
+#  define RT_KEY_1 18
+#  define RT_KEY_2 19
+#  define RT_KEY_3 20
+#  define RT_KEY_4 21
 # endif
 
 #endif

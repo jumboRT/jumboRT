@@ -6,9 +6,14 @@
 void
 	thread_create(t_thread *thr, t_start start, void *arg)
 {
-	int	ret;
+	int				ret;
+	pthread_attr_t	attr;
 
-	ret = pthread_create(thr, NULL, start, arg);
+	ret = pthread_attr_init(&attr);
+	rt_assert(!ret, "attr init failed");
+	ret = pthread_attr_setstacksize(&attr, 16777216);
+	rt_assert(!ret, "attr setstacksize failed");
+	ret = pthread_create(thr, &attr, start, arg);
 	rt_assert(!ret, "thread create failed");
 }
 

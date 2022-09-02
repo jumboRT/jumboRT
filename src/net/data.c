@@ -27,7 +27,7 @@ int
 #if defined RT_WINDOWS
 		nwritten = send(sockfd, ((const char *) data) + nwritten, size, 0);
 #else
-		nwritten = send(sockfd, ((const char *) data) + nwritten, size, MSG_NOSIGNAL);
+		nwritten = send(sockfd, ((const char *) data) + nwritten, size, 0);
 #endif
 		if (nwritten < 0)
 		{
@@ -54,7 +54,7 @@ ssize_t
 #if defined RT_WINDOWS
 		nread = recv(sockfd, ((char *) buffer) + total_read, length, 0);
 #else
-		nread = recv(sockfd, ((char *) buffer) + total_read, length, MSG_NOSIGNAL);
+		nread = recv(sockfd, ((char *) buffer) + total_read, length, 0);
 #endif
 		if (nread < 0 && errno == EINTR)
 			continue;
