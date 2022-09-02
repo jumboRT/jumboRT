@@ -1,9 +1,9 @@
 [submodule "scenes"]
 	path = scenes
-	url = git@github.com:jumboRT/scenes.git
+	url = https://github.com/jumboRT/scenes.git
 [submodule "joincd"]
 	path = joincd
-	url = git@github.com:jumboRT/joincd.git
+	url = https://github.com/jumboRT/joincd.git
 [submodule "jup"]
 	path = jup
-	url = git@github.com:jumboRT/jup.git
+	url = https://github.com/jumboRT/jup.git
