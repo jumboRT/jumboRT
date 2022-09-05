@@ -64,7 +64,7 @@ uint32_t
 	old_size = world->materials_size;
 	world->materials_size += sizeof(*material);
 	world->materials = world_reallog(world->materials, &world->materials_capacity, world->materials_size);
-	ft_memcpy((char *) world->materials + old_size, material, sizeof(*material));
+	rt_memcpy((char *) world->materials + old_size, material, sizeof(*material));
 	return (old_size / sizeof(*material));
 }
 
@@ -77,7 +77,7 @@ uint32_t
 	old_size = world->primitives_size;
 	world->primitives_size += (size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 	world->primitives = world_reallog(world->primitives, &world->primitives_capacity, world->primitives_size);
-	ft_memcpy((char *) world->primitives + old_size, primitive, size);
+	rt_memcpy((char *) world->primitives + old_size, primitive, size);
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }
 
@@ -90,7 +90,7 @@ uint32_t
 	old_size = world->vertices_size;
 	world->vertices_size += sizeof(*vertex);
 	world->vertices = world_reallog(world->vertices, &world->vertices_capacity, world->vertices_size);
-	ft_memcpy((char *) world->vertices + old_size, vertex, sizeof(*vertex));
+	rt_memcpy((char *) world->vertices + old_size, vertex, sizeof(*vertex));
 	return (old_size / sizeof(*vertex));
 }
 
@@ -103,7 +103,7 @@ uint32_t
 	old_size = world->accel_nodes_size;
 	world->accel_nodes_size += sizeof(*accel_node);
 	world->accel_nodes = world_reallog(world->accel_nodes, &world->accel_nodes_capacity, world->accel_nodes_size);
-	ft_memcpy((char *) world->accel_nodes + old_size, accel_node, sizeof(*accel_node));
+	rt_memcpy((char *) world->accel_nodes + old_size, accel_node, sizeof(*accel_node));
 	return (old_size / sizeof(*accel_node));
 }
 
@@ -116,7 +116,7 @@ uint32_t
 	old_size = world->accel_indices_size;
 	world->accel_indices_size += sizeof(accel_index);
 	world->accel_indices = world_reallog(world->accel_indices, &world->accel_indices_capacity, world->accel_indices_size);
-	ft_memcpy((char *) world->accel_indices + old_size, &accel_index, sizeof(accel_index));
+	rt_memcpy((char *) world->accel_indices + old_size, &accel_index, sizeof(accel_index));
 	return (old_size / sizeof(accel_index));
 }
 
@@ -129,7 +129,7 @@ uint32_t
 	old_size = world->accel_degenerates_size;
 	world->accel_degenerates_size += sizeof(accel_degenerate);
 	world->accel_degenerates = world_reallog(world->accel_degenerates, &world->accel_degenerates_capacity, world->accel_degenerates_size);
-	ft_memcpy((char *) world->accel_degenerates + old_size, &accel_degenerate, sizeof(accel_degenerate));
+	rt_memcpy((char *) world->accel_degenerates + old_size, &accel_degenerate, sizeof(accel_degenerate));
 	return (old_size / sizeof(accel_degenerate));
 }
 
@@ -142,7 +142,7 @@ uint32_t
 	old_size = world->textures_size;
 	world->textures_size += sizeof(*tex);
 	world->textures = world_reallog(world->textures, &world->textures_capacity, world->textures_size);
-	ft_memcpy((char *) world->textures + old_size, tex, sizeof(*tex));
+	rt_memcpy((char *) world->textures + old_size, tex, sizeof(*tex));
 	return (old_size / sizeof(*tex));
 }
 

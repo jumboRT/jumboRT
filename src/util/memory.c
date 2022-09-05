@@ -27,7 +27,7 @@ void
 		size = new_size;
 	if (ptr)
 	{
-		ft_memcpy(ret, ptr, size);
+		rt_memcpy(ret, ptr, size);
 		rt_free(ptr);
 	}
 	return (ret);

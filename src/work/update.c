@@ -37,12 +37,15 @@ static void
 	mutex_lock(&work->update_mtx);
 	while (1)
 	{
-		if (work->update_flag)
+		while (work->update_flag)
 		{
+			work->update_flag = 0;
+			mutex_unlock(&work->update_mtx);
 			mutex_lock(&work->state_mtx);
 			work_update(work);
-			mutex_unlock(&work->state_mtx);
 			cond_broadcast(&work->progress_cnd);
+			mutex_unlock(&work->state_mtx);
+			mutex_lock(&work->update_mtx);
 		}
 		if (work->update_stop && work->work_progress >= work->work_index)
 		{

@@ -13,6 +13,7 @@
 /* TODO: real specular reflection (to complete phong reflection model) */
 /* TODO: help flag for help message */
 /* TODO: check if camera exists in scene parser */
+/* TODO: pre-pack results on gpu end (just delete the s_result struct and fix all the errors :D), will lower cpu and memory usage significantly */
 
 #include <ft_printf.h>
 #include <stdlib.h>

@@ -40,7 +40,7 @@ void
 	void	*cpy;
 
 	cpy = rt_malloc(size);
-	ft_memcpy(cpy, src, size);
+	rt_memcpy(cpy, src, size);
 	return (cpy);
 }
 
