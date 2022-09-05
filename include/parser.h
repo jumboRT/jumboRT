@@ -24,6 +24,7 @@ struct s_entry {
 struct s_parse_ctx {
 	char		*begin;
 	char		*data;
+	size_t		size;
 	const char	*filename;
 	int			line;
 	int			column;
@@ -37,6 +38,7 @@ struct s_parse_ctx {
 };
 
 void			parser_init(t_parse_ctx *ctx, const char *filename, const char *key);
+void			parser_push(t_parse_ctx *ctx, const char *filename);
 void			parser_destroy(t_parse_ctx *ctx);
 void			mat_add(t_parse_ctx *ctx, const char *name, uint32_t index);
 void			tex_add(t_parse_ctx *ctx, const char *name, uint32_t index);
@@ -100,6 +102,7 @@ void			rt_exec_cam_focus(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cam_blur(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_conditional(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_include(t_world *world, t_parse_ctx *ctx);
 
 void			rt_world(t_world *world, t_parse_ctx *ctx);
 

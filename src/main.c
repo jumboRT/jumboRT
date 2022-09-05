@@ -10,6 +10,7 @@
 /* TODO: better gamma correction */
 /* TODO: better image reconstruction */
 /* TODO: help flag for help message */
+/* TODO: check if camera exists in scene parser */
 
 #include <ft_printf.h>
 #include <stdlib.h>

@@ -13,7 +13,7 @@
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
 # define RT_EMPTY_BONUS (float) 0.3
-# define RT_MAX_PRIMITIVES 20
+# define RT_MAX_PRIMITIVES 5
 
 # define ACCEL_BELOW 0
 # define ACCEL_ABOVE 1

@@ -36,6 +36,7 @@ static const t_directive	directives[] = {
 	{ "cam_blur", rt_exec_cam_blur },
 	{ "#", rt_exec_comment },
 	{ "$", rt_exec_conditional },
+	{ "!", rt_exec_include },
 #endif
 };
 
