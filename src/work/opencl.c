@@ -19,15 +19,27 @@
 # endif
 
 # ifndef RT_WORK_OPENCL_GLOBAL_SIZE
-#  define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 16)
+#  if defined RT_MACOS
+#   define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 10)
+#  else
+#   define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 16)
+#  endif
 # endif
 
 # ifndef RT_WORK_OPENCL_LOCAL_SIZE
-#  define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#  if defined RT_MACOS
+#   define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#  else
+#   define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#  endif
 # endif
 
 # ifndef RT_WORK_OPENCL_CHUNK_SIZE
-#  define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 16)
+#  if defined RT_MACOS
+#   define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 10)
+#  else
+#   define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 16)
+#  endif
 # endif
 
 struct s_opencl_ctx {
@@ -326,7 +338,7 @@ static void
 	rt_assert(string != NULL, error);
 	cl_ctx->program = clCreateProgramWithBinary(cl_ctx->context, 1, &device, &length, (const unsigned char **) &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS, "clCreateProgramWithBinary failed");
-	status = clBuildProgram(cl_ctx->program, 1, &device, "-I include -D RT_OPENCL -D GLOBAL=__global -Werror", NULL, NULL);
+	status = clBuildProgram(cl_ctx->program, 1, &device, "", NULL, NULL);
 	if (status != CL_SUCCESS)
 	{
 		status = clGetProgramBuildInfo(cl_ctx->program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);

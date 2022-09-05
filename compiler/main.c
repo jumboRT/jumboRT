@@ -14,7 +14,12 @@
 #endif
 
 #define READ_SIZE 1024
-#define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
+
+#if defined RT_MACOS
+# define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global"
+#else
+# define BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
+#endif
 
 void
 	read_file(char **str, size_t *len, char *file)
@@ -114,9 +119,8 @@ int
 	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, size, str, NULL);
 	assert(status == CL_SUCCESS);
 	write(STDOUT_FILENO, str, size);
-	write(STDOUT_FILENO, "\n", 1);
 	free(str);
-	return (status == CL_BUILD_SUCCESS);
+	return (build_status == CL_BUILD_SUCCESS);
 }
 
 char

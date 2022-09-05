@@ -7,6 +7,9 @@
 #include "net.h"
 
 /* TODO: credits for all the people who helped render images */
+/* TODO: better gamma correction */
+/* TODO: better image reconstruction */
+/* TODO: help flag for help message */
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -14,7 +17,7 @@
 #include "z.h"
 
 #if defined RT_WINDOWS
-#include <winsock.h>
+# include <winsock.h>
 #endif
 
 
