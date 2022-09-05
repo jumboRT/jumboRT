@@ -10,6 +10,7 @@
 /* TODO: better gamma correction */
 /* TODO: better image reconstruction */
 /* TODO: better light emission calculation based on normals */
+/* TODO: real specular reflection (to complete phong reflection model) */
 /* TODO: help flag for help message */
 /* TODO: check if camera exists in scene parser */
 
