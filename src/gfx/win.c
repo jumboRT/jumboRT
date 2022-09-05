@@ -17,7 +17,7 @@ int	win_create(t_win *win, int width, int height)
 {
 	int	ignore;
 
-	win->handle = mlx_new_window(mlx(), width, height, "No Title");
+	win->handle = mlx_new_window(mlx(), width, height, "JUMBO");
 	win->img = mlx_new_image(mlx(), width, height);
 	win->data = mlx_get_data_addr(win->img, &win->bpp, &ignore, &ignore);
 	return (0);
