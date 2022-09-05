@@ -9,6 +9,7 @@
 /* TODO: credits for all the people who helped render images */
 /* TODO: better gamma correction */
 /* TODO: better image reconstruction */
+/* TODO: better light emission calculation based on normals */
 /* TODO: help flag for help message */
 /* TODO: check if camera exists in scene parser */
 
