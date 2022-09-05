@@ -30,7 +30,7 @@
 #  if defined RT_MACOS
 #   define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
 #  else
-#   define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#   define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 5)
 #  endif
 # endif
 
@@ -38,7 +38,7 @@
 #  if defined RT_MACOS
 #   define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 10)
 #  else
-#   define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 16)
+#   define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 18)
 #  endif
 # endif
 
