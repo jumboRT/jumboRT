@@ -59,27 +59,51 @@ unsigned int
 	return ((unsigned int) result);
 }
 
+#include <stdlib.h>
+
 float
 	rt_float(t_parse_ctx *ctx)
 {
-	float	result;
+	float	integer_part;
+	float	fractional_part;
+	float	exp;
+	float	sign;
+	int		has_digit;
 
 	rt_skip(ctx, ft_isspace);
-	if (!ft_isdigit(*ctx->data) && *ctx->data != '-')
-	{
-		rt_parse_error(ctx, "unexpected character %c, expected: float", *ctx->data);
-	}
-	if (!rt_atof(ctx->data, &result))
-	{
-		rt_parse_error(ctx, "%.*s would be infinite", rt_idlen(ctx), ctx->data);
-	}
+	has_digit = 0;
+	sign = 1.0f;
+	integer_part = 0.0f;
+	fractional_part = 0.0f;
+	exp = 1.0f;
 	if (*ctx->data == '-')
+	{
+		sign = -1.0f;
 		rt_advance(ctx);
-	rt_skip(ctx, ft_isdigit);
+	}
+	while (ft_isdigit(*ctx->data))
+	{
+		integer_part *= 10.0f;
+		integer_part += *ctx->data - '0';
+		ctx->data += 1;
+		has_digit = 1;
+	}
 	if (*ctx->data == '.')
+	{
 		rt_advance(ctx);
-	rt_skip(ctx, ft_isdigit);
-	return (result);
+	}
+	while (ft_isdigit(*ctx->data))
+	{
+		exp /= 10.0f;
+		fractional_part += (*ctx->data - '0') * exp;
+		ctx->data += 1;
+		has_digit = 1;
+	}
+	if (!has_digit)
+	{
+		rt_parse_error(ctx, "bad floating point value");
+	}
+	return ((integer_part + fractional_part) * sign);
 }
 
 float

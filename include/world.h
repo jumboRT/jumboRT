@@ -37,6 +37,9 @@
 
 # define RT_MAX_ETA					8
 
+# define RT_HASH_GEOMETRY			1
+# define RT_HASH_MATERIALS			2
+
 /* # define RT_RAY_MIN 0.001 */
 
 # include "rtmath.h"
@@ -347,6 +350,8 @@ uint32_t	nprims(t_accel_node node);
 uint32_t	split_axis(t_accel_node node);
 uint32_t	is_leaf(t_accel_node node);
 uint32_t	above_child(t_accel_node node);
+
+uint64_t	hash_world(const GLOBAL t_world *world, int flags);
 
 #endif
 

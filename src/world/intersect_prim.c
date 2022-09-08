@@ -29,7 +29,6 @@ static t_triangle
 			world->vertices[tr->b].normal,
 			world->vertices[tr->c].normal,
 			(mat->flags & RT_MAT_SMOOTH) != 0));
-
 }
 
 int
@@ -66,3 +65,4 @@ void
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		cone_hit_info(ray, ((const GLOBAL t_shape_cone *) prim)->cone, &hit->hit);
 }
+

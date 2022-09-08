@@ -8,7 +8,7 @@
 # include <stdint.h>
 
 # ifndef RT_BUFFER_SIZE
-#  define RT_BUFFER_SIZE 10240
+#  define RT_BUFFER_SIZE 65536
 # elif RT_BUFFER_SIZE <= 0
 #  error RT_BUFFER_SIZE must be a positive integer
 # endif

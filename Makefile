@@ -21,7 +21,7 @@ WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \
 						   tex_sample.c material.c tex_ppm.c bsdf.c filter.c \
-						   conversion.c
+						   conversion.c hash.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
@@ -294,6 +294,7 @@ compile: compiler/main.c
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(COMPILER_EXE) $(OPENCL_FILES); do sleep 1; done"
+	@touch kernel.bin
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
@@ -305,7 +306,7 @@ clean:
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
 	$(SILENT)rm -f $(NAME)
-	$(SILENT)rm -f compile kernel-*.bin
+	$(SILENT)rm -f compile kernel*.bin
 
 re: fclean
 	$(MAKE) all
