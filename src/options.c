@@ -36,6 +36,7 @@ void
 	opts->key = NULL;
 	opts->threads = 8;
 	opts->batch_size = 16;
+	opts->trace_batch_size = 1;
 	opts->compression = 1;
 	opts->samples_set = 0;
 	opts->width_set = 0;
@@ -47,6 +48,7 @@ void
 	opts->req_jobs_set = 0;
 	opts->threads_set = 0;
 	opts->batch_size_set = 0;
+	opts->trace_batch_size_set = 0;
 	opts->cl_device_count = 0;
 	i = 1;
 	while (i < argc)
@@ -165,6 +167,15 @@ void
 			opts->batch_size = ft_atoi(argv[i + 1]);
 			rt_assert(opts->batch_size > 0, "invalid batch size");
 			opts->batch_size_set = 1;
+			i += 2;
+		}
+		else if (ft_strcmp(argv[i], "-B") == 0)
+		{
+			rt_assert(!opts->trace_batch_size_set, "more than one trace batch size specified");
+			rt_assert(i + 1 < argc, "-B requires an argument");
+			opts->trace_batch_size = ft_atoi(argv[i + 1]);
+			rt_assert(opts->trace_batch_size > 0, "invalid trace batch size");
+			opts->trace_batch_size_set = 1;
 			i += 2;
 		}
 		else if (ft_strcmp(argv[i], "-u") == 0)

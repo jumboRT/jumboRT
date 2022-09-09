@@ -29,6 +29,7 @@ void
 	world->flags = 0;
 	world->render_mode = RT_RENDER_MODE_DEFAULT;
 	world->batch_size = 16;
+	world->trace_batch_size = 1;
 }
 
 void

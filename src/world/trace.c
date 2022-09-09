@@ -182,12 +182,23 @@ t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
 {
 	t_trace_ctx	tctx;
+	t_vec		result;
+	uint64_t	i;
+	int			this_depth;
 
-	world_trace_init(world, &tctx);
-	tctx.ray = ray;
-	while (depth > 0 && world_trace_step(world, ctx, &tctx))
-		depth -= 1;
-	return (tctx.tail);
+	result = vec_0();
+	i = 0;
+	while (i < world->trace_batch_size)
+	{
+		this_depth = depth;
+		world_trace_init(world, &tctx);
+		tctx.ray = ray;
+		while (this_depth > 0 && world_trace_step(world, ctx, &tctx))
+			this_depth -= 1;
+		result = vec_add(result, tctx.tail);
+		i += 1;
+	}
+	return (vec_scale(result, 1.0 / world->trace_batch_size));
 }
 
 void
@@ -195,12 +206,20 @@ void
 {
 	int			depth;
 	t_trace_ctx	tctx;
+	t_vec		result;
+	uint64_t	i;
 
 	depth = 0;
+	i = world->trace_batch_size;
 	while (index < end - begin)
 	{
 		if (depth == 0)
 		{
+			if (i == world->trace_batch_size)
+			{
+				i = 0;
+				result = vec_0();
+			}
 			depth = RT_MAX_DEPTH;
 			world_trace_init(world, &tctx);
 			tctx.ray = project(world, ctx, begin + index);
@@ -210,8 +229,13 @@ void
 			depth = 0;
 		if (depth == 0)
 		{
-			results[index].color = tctx.tail;
-			index += stride;
+			i += 1;
+			result = vec_add(result, tctx.tail);
+			if (i == world->trace_batch_size)
+			{
+				results[index].color = vec_scale(result, 1.0 / world->trace_batch_size);
+				index += stride;
+			}
 		}
 	}
 }

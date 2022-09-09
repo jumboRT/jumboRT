@@ -28,6 +28,7 @@ struct s_options {
 	const char	*key;
 	int			threads;
 	long		batch_size;
+	long		trace_batch_size;
 	int			compression;
 	int			cl_platforms[16];
 	int			cl_devices[16];
@@ -41,6 +42,7 @@ struct s_options {
 	int			req_jobs_set;
 	int			threads_set;
 	int			batch_size_set;
+	int			trace_batch_size_set;
 	int			cl_device_count;
 
 };

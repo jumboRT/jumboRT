@@ -92,6 +92,7 @@ struct s_cjob_request {
 	struct s_string	scene_key;
 	uint64_t		render_mode;
 	uint64_t		batch_size;
+	uint64_t		trace_batch_size;
 };
 
 struct s_sjob_request {
@@ -107,6 +108,7 @@ struct s_sjob_request {
 	struct s_string	scene_key;
 	uint64_t		render_mode;
 	uint64_t		batch_size;
+	uint64_t		trace_batch_size;
 };
 
 struct s_send_results {

@@ -37,6 +37,7 @@ static void
 		rt_work_lock(worker->work);
 		state->world->render_mode = request.render_mode;
 		state->world->batch_size = request.batch_size;
+		state->world->trace_batch_size = request.trace_batch_size;
 		camera_set(state->world, &state->world->camera, request.cam_pos,
 				request.cam_dir, request.cam_fov, request.cam_focus, request.cam_blur);
 		worker->work->work_size = 0;
@@ -62,6 +63,7 @@ static void
 	world_create(state->world);
 	state->world->render_mode = request.render_mode;
 	state->world->batch_size = request.batch_size;
+	state->world->trace_batch_size = request.trace_batch_size;
 	state->world->img_meta.width = request.width;
 	state->world->img_meta.height = request.height;
 	world_load(state->world, request.scene_file.str, request.scene_key.str);

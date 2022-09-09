@@ -181,6 +181,7 @@ void
 	src = rt_upackstr(src, &dst->scene_key);
 	src = rt_upacku64(src, &dst->render_mode);
 	src = rt_upacku64(src, &dst->batch_size);
+	src = rt_upacku64(src, &dst->trace_batch_size);
 	return (src);
 }
 
@@ -239,6 +240,7 @@ void
 	dst = rt_packstr(dst, packet.scene_key);
 	dst = rt_packu64(dst, packet.render_mode);
 	dst = rt_packu64(dst, packet.batch_size);
+	dst = rt_packu64(dst, packet.trace_batch_size);
 	return (dst);
 }
 

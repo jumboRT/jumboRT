@@ -383,6 +383,7 @@ void
 	world.img_meta.width = image.width;
 	world.img_meta.height = image.height;
 	world.batch_size = options->batch_size;
+	world.trace_batch_size = options->trace_batch_size;
 	perf_start(&perf);
 	world_load(&world, options->scene_file, options->key);
 	perf_split(&perf, "load world");
