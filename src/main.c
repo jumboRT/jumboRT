@@ -255,13 +255,22 @@ int
 	rt_loop(void *ctx)
 {
 	t_work	*work;
+	int		update_flag;
 
 	work = ctx;
 	if (should_exit(0))
 		rt_exit(work);
+	mutex_lock(&work->update_mtx);
+	update_flag = work->update_flag;
+	work->update_flag = -1;
+	mutex_unlock(&work->update_mtx);
 	mutex_lock(&work->state_mtx);
 	win_put(&work->state->win, work->state->image);
 	mutex_unlock(&work->state_mtx);
+	mutex_lock(&work->update_mtx);
+	work->update_flag = update_flag;
+	cond_broadcast(&work->update_cnd);
+	mutex_unlock(&work->update_mtx);
 	return (0);
 }
 

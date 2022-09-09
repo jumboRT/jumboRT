@@ -37,7 +37,7 @@ static void
 	mutex_lock(&work->update_mtx);
 	while (1)
 	{
-		while (work->update_flag)
+		while (work->update_flag == 1)
 		{
 			work->update_flag = 0;
 			mutex_unlock(&work->update_mtx);
@@ -82,6 +82,8 @@ void
 	block.end = end;
 	queue_send(&worker->queue, &block, sizeof(block));
 	mutex_lock(&worker->work->update_mtx);
+	while (worker->work->update_flag == -1)
+		cond_wait(&worker->work->update_cnd, &worker->work->update_mtx);
 	worker->work->update_flag = 1;
 	cond_broadcast(&worker->work->update_cnd);
 	mutex_unlock(&worker->work->update_mtx);
