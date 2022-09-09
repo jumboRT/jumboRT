@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <ft_printf.h>
 
-#define PROTOVER 1
+#define PROTOVER 2
 
 /* TODO: network ping and timeout */
 

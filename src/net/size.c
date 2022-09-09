@@ -9,5 +9,5 @@ uint64_t
 uint64_t
 	rt_sizecjr(struct s_cjob_request packet)
 {
-	return (84 + packet.scene_file.len + packet.scene_key.len);
+	return (92 + packet.scene_file.len + packet.scene_key.len);
 }

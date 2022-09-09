@@ -92,9 +92,13 @@ void
 	uint64_t	i;
 	uint64_t	index;
 
-	rt_assert(end != begin, "block empty");
 	if (work->opts->worker)
-		rt_send_results(work->client, results, begin, end);
+	{
+		if (end != begin)
+			rt_send_results(work->client, results, begin, end);
+		else
+			rt_free(results);
+	}
 	else
 	{
 		i = 0;
