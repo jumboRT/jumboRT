@@ -10,6 +10,7 @@ void
 	vertex.pos = rt_vec(ctx);
 	vertex.uv = vec2(0.0, 0.0);
 	vertex.normal = vec_0();
+	ctx->max_index += 1;
 	world_add_vertex(world, &vertex);
 }
 
@@ -21,6 +22,7 @@ void
 	vertex.pos = rt_vec(ctx);
 	vertex.uv = rt_vec2(ctx);
 	vertex.normal = vec_0();
+	ctx->max_index += 1;
 	world_add_vertex(world, &vertex);
 }
 
@@ -32,6 +34,7 @@ void
 	vertex.pos = rt_vec(ctx);
 	vertex.uv = vec2(0.0, 0.0);
 	vertex.normal = rt_vec(ctx);
+	ctx->max_index += 1;
 	world_add_vertex(world, &vertex);
 }
 
@@ -43,6 +46,7 @@ void
 	vertex.pos = rt_vec(ctx);
 	vertex.uv = rt_vec2(ctx);
 	vertex.normal = rt_vec(ctx);
+	ctx->max_index += 1;
 	world_add_vertex(world, &vertex);
 }
 

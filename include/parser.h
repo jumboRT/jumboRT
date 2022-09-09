@@ -34,6 +34,7 @@ struct s_parse_ctx {
 	t_vector	textures;
 	int			mat_use_set;
 	uint32_t	mat_use;
+	size_t		max_index;
 	const char	*key;
 };
 
