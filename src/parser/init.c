@@ -25,6 +25,7 @@ void
 	ctx->mat_use_set = 0;
 	ctx->key = key;
 	ctx->cam_set = 0;
+	ctx->max_index = 0;
 	if (ctx->key == NULL)
 		ctx->key = "default";
 	vector_create(&ctx->materials, sizeof(t_entry), 0);
