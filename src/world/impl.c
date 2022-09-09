@@ -26,6 +26,7 @@ void
 	world->textures = world_zero(&world->textures_count, &world->textures_size, &world->textures_capacity);
 	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
 	world->bxdfs = world_zero(&world->bxdfs_count, &world->bxdfs_size, &world->bxdfs_capacity);
+	world->flags = 0;
 	world->render_mode = RT_RENDER_MODE_DEFAULT;
 	world->batch_size = 16;
 }

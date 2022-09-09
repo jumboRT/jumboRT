@@ -32,6 +32,8 @@
 # define RT_MAT_HAS_NORMAL			16
 # define RT_MAT_HAS_BUMP			32
 
+# define RT_WORLD_HAS_AMBIENT		1
+
 # define RT_MAX_DEPTH				8
 # define RT_MAX_VOLUMES				1
 
@@ -202,6 +204,7 @@ struct s_material {
 	t_bsdf		volume;
 	t_filter	alpha;
 	t_filter	emission;
+	float		emission_exp;
 	float		brightness;
 	uint32_t	normal_map;
 	uint32_t	bump_map;
@@ -259,7 +262,8 @@ struct s_world_hit {
 struct s_world {
 	t_image_meta			img_meta;
 	t_camera				camera;
-	t_filter				ambient_filter;
+	uint32_t				flags;
+	uint32_t				ambient_mat;
 	uint32_t				render_mode;
 	uint64_t				batch_size;
 	uint32_t				primitives_count;

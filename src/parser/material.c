@@ -5,7 +5,7 @@
 #include "util.h"
 #include <libft.h>
 
-static int
+int
 	has_prefix(const t_parse_ctx *ctx, const char *prefix)
 {
 	const char *word;
@@ -175,6 +175,15 @@ void
 	ctx->mat->brightness = rt_float(ctx);
 	ctx->mat->emission = rt_filter(world, ctx);
 	ctx->mat->flags |= RT_MAT_EMITTER;
+}
+
+void
+	rt_exec_emission_exp(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->emission_exp = rt_float(ctx);
 }
 
 void

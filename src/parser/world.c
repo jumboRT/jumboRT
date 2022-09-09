@@ -26,6 +26,7 @@ static const t_directive	directives[] = {
 	{ "cook_torrance", rt_exec_cook_torrance },
 	{ "transmissive", rt_exec_transmissive },
 	{ "emission", rt_exec_emission },
+	{ "emission_exp", rt_exec_emission_exp },
 	{ "smooth", rt_exec_smooth },
 	{ "alpha", rt_exec_alpha },
 	{ "normal", rt_exec_normal },
@@ -48,8 +49,6 @@ void
 	char used[256];
 
 	ft_memset(used, 0, sizeof(used));
-	world->ambient_filter.tex[0] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
-	world->ambient_filter.tex[1] = tex_by_color(world, ctx, vec3(0.0, 0.0, 0.0));
 	rt_skip(ctx, ft_isspace);
 	while (*ctx->data != '\0')
 	{

@@ -87,8 +87,15 @@ static int
 
 	if (!world_intersect(world, tctx->ray, &hit))
 	{
-		hit.hit.uv = sphere_uv_at(tctx->ray.dir);
-		tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, filter_sample(world, world->ambient_filter, hit.hit.uv)));
+		if (world->flags & RT_WORLD_HAS_AMBIENT)
+		{
+			mat = get_mat_const(world, world->ambient_mat);
+			if (mat->flags & RT_MAT_EMITTER)
+			{
+				hit.hit.uv = sphere_uv_at(tctx->ray.dir);
+				tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
+			}
+		}
 		return (0);
 	}
 	if (world->render_mode == RT_RENDER_MODE_GEOMETRIC_NORMAL)
@@ -120,24 +127,26 @@ static int
 	{
 		tctx->ray.org = hit.hit.pos;
 		mat = get_mat_const(world, prim_mat(hit.prim));
-		if (mat->flags & RT_MAT_EMITTER)
-			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
 		hit.rel_geometric_normal = hit.hit.geometric_normal;
 		if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
 			hit.rel_geometric_normal = vec_neg(hit.rel_geometric_normal);
+		hit.rel_shading_normal = hit.hit.shading_normal;
+		if (mat->flags & RT_MAT_HAS_NORMAL)
+			hit.rel_shading_normal = local_to_world(hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit.hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
+		if (mat->flags & RT_MAT_HAS_BUMP)
+			hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
+		hit.hit.shading_normal = hit.rel_shading_normal;
+		if (world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
+		{
+			tctx->tail = vec_abs(hit.hit.shading_normal);
+			return (0);
+		}
+		if ((mat->flags & RT_MAT_EMITTER) && mat->emission_exp != 0.0)
+			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness * rt_pow(rt_abs(vec_dot(tctx->ray.dir, hit.rel_shading_normal)), mat->emission_exp))));
+		else if (mat->flags & RT_MAT_EMITTER)
+			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
 		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(filter_sample(world, mat->alpha, hit.hit.uv))) && mat->surface.end > mat->surface.begin)
 		{
-			hit.rel_shading_normal = hit.hit.shading_normal;
-			if (mat->flags & RT_MAT_HAS_NORMAL)
-				hit.rel_shading_normal = local_to_world(hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit.hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
-			if (mat->flags & RT_MAT_HAS_BUMP)
-				hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
-			hit.hit.shading_normal = hit.rel_shading_normal;
-			if (world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
-			{
-				tctx->tail = vec_abs(hit.hit.shading_normal);
-				return (0);
-			}
 			if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
 				hit.rel_shading_normal = vec_neg(hit.rel_shading_normal);
 			bsdf = f_bsdf_sample(world, ctx, tctx, mat->surface, hit, tctx->ray.dir, &tctx->ray.dir);
@@ -149,16 +158,33 @@ static int
 	return (!vec_eq(tctx->head, vec_0()));
 }
 
+void
+	world_trace_init(const GLOBAL t_world *world, t_trace_ctx *tctx)
+{
+	const GLOBAL t_material	*ambient;
+
+	tctx->head = vec(1, 1, 1, 1);
+	tctx->tail = vec(0, 0, 0, 0);
+	tctx->volume_size = 0;
+	if (world->flags & RT_WORLD_HAS_AMBIENT)
+	{
+		ambient = get_mat_const(world, world->ambient_mat);
+		if ((ambient->flags & RT_MAT_HAS_VOLUME) && tctx->volume_size < RT_MAX_VOLUMES)
+		{
+			tctx->volumes[tctx->volume_size] = ambient;
+			tctx->volume_size += 1;
+		}
+	}
+	eta_init(tctx, 1.0);
+}
+
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
 {
 	t_trace_ctx	tctx;
 
-	tctx.head = vec(1, 1, 1, 1);
-	tctx.tail = vec(0, 0, 0, 0);
-	tctx.volume_size = 0;
+	world_trace_init(world, &tctx);
 	tctx.ray = ray;
-	eta_init(&tctx, 1.0);
 	while (depth > 0 && world_trace_step(world, ctx, &tctx))
 		depth -= 1;
 	return (tctx.tail);
@@ -176,10 +202,7 @@ void
 		if (depth == 0)
 		{
 			depth = RT_MAX_DEPTH;
-			tctx.head = vec(1, 1, 1, 1);
-			tctx.tail = vec(0, 0, 0, 0);
-			tctx.volume_size = 0;
-			eta_init(&tctx, 1.0);
+			world_trace_init(world, &tctx);
 			tctx.ray = project(world, ctx, begin + index);
 		}
 		depth -= 1;

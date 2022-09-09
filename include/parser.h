@@ -37,6 +37,8 @@ struct s_parse_ctx {
 	const char	*key;
 };
 
+int				has_prefix(const t_parse_ctx *ctx, const char *prefix);
+
 void			parser_init(t_parse_ctx *ctx, const char *filename, const char *key);
 void			parser_push(t_parse_ctx *ctx, const char *filename);
 void			parser_destroy(t_parse_ctx *ctx);
@@ -92,6 +94,7 @@ void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_transmissive(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_emission_exp(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_smooth(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_alpha(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_normal(t_world *world, t_parse_ctx *ctx);
