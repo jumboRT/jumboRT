@@ -9,11 +9,12 @@
 /* TODO: credits for all the people who helped render images */
 /* TODO: better gamma correction */
 /* TODO: better image reconstruction */
-/* TODO: better light emission calculation based on normals */
 /* TODO: real specular reflection (to complete phong reflection model) */
 /* TODO: help flag for help message */
 /* TODO: check if camera exists in scene parser */
-/* TODO: pre-pack results on gpu end (just delete the s_result struct and fix all the errors :D), will lower cpu and memory usage significantly */
+/* TODO: implement hdr with PFM */
+/* TODO: texture filtering */
+/* TODO: material hashing to check if scene is the same as last scene in network client */
 
 #include <ft_printf.h>
 #include <stdlib.h>
@@ -23,7 +24,6 @@
 #if defined RT_WINDOWS
 # include <winsock.h>
 #endif
-
 
 #include <stdio.h>
 

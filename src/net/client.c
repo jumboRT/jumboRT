@@ -10,7 +10,7 @@
 
 #define PROTOVER 2
 
-/* TODO: network ping and timeout */
+/* TODO: network ping */
 
 int
 	rt_recv_handle_packet(union u_client *client, char **error)
@@ -247,6 +247,5 @@ void
 #else
 	close(client->any.sockfd);
 #endif
-	/* TODO: This is not ok, we cannot destroy the mutex before it is actually done */
 	mutex_destroy(&client->any.mtx);
 }

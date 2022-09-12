@@ -20,7 +20,8 @@ compile
 /library
 /sibenik
 /mc
+/sponza.*
 *.zip
 *.bat
 *.gz
-*.jrtastic
+.*.jrtastic

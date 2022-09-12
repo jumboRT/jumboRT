@@ -1,6 +1,5 @@
 #include "parser.h"
 
-
 #include "util.h"
 #include <ft_printf.h>
 #include <stdlib.h>

@@ -26,6 +26,7 @@ static t_vec
 {
 	float sines;
 
+	(void) world;
 	sines = rt_sin(w(tex.a.checker.odd_color) * (u(uv) + u(offset))) * rt_sin(w(tex.a.checker.even_color) * (v(uv) + v(offset)));
 	if (sines < 0.0)
 		return (tex.a.checker.odd_color);
@@ -51,7 +52,7 @@ t_vec
 	t_vec	v;
 
 	v = sample_vector_offset(world, id, uv, offset);
-	return (vec(x(v) * x(v), y(v) * y(v), z(v) * z(v), w(v)));
+	return (vec_igc(v));
 }
 
 float

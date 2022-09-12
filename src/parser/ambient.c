@@ -3,7 +3,6 @@
 #include "world_impl.h"
 #include "util.h"
 
-/* TODO: add brightness */
 void
 	rt_exec_ambient(t_world *world, t_parse_ctx *ctx)
 {

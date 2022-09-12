@@ -4,7 +4,6 @@
 #include "util.h"
 #include <libft.h>
 
-/* TODO: check indices range */
 void
 	rt_exec_triangle(t_world *world, t_parse_ctx *ctx)
 {

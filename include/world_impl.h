@@ -9,7 +9,6 @@
 
 # include <stddef.h>
 
-/* TODO set these values to something good */
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
 # define RT_EMPTY_BONUS (float) 0.3

@@ -16,7 +16,8 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec_clamp_fast.c min.c max.c abs.c vec_set.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
-						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c
+						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
+						   gamma.c vec_value.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \

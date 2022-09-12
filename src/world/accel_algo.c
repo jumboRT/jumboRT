@@ -242,7 +242,7 @@ void
 	perf_start(&perf);
 	hash = hash_world(world, RT_HASH_GEOMETRY);
 	perf_split(&perf, "compute hash");
-	ft_sprintf(file, "%08x.jrtastic", (unsigned int) hash);
+	ft_sprintf(file, ".%08x.jrtastic", (unsigned int) hash);
 	ft_printf("world hash: %x\n", (unsigned int) hash);
 	if (!world_accel_load(world, file, hash))
 	{

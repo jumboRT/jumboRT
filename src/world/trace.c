@@ -56,8 +56,8 @@ t_vec
 	float	dfdx;
 	float	dfdy;
 
-	dfdx = sample_float_offset(world, bump_map, uv, vec2(10, 0)); /* TODO check lower offset values */
-	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 10));
+	dfdx = sample_float_offset(world, bump_map, uv, vec2(2, 0)) * 5;
+	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 2)) * 5;
 	dfdx -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	dfdy -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	/*
@@ -75,8 +75,6 @@ t_vec
 }
 
 /* TODO: unify these branches */
-/* TODO: when hitting a material that only has emission, should the ray stop? */
-/* TODO: maybe ambient lighting should be a material so you can start in a volume */
 static int
 	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {

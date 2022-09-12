@@ -131,6 +131,11 @@ float		rt_exp(float arg);
 float		rt_clamp(float arg, float min, float max);
 float		rt_log(float arg);
 
+float		rt_gc(float arg);
+float		rt_igc(float arg);
+t_vec		vec_gc(t_vec v);
+t_vec		vec_igc(t_vec v);
+
 int			float_eq(float a, float b, float error);
 
 float		x(t_vec v);
@@ -184,6 +189,8 @@ t_vec		vec_norm2(t_vec v);
 
 t_vec		vec_min(t_vec a, t_vec b);
 t_vec		vec_max(t_vec a, t_vec b);
+float		vec_minv(t_vec v);
+float		vec_maxv(t_vec v);
 t_vec		vec_clamp(t_vec v, float min, float max);
 t_vec		vec_abs(t_vec a);
 

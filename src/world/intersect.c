@@ -144,7 +144,7 @@ int
 		world_intersect_primitives(world, ray, hit);
 	if (hit->hit.t < RT_HUGE_VAL)
 	{
-		prim_hit_info(hit->prim, world, ray, hit); // TODO: defer this even further if possible
+		prim_hit_info(hit->prim, world, ray, hit);
 		return (1);
 	}
 	else
