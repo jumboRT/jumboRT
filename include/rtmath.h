@@ -28,11 +28,13 @@ typedef union u_vec2_conv {
 
 typedef struct s_ray		t_ray;
 
-typedef struct s_plane		t_plane;
-typedef struct s_triangle	t_triangle;
-typedef struct s_sphere		t_sphere;
-typedef struct s_cylinder	t_cylinder;
-typedef struct s_cone		t_cone;
+typedef struct s_plane			t_plane;
+typedef struct s_triangle		t_triangle;
+typedef struct s_sphere			t_sphere;
+typedef struct s_cylinder		t_cylinder;
+typedef struct s_cone			t_cone;
+typedef struct s_paraboloid		t_paraboloid;
+typedef struct s_hyperboloid	t_hyperboloid;
 
 typedef struct s_hit		t_hit;
 
@@ -94,6 +96,19 @@ struct s_cone {
 	t_vec	dir;
 	float	height;
 	float	angle;
+};
+
+struct s_paraboloid {
+	t_vec	pos;
+	float	a;
+	float	b;
+};
+
+struct s_hyperboloid {
+	t_vec	pos;
+	float	a;
+	float	b;
+	float	c;
 };
 
 struct s_hit {
@@ -161,11 +176,13 @@ t_vec		vec2_y(float y);
 float		u(t_vec2 v);
 float		v(t_vec2 v);
 
-t_plane		plane(t_vec pos, t_vec normal);
-t_triangle	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n1, t_vec n2, t_vec n3, int is_smooth);
-t_sphere	sphere(t_vec pos, float radius);
-t_cylinder	cylinder(t_vec pos, t_vec dir, float height, float radius);
-t_cone		cone(t_vec pos, t_vec dir, float height, float angle); 
+t_plane			plane(t_vec pos, t_vec normal);
+t_triangle		triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n1, t_vec n2, t_vec n3, int is_smooth);
+t_sphere		sphere(t_vec pos, float radius);
+t_cylinder		cylinder(t_vec pos, t_vec dir, float height, float radius);
+t_cone			cone(t_vec pos, t_vec dir, float height, float angle); 
+t_paraboloid	paraboloid(t_vec pos, float a, float b);
+t_hyperboloid	hyperboloid(t_vec pos, float a, float b, float c);
 
 float		vec_dot(t_vec a, t_vec b);
 float		vec_mag2(t_vec a);
@@ -217,6 +234,10 @@ int			ray_cylinder_intersect(t_ray ray,
 				t_cylinder cylinder, float min, t_hit *hit);
 int			ray_cone_intersect(t_ray ray,
 				t_cone cone, float min, t_hit *hit);
+int			ray_paraboloid_intersect(t_ray ray,
+				t_paraboloid paraboloid, float min, t_hit *hit);
+int			ray_hyperboloid_intersect(t_ray ray,
+				t_hyperboloid hyperboloid, float min, t_hit *hit);
 
 void		plane_hit_info(t_ray ray,
 				t_plane plane, t_hit *hit);
@@ -228,6 +249,10 @@ void		cylinder_hit_info(t_ray ray,
 				t_cylinder cylinder, t_hit *hit);
 void		cone_hit_info(t_ray ray,
 				t_cone cone, t_hit *hit);
+void		paraboloid_hit_info(t_ray ray,
+				t_paraboloid paraboloid, t_hit *hit);
+void		hyperboloid_hit_info(t_ray ray,
+				t_hyperboloid hyperboloid, t_hit *hit);
 
 int			quadratic_solve(const t_quadratic *quadratic, float solutions[2]);
 #endif

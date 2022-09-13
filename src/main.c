@@ -7,15 +7,14 @@
 #include "net.h"
 
 /* TODO: credits for all the people who helped render images */
-/* TODO: better gamma correction */
 /* TODO: better image reconstruction */
 /* TODO: real specular reflection (to complete phong reflection model) */
 /* TODO: help flag for help message */
-/* TODO: check if camera exists in scene parser */
 /* TODO: implement hdr with PFM */
 /* TODO: texture filtering */
 /* TODO: material hashing to check if scene is the same as last scene in network client */
 
+#include <libft.h>
 #include <ft_printf.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -93,7 +92,8 @@ static void
 static void
 	main_image(t_work *work, const char *image_file)
 {
-	t_perf	perf;
+	t_perf		perf;
+	const char	*ext;
 
 	setup_sighandlers();
 	work_update_start(work);
@@ -112,7 +112,11 @@ static void
 	}
 	perf_split(&perf, "draw image");
 	mutex_lock(&work->state_mtx);
-	rt_write_ppm(image_file, work->state->image);
+	ext = ft_strrchr(image_file, '.');
+	if (ext && ft_strcmp(ext, ".pfm") == 0)
+		rt_write_pfm(image_file, work->state->image);
+	else
+		rt_write_ppm(image_file, work->state->image);
 	mutex_unlock(&work->state_mtx);
 	perf_split(&perf, "save image");
 	rt_exit(work);

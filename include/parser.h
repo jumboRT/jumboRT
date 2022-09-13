@@ -84,6 +84,8 @@ void			rt_exec_vertex_texture_normal(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_triangle(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cylinder(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cone(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_paraboloid(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_hyperboloid(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_light(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_use(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);

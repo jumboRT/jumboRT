@@ -12,6 +12,8 @@ static const t_directive	directives[] = {
 #ifdef RT_BONUS
 	{ "l", rt_exec_light },
 	{ "co", rt_exec_cone },
+	{ "pa", rt_exec_paraboloid },
+	{ "hy", rt_exec_hyperboloid },
 	{ "v", rt_exec_vertex },
 	{ "w", rt_exec_vertex_texture },
 	{ "y", rt_exec_vertex_normal },
@@ -71,5 +73,7 @@ void
 		directives[i].exec(world, ctx);
 		rt_skip(ctx, ft_isspace);
 	}
+	if (ctx->cam_set == 0)
+			rt_parse_error(ctx, "scene has no camera");
 }
 

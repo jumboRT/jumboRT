@@ -84,9 +84,9 @@ static size_t
 	t_vec			color;
 	const t_pixel	*pixel;
 
-	y = 0;
+	y = image->height;
 	offset = 0;
-	while (y < image->height)
+	while (y--)
 	{
 		x = 0;
 		while (x < image->width)
@@ -98,7 +98,6 @@ static size_t
 			offset += rt_pfm_write_color(data + offset, color);
 			x++;
 		}
-		y++;
 	}
 	return (offset);
 }

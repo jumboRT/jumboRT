@@ -29,6 +29,7 @@ void	*rt_memcpy(void *dst, const void *src, size_t size);
 
 size_t	rt_image_to_ppm(char **dest, const t_image *image);
 size_t	rt_write_ppm(const char *path, const t_image *image);
+size_t	rt_write_pfm(const char *path, const t_image *image);
 
 char	*rt_readfile(const char *path, char **error, size_t *size);
 ssize_t	rt_writefile(const char *path, char **error, const void *data, size_t size);

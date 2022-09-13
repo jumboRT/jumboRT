@@ -19,6 +19,10 @@ uint64_t
 		return (world_primitive_size_adjust(sizeof(t_shape_cone)));
 	else if (shape_type == RT_SHAPE_TRIANGLE)
 		return (world_primitive_size_adjust(sizeof(t_shape_triangle)));
+	else if (shape_type == RT_SHAPE_PARABOLOID)
+		return (world_primitive_size_adjust(sizeof(t_shape_paraboloid)));
+	else if (shape_type == RT_SHAPE_HYPERBOLOID)
+		return (world_primitive_size_adjust(sizeof(t_shape_hyperboloid)));
 	return (RT_PRIMITIVE_ALIGN);
 }
 	

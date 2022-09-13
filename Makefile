@@ -17,7 +17,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
-						   gamma.c vec_value.c
+						   gamma.c vec_value.c paraboloid.c hyperboloid.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \
@@ -26,7 +26,8 @@ WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
-						   texture.c init.c ambient.c conditional.c include.c
+						   texture.c init.c ambient.c conditional.c include.c \
+						   boloid.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c
 Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
@@ -81,6 +82,9 @@ OPENCL_FILES			:= \
 	src/math/mod.c \
 	src/math/exp.c \
 	src/math/log.c \
+	src/math/gamma.c \
+	src/math/paraboloid.c \
+	src/math/hyperboloid.c \
 	src/world/intersect.c \
 	src/world/intersect_prim.c \
 	src/world/size.c \

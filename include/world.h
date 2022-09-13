@@ -13,6 +13,8 @@
 # define RT_SHAPE_PLANE				2
 # define RT_SHAPE_CYLINDER			3
 # define RT_SHAPE_CONE				4
+# define RT_SHAPE_PARABOLOID		5
+# define RT_SHAPE_HYPERBOLOID		6
 
 # define RT_TEX_COLOR				0
 # define RT_TEX_TEXTURE				1
@@ -60,6 +62,8 @@ typedef struct s_shape_sphere		t_shape_sphere;
 typedef struct s_shape_plane		t_shape_plane;
 typedef struct s_shape_cylinder		t_shape_cylinder;
 typedef struct s_shape_cone			t_shape_cone;
+typedef struct s_shape_paraboloid	t_shape_paraboloid;
+typedef struct s_shape_hyperboloid	t_shape_hyperboloid;
 typedef struct s_accel_node			t_accel_node;
 typedef struct s_world_hit			t_world_hit;
 typedef struct s_tex				t_tex;
@@ -237,6 +241,16 @@ struct s_shape_cylinder {
 struct s_shape_cone {
 	t_primitive	base;
 	t_cone		cone;
+};
+
+struct s_shape_paraboloid {
+	t_primitive		base;
+	t_paraboloid	paraboloid;
+};
+
+struct s_shape_hyperboloid {
+	t_primitive		base;
+	t_hyperboloid	hyperboloid;
 };
 
 struct s_accel_node {

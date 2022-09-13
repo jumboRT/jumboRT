@@ -47,6 +47,10 @@ int
 		did_hit = ray_cylinder_intersect(ray, ((const GLOBAL t_shape_cylinder *) prim)->cylinder, min, &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		did_hit = ray_cone_intersect(ray, ((const GLOBAL t_shape_cone *) prim)->cone, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_PARABOLOID)
+		did_hit = ray_paraboloid_intersect(ray, ((const GLOBAL t_shape_paraboloid *) prim)->paraboloid, min, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
+		did_hit = ray_hyperboloid_intersect(ray, ((const GLOBAL t_shape_hyperboloid *) prim)->hyperboloid, min, &hit->hit);
 	hit->prim = prim;
 	return (did_hit);
 }
@@ -64,5 +68,9 @@ void
 		cylinder_hit_info(ray, ((const GLOBAL t_shape_cylinder *) prim)->cylinder, &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		cone_hit_info(ray, ((const GLOBAL t_shape_cone *) prim)->cone, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_PARABOLOID)
+		paraboloid_hit_info(ray, ((const GLOBAL t_shape_paraboloid *) prim)->paraboloid, &hit->hit);
+	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
+		hyperboloid_hit_info(ray, ((const GLOBAL t_shape_hyperboloid *) prim)->hyperboloid, &hit->hit);
 }
 
