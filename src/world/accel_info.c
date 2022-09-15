@@ -77,7 +77,7 @@ void
 	while (offset < world->primitives_size)
 	{
 		primitive = (t_primitive *) ((char *) world->primitives + offset);
-		if (prim_is_infinite(primitive))
+		if (prim_is_degenerate(primitive))
 			world_add_accel_degenerate(world, offset / RT_PRIMITIVE_ALIGN);
 		else
 		{

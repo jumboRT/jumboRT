@@ -1,4 +1,5 @@
 #include "rtmath.h"
+#include "sample.h"
 
 t_cylinder
 	cylinder(t_vec pos, t_vec dir, float height, float radius)
@@ -179,4 +180,50 @@ int
 		}
 	}
 	return (0);
+}
+
+static float
+	cap_area(t_cylinder cylinder)
+{
+	return (RT_PI * cylinder.radius * cylinder.radius);
+}
+
+static float
+	mantle_area(t_cylinder cylinder)
+{
+	return (RT_2PI * cylinder.radius * cylinder.height);
+}
+
+t_vec
+	cylinder_sample(t_cylinder cylinder, GLOBAL t_context *ctx)
+{
+	float	sample;
+	t_vec	up;
+	t_vec	out;
+	t_vec	u;
+	t_vec	v;
+
+	sample = rt_random_float_range(&ctx->seed, 0, cylinder_area(cylinder));
+	u = vec_tangent(cylinder.dir);
+	v = vec_cross(cylinder.dir, u);
+	if (sample < mantle_area(cylinder))
+	{
+		up = vec_scale(cylinder.dir, rt_random_float_range(&ctx->seed, 0, cylinder.height));
+		out = vec_scale(vec_rotate(cylinder.dir, u, rt_random_float_range(&ctx->seed, 0, RT_2PI)), cylinder.radius);
+		return (vec_add(vec_add(up, out), cylinder.pos));
+	}
+	else if (sample < mantle_area(cylinder) + cap_area(cylinder))
+	{
+		return (vec_add(rt_random_in_disk(&ctx->seed, u, v, cylinder.radius), cylinder.pos));
+	}
+	else
+	{
+		return (vec_add(vec_add(vec_scale(cylinder.dir, cylinder.height), rt_random_in_disk(&ctx->seed, u, v, cylinder.radius)), cylinder.pos));
+	}
+}
+
+float
+	cylinder_area(t_cylinder cylinder)
+{
+	return (2.0f * cap_area(cylinder) + mantle_area(cylinder));
 }

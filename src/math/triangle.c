@@ -1,4 +1,5 @@
 #include "rtmath.h"
+#include "sample.h"
 
 t_triangle
 	triangle(t_vec v0, t_vec v1, t_vec v2, t_vec2 uv0, t_vec2 uv1, t_vec2 uv2, t_vec n0, t_vec n1, t_vec n2, int is_smooth)
@@ -108,3 +109,43 @@ int
 	hit->ctx.tr.bc_u = 1 - hit->ctx.tr.bc_v - hit->ctx.tr.bc_w;
 	return (hit->ctx.tr.bc_v >= 0 && hit->ctx.tr.bc_w >= 0 && hit->ctx.tr.bc_v + hit->ctx.tr.bc_w <= 1);
 }
+
+t_vec
+	triangle_sample(t_triangle triangle, GLOBAL t_context *ctx)
+{
+	t_vec	v0;
+	t_vec	v1;
+	float	u0;
+	float	u1;
+
+	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
+	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
+	u0 = rt_random_float(&ctx->seed);
+	u1 = rt_random_float(&ctx->seed);
+	if (u0 + u1 > 1)
+	{
+		u0 = 1 - u0;
+		u1 = 1 - u1;
+	}
+	v0 = vec_scale(v0, u0);
+	v1 = vec_scale(v1, u1);
+	return (vec_add(vec_add(v0, v1), triangle.vertices[0]));
+}
+
+float
+	triangle_area(t_triangle triangle)
+{
+	t_vec	v0;
+	t_vec	v1;
+	float	dot;
+	float	sin_theta;
+	float	area;
+
+	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
+	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
+	dot = vec_dot(v0, v1);
+	sin_theta = rt_sqrt(1 - dot * dot);
+	area = 0.5f * vec_mag(v0) * vec_mag(v1) * sin_theta;
+	return (area);
+}
+

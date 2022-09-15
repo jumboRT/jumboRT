@@ -74,7 +74,57 @@ t_vec
 				1.0));
 }
 
-/* TODO: unify these branches */
+static void
+	fix_normals(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_world_hit *hit, t_ray ray)
+{
+	hit->rel_geometric_normal = hit->hit.geometric_normal;
+	if (vec_dot(hit->hit.geometric_normal, ray.dir) > 0)
+		hit->rel_geometric_normal = vec_neg(hit->rel_geometric_normal);
+	hit->rel_shading_normal = hit->hit.shading_normal;
+	if (mat->flags & RT_MAT_HAS_NORMAL)
+		hit->rel_shading_normal = local_to_world(*hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit->hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
+	if (mat->flags & RT_MAT_HAS_BUMP)
+		hit->rel_shading_normal = local_to_world(*hit, bump(world, mat->bump_map, hit->hit.uv));
+	hit->hit.shading_normal = hit->rel_shading_normal;
+}
+
+/* TODO: alpha */
+static int
+	ray_to_light(const GLOBAL t_world *world, const GLOBAL t_primitive *prim, GLOBAL t_context *ctx, t_light_hit *hit, t_vec org)
+{
+	t_vec					pos;
+	t_world_hit				world_hit;
+	t_ray					ray_obj;
+	const GLOBAL t_material	*mat;
+	float					scale;
+	float					dot;
+
+	mat = get_mat_const(world, prim_mat(prim));
+	if (prim_is_infinite(prim) || !(mat->flags & RT_MAT_EMITTER))
+		return (0);
+	pos = prim_sample(prim, world, ctx);
+	ray_obj = ray(org, vec_norm(vec_sub(pos, org)));
+	if (prim_type(prim) == RT_SHAPE_POINT)
+	{
+		if (world_intersect(world, ray_obj, &world_hit) && vec_mag(vec_sub(pos, world_hit.hit.pos)) < RT_TINY_VAL)
+			return (0);
+		hit->color = vec_scale(filter_sample(world, mat->emission, vec2(0, 0)), mat->brightness * RT_PI);
+		return (1);
+	}
+	else
+	{
+		if (!world_intersect(world, ray_obj, &world_hit) || vec_mag(vec_sub(pos, world_hit.hit.pos)) < RT_TINY_VAL)
+			return (0);
+		fix_normals(world, mat, &world_hit, ray_obj);
+		dot = rt_abs(vec_dot(ray_obj.dir, world_hit.rel_shading_normal));
+		scale = mat->brightness * dot * prim_area(prim, world);
+		if (mat->emission_exp != 0.0)
+			scale *= rt_pow(dot, mat->emission_exp);
+		hit->color = vec_scale(filter_sample(world, mat->emission, world_hit.hit.uv), scale);
+		return (1);
+	}
+}
+
 static int
 	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {

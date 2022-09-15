@@ -23,6 +23,8 @@ uint64_t
 		return (world_primitive_size_adjust(sizeof(t_shape_paraboloid)));
 	else if (shape_type == RT_SHAPE_HYPERBOLOID)
 		return (world_primitive_size_adjust(sizeof(t_shape_hyperboloid)));
+	else if (shape_type == RT_SHAPE_POINT)
+		return (world_primitive_size_adjust(sizeof(t_shape_point)));
 	return (RT_PRIMITIVE_ALIGN);
 }
 	

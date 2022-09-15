@@ -26,3 +26,5 @@ compile
 *.bat
 *.gz
 .*.jrtastic
+/pack
+/pack.rt

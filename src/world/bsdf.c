@@ -41,7 +41,9 @@ static t_vec
 static t_vec
 	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
-	*wo = rt_random_on_hemi(&ctx->seed, hit.rel_shading_normal);
+	//*wo = rt_random_on_hemi(&ctx->seed, hit.rel_shading_normal);
+	*wo = rt_random_on_hemi_cos(&ctx->seed);
+	*wo = local_to_world(hit, *wo);
 	*wo = clip(*wo, hit.rel_geometric_normal);
 	return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 }

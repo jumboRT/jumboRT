@@ -1,4 +1,5 @@
 #include "world.h"
+#include "sample.h"
 
 static t_sphere
 	make_sphere(const GLOBAL t_world *world, const GLOBAL void *ptr)
@@ -72,5 +73,35 @@ void
 		paraboloid_hit_info(ray, ((const GLOBAL t_shape_paraboloid *) prim)->paraboloid, &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
 		hyperboloid_hit_info(ray, ((const GLOBAL t_shape_hyperboloid *) prim)->hyperboloid, &hit->hit);
+}
+
+t_vec
+	prim_sample(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, GLOBAL t_context *ctx)
+{
+	if (prim_type(prim) == RT_SHAPE_SPHERE)
+		return (sphere_sample(make_sphere(world, prim), ctx));
+	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
+		return (triangle_sample(make_triangle(world, prim), ctx));
+	else if (prim_type(prim) == RT_SHAPE_CYLINDER)
+		return (cylinder_sample(((const GLOBAL t_shape_cylinder *) prim)->cylinder, ctx));
+	else if (prim_type(prim) == RT_SHAPE_CONE)
+		return (cone_sample(((const GLOBAL t_shape_cone *) prim)->cone, ctx));
+	else if (prim_type(prim) == RT_SHAPE_POINT)
+		return (((const GLOBAL t_shape_point *) prim)->pos);
+	return (vec_0());
+}
+
+float
+	prim_area(const GLOBAL t_primitive *prim, const GLOBAL t_world *world)
+{
+	if (prim_type(prim) == RT_SHAPE_SPHERE)
+		return (sphere_area(make_sphere(world, prim)));
+	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
+		return (triangle_area(make_triangle(world, prim)));
+	else if (prim_type(prim) == RT_SHAPE_CYLINDER)
+		return (cylinder_area(((const GLOBAL t_shape_cylinder *) prim)->cylinder));
+	else if (prim_type(prim) == RT_SHAPE_CONE)
+		return (cone_area(((const GLOBAL t_shape_cone *) prim)->cone));
+	return (0);
 }
 

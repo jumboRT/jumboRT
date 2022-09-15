@@ -13,6 +13,8 @@
 /* TODO: implement hdr with PFM */
 /* TODO: texture filtering */
 /* TODO: material hashing to check if scene is the same as last scene in network client */
+/* TODO: better fog */
+/* TODO: split up headers */
 
 #include <libft.h>
 #include <ft_printf.h>

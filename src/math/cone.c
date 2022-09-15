@@ -1,4 +1,5 @@
 #include "rtmath.h"
+#include "sample.h"
 
 static int
 	ray_infinite_cone_intersect(t_ray ray, t_cone cone, float intersections[2])
@@ -116,3 +117,56 @@ int
 	}
 	return (hit->t < RT_HUGE_VAL);
 }
+
+static float
+	cap_area(t_cone cone)
+{
+	float	r;
+
+	r = rt_tan(cone.angle) * cone.height;
+	return (RT_PI * r * r);
+}
+
+static float
+	mantle_area(t_cone cone)
+{
+	float	r;
+	float	l;
+
+	r = rt_tan(cone.angle) * cone.height;
+	l = rt_sqrt(r * r + cone.height * cone.height);
+	return (RT_PI * r * l);
+}
+
+t_vec
+	cone_sample(t_cone cone, GLOBAL t_context *ctx)
+{
+	float	r;
+	t_vec	down;
+	t_vec	out;
+	t_vec	u;
+	t_vec	v;
+	float	sample;
+
+	r = rt_tan(cone.angle) * cone.height;
+	u = vec_tangent(cone.dir);
+	v = vec_cross(cone.dir, u);
+	sample = rt_random_float_range(&ctx->seed, 0, cone_area(cone));
+	if (sample < mantle_area(cone))
+	{
+		down = vec_scale(cone.dir, rt_sqrt(rt_random_float_range(&ctx->seed, 0, cone.height)));
+		out = vec_scale(vec_rotate(cone.dir, u, rt_random_float_range(&ctx->seed, 0, RT_2PI)), r);
+		return (vec_add(vec_add(down, out), cone.pos));
+	}
+	else
+	{
+		return (vec_add(vec_add(vec_scale(cone.dir, cone.height), rt_random_in_disk(&ctx->seed, u, v, r)), cone.pos));
+	}
+}
+
+float
+	cone_area(t_cone cone)
+{
+	return (cap_area(cone) + mantle_area(cone));
+}
+

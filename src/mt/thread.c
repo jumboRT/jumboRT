@@ -18,6 +18,13 @@ void
 }
 
 void
+	thread_priority(t_thread *thr, int prio)
+{
+	(void) thr;
+	(void) prio;
+}
+
+void
 	thread_exit(void *retval)
 {
 	(void) retval;

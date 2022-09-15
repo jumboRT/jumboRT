@@ -15,6 +15,7 @@
 # define RT_SHAPE_CONE				4
 # define RT_SHAPE_PARABOLOID		5
 # define RT_SHAPE_HYPERBOLOID		6
+# define RT_SHAPE_POINT				7
 
 # define RT_TEX_COLOR				0
 # define RT_TEX_TEXTURE				1
@@ -64,8 +65,10 @@ typedef struct s_shape_cylinder		t_shape_cylinder;
 typedef struct s_shape_cone			t_shape_cone;
 typedef struct s_shape_paraboloid	t_shape_paraboloid;
 typedef struct s_shape_hyperboloid	t_shape_hyperboloid;
+typedef struct s_shape_point		t_shape_point;
 typedef struct s_accel_node			t_accel_node;
 typedef struct s_world_hit			t_world_hit;
+typedef struct s_light_hit			t_light_hit;
 typedef struct s_tex				t_tex;
 typedef struct s_bsdf				t_bsdf;
 typedef struct s_bxdf				t_bxdf;
@@ -253,6 +256,11 @@ struct s_shape_hyperboloid {
 	t_hyperboloid	hyperboloid;
 };
 
+struct s_shape_point {
+	t_primitive	base;
+	t_vec		pos;
+};
+
 struct s_accel_node {
 	union {
 		float		split;
@@ -271,6 +279,10 @@ struct s_world_hit {
 	t_vec						rel_geometric_normal;
 	t_vec						rel_shading_normal;
 	const GLOBAL t_primitive	*prim;
+};
+
+struct s_light_hit {
+	t_vec	color;
 };
 
 struct s_world {
@@ -345,7 +357,10 @@ void eta_init(t_trace_ctx *trace_ctx, float eta);
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, float min, t_world_hit *hit);
 void		prim_hit_info(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
+t_vec		prim_sample(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, GLOBAL t_context *ctx);
+float		prim_area(const GLOBAL t_primitive *prim, const GLOBAL t_world *world);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
+int			prim_is_degenerate(const GLOBAL t_primitive *prim);
 t_vec		filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset);
 t_vec		filter_sample(const GLOBAL t_world *world, t_filter filter, t_vec2 uv);
 t_vec		sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv, t_vec2 offset);
