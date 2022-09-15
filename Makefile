@@ -299,7 +299,6 @@ compile: compiler/main.c
 kernel.bin: $(OPENCL_FILES) compile
 	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(COMPILER_EXE) $(OPENCL_FILES); do sleep 1; done"
-	@touch kernel.bin
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n

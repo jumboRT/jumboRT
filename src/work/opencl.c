@@ -50,6 +50,7 @@ struct s_opencl_ctx {
 	cl_mem				world_mem;
 	cl_mem				ctx_mem;
 	cl_mem				result_mem[2];
+	cl_mem				indices_mem[2];
 	cl_mem				primitives_mem;
 	cl_mem				materials_mem;
 	cl_mem				vertices_mem;
@@ -61,6 +62,7 @@ struct s_opencl_ctx {
 	cl_mem				bxdfs_mem;
 	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
 	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
+	cl_uint				indices[2];
 	int					id;
 };
 
@@ -176,6 +178,7 @@ static void
 	size_t							local_work_size[1];
 	cl_event						kernel_event[2];
 	cl_event						read_event;
+	cl_event						write_event;
 	int								id;
 	struct s_opencl_callback_ctx	cb_ctx[2];
 
@@ -198,9 +201,13 @@ static void
 		rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 3 failed");
 		status = clSetKernelArg(cl_ctx->work_kernel, 4, sizeof(cl_mem), &cl_ctx->result_mem[id]);
 		rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 4 failed");
+		status = clSetKernelArg(cl_ctx->work_kernel, 5, sizeof(cl_mem), &cl_ctx->indices_mem[id]);
+		rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 5 failed");
 		cb_ctx[id].begin = begin;
 		cb_ctx[id].end = end;
-		status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 0, NULL, &kernel_event[id]);
+		status = clEnqueueWriteBuffer(cl_ctx->command_queue[0], cl_ctx->indices_mem[id], CL_FALSE, 0, sizeof(cl_ctx->indices[id]), &cl_ctx->indices[id], 0, NULL, &write_event);
+		rt_assert(status == CL_SUCCESS, "clEnqueueWriteBuffer work_kernel failed");
+		status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 1, &write_event, &kernel_event[id]);
 		rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 		status = clEnqueueReadBuffer(cl_ctx->command_queue[1], cl_ctx->result_mem[id], CL_FALSE, 0, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, cl_ctx->result, 1, &kernel_event[id], &read_event);
 		rt_assert(status == CL_SUCCESS, "clEnqueueReadBuffer work_kernel failed");
@@ -223,9 +230,13 @@ static void
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 3 failed");
 			status = clSetKernelArg(cl_ctx->work_kernel, 4, sizeof(cl_mem), &cl_ctx->result_mem[id]);
 			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 4 failed");
+			status = clSetKernelArg(cl_ctx->work_kernel, 5, sizeof(cl_mem), &cl_ctx->indices_mem[id]);
+			rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 5 failed");
 			cb_ctx[id].begin = begin;
 			cb_ctx[id].end = end;
-			status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 1, &kernel_event[1 - id], &kernel_event[id]);
+			status = clEnqueueWriteBuffer(cl_ctx->command_queue[0], cl_ctx->indices_mem[id], CL_FALSE, 0, sizeof(cl_ctx->indices[id]), &cl_ctx->indices[id], 1, &kernel_event[1 - id], &write_event);
+			rt_assert(status == CL_SUCCESS, "clEnqueueWriteBuffer work_kernel failed");
+			status = clEnqueueNDRangeKernel(cl_ctx->command_queue[0], cl_ctx->work_kernel, 1, NULL, global_work_size, local_work_size, 1, &write_event, &kernel_event[id]);
 			rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel work_kernel failed");
 			status = clReleaseEvent(kernel_event[1 - id]);
 			rt_assert(status == CL_SUCCESS, "clReleaseEvent work_kernel failed");
@@ -305,15 +316,19 @@ static void
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[0] failed");
 	cl_ctx->result_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_WRITE_ONLY, sizeof(*cl_ctx->result) * RT_WORK_OPENCL_CHUNK_SIZE, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer result[1] failed");
-	cl_ctx->primitives_mem = work_copy_ptr(cl_ctx, work->state->world->primitives_size, work->state->world->primitives, 5);
-	cl_ctx->materials_mem = work_copy_ptr(cl_ctx, work->state->world->materials_size, work->state->world->materials, 6);
-	cl_ctx->vertices_mem = work_copy_ptr(cl_ctx, work->state->world->vertices_size, work->state->world->vertices, 7);
-	cl_ctx->accel_nodes_mem = work_copy_ptr(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes, 8);
-	cl_ctx->accel_indices_mem = work_copy_ptr(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices, 9);
-	cl_ctx->accel_degenerates_mem = work_copy_ptr(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates, 10);
-	cl_ctx->texture_data_mem = work_copy_ptr(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data, 11);
-	cl_ctx->textures_mem = work_copy_ptr(cl_ctx, work->state->world->textures_size, work->state->world->textures, 12);
-	cl_ctx->bxdfs_mem = work_copy_ptr(cl_ctx, work->state->world->bxdfs_size, work->state->world->bxdfs, 13);
+	cl_ctx->indices_mem[0] = clCreateBuffer(cl_ctx->context, CL_MEM_READ_WRITE, sizeof(*cl_ctx->indices), NULL, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer indices[0] failed");
+	cl_ctx->indices_mem[1] = clCreateBuffer(cl_ctx->context, CL_MEM_READ_WRITE, sizeof(*cl_ctx->indices), NULL, &status);
+	rt_assert(status == CL_SUCCESS, "clCreateBuffer indices[1] failed");
+	cl_ctx->primitives_mem = work_copy_ptr(cl_ctx, work->state->world->primitives_size, work->state->world->primitives, 6);
+	cl_ctx->materials_mem = work_copy_ptr(cl_ctx, work->state->world->materials_size, work->state->world->materials, 7);
+	cl_ctx->vertices_mem = work_copy_ptr(cl_ctx, work->state->world->vertices_size, work->state->world->vertices, 8);
+	cl_ctx->accel_nodes_mem = work_copy_ptr(cl_ctx, work->state->world->accel_nodes_size, work->state->world->accel_nodes, 9);
+	cl_ctx->accel_indices_mem = work_copy_ptr(cl_ctx, work->state->world->accel_indices_size, work->state->world->accel_indices, 10);
+	cl_ctx->accel_degenerates_mem = work_copy_ptr(cl_ctx, work->state->world->accel_degenerates_size, work->state->world->accel_degenerates, 11);
+	cl_ctx->texture_data_mem = work_copy_ptr(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data, 12);
+	cl_ctx->textures_mem = work_copy_ptr(cl_ctx, work->state->world->textures_size, work->state->world->textures, 13);
+	cl_ctx->bxdfs_mem = work_copy_ptr(cl_ctx, work->state->world->bxdfs_size, work->state->world->bxdfs, 14);
 	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
 	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
 	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
@@ -402,6 +417,8 @@ static void
 		ctx_init(&cl_ctx->ctx[i]);
 		i += 1;
 	}
+	cl_ctx->indices[0] = 0;
+	cl_ctx->indices[1] = 0;
 	context_props[0] = CL_CONTEXT_PLATFORM;
 	context_props[1] = (cl_context_properties) platform;
 	context_props[2] = 0;
@@ -416,6 +433,8 @@ static void
 	cl_ctx->ctx_mem = NULL;
 	cl_ctx->result_mem[0] = NULL;
 	cl_ctx->result_mem[1] = NULL;
+	cl_ctx->indices_mem[0] = NULL;
+	cl_ctx->indices_mem[1] = NULL;
 	cl_ctx->primitives_mem = NULL;
 	cl_ctx->materials_mem = NULL;
 	cl_ctx->vertices_mem = NULL;
@@ -494,6 +513,8 @@ static void
 	work_destroy_array(cl_ctx->ctx_mem);
 	work_destroy_array(cl_ctx->result_mem[0]);
 	work_destroy_array(cl_ctx->result_mem[1]);
+	work_destroy_array(cl_ctx->indices_mem[0]);
+	work_destroy_array(cl_ctx->indices_mem[1]);
 	work_destroy_array(cl_ctx->primitives_mem);
 	work_destroy_array(cl_ctx->materials_mem);
 	work_destroy_array(cl_ctx->vertices_mem);

@@ -199,17 +199,21 @@ t_vec
 	return (vec_scale(result, 1.0 / world->trace_batch_size));
 }
 
+#ifdef RT_OPENCL
+
 void
-	world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride)
+	world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, GLOBAL unsigned int *index, uint64_t begin, uint64_t end)
 {
-	int			depth;
-	t_trace_ctx	tctx;
-	t_vec		result;
-	uint64_t	i;
+	int				depth;
+	t_trace_ctx		tctx;
+	t_vec			result;
+	unsigned int	my_index;
+	uint64_t		i;
 
 	depth = 0;
 	i = world->trace_batch_size;
-	while (index < end - begin)
+	my_index = atomic_add(index, 1);
+	while (my_index < end - begin)
 	{
 		if (depth == 0)
 		{
@@ -220,7 +224,7 @@ void
 			}
 			depth = RT_MAX_DEPTH;
 			world_trace_init(world, &tctx);
-			tctx.ray = project(world, ctx, begin + index);
+			tctx.ray = project(world, ctx, begin + my_index);
 		}
 		depth -= 1;
 		if (!world_trace_step(world, ctx, &tctx))
@@ -231,10 +235,12 @@ void
 			result = vec_add(result, tctx.tail);
 			if (i == world->trace_batch_size)
 			{
-				results[index].color = vec_scale(result, 1.0 / world->trace_batch_size);
-				index += stride;
+				results[my_index].color = vec_scale(result, 1.0 / world->trace_batch_size);
+				my_index = atomic_add(index, 1);
 			}
 		}
 	}
 }
+
+#endif
 

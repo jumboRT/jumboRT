@@ -9,6 +9,7 @@ __kernel void
 		uint64_t begin,
 		uint64_t end,
 		GLOBAL t_result *results,
+		GLOBAL unsigned int *index,
 		GLOBAL void *primitives,
 		GLOBAL void *materials,
 		GLOBAL void *vertices,
@@ -19,25 +20,19 @@ __kernel void
 		GLOBAL void *textures,
 		GLOBAL void *bxdfs)
 {
-	uint64_t			index;
 	GLOBAL t_context	*my_ctx;
 
-	if (get_global_id(0) == 0)
-	{
-		world->primitives = primitives;
-		world->materials = materials;
-		world->vertices = vertices;
-		world->accel_nodes = accel_nodes;
-		world->accel_indices = accel_indices;
-		world->accel_degenerates = accel_degenerates;
-		world->texture_data = texture_data;
-		world->textures = textures;
-		world->bxdfs = bxdfs;
-	}
-	barrier(CLK_GLOBAL_MEM_FENCE);
-	index = get_global_id(0);
-	my_ctx = &ctx[index];
-	world_trace_all(world, my_ctx, results, index, begin, end, get_global_size(0));
+	world->primitives = primitives;
+	world->materials = materials;
+	world->vertices = vertices;
+	world->accel_nodes = accel_nodes;
+	world->accel_indices = accel_indices;
+	world->accel_degenerates = accel_degenerates;
+	world->texture_data = texture_data;
+	world->textures = textures;
+	world->bxdfs = bxdfs;
+	my_ctx = &ctx[get_global_id(0)];
+	world_trace_all(world, my_ctx, results, index, begin, end);
 }
 
 #endif

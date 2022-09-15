@@ -356,7 +356,7 @@ t_vec		sample_color(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
 float		sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
-void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, uint64_t index, uint64_t begin, uint64_t end, uint64_t stride);
+void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, GLOBAL unsigned int *index, uint64_t begin, uint64_t end);
 int			world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 void		world_accel(t_world *world);
 void		leaf_create(t_accel_node *leaf, const uint32_t *prim_indices, uint32_t prim_count, uint32_t *out_indices);
