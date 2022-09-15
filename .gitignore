@@ -17,6 +17,8 @@ kernel*.bin
 compile
 /san-miguel
 /library
+/pack.png-juc
+/pack.png-obj2rt
 /sibenik
 /mc
 /sponza.*

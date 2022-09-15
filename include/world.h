@@ -36,8 +36,8 @@
 
 # define RT_WORLD_HAS_AMBIENT		1
 
-# define RT_MAX_DEPTH				8
-# define RT_MAX_VOLUMES				1
+# define RT_MAX_DEPTH				16
+# define RT_MAX_VOLUMES				2
 
 # define RT_MAX_ETA					8
 
