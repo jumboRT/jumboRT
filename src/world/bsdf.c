@@ -33,7 +33,7 @@ static t_vec
 	(void)ctx;
 	(void) bxdf;
 	*wo = reflect(wi, hit.rel_shading_normal);
-	*wo = vec_norm(vec_add(*wo, vec_scale(rt_random_unit_sphere(&ctx->seed), bxdf->fuzzy)));
+	*wo = vec_norm(vec_add(*wo, vec_scale(rt_random_in_sphere(&ctx->seed), bxdf->fuzzy)));
 	*wo = clip(*wo, hit.rel_geometric_normal);
 	return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 }

@@ -79,7 +79,7 @@ t_vec
 {
 	t_vec	result;
 
-	result = vec_norm(rt_random_unit_sphere(seed));
+	result = vec_norm(rt_random_in_sphere(seed));
 	if (vec_dot(result, normal) < 0)
 		result = vec_neg(result);
 	return (result);
