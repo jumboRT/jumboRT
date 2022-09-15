@@ -222,8 +222,8 @@ else ifeq ($(config), profile)
 	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
-		CFLAGS		+= -g3 -Ofast -flto #-march=native
-		LFLAGS		+= -g3 -Ofast -flto #-march=native
+		CFLAGS		+= -g3 -Ofast -flto -march=native
+		LFLAGS		+= -g3 -Ofast -flto -march=native
 	else
 		CFLAGS		+= -g3 -Ofast
 		LFLAGS		+= -g3 -Ofast
