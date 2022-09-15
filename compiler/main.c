@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if defined RT_LINUX
 # include <CL/cl.h>
