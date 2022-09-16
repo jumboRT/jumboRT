@@ -13,6 +13,7 @@
 /* TODO: implement hdr with PFM */
 /* TODO: texture filtering */
 /* TODO: material hashing to check if scene is the same as last scene in network client */
+/* TODO: use ropes for tree traversal */
 
 #include <libft.h>
 #include <ft_printf.h>
