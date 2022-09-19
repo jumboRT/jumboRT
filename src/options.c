@@ -126,7 +126,7 @@ void
 			rt_assert(!opts->net_jobs_set, "more than one net job count specified");
 			rt_assert(i + 1 < argc, "-j requires an argument");
 			opts->net_jobs = ft_atoi(argv[i + 1]);
-			rt_assert(opts->net_jobs > 0 && opts->net_jobs <= 256, "invalid net job count");
+			rt_assert(opts->net_jobs > 0 && opts->net_jobs <= 1024, "invalid net job count");
 			opts->net_jobs_set = 1;
 			i += 2;
 		}
@@ -135,7 +135,7 @@ void
 			rt_assert(!opts->req_jobs_set, "more than one request job count specified");
 			rt_assert(i + 1 < argc, "-J requires an argument");
 			opts->req_jobs = ft_atoi(argv[i + 1]);
-			rt_assert(opts->req_jobs > 0 && opts->req_jobs <= 16, "invalid request job count");
+			rt_assert(opts->req_jobs > 0 && opts->req_jobs <= 64, "invalid request job count");
 			opts->req_jobs_set = 1;
 			i += 2;
 		}

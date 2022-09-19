@@ -15,6 +15,7 @@
 /* TODO: material hashing to check if scene is the same as last scene in network client */
 /* TODO: better fog */
 /* TODO: split up headers */
+/* TODO: use ropes for tree traversal */
 
 #include <libft.h>
 #include <ft_printf.h>

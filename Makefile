@@ -257,7 +257,11 @@ ifeq ($(platform), macos)
 	COMPILER_CFLAGS	+= -DRT_MACOS
 	COMPILER_EXE := compile
 else ifeq ($(platform), linux)
-	FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
+	ifeq ($(target), joinc)
+		FRAMEWORKS	:= -lm -lpthread -lOpenCL
+	else
+		FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
+	endif
 	CFLAGS		+= -DRT_LINUX
 	COMPILER_CFLAGS	+= -DRT_LINUX
 	COMPILER_EXE := compile
@@ -305,7 +309,7 @@ clean:
 	$(SILENT)rm -rf build
 	$(SILENT)${MAKE} -C $(LIBFT_DIR) fclean
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) fclean
-	$(SILENT)${MAKE} -C $(MLX_DIR) clean
+	-$(SILENT)${MAKE} -C $(MLX_DIR) clean
 
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
