@@ -1,7 +1,7 @@
 #ifndef RT_SAMPLE_H
 #define RT_SAMPLE_H
 
-#include "state.h"
+#include "world.h"
 
 t_vec		triangle_sample(t_triangle triangle, GLOBAL t_context *ctx);
 t_vec		sphere_sample(t_sphere sphere, GLOBAL t_context *ctx);

@@ -183,13 +183,13 @@ int
 }
 
 static float
-	cap_area(t_cylinder cylinder)
+	cylinder_cap_area(t_cylinder cylinder)
 {
 	return (RT_PI * cylinder.radius * cylinder.radius);
 }
 
 static float
-	mantle_area(t_cylinder cylinder)
+	cylinder_mantle_area(t_cylinder cylinder)
 {
 	return (RT_2PI * cylinder.radius * cylinder.height);
 }
@@ -206,13 +206,13 @@ t_vec
 	sample = rt_random_float_range(&ctx->seed, 0, cylinder_area(cylinder));
 	u = vec_tangent(cylinder.dir);
 	v = vec_cross(cylinder.dir, u);
-	if (sample < mantle_area(cylinder))
+	if (sample < cylinder_mantle_area(cylinder))
 	{
 		up = vec_scale(cylinder.dir, rt_random_float_range(&ctx->seed, 0, cylinder.height));
 		out = vec_scale(vec_rotate(cylinder.dir, u, rt_random_float_range(&ctx->seed, 0, RT_2PI)), cylinder.radius);
 		return (vec_add(vec_add(up, out), cylinder.pos));
 	}
-	else if (sample < mantle_area(cylinder) + cap_area(cylinder))
+	else if (sample < cylinder_mantle_area(cylinder) + cylinder_cap_area(cylinder))
 	{
 		return (vec_add(rt_random_in_disk(&ctx->seed, u, v, cylinder.radius), cylinder.pos));
 	}
@@ -225,5 +225,5 @@ t_vec
 float
 	cylinder_area(t_cylinder cylinder)
 {
-	return (2.0f * cap_area(cylinder) + mantle_area(cylinder));
+	return (2.0f * cylinder_cap_area(cylinder) + cylinder_mantle_area(cylinder));
 }

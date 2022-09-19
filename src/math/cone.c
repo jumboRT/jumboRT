@@ -119,7 +119,7 @@ int
 }
 
 static float
-	cap_area(t_cone cone)
+	cone_cap_area(t_cone cone)
 {
 	float	r;
 
@@ -128,7 +128,7 @@ static float
 }
 
 static float
-	mantle_area(t_cone cone)
+	cone_mantle_area(t_cone cone)
 {
 	float	r;
 	float	l;
@@ -152,7 +152,7 @@ t_vec
 	u = vec_tangent(cone.dir);
 	v = vec_cross(cone.dir, u);
 	sample = rt_random_float_range(&ctx->seed, 0, cone_area(cone));
-	if (sample < mantle_area(cone))
+	if (sample < cone_mantle_area(cone))
 	{
 		down = vec_scale(cone.dir, rt_sqrt(rt_random_float_range(&ctx->seed, 0, cone.height)));
 		out = vec_scale(vec_rotate(cone.dir, u, rt_random_float_range(&ctx->seed, 0, RT_2PI)), r);
@@ -167,6 +167,6 @@ t_vec
 float
 	cone_area(t_cone cone)
 {
-	return (cap_area(cone) + mantle_area(cone));
+	return (cone_cap_area(cone) + cone_mantle_area(cone));
 }
 
