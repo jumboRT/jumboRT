@@ -26,6 +26,7 @@ void
 	world->textures = world_zero(&world->textures_count, &world->textures_size, &world->textures_capacity);
 	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
 	world->bxdfs = world_zero(&world->bxdfs_count, &world->bxdfs_size, &world->bxdfs_capacity);
+	world->lights = world_zero(&world->lights_count, &world->lights_size, &world->lights_capacity);
 	world->flags = 0;
 	world->render_mode = RT_RENDER_MODE_DEFAULT;
 	world->batch_size = 16;
@@ -73,13 +74,17 @@ uint32_t
 uint32_t
 	world_add_primitive(t_world *world, void *primitive, size_t size)
 {
-	size_t	old_size;
+	size_t				old_size;
+	const t_material	*mat;
 
 	world->primitives_count += 1;
 	old_size = world->primitives_size;
 	world->primitives_size += (size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN;
 	world->primitives = world_reallog(world->primitives, &world->primitives_capacity, world->primitives_size);
 	rt_memcpy((char *) world->primitives + old_size, primitive, size);
+	mat = get_mat_const(world, prim_mat(primitive));
+	if (mat->flags & RT_MAT_EMITTER)
+		world_add_light(world, old_size / RT_PRIMITIVE_ALIGN);
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }
 
@@ -190,5 +195,18 @@ void
 		material->surface.end += 1;
 		material->surface.weight += ((t_bxdf *) bxdf)->weight;
 	}
+}
+
+uint32_t
+	world_add_light(t_world *world, uint32_t light)
+{
+	size_t	old_size;
+
+	world->lights_count += 1;
+	old_size = world->lights_size;
+	world->lights_size += sizeof(light);
+	world->lights = world_reallog(world->lights, &world->lights_capacity, world->lights_size);
+	rt_memcpy((char *) world->lights + old_size, &light, sizeof(light));
+	return (old_size / sizeof(light));
 }
 

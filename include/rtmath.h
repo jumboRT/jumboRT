@@ -1,7 +1,7 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
-# define RT_TINY_VAL 0.0001
+# define RT_TINY_VAL 0.001
 # define RT_HUGE_VAL 1000000000.0
 
 # define RT_1_PI 0.31831 

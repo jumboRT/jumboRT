@@ -301,6 +301,7 @@ struct s_world {
 	uint32_t				accel_degenerates_count;
 	uint32_t				textures_count;
 	uint32_t				bxdfs_count;
+	uint32_t				lights_count;
 	uint64_t				primitives_size;
 	uint64_t				materials_size;
 	uint64_t				vertices_size;
@@ -310,6 +311,7 @@ struct s_world {
 	uint64_t				textures_size;
 	uint64_t				texture_data_size;
 	uint64_t				bxdfs_size;
+	uint64_t				lights_size;
 	uint64_t				primitives_capacity;
 	uint64_t				materials_capacity;
 	uint64_t				vertices_capacity;
@@ -319,6 +321,7 @@ struct s_world {
 	uint64_t				textures_capacity;
 	uint64_t				texture_data_capacity;
 	uint64_t				bxdfs_capacity;
+	uint64_t				lights_capacity;
 	GLOBAL void				*primitives;
 	GLOBAL t_material		*materials;
 	GLOBAL t_vertex			*vertices;
@@ -328,6 +331,7 @@ struct s_world {
 	GLOBAL t_tex			*textures;
 	GLOBAL unsigned char	*texture_data;
 	GLOBAL t_bxdf_any		*bxdfs;
+	GLOBAL uint32_t			*lights;
 };
 
 uint64_t	project_index(const GLOBAL t_world *world, uint64_t index);

@@ -88,7 +88,7 @@ static void
 	hit->hit.shading_normal = hit->rel_shading_normal;
 }
 
-/* TODO: alpha */
+/* TODO: factor in bsdf pdf */
 static int
 	ray_to_light(const GLOBAL t_world *world, const GLOBAL t_primitive *prim, GLOBAL t_context *ctx, t_light_hit *hit, t_vec org)
 {
@@ -104,12 +104,13 @@ static int
 		return (0);
 	pos = prim_sample(prim, world, ctx);
 	ray_obj = ray(org, vec_norm(vec_sub(pos, org)));
+	scale = mat->brightness * world->lights_count;
 	if (prim_type(prim) == RT_SHAPE_POINT)
 	{
 		if (world_intersect(world, ray_obj, &world_hit) && vec_mag(vec_sub(pos, world_hit.hit.pos)) < RT_TINY_VAL)
 			return (0);
-		hit->color = vec_scale(filter_sample(world, mat->emission, vec2(0, 0)), mat->brightness * RT_PI);
-		return (1);
+		world_hit.hit.uv = vec2(0, 0);
+		scale *= RT_PI;
 	}
 	else
 	{
@@ -117,12 +118,23 @@ static int
 			return (0);
 		fix_normals(world, mat, &world_hit, ray_obj);
 		dot = rt_abs(vec_dot(ray_obj.dir, world_hit.rel_shading_normal));
-		scale = mat->brightness * dot * prim_area(prim, world);
+		scale *= dot * prim_area(prim, world);
 		if (mat->emission_exp != 0.0)
 			scale *= rt_pow(dot, mat->emission_exp);
-		hit->color = vec_scale(filter_sample(world, mat->emission, world_hit.hit.uv), scale);
-		return (1);
 	}
+	hit->color = vec_scale(filter_sample(world, mat->emission, world_hit.hit.uv), scale);
+	return (1);
+}
+
+static int
+	ray_to_lights(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_light_hit *hit, t_vec org)
+{
+	const GLOBAL t_primitive	*prim;
+	uint32_t					light;
+
+	light = rt_random(&ctx->seed) % world->lights_count;
+	prim = get_prim_const(world, world->lights[light]);
+	return (ray_to_light(world, prim, ctx, hit, org));
 }
 
 static int

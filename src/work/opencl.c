@@ -60,6 +60,7 @@ struct s_opencl_ctx {
 	cl_mem				texture_data_mem;
 	cl_mem				textures_mem;
 	cl_mem				bxdfs_mem;
+	cl_mem				lights_mem;
 	t_context			ctx[RT_WORK_OPENCL_GLOBAL_SIZE];
 	t_result			result[RT_WORK_OPENCL_CHUNK_SIZE];
 	cl_uint				indices[2];
@@ -329,6 +330,7 @@ static void
 	cl_ctx->texture_data_mem = work_copy_ptr(cl_ctx, work->state->world->texture_data_size, work->state->world->texture_data, 12);
 	cl_ctx->textures_mem = work_copy_ptr(cl_ctx, work->state->world->textures_size, work->state->world->textures, 13);
 	cl_ctx->bxdfs_mem = work_copy_ptr(cl_ctx, work->state->world->bxdfs_size, work->state->world->bxdfs, 14);
+	cl_ctx->lights_mem = work_copy_ptr(cl_ctx, work->state->world->lights_size, work->state->world->lights, 15);
 	status = clSetKernelArg(cl_ctx->work_kernel, 0, sizeof(cl_mem), &cl_ctx->world_mem);
 	rt_assert(status == CL_SUCCESS, "clSetKernelArg work_kernel 0 failed");
 	status = clSetKernelArg(cl_ctx->work_kernel, 1, sizeof(cl_mem), &cl_ctx->ctx_mem);
@@ -444,6 +446,7 @@ static void
 	cl_ctx->texture_data_mem = NULL;
 	cl_ctx->textures_mem = NULL;
 	cl_ctx->bxdfs_mem = NULL;
+	cl_ctx->lights_mem = NULL;
 	work_add(work, work_start, cl_ctx, RT_BACKEND_OPENCL);
 }
 
@@ -524,6 +527,7 @@ static void
 	work_destroy_array(cl_ctx->texture_data_mem);
 	work_destroy_array(cl_ctx->textures_mem);
 	work_destroy_array(cl_ctx->bxdfs_mem);
+	work_destroy_array(cl_ctx->lights_mem);
 }
 
 void
