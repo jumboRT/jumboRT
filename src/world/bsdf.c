@@ -53,7 +53,6 @@ static float
 	f_bxdf_bphong_f(float theta, float alpha)
 {
 	return (((alpha + 2.0f) * rt_pow(rt_cos(theta), alpha + 1.0)) / RT_2PI);
-	return (1.0f);
 }
 
 static t_vec
@@ -77,10 +76,6 @@ static t_vec
 	*wo = local_to_world(hit, *wo);
 	half_vec = vec_norm(vec_add(*wo, wi));
 
-	/*
-	return (vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
-				f_bxdf_bphong_f(theta, alpha)));
-	*/
 	return (vec_add(vec_scale(filter_sample(world, bxdf->base.tex, hit.hit.uv),
 					vec_dot(half_vec, hit.rel_shading_normal)),
 			vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
