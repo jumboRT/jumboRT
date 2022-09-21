@@ -77,15 +77,14 @@ static t_vec
 	*wo = local_to_world(hit, *wo);
 	half_vec = vec_norm(vec_add(*wo, wi));
 
+	/*
 	return (vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
 				f_bxdf_bphong_f(theta, alpha)));
-	/*
+	*/
 	return (vec_add(vec_scale(filter_sample(world, bxdf->base.tex, hit.hit.uv),
 					vec_dot(half_vec, hit.rel_shading_normal)),
 			vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
 				f_bxdf_bphong_f(theta, alpha))));
-				*/
-
 }
 
 static t_vec
