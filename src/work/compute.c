@@ -32,7 +32,7 @@ __kernel void
 	world->texture_data = texture_data;
 	world->textures = textures;
 	world->bxdfs = bxdfs;
-	world->lights = lights
+	world->lights = lights;
 	my_ctx = &ctx[get_global_id(0)];
 	world_trace_all(world, my_ctx, results, index, begin, end);
 }

@@ -26,6 +26,7 @@ static const t_directive	directives[] = {
 	{ "diffuse", rt_exec_diffuse },
 	{ "reflective", rt_exec_reflective },
 	{ "cook_torrance", rt_exec_cook_torrance },
+	{ "bphong", rt_exec_bphong},
 	{ "transmissive", rt_exec_transmissive },
 	{ "emission", rt_exec_emission },
 	{ "emission_exp", rt_exec_emission_exp },

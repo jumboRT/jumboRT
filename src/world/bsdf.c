@@ -41,6 +41,7 @@ static t_vec
 static t_vec
 	f_bxdf_diffuse_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, const GLOBAL t_bxdf_diffuse *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
 {
+	(void) wi;
 	*wo = rt_random_on_hemi(&ctx->seed, hit.rel_shading_normal);
 	//*wo = rt_random_on_hemi_cos(&ctx->seed);
 	//*wo = local_to_world(hit, *wo);
@@ -48,23 +49,43 @@ static t_vec
 	return (filter_sample(world, bxdf->base.tex, hit.hit.uv));
 }
 
+static float
+	f_bxdf_bphong_f(float theta, float alpha)
+{
+	return (((alpha + 2.0f) * rt_pow(rt_cos(theta), alpha + 1.0)) / RT_2PI);
+	return (1.0f);
+}
+
 static t_vec
-	f_bxdf_bhong_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx,
-			const GLOBAL t_bxdf_bphong *bxdf, t_world_hit hit, t_vec wi, t_vec *wo)
+	f_bxdf_bphong_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx,
+			const GLOBAL t_bxdf_bphong *bxdf, t_world_hit hit,
+			t_vec wi, t_vec *wo)
 {
 	float	e0;
 	float	e1;
 	float	theta;
 	float	phi;
 	float	alpha;
+	t_vec	half_vec;
 
 	e0 = rt_random_float_range(&ctx->seed, 0, 1.0f);
 	e1 = rt_random_float_range(&ctx->seed, 0, 1.0f);
-	alpha = filter_sample(world, bxdf->base.tex, hit.hit.uv);
+	alpha = x(filter_sample(world, bxdf->alpha, hit.hit.uv));
 	theta = rt_acos(rt_pow(e0, (1.0f / (alpha + 2.0f))));
 	phi = RT_2PI * e1;
-	*wo = rt_sphere_to_cart(theta, phi);
+	*wo = sphere_to_cart(theta, phi);
 	*wo = local_to_world(hit, *wo);
+	half_vec = vec_norm(vec_add(*wo, wi));
+
+	return (vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
+				f_bxdf_bphong_f(theta, alpha)));
+	/*
+	return (vec_add(vec_scale(filter_sample(world, bxdf->base.tex, hit.hit.uv),
+					vec_dot(half_vec, hit.rel_shading_normal)),
+			vec_scale(filter_sample(world, bxdf->spec, hit.hit.uv),
+				f_bxdf_bphong_f(theta, alpha))));
+				*/
+
 }
 
 static t_vec
@@ -226,6 +247,8 @@ static t_vec
 		return (f_bxdf_reflective_sample(world, ctx, (const GLOBAL t_bxdf_reflective *) bxdf, hit, wiw, wow));
 	if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		return (f_bxdf_transmissive_sample(world, ctx, trace_ctx, (const GLOBAL t_bxdf_transmissive *) bxdf, hit, wiw, wow));;
+	if (bxdf->type == RT_BXDF_BLINN_PHONG)
+		return (f_bxdf_bphong_sample(world, ctx, (const GLOBAL t_bxdf_bphong *) bxdf, hit, wiw, wow));
 	return vec_0();
 }
 

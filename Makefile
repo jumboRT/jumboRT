@@ -17,7 +17,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
-						   gamma.c vec_value.c paraboloid.c hyperboloid.c
+						   gamma.c vec_value.c paraboloid.c hyperboloid.c coord.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \
@@ -72,6 +72,7 @@ OPENCL_FILES			:= \
 	src/math/clamp.c \
 	src/math/basis.c \
 	src/math/sqrt.c \
+	src/math/coord.c \
 	src/math/sin.c \
 	src/math/cos.c \
 	src/math/tan.c \
