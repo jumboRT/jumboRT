@@ -86,6 +86,7 @@ static size_t
 
 	y = image->height;
 	offset = 0;
+	*max = RT_TINY_VAL;
 	while (y--)
 	{
 		x = 0;
