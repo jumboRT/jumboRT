@@ -109,7 +109,7 @@ float
 	}
 	if (!has_digit) {
 		//TODO wordlen could overflow the int
-		rt_parse_error(ctx, "bad floating point value: %.*s",
+		rt_parse_error(ctx, "bad floating point value '%.*s'",
 				(int) rt_wordlen(word), word);
 	}
 	return ((integer_part + fractional_part) * sign);
