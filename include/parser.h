@@ -95,6 +95,7 @@ void			rt_exec_checker_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_diffuse(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_bphong(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_transmissive(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission_exp(t_world *world, t_parse_ctx *ctx);

@@ -223,6 +223,7 @@ t_ray		ray(t_vec org, t_vec dir);
 t_vec		ray_at(t_ray ray, float t);
 
 t_vec2		sphere_uv_at(t_vec point);
+t_vec		sphere_to_cart(float theta, float phi);
 
 int			ray_plane_intersect(t_ray ray,
 				t_plane plane, float min, t_hit *hit);
