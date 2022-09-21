@@ -15,6 +15,7 @@
 /* TODO: better fog */
 /* TODO: split up headers */
 /* TODO: use ropes for tree traversal */
+/* TODO: remove shell scripts and python files out of repo dir */
 
 #include <libft.h>
 #include <ft_printf.h>
