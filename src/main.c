@@ -8,9 +8,8 @@
 
 /* TODO: credits for all the people who helped render images */
 /* TODO: better image reconstruction */
-/* TODO: real specular reflection (to complete phong reflection model) */
+/* TODO: check blinn phong reflection */
 /* TODO: help flag for help message */
-/* TODO: implement hdr with PFM */
 /* TODO: texture filtering */
 /* TODO: material hashing to check if scene is the same as last scene in network client */
 /* TODO: better fog */
