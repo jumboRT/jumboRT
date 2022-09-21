@@ -20,14 +20,20 @@ void
 }
 
 size_t
-	rt_idlen(t_parse_ctx *ctx)
+	rt_wordlen(const char *str)
 {
 	size_t	i;
 
 	i = 0;
-	while (!ft_isspace(ctx->data[i]) && ctx->data[i] != '\0')
+	while (!ft_isspace(str[i]) && str[i] != '\0')
 		i += 1;
 	return (i);
+}
+
+size_t
+	rt_idlen(t_parse_ctx *ctx)
+{
+	return (rt_wordlen(ctx->data));
 }
 
 void
@@ -64,13 +70,15 @@ unsigned int
 float
 	rt_float(t_parse_ctx *ctx)
 {
-	float	integer_part;
-	float	fractional_part;
-	float	exp;
-	float	sign;
+	float		integer_part;
+	float		fractional_part;
+	float		exp;
+	float		sign;
 	int		has_digit;
+	const char	*word;
 
 	rt_skip(ctx, ft_isspace);
+	word = ctx->data;
 	has_digit = 0;
 	sign = 1.0f;
 	integer_part = 0.0f;
@@ -99,9 +107,10 @@ float
 		ctx->data += 1;
 		has_digit = 1;
 	}
-	if (!has_digit)
-	{
-		rt_parse_error(ctx, "bad floating point value");
+	if (!has_digit) {
+		//TODO wordlen could overflow the int
+		rt_parse_error(ctx, "bad floating point value: %.*s",
+				(int) rt_wordlen(word), word);
 	}
 	return ((integer_part + fractional_part) * sign);
 }

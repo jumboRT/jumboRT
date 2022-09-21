@@ -55,6 +55,7 @@ void			rt_advance(t_parse_ctx *ctx);
 
 void			rt_skip(t_parse_ctx *ctx, int (*pred)(int));
 void			rt_expect(t_parse_ctx *ctx, int ch);
+size_t			rt_wordlen(const char *str);
 size_t			rt_idlen(t_parse_ctx *ctx);
 void			rt_idskip(t_parse_ctx *ctx, size_t len);
 
