@@ -9,6 +9,10 @@
 #  define ACCEL_USE_ROPES 0
 # endif
 
+# ifndef ACCEL_INLINE_PRIMS
+#  define ACCEL_INLINE_PRIMS 1
+# endif
+
 # define RT_PRIMITIVE_ALIGN 16
 
 # define RT_RENDER_MODE_DEFAULT				0
@@ -293,8 +297,8 @@ struct s_shape_point {
 struct s_accel_node {
 	union {
 		float		split;
-		uint32_t	one_primitive;
-		uint32_t	primitive_ioffset;
+		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
+		uint32_t	primitive_offset;
 	}	a;
 	union {
 		uint32_t	flags;
@@ -309,8 +313,8 @@ struct s_accel_node {
 struct s_accel_node {
 	union {
 		float		split;
-		uint32_t	one_primitive;
-		uint32_t	primitive_ioffset;
+		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
+		uint32_t	primitive_offset;
 	}	a;
 	union {
 		uint32_t	flags;
