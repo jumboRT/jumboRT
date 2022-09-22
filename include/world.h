@@ -1,6 +1,14 @@
 #ifndef WORLD_H
 # define WORLD_H
 
+# ifndef ACCEL_USE_TREE
+#  define ACCEL_USE_TREE 1
+# endif
+
+# ifndef ACCEL_USE_ROPES
+#  define ACCEL_USE_ROPES 0
+# endif
+
 # define RT_PRIMITIVE_ALIGN 16
 
 # define RT_RENDER_MODE_DEFAULT				0
@@ -84,6 +92,12 @@ typedef struct s_result				t_result;
 typedef struct s_trace_ctx			t_trace_ctx;
 typedef struct s_filter				t_filter;
 typedef struct s_eta_link			t_eta_link;
+typedef struct s_rope_data			t_rope_data;
+
+struct s_rope_data {
+	float		bounds[6];
+	uint32_t	ropes[6];
+};
 
 struct s_eta_link {
 	int64_t		mat;
@@ -269,6 +283,24 @@ struct s_shape_point {
 	t_vec		pos;
 };
 
+# if ACCEL_USE_ROPES
+
+struct s_accel_node {
+	union {
+		float		split;
+		uint32_t	one_primitive;
+		uint32_t	primitive_ioffset;
+	}	a;
+	union {
+		uint32_t	flags;
+		uint32_t	nprims;
+		uint32_t	above_child;
+	}	b;
+	t_rope_data		rope_data;
+};
+
+# else
+
 struct s_accel_node {
 	union {
 		float		split;
@@ -281,6 +313,8 @@ struct s_accel_node {
 		uint32_t	above_child;
 	}	b;
 };
+
+# endif
 
 struct s_world_hit {
 	t_hit						hit;

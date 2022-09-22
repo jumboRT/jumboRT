@@ -22,7 +22,7 @@ WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
 						   size.c accel_algo.c accel_info.c accel_util.c \
 						   node.c bounds.c common.c trace.c camera.c \
 						   tex_sample.c material.c tex_ppm.c bsdf.c filter.c \
-						   conversion.c hash.c
+						   conversion.c hash.c accel_ropes.c
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \

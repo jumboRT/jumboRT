@@ -87,6 +87,8 @@ void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
 void		world_info_destroy(t_tree_info *tree, t_node_info *node);
 
+void		world_attach_ropes(t_world *world, t_bounds bounds);
+
 void		material_init(t_material *mat, const t_world *world);
 void		texture_init(t_tex *tex);
 

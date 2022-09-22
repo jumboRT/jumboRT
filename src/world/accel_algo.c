@@ -250,6 +250,7 @@ void
 		world_info_create(&tree, &node, world);
 		world_info_init(&tree, &node, world);
 		world_plant_tree(&node);
+		world_attach_ropes(world, node.bounds);
 		world_info_destroy(&tree, &node);
 		world_accel_save(world, file, hash);
 	}
