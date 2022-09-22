@@ -16,9 +16,9 @@ static void
 			node = world->accel_nodes + above_child(*node);
 		else if (split_axis(*node) == index % 3)
 			node = node + 1;
-		else if (split_pos(*node) < rope_data->bounds[split_axis(*node) + 0])
+		else if (split_pos(*node) <= rope_data->bounds[split_axis(*node) + 0])
 			node = world->accel_nodes + above_child(*node);
-		else if (split_pos(*node) > rope_data->bounds[split_axis(*node) + 3])
+		else if (split_pos(*node) >= rope_data->bounds[split_axis(*node) + 3])
 			node = node + 1;
 		else
 			break ;
@@ -30,6 +30,7 @@ static void
 	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data)
 {
 	t_rope_data	child_rope_data;
+	t_leaf_data	leaf_data;
 	uint32_t	i;
 
 	i = 0;
@@ -39,8 +40,13 @@ static void
 			optimize(world, &rope_data, i);
 		i += 1;
 	}
-	node->rope_data = rope_data;
-	if (!is_leaf(*node))
+	if (is_leaf(*node))
+	{
+		leaf_data.rope_data = rope_data;
+		leaf_data.a.primitive_ioffset = node->a.primitive_ioffset;
+		node->a.leaf_data_index = world_add_leaf_data(world, leaf_data);
+	}
+	else
 	{
 		child_rope_data = rope_data;
 		child_rope_data.bounds[split_axis(*node) + 0] = split_pos(*node);

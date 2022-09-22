@@ -80,6 +80,7 @@ uint32_t	world_add_tex(t_world *world, const t_tex *tex);
 uint32_t	world_alloc_tex_data(t_world *world, size_t size);
 void		world_insert_bxdf(t_world *world, t_material *material, void *bxdf, size_t size);
 uint32_t	world_add_light(t_world *world, uint32_t light);
+uint32_t	world_add_leaf_data(t_world *world, t_leaf_data leaf_data);
 
 void		world_load_ppm(t_world *world, t_tex *tex, const unsigned char *data, size_t len);
 

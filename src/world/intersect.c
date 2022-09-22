@@ -65,6 +65,7 @@ static void
 	uint32_t					index;
 	float						distance;
 	uint32_t					rope_index;
+	const GLOBAL t_leaf_data	*leaf_data;
 
 	min_t = RT_TINY_VAL;
 	node = world->accel_nodes;
@@ -84,10 +85,7 @@ static void
 				else
 					node = world->accel_nodes + above_child(*node);
 			}
-			if (nprims(*node) == 1)
-				prims = &node->a.one_primitive;
-			else
-				prims = world->accel_indices + node->a.primitive_ioffset;
+			prims = node_prims(world, node);
 			iprim = 0;
 			nprim = nprims(*node);
 		}
@@ -103,6 +101,7 @@ static void
 			exit_rope = 0xFFFFFFFF;
 			exit_distance = RT_HUGE_VAL;
 			index = 0;
+			leaf_data = &world->leaf_data[node->a.leaf_data_index];
 			while (index < 3)
 			{
 				org_t = xyz(ray.org, index);
@@ -113,11 +112,11 @@ static void
 						rope_index = index + 0;
 					else
 						rope_index = index + 3;
-					distance = (node->rope_data.bounds[rope_index] - org_t) / dir_t;
+					distance = (leaf_data->rope_data.bounds[rope_index] - org_t) / dir_t;
 					if (distance < exit_distance)
 					{
 						exit_distance = distance;
-						exit_rope = node->rope_data.ropes[rope_index];
+						exit_rope = leaf_data->rope_data.ropes[rope_index];
 					}
 				}
 				index += 1;
@@ -188,10 +187,7 @@ static void
 					max_t = plane_t;
 				}
 			}
-			if (nprims(*node) == 1)
-				prims = &node->a.one_primitive;
-			else
-				prims = world->accel_indices + node->a.primitive_ioffset;
+			prims = node_prims(world, node);
 			iprim = 0;
 			nprim = nprims(*node);
 		}

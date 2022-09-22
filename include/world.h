@@ -93,10 +93,19 @@ typedef struct s_trace_ctx			t_trace_ctx;
 typedef struct s_filter				t_filter;
 typedef struct s_eta_link			t_eta_link;
 typedef struct s_rope_data			t_rope_data;
+typedef struct s_leaf_data			t_leaf_data;
 
 struct s_rope_data {
 	float		bounds[6];
 	uint32_t	ropes[6];
+};
+
+struct s_leaf_data {
+	union {
+		uint32_t	one_primitive;
+		uint32_t	primitive_ioffset;
+	} a;
+	t_rope_data		rope_data;
 };
 
 struct s_eta_link {
@@ -283,29 +292,12 @@ struct s_shape_point {
 	t_vec		pos;
 };
 
-# if ACCEL_USE_ROPES
-
 struct s_accel_node {
 	union {
 		float		split;
 		uint32_t	one_primitive;
 		uint32_t	primitive_ioffset;
-	}	a;
-	union {
-		uint32_t	flags;
-		uint32_t	nprims;
-		uint32_t	above_child;
-	}	b;
-	t_rope_data		rope_data;
-};
-
-# else
-
-struct s_accel_node {
-	union {
-		float		split;
-		uint32_t	one_primitive;
-		uint32_t	primitive_ioffset;
+		uint32_t	leaf_data_index;
 	}	a;
 	union {
 		uint32_t	flags;
@@ -313,8 +305,6 @@ struct s_accel_node {
 		uint32_t	above_child;
 	}	b;
 };
-
-# endif
 
 struct s_world_hit {
 	t_hit						hit;
@@ -344,6 +334,7 @@ struct s_world {
 	uint32_t				textures_count;
 	uint32_t				bxdfs_count;
 	uint32_t				lights_count;
+	uint32_t				leaf_data_count;
 	uint64_t				primitives_size;
 	uint64_t				materials_size;
 	uint64_t				vertices_size;
@@ -354,6 +345,7 @@ struct s_world {
 	uint64_t				texture_data_size;
 	uint64_t				bxdfs_size;
 	uint64_t				lights_size;
+	uint64_t				leaf_data_size;
 	uint64_t				primitives_capacity;
 	uint64_t				materials_capacity;
 	uint64_t				vertices_capacity;
@@ -364,6 +356,7 @@ struct s_world {
 	uint64_t				texture_data_capacity;
 	uint64_t				bxdfs_capacity;
 	uint64_t				lights_capacity;
+	uint64_t				leaf_data_capacity;
 	GLOBAL void				*primitives;
 	GLOBAL t_material		*materials;
 	GLOBAL t_vertex			*vertices;
@@ -374,6 +367,7 @@ struct s_world {
 	GLOBAL unsigned char	*texture_data;
 	GLOBAL t_bxdf_any		*bxdfs;
 	GLOBAL uint32_t			*lights;
+	GLOBAL t_leaf_data		*leaf_data;
 };
 
 uint64_t	project_index(const GLOBAL t_world *world, uint64_t index);
@@ -425,6 +419,7 @@ void		interior_create(t_accel_node *interior, uint32_t axis, uint32_t above_chil
 
 void		camera_set(const t_world *world, t_camera *camera, t_vec org, t_vec dir, float fov, float focus, float blur);
 
+const GLOBAL uint32_t	*node_prims(const GLOBAL t_world *world, const GLOBAL t_accel_node *node);
 float		split_pos(t_accel_node node);
 uint32_t	nprims(t_accel_node node);
 uint32_t	split_axis(t_accel_node node);
