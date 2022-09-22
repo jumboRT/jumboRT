@@ -43,8 +43,7 @@ static void
 	if (is_leaf(*node))
 	{
 		leaf_data.rope_data = rope_data;
-		leaf_data.a.primitive_ioffset = node->a.primitive_ioffset;
-		node->a.leaf_data_index = world_add_leaf_data(world, leaf_data);
+		node->leaf_data_index = world_add_leaf_data(world, leaf_data);
 	}
 	else
 	{

@@ -101,7 +101,7 @@ static void
 			exit_rope = 0xFFFFFFFF;
 			exit_distance = RT_HUGE_VAL;
 			index = 0;
-			leaf_data = &world->leaf_data[node->a.leaf_data_index];
+			leaf_data = &world->leaf_data[node->leaf_data_index];
 			while (index < 3)
 			{
 				org_t = xyz(ray.org, index);

@@ -101,10 +101,6 @@ struct s_rope_data {
 };
 
 struct s_leaf_data {
-	union {
-		uint32_t	one_primitive;
-		uint32_t	primitive_ioffset;
-	} a;
 	t_rope_data		rope_data;
 };
 
@@ -292,12 +288,29 @@ struct s_shape_point {
 	t_vec		pos;
 };
 
+#if ACCEL_USE_ROPES
+
 struct s_accel_node {
 	union {
 		float		split;
 		uint32_t	one_primitive;
 		uint32_t	primitive_ioffset;
-		uint32_t	leaf_data_index;
+	}	a;
+	union {
+		uint32_t	flags;
+		uint32_t	nprims;
+		uint32_t	above_child;
+	}	b;
+	uint32_t	leaf_data_index;
+};
+
+#else
+
+struct s_accel_node {
+	union {
+		float		split;
+		uint32_t	one_primitive;
+		uint32_t	primitive_ioffset;
 	}	a;
 	union {
 		uint32_t	flags;
@@ -305,6 +318,8 @@ struct s_accel_node {
 		uint32_t	above_child;
 	}	b;
 };
+
+#endif
 
 struct s_world_hit {
 	t_hit						hit;
