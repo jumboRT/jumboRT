@@ -107,20 +107,18 @@ static void
 			{
 				org_t = xyz(ray.org, index);
 				dir_t = xyz(ray.dir, index);
-				if (dir_t < 0)
-					rope_index = index + 0;
-				else if (dir_t > 0)
-					rope_index = index + 3;
-				else
+				if (dir_t != 0)
 				{
-					index += 1;
-					continue ;
-				}
-				distance = (node->rope_data.bounds[rope_index] - org_t) / dir_t;
-				if (distance < exit_distance)
-				{
-					exit_distance = distance;
-					exit_rope = node->rope_data.ropes[rope_index];
+					if (dir_t < 0)
+						rope_index = index + 0;
+					else
+						rope_index = index + 3;
+					distance = (node->rope_data.bounds[rope_index] - org_t) / dir_t;
+					if (distance < exit_distance)
+					{
+						exit_distance = distance;
+						exit_rope = node->rope_data.ropes[rope_index];
+					}
 				}
 				index += 1;
 			}
