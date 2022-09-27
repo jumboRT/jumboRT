@@ -1,5 +1,6 @@
 #include "net.h"
 
+#include "ser.h"
 #include "z.h"
 #include "util.h"
 #include <string.h>
@@ -8,6 +9,7 @@
 #define RT_FLOAT_MANTISSA_BITS 8
 #define RT_FLOAT_EXPONENT_BITS 8
 
+/* TODO move these pack functions to different file */
 void
 	*rt_packu64(void *dst, uint64_t i)
 {

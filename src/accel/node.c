@@ -1,3 +1,5 @@
+#include "accel.h"
+
 #include "world.h"
 
 const GLOBAL uint32_t

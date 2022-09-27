@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include "mat.h"
 #include "world_impl.h"
 #include "util.h"
 
@@ -27,3 +28,8 @@ void
 	}
 }
 
+void
+	rt_exec_ambient_dist(t_world *world, t_parse_ctx *ctx)
+{
+	world->ambient_dist = rt_float(ctx);
+}

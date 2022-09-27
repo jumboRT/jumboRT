@@ -1,5 +1,8 @@
 #include "world.h"
 
+#include "shape.h"
+#include "accel.h"
+
 #ifndef ACCEL_NODE_STACK_SIZE
 # define ACCEL_NODE_STACK_SIZE 64
 #endif
@@ -212,10 +215,9 @@ static void
 
 #endif
 
-int
+void
 	world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
 {
-	hit->hit.t = RT_HUGE_VAL;
 	if (ACCEL_USE_TREE)
 	{
 		world_intersect_degenerates(world, ray, hit);
@@ -223,11 +225,4 @@ int
 	}
 	else
 		world_intersect_primitives(world, ray, hit);
-	if (hit->hit.t < RT_HUGE_VAL)
-	{
-		prim_hit_info(hit->prim, world, ray, hit);
-		return (1);
-	}
-	else
-		return (0);
 }

@@ -1,3 +1,4 @@
+#include "bsdf.h"
 #include "world.h"
 
 static t_vec
@@ -247,7 +248,19 @@ static t_vec
 }
 
 t_vec
-	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *trace_ctx, t_bsdf bsdf, t_world_hit hit, t_vec wiw, t_vec *wow)
+	f_bsdf_f(const GLOBAL t_world *world,GLOBAL t_context *ctx,
+			t_trace_ctx *trace_ctx, t_bsdf bsdf, t_world_hit hit,
+			t_vec wi, t_vec wo)
+{
+	uint32_t			idx;
+	const GLOBAL t_bxdf	*bxdf;
+	t_vec				result;
+}
+
+t_vec
+	f_bsdf_sample(const GLOBAL t_world *world, GLOBAL t_context *ctx,
+			t_trace_ctx *trace_ctx,
+			t_bsdf bsdf, t_world_hit hit, t_vec wiw, t_vec *wow)
 {
 	uint32_t			idx;
 	float				rand;

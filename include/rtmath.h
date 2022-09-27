@@ -12,7 +12,6 @@
 
 # if defined RT_VECTORIZE
 typedef float				t_vec __attribute__ ((vector_size(16)));
-typedef int					t_ivec __attribute__ ((vector_size(16))); /* TODO can probably be removed */
 typedef float				t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
@@ -150,8 +149,6 @@ float		rt_gc(float arg);
 float		rt_igc(float arg);
 t_vec		vec_gc(t_vec v);
 t_vec		vec_igc(t_vec v);
-
-int			float_eq(float a, float b, float error);
 
 float		x(t_vec v);
 float		y(t_vec v);

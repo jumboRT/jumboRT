@@ -1,5 +1,7 @@
-#include "world_impl.h"
+#include "accel.h"
 #include "util.h"
+#include "world.h"
+#include "world_impl.h"
 #include <math.h>
 
 const t_primitive *get_primitive(const t_tree_info *info, size_t index) {

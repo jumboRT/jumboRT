@@ -1,4 +1,4 @@
-#include "cl.h"
+#include "rand.h"
 
 t_seed
 	rt_random(GLOBAL t_seed *seed)

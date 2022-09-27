@@ -1,6 +1,6 @@
 #include "vector.h"
 
-#include "world_impl.h"
+#include "accel_impl.h"
 
 static void
 	swap(unsigned char *a, unsigned char *b, size_t size)

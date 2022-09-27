@@ -1,5 +1,6 @@
 #include "world_impl.h"
 
+#include "tex.h"
 #include "util.h"
 #include <libft.h>
 #include <ft_printf.h>

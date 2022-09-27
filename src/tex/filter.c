@@ -1,4 +1,4 @@
-#include "world.h"
+#include "tex.h"
 
 t_vec
 	filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset)

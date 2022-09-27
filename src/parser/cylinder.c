@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include "shape.h"
 #include "world_impl.h"
 
 void

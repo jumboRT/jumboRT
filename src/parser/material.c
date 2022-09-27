@@ -1,8 +1,9 @@
 #include "parser.h"
 
+#include "mat.h"
+#include "util.h"
+#include "shape.h"
 #include "world_impl.h"
-#include "util.h"
-#include "util.h"
 #include <libft.h>
 
 int

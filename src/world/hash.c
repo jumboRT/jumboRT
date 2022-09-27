@@ -1,5 +1,8 @@
 #include "world_impl.h"
 
+#include "mat.h"
+#include "shape.h"
+
 uint64_t
 	hash_salt(t_seed *seed, uint64_t salt)
 {

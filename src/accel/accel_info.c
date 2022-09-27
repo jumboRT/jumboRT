@@ -1,3 +1,7 @@
+#include "accel.h"
+#include "aabb.h"
+#include "shape.h"
+#include "world.h"
 #include "world_impl.h"
 
 #include "util.h"

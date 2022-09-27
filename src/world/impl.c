@@ -1,6 +1,9 @@
 #include "world_impl.h"
 
+#include "mat.h"
 #include "util.h"
+#include "shape.h"
+#include "accel.h"
 
 #include <libft.h>
 
@@ -32,6 +35,7 @@ void
 	world->render_mode = RT_RENDER_MODE_DEFAULT;
 	world->batch_size = 16;
 	world->trace_batch_size = 1;
+	world->ambient_dist = RT_HUGE_VAL;
 }
 
 void
@@ -86,7 +90,7 @@ uint32_t
 	world->primitives = world_reallog(world->primitives, &world->primitives_capacity, world->primitives_size);
 	rt_memcpy((char *) world->primitives + old_size, primitive, size);
 	mat = get_mat_const(world, prim_mat(primitive));
-	if (mat->flags & RT_MAT_EMITTER)
+	if (!prim_is_infinite(primitive) && (mat->flags & RT_MAT_EMITTER))
 		world_add_light(world, old_size / RT_PRIMITIVE_ALIGN);
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }

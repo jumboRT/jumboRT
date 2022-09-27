@@ -1,8 +1,6 @@
 #ifndef VECTOR_H
 # define VECTOR_H
 
-# include "cl.h"
-
 # include <stddef.h>
 
 typedef struct s_view	t_view;

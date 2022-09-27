@@ -2,6 +2,7 @@
 #include "state.h"
 #include "rtmath.h"
 #include "net.h"
+#include "ser.h"
 
 #include <ft_printf.h>
 #include <stdio.h>

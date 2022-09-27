@@ -1,8 +1,9 @@
 #ifndef Z_H
 #define Z_H
 
-#include "vector.h"
-#include <stdlib.h>
+# include "types.h"
+# include "vector.h"
+# include <stdlib.h>
 
 //#define ZWINDOW_SIZE (32768)
 #define ZWINDOW_SIZE (1024)

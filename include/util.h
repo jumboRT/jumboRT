@@ -1,8 +1,6 @@
 #ifndef UTIL_H
 # define UTIL_H
 
-# include "rtmath.h"
-
 # include <stddef.h>
 # include <unistd.h>
 # include <stdint.h>

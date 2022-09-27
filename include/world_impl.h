@@ -9,62 +9,9 @@
 
 # include <stddef.h>
 
-# define RT_INTERSECT_COST 80
-# define RT_TRAVERSAL_COST 80
-# define RT_EMPTY_BONUS (float) 0.3
-# define RT_MAX_PRIMITIVES 5
-
-# define ACCEL_BELOW 0
-# define ACCEL_ABOVE 1
-# define EDGE_START 0
-# define EDGE_END 1
-# define AXIS_X 0
-# define AXIS_Y 1
-# define AXIS_Z 2
-# define AXIS_NONE 3
-
-typedef struct s_prim_info	t_prim_info;
-typedef struct s_tree_edges	t_tree_edges;
-typedef struct s_tree_info	t_tree_info;
-typedef struct s_node_info	t_node_info;
-typedef struct s_split		t_split;
-typedef struct s_edge		t_edge;
-
 struct s_prim_info {
 	uint32_t	index;
 	t_bounds	bounds;
-};
-
-struct s_tree_edges {
-	t_edge	*edges[3];
-	size_t	count;
-};
-
-struct s_tree_info {
-	t_world			*world;
-	t_prim_info		*prims;
-	size_t			prims_count;
-	t_tree_edges	*edges;
-};
-
-struct s_node_info {
-	t_tree_info		*tree;
-	uint32_t		offset;
-	uint32_t		depth;
-	t_tree_edges	*edges;
-	t_bounds		bounds;
-};
-
-struct s_split {
-	float		offset;
-	float		cost;
-	uint8_t		axis;
-};
-
-struct s_edge {
-	float		offset;
-	uint32_t	index : 31;
-	uint32_t	type : 1;
 };
 
 void		world_create(t_world *world);
@@ -84,24 +31,8 @@ uint32_t	world_add_leaf_data(t_world *world, t_leaf_data leaf_data);
 
 void		world_load_ppm(t_world *world, t_tex *tex, const unsigned char *data, size_t len);
 
-void		world_info_create(t_tree_info *tree, t_node_info *node, t_world *world);
-void		world_info_init(t_tree_info *tree, t_node_info *node, t_world *world);
-void		world_info_destroy(t_tree_info *tree, t_node_info *node);
-
 void		world_attach_ropes(t_world *world, t_bounds bounds);
 
 void		material_init(t_material *mat, const t_world *world);
 void		texture_init(t_tex *tex);
-
-/* voor daan */
-uint32_t	world_max_depth(size_t prims_count);
-uint32_t	new_node(t_world *world);
-int			world_axis_side(const t_tree_info *tree, const t_split *split, uint32_t index);
-
-const t_primitive	*get_primitive(const t_tree_info *info, size_t index);
-t_bounds			get_bounds(const t_world *world, const t_primitive *primitive);
-void				interior_node_init(t_node_info *parent_info, const t_node_info *above_info, const t_split *split);
-void				leaf_node_init(t_node_info *node_info);
-float				get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t primitive_counts[2]);
-
 #endif

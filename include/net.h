@@ -142,21 +142,11 @@ int		rt_send_packet(struct s_client_base *client,
 int		rt_recv_packet(int sockfd, struct s_packet *packet, char **error);
 
 void	*rt_packstr(void *dst, struct s_string str);
-void	*rt_packu64(void *dst, uint64_t i);
-void	*rt_packfl(void *dst, float f);
-void	*rt_packvec(void *dst, t_vec vec);
-void	*rt_packhfl(void *dst, float f);
-void	*rt_packhvec(void *dst, t_vec vec);
 void	*rt_packhs(void *dst, struct s_handshake packet, int type);
 void	*rt_packsw(void *dst, struct s_send_work packet);
 void	*rt_packcjr(void *dst, struct s_cjob_request packet);
 void	*rt_packsr(void *dst, struct s_send_results packet);
 void	*rt_upackstr(void *src, struct s_string *str);
-void	*rt_upacku64(void *src, uint64_t *i);
-void	*rt_upackfl(void *dst, float *f);
-void	*rt_upackvec(void *dst, t_vec *vec);
-void	*rt_upackhfl(void *dst, float *f);
-void	*rt_upackhvec(void *dst, t_vec *vec);
 void	*rt_upacksr(void *src, struct s_send_results *dst);
 void	*rt_upacksjr(void *src, struct s_sjob_request *dst);
 void	*rt_upacksw(void *src, struct s_send_work *dst);
