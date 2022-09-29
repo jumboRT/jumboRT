@@ -6,8 +6,17 @@ t_sample
 			const GLOBAL t_bxdf_diffuse *bxdf, t_vec wiw)
 {
 	t_sample	result;
+	float		epsilon0;
+	float		epsilon1;
+	float		theta;
+	float		phi;
 
-	result.wo = rt_random_on_hemi_cos(&ctx->ctx->seed);	
+	epsilon0 = rt_random_float(&ctx->ctx->seed);
+	epsilon1 = rt_random_float(&ctx->ctx->seed);
+	theta = rt_acos(rt_sqrt(epsilon0));
+	phi = RT_2PI * epsilon1;
+	result.wo = sphere_to_cart(theta, phi);
+	result.wo = rt_random_on_hemi_cos(&ctx->ctx->seed);
 	result.bsdf = diffuse_f(ctx, hit, bxdf, wiw, result.wo);
 	result.pdf = diffuse_pdf(ctx, hit, bxdf, wiw, result.wo);
 	return (result);
@@ -32,8 +41,8 @@ float
 	(void) ctx;
 	(void) hit;
 	(void) bxdf;
-	if (vec_dot(wiw, wow) > 0)
-		return (z(wiw) * RT_1_PI);
+	if (vec_dot(wiw, wow) >= 0)
+		return (rt_abs(z(wiw) * RT_1_PI));
 	else
 		return (0);
 }

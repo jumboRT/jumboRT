@@ -59,6 +59,48 @@ t_sample
 	return (result);
 }
 
+float
+	bxdf_pdf(t_trace_ctx *ctx, const t_world_hit *hit,
+			const GLOBAL t_bxdf *bxdf, t_vec wi, t_vec wo)
+{
+	float	result;
+
+	result = 0.0f;
+	if (bxdf->type == RT_BXDF_DIFFUSE)
+		result += diffuse_pdf(ctx, hit, (const GLOBAL t_bxdf_diffuse *) bxdf,
+						wi, wo);
+	return (result);
+}
+
+float
+	bsdf_pdf(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo)
+{
+
+	uint32_t			idx;
+	uint32_t			type;
+	const GLOBAL t_bxdf	*bxdf;
+	float				result;
+
+	wi = world_to_local(hit, wi);
+	wo = world_to_local(hit, wo);
+	result = 0.0f;
+	idx = hit->mat->surface.begin;
+	type = 0;
+	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */
+	{
+		while (idx < hit->mat->surface.end)
+		{
+			bxdf = get_bxdf_const(ctx->world, idx);
+			if (bxdf->type != type)
+				break;
+			result += bxdf_pdf(ctx, hit, bxdf, wi, wo) * bxdf->weight;
+			idx++;
+		}
+		type++;
+	}
+	return (result);
+}
+
 t_vec
 	bxdf_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf *bxdf,
 			t_vec wi, t_vec wo)
@@ -81,6 +123,8 @@ t_vec
 	t_vec				result;
 
 	result = vec_0();
+	wi = world_to_local(hit, wi);
+	wo = world_to_local(hit, wo);
 	idx = hit->mat->surface.begin;
 	type = 0;
 	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */

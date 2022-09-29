@@ -241,8 +241,10 @@ static void
 		return ;
 	sample.wo = vec_norm(vec_sub(hit->hit.pos, lhit.hit.pos));
 	sample.bsdf = bsdf_f(ctx, hit, ctx->ray.dir, sample.wo);
-	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.hit.geometric_normal));
-	sample.pdf = sample.pdf * prim_area(lhit.prim, ctx->world);
+	sample.pdf = bsdf_pdf(ctx, hit, ctx->ray.dir, sample.wo);
+	sample.pdf *= rt_abs(vec_dot(sample.wo, lhit.hit.geometric_normal));
+	sample.pdf *= prim_area(lhit.prim, ctx->world);
+	sample.pdf /= lhit.hit.t * lhit.hit.t;
 	tmp = vec_scale(vec_mul(le(ctx, &lhit), sample.bsdf), sample.pdf);
 	ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, tmp));
 }
@@ -260,6 +262,7 @@ static int
 	return (sample < alpha);
 }
 
+#include <assert.h>
 static int
 	world_trace_step(t_trace_ctx *ctx)
 {
@@ -278,7 +281,9 @@ static int
 		if (sample.pdf == 0)
 			return (0);
 		ctx->ray.dir = sample.wo;
-		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, 1 / sample.pdf));
+		// assert(vec_dot(sample.wo, hit.rel_shading_normal) >= 0);
+		// TODO: scale by cosine
+		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
 	}
 	if (!hit.is_volume && (hit.mat->flags & RT_MAT_HAS_VOLUME)
 			&& vec_dot(ctx->ray.dir, hit.rel_geometric_normal) < 0)
