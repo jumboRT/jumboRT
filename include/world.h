@@ -56,9 +56,10 @@ struct s_trace_ctx {
 	t_vec					head;
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
-	t_eta_link				etas[RT_MAX_ETA];
 	uint32_t				volume_size;
+	float					refractive_index;
 	float					time;
+	int						should_add_emission;
 };
 
 struct s_result {
@@ -165,8 +166,8 @@ const GLOBAL t_bxdf			*get_bxdf_const(const GLOBAL t_world *world, uint32_t inde
 GLOBAL t_bxdf				*get_bxdf(GLOBAL t_world *world, uint32_t index);
 t_vec						get_vertex(const t_world *world, uint32_t index);
 t_vec						get_albedo(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_vec2 uv);
-t_vec						local_to_world(t_world_hit hit, t_vec v);
-t_vec						world_to_local(t_world_hit hit, t_vec v);
+t_vec						local_to_world(t_world_hit *hit, t_vec v);
+t_vec						world_to_local(t_world_hit *hit, t_vec v);
 void eta_init(t_trace_ctx *trace_ctx, float eta);
 
 t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);

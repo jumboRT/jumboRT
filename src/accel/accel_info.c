@@ -1,4 +1,5 @@
 #include "accel.h"
+#include "accel_impl.h"
 #include "aabb.h"
 #include "shape.h"
 #include "world.h"

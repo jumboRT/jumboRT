@@ -26,10 +26,11 @@ typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
 typedef struct s_bxdf_bphong		t_bxdf_bphong;
 typedef union u_bxdf_any			t_bxdf_any;
+typedef struct s_sample				t_sample;
 
 struct s_bxdf {
 	uint32_t	type;
-	t_filter	tex;
+	t_filter	tex; // TODO: move to individual bxdfs
 	float		weight;
 };
 
@@ -76,6 +77,19 @@ struct s_bsdf {
 	float		weight;
 };
 
-t_vec	f_bsdf_sample(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi, t_vec *wo);
-t_vec	f_bsdf_f(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi, t_vec *wo);
+struct s_sample {
+	t_vec	bsdf;
+	t_vec	wo;
+	float	pdf;
+};
+
+t_sample	sample(t_vec bsdf, t_vec wo, float pdf);
+
+t_sample	diffuse_sample(t_trace_ctx *ctx, t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
+t_vec		diffuse_f(t_trace_ctx *ctx, t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+float		diffuse_pdf(t_trace_ctx *ctx, t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+t_sample	bsdf_sample(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi);
+t_vec		bsdf_f(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi, t_vec wo);
+float		bsdf_pdf(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi, t_vec wo);
+int32_t		bsdf_is_perfspec(t_world_hit *hit); // TODO: compute at parse time
 #endif
