@@ -143,7 +143,7 @@ float
 
 	v0 = vec_sub(triangle.vertices[1], triangle.vertices[0]);
 	v1 = vec_sub(triangle.vertices[2], triangle.vertices[0]);
-	dot = vec_dot(v0, v1);
+	dot = vec_dot(vec_norm(v0), vec_norm(v1));
 	sin_theta = rt_sqrt(1 - dot * dot);
 	area = 0.5f * vec_mag(v0) * vec_mag(v1) * sin_theta;
 	return (area);

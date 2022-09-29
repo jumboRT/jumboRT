@@ -113,12 +113,12 @@ static void
 static void
 	intersect_partial(const t_trace_ctx *ctx, t_world_hit *hit, t_ray ray)
 {
+	hit->hit.t = ctx->time;
 	hit->prim = 0;
+	world_intersect(ctx->world, ray, hit);
 	hit->mat = 0;
 	hit->is_volume = 0;
 	hit->is_ambient = 0;
-	hit->hit.t = ctx->time;
-	world_intersect(ctx->world, ray, hit);
 	intersect_volume(ctx->volumes, ctx->volume_size, ctx->ctx, hit);
 	if (hit->hit.t >= ctx->time)
 		hit->is_ambient = 1;
@@ -143,7 +143,6 @@ static void
 	}
 	else
 	{
-		hit->mat = get_mat_const(ctx->world, prim_mat(hit->prim));
 		prim_hit_info(hit->prim, ctx->world, ray, hit);
 		fix_normals(ctx->world, hit, ray);
 	}
@@ -151,7 +150,7 @@ static void
 
 static t_ray
 	intersect_light_init(const t_trace_ctx *ctx, t_world_hit *hit,
-			t_world_hit *whit)
+			const t_world_hit *whit)
 {
 	uint32_t	light;
 	t_vec		delta;
@@ -167,7 +166,7 @@ static t_ray
 
 static int
 	intersect_light(const t_trace_ctx *ctx, t_world_hit *hit,
-			t_world_hit *whit)
+			const t_world_hit *whit)
 {
 	t_world_hit	lhit;
 	t_ray		lray;
@@ -232,7 +231,7 @@ static int
 }
 
 static void
-	world_trace_light(t_trace_ctx *ctx, t_world_hit *hit)
+	world_trace_light(t_trace_ctx *ctx, const t_world_hit *hit)
 {
 	t_world_hit	lhit;
 	t_sample	sample;
@@ -249,11 +248,23 @@ static void
 }
 
 static int
+	world_trace_alpha(t_trace_ctx *ctx, t_world_hit *hit)
+{
+	float	alpha;
+	float	sample;
+
+	if (!(hit->mat->flags & RT_MAT_HAS_ALPHA))
+		return (1);
+	sample = rt_random_float(&ctx->ctx->seed);
+	alpha = w(filter_sample(ctx->world, hit->mat->alpha, hit->hit.uv));
+	return (sample < alpha);
+}
+
+static int
 	world_trace_step(t_trace_ctx *ctx)
 {
 	t_world_hit	hit;
 	t_sample	sample;
-	float		alpha[2];
 
 	intersect_full(ctx, &hit, ctx->ray);
 	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
@@ -261,11 +272,11 @@ static int
 	world_trace_light(ctx, &hit);
 	if (hit.is_ambient || (!hit.is_volume && ctx->should_add_emission))
 		ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
-	alpha[0] = rt_random_float(&ctx->ctx->seed);
-	alpha[1] = w(filter_sample(ctx->world, hit.mat->alpha, hit.hit.uv));
-	if (!(hit.mat->flags & RT_MAT_HAS_ALPHA) || alpha[0] < alpha[1])
+	if (world_trace_alpha(ctx, &hit))
 	{
 		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
+		if (sample.pdf == 0)
+			return (0);
 		ctx->ray.dir = sample.wo;
 		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, 1 / sample.pdf));
 	}

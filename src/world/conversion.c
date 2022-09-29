@@ -1,6 +1,6 @@
 #include "world.h"
 
-t_vec world_to_local(t_world_hit *hit, t_vec v) {
+t_vec world_to_local(const t_world_hit *hit, t_vec v) {
 	t_vec	ns;
 	t_vec	ss;
 	t_vec	ts;
@@ -15,7 +15,7 @@ t_vec world_to_local(t_world_hit *hit, t_vec v) {
 	return vec_norm2(v);
 }
 
-t_vec local_to_world(t_world_hit *hit, t_vec v) {
+t_vec local_to_world(const t_world_hit *hit, t_vec v) {
 	t_vec	ns;
 	t_vec	ss;
 	t_vec	ts;

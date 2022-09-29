@@ -54,7 +54,7 @@ int
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
-	hit->geometric_normal = vec_scale(vec_sub(hit->pos, sphere.pos), 1.0 / sphere.radius);
+	hit->geometric_normal = vec_norm(vec_sub(hit->pos, sphere.pos));
 	hit->shading_normal = hit->geometric_normal;
 	return (1);
 }

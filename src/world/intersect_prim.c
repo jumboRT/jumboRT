@@ -59,6 +59,7 @@ int
 void
 	prim_hit_info(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
 {
+	hit->mat = get_mat_const(world, prim_mat(hit->prim));
 	if (prim_type(prim) == RT_SHAPE_SPHERE)
 		sphere_hit_info(ray, make_sphere(world, prim), &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)

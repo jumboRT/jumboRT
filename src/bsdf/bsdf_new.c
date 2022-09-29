@@ -4,7 +4,7 @@
 #include "mat.h"
 
 static t_sample
-	bxdf_sample_single(t_trace_ctx *ctx, t_world_hit *hit,
+	bxdf_sample_single(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf *bxdf, t_vec wiw)
 {
 	t_sample	result;
@@ -17,7 +17,7 @@ static t_sample
 }
 
 static t_sample
-	bxdf_sample(t_trace_ctx *ctx, t_world_hit *hit, uint32_t bxdf_idx, 
+	bxdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, uint32_t bxdf_idx, 
 			t_vec wiw)
 {
 	/*
@@ -60,7 +60,7 @@ t_sample
 }
 
 t_vec
-	bxdf_f(t_trace_ctx *ctx, t_world_hit *hit, const GLOBAL t_bxdf *bxdf,
+	bxdf_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf *bxdf,
 			t_vec wi, t_vec wo)
 {
 	t_vec	result;
@@ -73,7 +73,7 @@ t_vec
 }
 
 t_vec
-	bsdf_f(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi, t_vec wo)
+	bsdf_f(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo)
 {
 	uint32_t			idx;
 	uint32_t			type;
@@ -82,6 +82,7 @@ t_vec
 
 	result = vec_0();
 	idx = hit->mat->surface.begin;
+	type = 0;
 	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */
 	{
 		while (idx < hit->mat->surface.end)
@@ -99,7 +100,7 @@ t_vec
 }
 
 t_sample
-	bsdf_sample(t_trace_ctx *ctx, t_world_hit *hit, t_vec wi)
+	bsdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi)
 {
 	uint32_t			idx;
 	uint32_t			type;
@@ -127,7 +128,7 @@ t_sample
 }
 
 int32_t
-	bsdf_is_perfspec(t_world_hit *hit)
+	bsdf_is_perfspec(const t_world_hit *hit)
 {
 	return (0); /* TODO implement */
 }

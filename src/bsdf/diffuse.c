@@ -2,7 +2,7 @@
 #include "world.h"
 
 t_sample
-	diffuse_sample(t_trace_ctx *ctx, t_world_hit *hit,
+	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_diffuse *bxdf, t_vec wiw)
 {
 	t_sample	result;
@@ -14,7 +14,7 @@ t_sample
 }
 
 t_vec
-	diffuse_f(t_trace_ctx *ctx, t_world_hit *hit,
+	diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_diffuse *bxdf, t_vec wiw, t_vec wow)
 {
 	t_vec	color;
@@ -26,7 +26,7 @@ t_vec
 }
 
 float
-	diffuse_pdf(t_trace_ctx *ctx, t_world_hit *hit,
+	diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_diffuse *bxdf, t_vec wiw, t_vec wow)
 {
 	(void) ctx;

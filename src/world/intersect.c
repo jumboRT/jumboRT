@@ -181,13 +181,16 @@ static void
 					node = world->accel_nodes + above_child(*node);
 					tmp = -dir_t;
 				}
-				plane_t = (split_t - org_t) / dir_t;
-				if (tmp > 0 && plane_t < max_t)
+				if (dir_t != 0)
 				{
-					stack[istack].index = next_child;
-					stack[istack].max = max_t;
-					istack += 1;
-					max_t = plane_t;
+					plane_t = (split_t - org_t) / dir_t;
+					if (tmp > 0 && plane_t < max_t)
+					{
+						stack[istack].index = next_child;
+						stack[istack].max = max_t;
+						istack += 1;
+						max_t = plane_t;
+					}
 				}
 			}
 			prims = node_prims(world, node);
