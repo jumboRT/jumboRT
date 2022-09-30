@@ -200,7 +200,7 @@ static t_vec
 	if (!(hit->mat->flags & RT_MAT_EMITTER))
 		return (vec_0());
 	sample = filter_sample(ctx->world, hit->mat->emission, hit->hit.uv);
-	brightness = hit->mat->brightness * rt_pow(rt_abs(vec_dot(ctx->ray.dir, hit->rel_shading_normal)), hit->mat->emission_exp);
+	brightness = hit->mat->brightness; // TODO: * rt_pow(rt_abs(vec_dot(ctx->ray.dir, hit->rel_shading_normal)), hit->mat->emission_exp);
 	return (vec_scale(sample, brightness));
 }
 
@@ -272,26 +272,28 @@ static int
 	intersect_full(ctx, &hit, ctx->ray);
 	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
 		return (0);
-	world_trace_light(ctx, &hit);
-	if (hit.is_ambient || (!hit.is_volume && ctx->should_add_emission))
+	// world_trace_light(ctx, &hit);
+	if (1 || hit.is_ambient || (!hit.is_volume && ctx->should_add_emission)) // TODO: light emitting planes
 		ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
 	if (world_trace_alpha(ctx, &hit))
 	{
 		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
 		if (sample.pdf == 0)
 			return (0);
-		ctx->ray.dir = sample.wo;
 		// assert(vec_dot(sample.wo, hit.rel_shading_normal) >= 0);
-		// TODO: scale by cosine
-		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
+		// ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
+		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, 1.0f / sample.pdf));
+		// ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, vec_dot(ctx->ray.dir, sample.wo)));
+		ctx->ray.dir = sample.wo;
 	}
 	if (!hit.is_volume && (hit.mat->flags & RT_MAT_HAS_VOLUME)
 			&& vec_dot(ctx->ray.dir, hit.rel_geometric_normal) < 0)
 		toggle_volume(ctx->volumes, &ctx->volume_size, hit.mat,
 				vec_dot(ctx->ray.dir, hit.hit.geometric_normal));
 	ctx->ray.org = hit.hit.pos;
-	ctx->should_add_emission = bsdf_is_perfspec(&hit);
-	return (!vec_eq(ctx->head, vec_0()));
+	ctx->should_add_emission = bsdf_is_perfspec(&hit); // TODO: this is incorrect
+	ctx->time -= hit.hit.t;
+	return (!vec_eq(ctx->head, vec_0()) && ctx->time > 0);
 }
 
 void

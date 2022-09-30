@@ -117,3 +117,39 @@ t_vec
 	y = r * rt_sin(alpha);
 	return (vec_add(vec_scale(right, x), vec_scale(up, y)));
 }
+
+t_vec2
+	rt_random_concentric_disk(GLOBAL t_seed *seed)
+{
+	t_vec2	epsilon;
+	float	theta;
+	float	r;
+
+	epsilon = vec2(rt_random_float(seed), rt_random_float(seed));
+	epsilon = vec2_sub(vec2_scale(epsilon, 2.0f), vec2(1.0f, 1.0f));
+
+	if (vec2_eq(epsilon, vec2_0()))
+		return (epsilon);
+	if (rt_abs(u(epsilon)) > rt_abs(v(epsilon)))
+	{
+		r = u(epsilon);
+		theta = RT_PI_4 * (v(epsilon) / u(epsilon));
+	}
+	else
+	{
+		r = v(epsilon);
+		theta = RT_PI_2 - RT_PI_4 * (u(epsilon) / v(epsilon));
+	}
+	return (vec2_scale(vec2(rt_cos(theta), rt_sin(theta)), r));
+}
+
+t_vec
+	rt_random_cosine_hemi(GLOBAL t_seed *seed)
+{
+	t_vec2	d;
+	float	z;
+
+	d = rt_random_concentric_disk(seed);
+	z = rt_sqrt(rt_max(0.0f, 1.0f - u(d) * u(d) - v(d) * v(d)));
+	return (vec3(u(d), v(d), z));
+}

@@ -17,4 +17,7 @@ float	rt_random_gauss(GLOBAL t_seed *seed);
 t_vec	rt_random_unit_sphere(GLOBAL t_seed *seed);
 t_vec	rt_random_on_hemi_cos(GLOBAL t_seed *seed);
 
+t_vec2	rt_random_concentric_disk(GLOBAL t_seed *seed);
+t_vec	rt_random_cosine_hemi(GLOBAL t_seed *seed);
+
 #endif

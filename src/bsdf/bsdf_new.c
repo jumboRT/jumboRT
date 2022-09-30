@@ -154,6 +154,7 @@ t_sample
 	epsilon = rt_random_float(&ctx->ctx->seed);
 	idx = hit->mat->surface.begin;
 	type = 0;
+	wi = world_to_local(hit, wi);
 	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */
 	{
 		while (idx < hit->mat->surface.end)
@@ -163,7 +164,7 @@ t_sample
 				break;
 			epsilon -= bxdf->weight;
 			if (epsilon <= 0)
-				return (bxdf_sample(ctx, hit, idx, world_to_local(hit, wi)));
+				return (bxdf_sample(ctx, hit, idx, wi));
 			idx += 1;
 		}
 		type += 1;
