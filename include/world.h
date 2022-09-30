@@ -59,7 +59,7 @@ struct s_trace_ctx {
 	uint32_t				volume_size;
 	float					refractive_index;
 	float					time;
-	int						should_add_emission;
+	int						specref;
 };
 
 struct s_result {

@@ -78,12 +78,14 @@ struct s_bsdf {
 };
 
 struct s_sample {
-	t_vec	bsdf;
-	t_vec	wo;
-	float	pdf;
+	const GLOBAL t_bxdf	*bxdf;
+	t_vec				bsdf;
+	t_vec				wo;
+	float				pdf;
 };
 
 t_sample	sample(t_vec bsdf, t_vec wo, float pdf);
+int			same_hemi(t_vec wa, t_vec wb);
 
 t_sample	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
 t_vec		diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
@@ -91,5 +93,5 @@ float		diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf
 t_sample	bsdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi);
 t_vec		bsdf_f(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);
 float		bsdf_pdf(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);
-int32_t		bsdf_is_perfspec(const t_world_hit *hit); // TODO: compute at parse time
+int32_t		bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf); // TODO: compute at parse time
 #endif

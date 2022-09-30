@@ -13,6 +13,7 @@ static t_sample
 		result = diffuse_sample(ctx, hit, (const GLOBAL t_bxdf_diffuse*) bxdf,
 					wiw);
 	result.wo = local_to_world(hit, result.wo);
+	result.bxdf = bxdf;
 	return (result);
 }
 
@@ -173,7 +174,7 @@ t_sample
 }
 
 int32_t
-	bsdf_is_perfspec(const t_world_hit *hit)
+	bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf)
 {
 	return (0); /* TODO implement */
 }
