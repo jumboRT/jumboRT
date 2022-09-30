@@ -46,13 +46,11 @@ struct s_bxdf_reflective {
 struct s_bxdf_transmissive {
 	t_bxdf		base;
 	t_filter	refraction_tex;
-	float		eta;
 };
 
 struct s_bxdf_cook_torrance {
 	t_bxdf		base;
 	float		roughness;
-	float		eta;
 	float		k;
 };
 
@@ -87,9 +85,20 @@ struct s_sample {
 t_sample	sample(t_vec bsdf, t_vec wo, float pdf);
 int			same_hemi(t_vec wa, t_vec wb);
 
+float		costheta(t_vec w);
+
 t_sample	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
 t_vec		diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
 float		diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+
+t_sample	reflective_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi);
+t_vec		reflective_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
+float		reflective_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
+
+t_sample	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
+t_vec		transmissive_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+float		transmissive_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+
 t_sample	bsdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi);
 t_vec		bsdf_f(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);
 float		bsdf_pdf(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);

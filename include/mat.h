@@ -20,6 +20,7 @@ struct s_material {
 	t_bsdf		volume;
 	t_filter	alpha;
 	t_filter	emission;
+	float		refractive_index;
 	float		emission_exp;
 	float		brightness;
 	uint32_t	normal_map;

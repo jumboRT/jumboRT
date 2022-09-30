@@ -5,3 +5,9 @@ int
 {
 	return (z(wa) * z(wb) > 0);
 }
+
+float
+	costheta(t_vec w)
+{
+	return (z(w));
+}

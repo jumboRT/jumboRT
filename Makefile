@@ -32,7 +32,7 @@ Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   lz77_new.c encode.c decode.c wtree.c \
 						   encode_zwtree_token.c util.c
 GFX_FILES				:= win.c
-BSDF_FILES				:= bsdf_new.c diffuse.c util.c
+BSDF_FILES				:= bsdf_new.c diffuse.c reflective.c transmissive.c util.c
 TEX_FILES				:= sample.c filter.c init.c
 SHAPE_FILES				:= traits.c bounds.c
 ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
@@ -97,6 +97,8 @@ OPENCL_FILES			:= \
 	src/world/conversion.c \
 	src/bsdf/bsdf_new.c \
 	src/bsdf/diffuse.c \
+	src/bsdf/reflective.c \
+	src/bsdf/transmissive.c \
 	src/bsdf/util.c \
 	src/tex/sample.c \
 	src/tex/filter.c \
