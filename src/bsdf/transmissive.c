@@ -11,7 +11,6 @@ static int
 	t_vec	rparl = vec_scale(n, -rt_sqrt(rt_abs(1.0f - vec_mag2(rperp))));
 	*wt = vec_add(rperp, rparl);
 	return (1);
-	/*
 	float	costhetai;
 	float	costhetat;
 	float	sin2thetai;
@@ -26,7 +25,6 @@ static int
 	*wt = vec_add(vec_scale(vec_neg(wi), eta),
 			vec_scale(n, eta * costhetai * costhetat));
 	return (1);
-	*/
 }
 
 static t_vec
@@ -74,15 +72,17 @@ t_sample
 	t_sample	result;
 	float		etai;
 	float		etat;
+	t_vec		wiw;
 	//float		fresnel;
 
+	wiw = local_to_world(hit, wi);
 	wi = vec_neg(wi);
 
 	//etai = hit->mat->refractive_index / ctx->refractive_index;
 	//etat = ctx->refractive_index;
 	etai = 1.0f;
 	etat = 1.5f;
-	if (costheta(wi) > 0)
+	if (vec_dot(hit->hit.geometric_normal, wiw) < 0)
 	{
 		etai = 1.5f;
 		etat = 1.0f;

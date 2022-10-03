@@ -178,7 +178,7 @@ static void
 	{
 		// TODO: would rather not use intersect_full here
 		intersect_full(ctx, hit, ray, max - total);
-		total += hit->hit.t;
+		total += hit->hit.t; // TODO: floating point errors
 		if (alpha_test(ctx, hit))
 			break ;
 		count -= 1;
@@ -356,7 +356,7 @@ t_vec
 	{
 		this_depth = depth;
 		world_trace_init(world, ctx, &tctx);
-		tctx.ray = ray;
+		tctx.ray = ray; // TODO: ray has no randomness?!?
 		while (this_depth > 0 && world_trace_step(&tctx))
 			this_depth -= 1;
 		result = vec_add(result, tctx.tail);

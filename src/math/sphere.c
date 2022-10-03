@@ -22,15 +22,10 @@ t_vec2
 void
 	sphere_hit_info(t_ray ray, t_sphere sphere, t_hit *hit)
 {
-	float		cosphi, sinphi;
-	float		theta;
-
+	(void) sphere;
 	(void) ray;
-	cosphi = x(hit->pos) / sphere.radius;
-	sinphi = y(hit->pos) / sphere.radius;
-	theta = rt_acos(rt_clamp(z(hit->pos) / sphere.radius, -1.0, 1.0));
-	hit->dpdu = vec(-RT_2PI * y(hit->pos), RT_2PI * x(hit->pos), 0.0, 0.0);
-	hit->dpdv = vec_scale(vec(z(hit->pos) * cosphi, z(hit->pos) * sinphi, -sphere.radius * rt_sin(theta), 0.0), RT_2PI);
+	hit->dpdu = vec_cross(hit->geometric_normal, vec_z(1));
+	hit->dpdv = vec_cross(hit->geometric_normal, hit->dpdu);
 	hit->uv = sphere_uv_at(hit->geometric_normal);
 }
 

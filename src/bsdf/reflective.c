@@ -8,9 +8,7 @@ t_sample
 	t_sample	result;
 	t_vec		color;
 
-	result.wo = wiw;
-	result.wo = vec_set(result.wo, 0, -x(result.wo));
-	result.wo = vec_set(result.wo, 1, -y(result.wo));
+	result.wo = vec_set(wiw, 2, -z(wiw));
 	color = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
 	result.bsdf = vec_scale(color, 1.0f / rt_abs(z(result.wo)));
 	result.pdf = 1;

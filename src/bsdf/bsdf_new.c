@@ -142,29 +142,30 @@ static t_sample
 	t_sample			result;
 
 	result = bxdf_sample(ctx, hit, bxdf, wiw);
-	start = get_bsdf(hit).begin;
-	while (start < get_bsdf(hit).end)
-	{
-		bxdf2 = get_bxdf_const(ctx->world, start);
-		if (bxdf2->type >= bxdf->type)
-			break ;
-		start += 1;
-	}
-	idx = start;
-	while (idx < get_bsdf(hit).end)
-	{
-		bxdf2 = get_bxdf_const(ctx->world, idx);
-		if (bxdf2->type > bxdf->type)
-			break ;
-		if (bxdf != bxdf2)
-			result.pdf += bxdf_pdf(ctx, hit, bxdf2, wiw, result.wo);
-		idx += 1;
-	}
-	result.pdf /= idx - start;
 	if (!bxdf_is_perfspec(bxdf))
 	{
+		/* TODO: optimize these loops */
+		start = get_bsdf(hit).begin;
+		while (start < get_bsdf(hit).end)
+		{
+			bxdf2 = get_bxdf_const(ctx->world, start);
+			if (bxdf2->type >= bxdf->type)
+				break ;
+			start += 1;
+		}
 		idx = start;
+		while (idx < get_bsdf(hit).end)
+		{
+			bxdf2 = get_bxdf_const(ctx->world, idx);
+			if (bxdf2->type > bxdf->type)
+				break ;
+			if (bxdf != bxdf2)
+				result.pdf += bxdf_pdf(ctx, hit, bxdf2, wiw, result.wo);
+			idx += 1;
+		}
+		result.pdf /= idx - start;
 		result.bsdf = vec_0();
+		idx = start;
 		while (idx < get_bsdf(hit).end)
 		{
 			bxdf2 = get_bxdf_const(ctx->world, idx);
