@@ -7,7 +7,7 @@ static int
 	refract(t_vec wi, t_vec n, float eta, t_vec *wt)
 {
 	float	costheta = rt_min(vec_dot(wi, n), 1.0f);
-	t_vec	rperp = vec_scale(vec_add(wi, vec_scale(n, costheta)), eta);
+	t_vec	rperp = vec_scale(vec_add(vec_neg(wi), vec_scale(n, costheta)), eta);
 	t_vec	rparl = vec_scale(n, -rt_sqrt(rt_abs(1.0f - vec_mag2(rperp))));
 	*wt = vec_add(rperp, rparl);
 	return (1);
