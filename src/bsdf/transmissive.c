@@ -6,11 +6,13 @@
 static int
 	refract(t_vec wi, t_vec n, float eta, t_vec *wt)
 {
+	/*
 	float	costheta = rt_min(vec_dot(wi, n), 1.0f);
 	t_vec	rperp = vec_scale(vec_add(vec_neg(wi), vec_scale(n, costheta)), eta);
 	t_vec	rparl = vec_scale(n, -rt_sqrt(rt_abs(1.0f - vec_mag2(rperp))));
 	*wt = vec_add(rperp, rparl);
 	return (1);
+	*/
 	float	costhetai;
 	float	costhetat;
 	float	sin2thetai;
@@ -23,7 +25,7 @@ static int
 		return (0);
 	costhetat = rt_sqrt(1.0f - sin2thetat);
 	*wt = vec_add(vec_scale(vec_neg(wi), eta),
-			vec_scale(n, eta * costhetai * costhetat));
+			vec_scale(n, (eta * costhetai) - costhetat));
 	return (1);
 }
 
@@ -73,7 +75,7 @@ t_sample
 	float		etai;
 	float		etat;
 	t_vec		wiw;
-	//float		fresnel;
+	float		fresnel;
 
 	wiw = local_to_world(hit, wi);
 	wi = vec_neg(wi);
@@ -89,25 +91,23 @@ t_sample
 		//etai = ctx->refractive_index / hit->mat->refractive_index;
 		//etat = hit->mat->refractive_index;
 	}
-	refract(wi, forward(vec_z(1.0f), wi), etai / etat, &result.wo);
-
-	result.pdf = 1;
-	result.bsdf = vec3(1.0f, 1.0f, 1.0f);
-	return (result);
 	//fresnel = f_dielectric(costheta(result.wo), etai, etat);
 	
-	/*
+	result.pdf = 1.0f;
+	result.bsdf = vec3(1.0, 1.0, 1.0);
 	if (!refract(wi, forward(vec_z(1.0f), wi), etai / etat, &result.wo))
 	{
+		result.wo = vec_z(1);
+		result.bsdf = vec_0();
+		result.pdf = 0.0f;
+		return (result);
 		result.wo = vec3(-x(wi), -y(wi), z(wi));
 		result.wo = reflect(wi, forward(vec_z(1.0f), wi)); //TODO remove if not working
-		result.pdf = 1.0f;
 		result.bsdf = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
 		fresnel = f_dielectric(costheta(result.wo), etai, etat);
 		result.bsdf = vec_scale(result.bsdf, fresnel / rt_abs(costheta(result.wo)));
 		return (result);
 	}
-	*/
 
 	/*
 	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
