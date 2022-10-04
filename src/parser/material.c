@@ -132,7 +132,6 @@ void
 	bxdf.base.type = RT_BXDF_REFLECTIVE;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
-	bxdf.fuzzy = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 

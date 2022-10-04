@@ -12,7 +12,7 @@ t_vec world_to_local(const t_world_hit *hit, t_vec v) {
 				vec_dot(v, ts),
 				vec_dot(v, ns),
 				0.0));
-	return vec_norm2(v);
+	// return vec_norm2(v);
 }
 
 t_vec local_to_world(const t_world_hit *hit, t_vec v) {

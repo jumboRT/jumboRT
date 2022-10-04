@@ -11,7 +11,8 @@
 # define RT_BXDF_MF_REFLECTIVE		3
 # define RT_BXDF_COOK_TORRANCE		4
 # define RT_BXDF_BLINN_PHONG		5
-# define RT_BXDF_COUNT				6
+# define RT_BXDF_PHONG				6
+# define RT_BXDF_COUNT				7
 
 typedef struct s_world				t_world;
 typedef struct s_context			t_context;
@@ -25,6 +26,7 @@ typedef struct s_bxdf_transmissive	t_bxdf_transmissive;
 typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
 typedef struct s_bxdf_bphong		t_bxdf_bphong;
+typedef struct s_bxdf_bphong		t_bxdf_phong;
 typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_sample				t_sample;
 
@@ -40,7 +42,6 @@ struct s_bxdf_diffuse {
 
 struct s_bxdf_reflective {
 	t_bxdf		base;
-	float		fuzzy;
 };
 
 struct s_bxdf_transmissive {
@@ -52,6 +53,12 @@ struct s_bxdf_cook_torrance {
 	t_bxdf		base;
 	float		roughness;
 	float		k;
+};
+
+struct s_bxdf_phong {
+	t_bxdf		base;
+	t_filter	alpha;
+	t_filter	spec;
 };
 
 struct s_bxdf_bphong {
@@ -98,6 +105,10 @@ float		reflective_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_b
 t_sample	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
 t_vec		transmissive_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
 float		transmissive_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+
+t_sample	phong_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi);
+t_vec		phong_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi, t_vec wo);
+float		phong_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi, t_vec wo);
 
 t_sample	bsdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi);
 t_vec		bsdf_f(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);

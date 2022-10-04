@@ -65,7 +65,6 @@ t_sample
 	else if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		result = transmissive_sample(ctx, hit,
 				(const GLOBAL t_bxdf_transmissive*) bxdf, wiw);
-	result.wo = local_to_world(hit, result.wo);
 	result.bsdf = vec_scale(result.bsdf, bxdf->weight);
 	result.bxdf = bxdf;
 	return (result);
@@ -186,6 +185,7 @@ t_sample
 	result.bsdf = bsdf;
 	result.wo = wo;
 	result.pdf = pdf;
+	result.bxdf = 0;
 	return (result);
 }
 
@@ -210,13 +210,16 @@ t_sample
 {
 	uint32_t			idx;
 	const GLOBAL t_bxdf	*bxdf;
+	t_sample			result;
 
 	if (get_bsdf(hit).end == get_bsdf(hit).begin)
 		return (sample(vec_0(), vec_0(), 0.0f));
 	idx = rt_random(&ctx->ctx->seed) % (get_bsdf(hit).end - get_bsdf(hit).begin);
-	bxdf = get_bxdf_const(ctx->world, idx);
+	bxdf = get_bxdf_const(ctx->world, get_bsdf(hit).begin + idx);
 	wi = world_to_local(hit, wi);
-	return (bxdf_sample_int(ctx, hit, bxdf, wi));
+	result = bxdf_sample_int(ctx, hit, bxdf, wi);
+	result.wo = local_to_world(hit, result.wo);
+	return (result);
 }
 
 int32_t

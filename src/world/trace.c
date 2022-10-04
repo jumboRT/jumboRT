@@ -165,6 +165,7 @@ static void
 	}
 }
 
+// TODO: optimize this, maybe move to world_intersect
 static void
 	intersect_transparent(const t_trace_ctx *ctx, t_world_hit *hit,
 			t_ray ray, float max)
@@ -210,6 +211,8 @@ static int
 	t_world_hit	lhit;
 	t_ray		lray;
 
+	if (ctx->world->lights_count == 0)
+		return (0);
 	lray = intersect_light_init(ctx, hit, whit);
 	intersect_transparent(ctx, &lhit, lray, ctx->time);
 	if (prim_type(hit->prim) == RT_SHAPE_POINT)
@@ -280,11 +283,11 @@ static void
 		return ;
 	sample.wo = vec_norm(vec_sub(lhit.hit.pos, hit->hit.pos));
 	sample.bsdf = bsdf_f(ctx, hit, ctx->ray.dir, sample.wo);
-	sample.pdf = bsdf_pdf(ctx, hit, ctx->ray.dir, sample.wo);
-	sample.pdf *= rt_abs(vec_dot(sample.wo, lhit.rel_shading_normal));
+	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.rel_shading_normal));
+	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->rel_shading_normal));
 	sample.pdf *= prim_area(lhit.prim, ctx->world);
 	sample.pdf *= ctx->world->lights_count;
-	sample.pdf /= (lhit.hit.t * lhit.hit.t) + 0.05; // TODO: try min()
+	sample.pdf /= lhit.hit.t * lhit.hit.t + RT_TINY_VAL; // TODO: try min()
 	tmp = vec_scale(vec_mul(le(ctx, &lhit), sample.bsdf), sample.pdf);
 	ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, tmp));
 }
@@ -333,6 +336,7 @@ void
 	if (world->flags & RT_WORLD_HAS_AMBIENT)
 	{
 		ambient = get_mat_const(world, world->ambient_mat);
+		tctx->refractive_index = ambient->refractive_index;
 		if ((ambient->flags & RT_MAT_HAS_VOLUME) && !!RT_MAX_VOLUMES)
 		{
 			tctx->volumes[tctx->volume_size] = ambient;

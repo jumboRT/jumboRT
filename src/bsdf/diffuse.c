@@ -9,8 +9,10 @@ t_sample
 
 	result.wo = rt_random_cosine_hemi(&ctx->ctx->seed);
 	if (z(wiw) > 0)
-		result.wo = vec_neg(result.wo);
-	result.bsdf = diffuse_f(ctx, hit, bxdf, wiw, result.wo);
+		result.wo = vec_set(result.wo, 2, -z(result.wo));
+	t_vec color = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
+	result.bsdf = (vec_scale(color, RT_1_PI));
+	// result.bsdf = diffuse_f(ctx, hit, bxdf, wiw, result.wo);
 	result.pdf = diffuse_pdf(ctx, hit, bxdf, wiw, result.wo);
 	return (result);
 }
@@ -21,8 +23,8 @@ t_vec
 {
 	t_vec	color;
 
-	(void) wiw;
-	(void) wow;
+	if (same_hemi(wiw, wow))
+		return (vec_0());
 	color = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
 	return (vec_scale(color, RT_1_PI));
 }
