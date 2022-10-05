@@ -1,5 +1,7 @@
 #include "world.h"
 #include "sample.h"
+#include "shape.h"
+#include "mat.h"
 
 static t_sphere
 	make_sphere(const GLOBAL t_world *world, const GLOBAL void *ptr)
@@ -33,32 +35,31 @@ static t_triangle
 }
 
 int
-	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, float min, t_world_hit *hit)
+	prim_intersect(const GLOBAL t_primitive *prim, const GLOBAL t_world *world,
+			t_ray ray, float min, t_world_hit *hit)
 {
-	int	did_hit;
-
-	did_hit = 0;
-	if (prim_type(prim) == RT_SHAPE_SPHERE)
-		did_hit = ray_sphere_intersect(ray, make_sphere(world, prim), min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
-		did_hit = ray_triangle_intersect(ray, make_triangle(world, prim), min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_PLANE)
-		did_hit = ray_plane_intersect(ray, ((const GLOBAL t_shape_plane *) prim)->plane, min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_CYLINDER)
-		did_hit = ray_cylinder_intersect(ray, ((const GLOBAL t_shape_cylinder *) prim)->cylinder, min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_CONE)
-		did_hit = ray_cone_intersect(ray, ((const GLOBAL t_shape_cone *) prim)->cone, min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_PARABOLOID)
-		did_hit = ray_paraboloid_intersect(ray, ((const GLOBAL t_shape_paraboloid *) prim)->paraboloid, min, &hit->hit);
-	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
-		did_hit = ray_hyperboloid_intersect(ray, ((const GLOBAL t_shape_hyperboloid *) prim)->hyperboloid, min, &hit->hit);
 	hit->prim = prim;
-	return (did_hit);
+	if (prim_type(prim) == RT_SHAPE_SPHERE)
+		return (ray_sphere_intersect(ray, make_sphere(world, prim), min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
+		return (ray_triangle_intersect(ray, make_triangle(world, prim), min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_PLANE)
+		return (ray_plane_intersect(ray, ((const GLOBAL t_shape_plane *) prim)->plane, min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_CYLINDER)
+		return (ray_cylinder_intersect(ray, ((const GLOBAL t_shape_cylinder *) prim)->cylinder, min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_CONE)
+		return (ray_cone_intersect(ray, ((const GLOBAL t_shape_cone *) prim)->cone, min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_PARABOLOID)
+		return (ray_paraboloid_intersect(ray, ((const GLOBAL t_shape_paraboloid *) prim)->paraboloid, min, &hit->hit));
+	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
+		return (ray_hyperboloid_intersect(ray, ((const GLOBAL t_shape_hyperboloid *) prim)->hyperboloid, min, &hit->hit));
+	return (0);
 }
 
 void
 	prim_hit_info(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
 {
+	hit->mat = get_mat_const(world, prim_mat(hit->prim));
 	if (prim_type(prim) == RT_SHAPE_SPHERE)
 		sphere_hit_info(ray, make_sphere(world, prim), &hit->hit);
 	else if (prim_type(prim) == RT_SHAPE_TRIANGLE)
@@ -102,6 +103,8 @@ float
 		return (cylinder_area(((const GLOBAL t_shape_cylinder *) prim)->cylinder));
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		return (cone_area(((const GLOBAL t_shape_cone *) prim)->cone));
+	else if (prim_type(prim) == RT_SHAPE_POINT)
+		return (RT_PI);
 	return (0);
 }
 

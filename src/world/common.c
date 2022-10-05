@@ -1,17 +1,12 @@
 #include "world.h"
-
-uint32_t
-	prim_type(const GLOBAL t_primitive *prim)
-{
-	return (prim->data & 0xFF);
-}
+#include "shape.h"
+#include "mat.h"
 
 uint32_t
 	prim_mat(const GLOBAL t_primitive *prim)
 {
 	return (prim->data >> 8);
 }
-
 
 const GLOBAL t_primitive
 	*get_prim_const(const GLOBAL t_world *world, uint32_t index)

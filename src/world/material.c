@@ -1,4 +1,5 @@
-#include "world_impl.h"
+#include "world.h"
+#include "mat.h"
 
 #include <limits.h>
 
@@ -14,11 +15,6 @@ void
 	mat->volume.weight = 0.0;
 	mat->brightness = 0.0;
 	mat->emission_exp = 0.0;
+	mat->refractive_index = 1.0;
 }
 
-void
-	texture_init(t_tex *tex)
-{
-	tex->type = RT_TEX_COLOR;
-	tex->a.color = vec(0, 0, 0, 0);
-}

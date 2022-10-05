@@ -1,5 +1,7 @@
 #include "world.h"
 
+#include "shape.h"
+
 static uint64_t
 	world_primitive_size_adjust(uint64_t size)
 {

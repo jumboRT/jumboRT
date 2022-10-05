@@ -1,6 +1,9 @@
 #include "world_impl.h"
 
+#include "mat.h"
 #include "util.h"
+#include "shape.h"
+#include "accel.h"
 
 #include <libft.h>
 
@@ -27,10 +30,12 @@ void
 	world->texture_data = world_zero(NULL, &world->texture_data_size, &world->texture_data_capacity);
 	world->bxdfs = world_zero(&world->bxdfs_count, &world->bxdfs_size, &world->bxdfs_capacity);
 	world->lights = world_zero(&world->lights_count, &world->lights_size, &world->lights_capacity);
+	world->leaf_data = world_zero(&world->leaf_data_count, &world->leaf_data_size, &world->leaf_data_capacity);
 	world->flags = 0;
 	world->render_mode = RT_RENDER_MODE_DEFAULT;
 	world->batch_size = 16;
 	world->trace_batch_size = 1;
+	world->ambient_dist = RT_HUGE_VAL;
 }
 
 void
@@ -45,6 +50,8 @@ void
 	rt_free(world->textures);
 	rt_free(world->texture_data);
 	rt_free(world->bxdfs);
+	rt_free(world->lights);
+	rt_free(world->leaf_data);
 }
 
 void
@@ -83,7 +90,7 @@ uint32_t
 	world->primitives = world_reallog(world->primitives, &world->primitives_capacity, world->primitives_size);
 	rt_memcpy((char *) world->primitives + old_size, primitive, size);
 	mat = get_mat_const(world, prim_mat(primitive));
-	if (mat->flags & RT_MAT_EMITTER)
+	if (!prim_is_infinite(primitive) && (mat->flags & RT_MAT_EMITTER))
 		world_add_light(world, old_size / RT_PRIMITIVE_ALIGN);
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }
@@ -208,5 +215,18 @@ uint32_t
 	world->lights = world_reallog(world->lights, &world->lights_capacity, world->lights_size);
 	rt_memcpy((char *) world->lights + old_size, &light, sizeof(light));
 	return (old_size / sizeof(light));
+}
+
+uint32_t
+	world_add_leaf_data(t_world *world, t_leaf_data leaf_data)
+{
+	size_t	old_size;
+
+	world->leaf_data_count += 1;
+	old_size = world->leaf_data_size;
+	world->leaf_data_size += sizeof(leaf_data);
+	world->leaf_data = world_reallog(world->leaf_data, &world->leaf_data_capacity, world->leaf_data_size);
+	rt_memcpy((char *) world->leaf_data + old_size, &leaf_data, sizeof(leaf_data));
+	return (old_size / sizeof(leaf_data));
 }
 

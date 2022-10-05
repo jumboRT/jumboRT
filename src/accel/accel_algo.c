@@ -1,7 +1,10 @@
-#include "world_impl.h"
+#include "accel.h"
+#include "accel_impl.h"
 
+#include "world.h"
+#include "world_impl.h"
 #include "util.h"
-#include "net.h"
+#include "ser.h"
 #include "perf.h"
 
 #include <ft_printf.h>
@@ -167,7 +170,7 @@ int
 		rt_free(error);
 		return (0);
 	}
-	if (size < sizeof(uint64_t) * 4)
+	if (size < sizeof(uint64_t) * 5)
 	{
 		rt_free(data);
 		return (0);
@@ -182,21 +185,27 @@ int
 	ptr = rt_upacku64(ptr, &world->accel_nodes_size);
 	ptr = rt_upacku64(ptr, &world->accel_indices_size);
 	ptr = rt_upacku64(ptr, &world->accel_degenerates_size);
+	ptr = rt_upacku64(ptr, &world->leaf_data_size);
 	world->accel_nodes = rt_realloc(world->accel_nodes, world->accel_nodes_capacity, world->accel_nodes_size);
 	world->accel_indices = rt_realloc(world->accel_indices, world->accel_indices_capacity, world->accel_indices_size);
 	world->accel_degenerates = rt_realloc(world->accel_degenerates, world->accel_degenerates_capacity, world->accel_degenerates_size);
+	world->leaf_data = rt_realloc(world->leaf_data, world->leaf_data_capacity, world->leaf_data_size);
 	world->accel_nodes_capacity = world->accel_nodes_size;
 	world->accel_indices_capacity = world->accel_indices_size;
 	world->accel_degenerates_capacity = world->accel_degenerates_size;
+	world->leaf_data_capacity = world->leaf_data_size;
 	world->accel_nodes_count = world->accel_nodes_size / sizeof(*world->accel_nodes);
 	world->accel_indices_count = world->accel_indices_size / sizeof(*world->accel_indices);
 	world->accel_degenerates_count = world->accel_degenerates_size / sizeof(*world->accel_degenerates);
+	world->leaf_data_count = world->leaf_data_size / sizeof(*world->leaf_data);
 	rt_memcpy(world->accel_nodes, ptr, world->accel_nodes_size);
 	ptr += world->accel_nodes_size;
 	rt_memcpy(world->accel_indices, ptr, world->accel_indices_size);
 	ptr += world->accel_indices_size;
 	rt_memcpy(world->accel_degenerates, ptr, world->accel_degenerates_size);
 	ptr += world->accel_degenerates_size;
+	rt_memcpy(world->leaf_data, ptr, world->leaf_data_size);
+	ptr += world->leaf_data_size;
 	rt_free(data);
 	return (1);
 }
@@ -209,22 +218,26 @@ void
 	unsigned char	*ptr;
 	char			*error;
 
-	size = sizeof(uint64_t) * 4;
+	size = sizeof(uint64_t) * 5;
 	size += world->accel_nodes_size;
 	size += world->accel_indices_size;
 	size += world->accel_degenerates_size;
+	size += world->leaf_data_size;
 	data = rt_malloc(size);
 	ptr = data;
 	ptr = rt_packu64(ptr, hash);
 	ptr = rt_packu64(ptr, world->accel_nodes_size);
 	ptr = rt_packu64(ptr, world->accel_indices_size);
 	ptr = rt_packu64(ptr, world->accel_degenerates_size);
+	ptr = rt_packu64(ptr, world->leaf_data_size);
 	rt_memcpy(ptr, world->accel_nodes, world->accel_nodes_size);
 	ptr += world->accel_nodes_size;
 	rt_memcpy(ptr, world->accel_indices, world->accel_indices_size);
 	ptr += world->accel_indices_size;
 	rt_memcpy(ptr, world->accel_degenerates, world->accel_degenerates_size);
 	ptr += world->accel_degenerates_size;
+	rt_memcpy(ptr, world->leaf_data, world->leaf_data_size);
+	ptr += world->leaf_data_size;
 	rt_writefile(file, &error, data, size);
 	rt_free(data);
 }
@@ -250,6 +263,7 @@ void
 		world_info_create(&tree, &node, world);
 		world_info_init(&tree, &node, world);
 		world_plant_tree(&node);
+		world_attach_ropes(world, node.bounds);
 		world_info_destroy(&tree, &node);
 		world_accel_save(world, file, hash);
 	}

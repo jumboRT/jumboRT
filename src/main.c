@@ -6,6 +6,10 @@
 #include "perf.h"
 #include "net.h"
 
+#if RT_DEBUG
+# include <fenv.h>
+#endif
+
 /* TODO: credits for all the people who helped render images */
 /* TODO: better image reconstruction */
 /* TODO: check blinn phong reflection */
@@ -439,6 +443,10 @@ int
 		fprintf(stderr, "WSAStartup failed\n");
 		return (EXIT_FAILURE);
 	}
+#endif
+
+#if RT_DEBUG
+	feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
 	/*
 	unsigned char	*str;

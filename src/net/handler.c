@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "world_impl.h"
 #include "perf.h"
+#include "ser.h"
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>

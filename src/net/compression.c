@@ -1,6 +1,7 @@
 #include "net.h"
 
 #include "z.h"
+#include "ser.h"
 #include "util.h"
 
 void

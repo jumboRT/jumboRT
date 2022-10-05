@@ -1,8 +1,9 @@
 #include "parser.h"
 
+#include "mat.h"
+#include "util.h"
+#include "shape.h"
 #include "world_impl.h"
-#include "util.h"
-#include "util.h"
 #include <libft.h>
 
 int
@@ -131,7 +132,6 @@ void
 	bxdf.base.type = RT_BXDF_REFLECTIVE;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
-	bxdf.fuzzy = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
@@ -146,7 +146,6 @@ void
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.roughness = rt_float(ctx);
 	bxdf.k = rt_float(ctx);
-	bxdf.eta = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 
@@ -178,7 +177,6 @@ void
 	bxdf.base.type = RT_BXDF_TRANSMISSIVE;
 	bxdf.base.tex = rt_filter(world, ctx);
 	bxdf.refraction_tex = rt_filter(world, ctx);
-	bxdf.eta = rt_float(ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
@@ -250,6 +248,16 @@ void
 	ctx->mat->volume.begin = world->bxdfs_count;
 	ctx->mat->volume.end = world->bxdfs_count;
 }
+
+void
+	rt_exec_refractive_index(t_world *world, t_parse_ctx *ctx)
+{
+	(void) world;
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	ctx->mat->refractive_index = rt_float(ctx);
+}
+
 
 void
 	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)

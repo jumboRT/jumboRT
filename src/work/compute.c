@@ -19,7 +19,8 @@ __kernel void
 		GLOBAL void *texture_data,
 		GLOBAL void *textures,
 		GLOBAL void *bxdfs,
-		GLOBAL void *lights)
+		GLOBAL void *lights,
+		GLOBAL void *leaf_data)
 {
 	GLOBAL t_context	*my_ctx;
 
@@ -33,6 +34,7 @@ __kernel void
 	world->textures = textures;
 	world->bxdfs = bxdfs;
 	world->lights = lights;
+	world->leaf_data = leaf_data;
 	my_ctx = &ctx[get_global_id(0)];
 	world_trace_all(world, my_ctx, results, index, begin, end);
 }

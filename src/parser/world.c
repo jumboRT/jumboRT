@@ -38,6 +38,8 @@ static const t_directive	directives[] = {
 	{ "mat_end", rt_exec_mat_end },
 	{ "cam_focus", rt_exec_cam_focus },
 	{ "cam_blur", rt_exec_cam_blur },
+	{ "ambient_dist", rt_exec_ambient_dist },
+	{ "refractive_index", rt_exec_refractive_index },
 	{ "#", rt_exec_comment },
 	{ "$", rt_exec_conditional },
 	{ "!", rt_exec_include },

@@ -1,9 +1,14 @@
 #include "world.h"
+#include "hit.h"
+#include "shape.h"
+#include "mat.h"
+#include "bsdf.h"
 
 static void
-	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size, const GLOBAL t_material *mat, float norm_dir)
+	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size,
+			const GLOBAL t_material *mat, float norm_dir)
 {
-	uint32_t	volume_index;
+	uint32_t	vi;
 
 	if (norm_dir < 0 && *volume_size < RT_MAX_VOLUMES)
 	{
@@ -12,42 +17,39 @@ static void
 	}
 	else if (norm_dir > 0)
 	{
-		volume_index = 0;
-		while (volume_index < *volume_size)
+		vi = 0;
+		while (vi < *volume_size)
 		{
-			if (volumes[volume_index] == mat)
+			if (volumes[vi] == mat)
 			{
 				*volume_size -= 1;
-				volumes[volume_index] = volumes[*volume_size];
+				volumes[vi] = volumes[*volume_size];
 				break ;
 			}
-			volume_index += 1;
+			vi += 1;
 		}
 	}
 }
 
-static const GLOBAL t_material
-	*intersect_volume(const GLOBAL t_material **volumes, uint32_t volume_size, GLOBAL t_context *ctx, float *max_t)
+static void
+	intersect_volume(const GLOBAL t_material *const *volumes,
+			uint32_t volume_size, GLOBAL t_context *ctx, t_world_hit *hit)
 {
-	uint32_t				volume_index;
-	const GLOBAL t_material	*mat;
-	float					t;
-	float					t2;
+	uint32_t	vi;
+	float		t;
 
-	volume_index = 0;
-	mat = 0;
-	t2 = *max_t;
-	while (volume_index < volume_size)
+	vi = 0;
+	while (vi < volume_size)
 	{
-		t = rt_log(1 - rt_random_float(&ctx->seed)) / -volumes[volume_index]->density;
-		if (t < t2)
+		t = rt_log(1 - rt_random_float(&ctx->seed)) / -volumes[vi]->density;
+		if (t < hit->hit.t)
 		{
-			*max_t = t;
-			mat = volumes[volume_index];
+			hit->hit.t = t;
+			hit->mat = volumes[vi];
+			hit->is_volume = 1;
 		}
-		volume_index += 1;
+		vi += 1;
 	}
-	return (mat);
 }
 
 t_vec
@@ -60,12 +62,6 @@ t_vec
 	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 2)) * 5;
 	dfdx -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	dfdy -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
-	/*
-	return (vec_scale(vec3(
-				(-dfdx) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
-				(-dfdy) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
-				1 / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1))), 1.0));
-	*/
 	return (vec_scale(vec(
 				(-dfdx) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
 				(-dfdy) / (rt_sqrt(dfdx * dfdx + dfdy * dfdy + 1)),
@@ -75,171 +71,283 @@ t_vec
 }
 
 static void
-	fix_normals(const GLOBAL t_world *world, const GLOBAL t_material *mat, t_world_hit *hit, t_ray ray)
+	fix_normals(const GLOBAL t_world *world, t_world_hit *hit, t_ray ray)
 {
+	t_vec	tmp;
+
 	hit->rel_geometric_normal = hit->hit.geometric_normal;
 	if (vec_dot(hit->hit.geometric_normal, ray.dir) > 0)
 		hit->rel_geometric_normal = vec_neg(hit->rel_geometric_normal);
 	hit->rel_shading_normal = hit->hit.shading_normal;
-	if (mat->flags & RT_MAT_HAS_NORMAL)
-		hit->rel_shading_normal = local_to_world(*hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit->hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
-	if (mat->flags & RT_MAT_HAS_BUMP)
-		hit->rel_shading_normal = local_to_world(*hit, bump(world, mat->bump_map, hit->hit.uv));
+	if (hit->mat->flags & RT_MAT_HAS_NORMAL)
+	{
+		tmp = sample_vector(world, hit->mat->normal_map, hit->hit.uv);
+		tmp = vec_sub(vec_mul(tmp, vec(2, 2, 1, 1)), vec(1, 1, 0, 0));
+		hit->rel_shading_normal = local_to_world(hit, tmp);
+	}
+	if (hit->mat->flags & RT_MAT_HAS_BUMP)
+	{
+		tmp = bump(world, hit->mat->bump_map, hit->hit.uv);
+		hit->rel_shading_normal = local_to_world(hit, tmp);
+	}
 	hit->hit.shading_normal = hit->rel_shading_normal;
+	if (vec_dot(hit->hit.shading_normal, ray.dir) > 0)
+		hit->rel_shading_normal = vec_neg(hit->rel_shading_normal);
 }
 
-/* TODO: factor in bsdf pdf */
-static int
-	ray_to_light(const GLOBAL t_world *world, const GLOBAL t_primitive *prim, GLOBAL t_context *ctx, t_light_hit *hit, t_vec org)
+static void
+	init_normals(t_world_hit *hit, t_ray ray, t_vec normal)
 {
-	t_vec					pos;
-	t_world_hit				world_hit;
-	t_ray					ray_obj;
-	const GLOBAL t_material	*mat;
-	float					scale;
-	float					dot;
+	hit->hit.geometric_normal = normal;
+	hit->hit.shading_normal = normal;
+	hit->rel_geometric_normal = normal;
+	if (vec_dot(hit->hit.geometric_normal, ray.dir) > 0)
+		hit->rel_geometric_normal = vec_neg(hit->rel_geometric_normal);
+	hit->rel_shading_normal = normal;
+	if (vec_dot(hit->hit.shading_normal, ray.dir) > 0)
+		hit->rel_shading_normal = vec_neg(hit->rel_shading_normal);
+	hit->hit.dpdu = vec_tangent(hit->hit.geometric_normal);
+	hit->hit.dpdv = vec_cross(hit->hit.geometric_normal, hit->hit.dpdu);
+}
 
-	mat = get_mat_const(world, prim_mat(prim));
-	if (prim_is_infinite(prim) || !(mat->flags & RT_MAT_EMITTER))
-		return (0);
-	pos = prim_sample(prim, world, ctx);
-	ray_obj = ray(org, vec_norm(vec_sub(pos, org)));
-	scale = mat->brightness * world->lights_count;
-	if (prim_type(prim) == RT_SHAPE_POINT)
+static int
+	alpha_test(const t_trace_ctx *ctx, t_world_hit *hit)
+{
+	float	alpha;
+	float	sample;
+
+	if (hit->mat == 0)
+		return (1);
+	if (!(hit->mat->flags & RT_MAT_HAS_ALPHA))
+		return (1);
+	sample = rt_random_float(&ctx->ctx->seed);
+	alpha = w(filter_sample(ctx->world, hit->mat->alpha, hit->hit.uv));
+	return (sample < alpha);
+}
+
+static void
+	intersect_partial(const t_trace_ctx *ctx, t_world_hit *hit,
+			t_ray ray, float max)
+{
+	hit->hit.t = max;
+	hit->prim = 0;
+	world_intersect(ctx->world, ray, hit);
+	hit->mat = 0;
+	hit->is_volume = 0;
+	hit->is_ambient = 0;
+	intersect_volume(ctx->volumes, ctx->volume_size, ctx->ctx, hit);
+	if (hit->hit.t >= max)
+		hit->is_ambient = 1;
+}
+
+static void
+	intersect_full(const t_trace_ctx *ctx, t_world_hit *hit,
+			t_ray ray, float max)
+{
+	intersect_partial(ctx, hit, ray, max);
+	if (hit->is_volume)
 	{
-		if (world_intersect(world, ray_obj, &world_hit) && vec_mag(vec_sub(pos, world_hit.hit.pos)) < RT_TINY_VAL)
-			return (0);
-		world_hit.hit.uv = vec2(0, 0);
-		scale *= RT_PI;
+		hit->hit.uv = vec2(0, 0);
+		init_normals(hit, ray, rt_random_on_hemi(&ctx->ctx->seed, ray.dir));
+	}
+	else if (hit->is_ambient)
+	{
+		hit->hit.pos = ray_at(ray, hit->hit.t);
+		if (ctx->world->flags & RT_WORLD_HAS_AMBIENT)
+			hit->mat = get_mat_const(ctx->world, ctx->world->ambient_mat);
+		hit->hit.uv = sphere_uv_at(ray.dir);
+		init_normals(hit, ray, ray.dir);
 	}
 	else
 	{
-		if (!world_intersect(world, ray_obj, &world_hit) || vec_mag(vec_sub(pos, world_hit.hit.pos)) < RT_TINY_VAL)
-			return (0);
-		fix_normals(world, mat, &world_hit, ray_obj);
-		dot = rt_abs(vec_dot(ray_obj.dir, world_hit.rel_shading_normal));
-		scale *= dot * prim_area(prim, world);
-		if (mat->emission_exp != 0.0)
-			scale *= rt_pow(dot, mat->emission_exp);
+		prim_hit_info(hit->prim, ctx->world, ray, hit);
+		fix_normals(ctx->world, hit, ray);
 	}
-	hit->color = vec_scale(filter_sample(world, mat->emission, world_hit.hit.uv), scale);
+}
+
+// TODO: optimize this, maybe move to world_intersect
+static void
+	intersect_transparent(const t_trace_ctx *ctx, t_world_hit *hit,
+			t_ray ray, float max)
+{
+	float	total;
+	int		count;
+
+	total = 0;
+	count = 16;
+	while (count > 0)
+	{
+		// TODO: would rather not use intersect_full here
+		intersect_full(ctx, hit, ray, max - total);
+		total += hit->hit.t; // TODO: floating point errors
+		if (alpha_test(ctx, hit))
+			break ;
+		count -= 1;
+		ray.org = hit->hit.pos;
+	}
+	hit->hit.t = total;
+}
+
+static t_ray
+	intersect_light_init(const t_trace_ctx *ctx, t_world_hit *hit,
+			const t_world_hit *whit)
+{
+	uint32_t	light;
+	t_vec		delta;
+
+	light = rt_random(&ctx->ctx->seed) % ctx->world->lights_count;
+	hit->prim = get_prim_const(ctx->world, ctx->world->lights[light]);
+	hit->mat = get_mat_const(ctx->world, prim_mat(hit->prim));
+	hit->hit.pos = prim_sample(hit->prim, ctx->world, ctx->ctx);
+	delta = vec_sub(hit->hit.pos, whit->hit.pos);
+	hit->hit.t = vec_mag(delta);
+	return (ray(whit->hit.pos, vec_norm(delta)));
+}
+
+static int
+	intersect_light(const t_trace_ctx *ctx, t_world_hit *hit,
+			const t_world_hit *whit)
+{
+	t_world_hit	lhit;
+	t_ray		lray;
+
+	if (ctx->world->lights_count == 0)
+		return (0);
+	lray = intersect_light_init(ctx, hit, whit);
+	intersect_transparent(ctx, &lhit, lray, ctx->time);
+	if (prim_type(hit->prim) == RT_SHAPE_POINT)
+	{
+		if (hit->hit.t > ctx->time || lhit.hit.t < hit->hit.t)
+			return (0);
+		hit->hit.uv = vec2(0, 0);
+		init_normals(hit, lray, lray.dir);
+		return (1);
+	}
+	if (lhit.hit.t >= ctx->time || lhit.is_volume || lhit.prim != hit->prim)
+		return (0);
+	if (vec_mag(vec_sub(hit->hit.pos, lhit.hit.pos)) > RT_TINY_VAL)
+		return (0);
+	// prim_hit_info(hit->prim, ctx->world, lray, &lhit);
+	// fix_normals(ctx->world, &lhit, lray);
+	*hit = lhit;
 	return (1);
 }
 
-static int
-	ray_to_lights(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_light_hit *hit, t_vec org)
+static t_vec
+	le(t_trace_ctx *ctx, const t_world_hit *hit)
 {
-	const GLOBAL t_primitive	*prim;
-	uint32_t					light;
+	t_vec	sample;
+	float	brightness;
 
-	light = rt_random(&ctx->seed) % world->lights_count;
-	prim = get_prim_const(world, world->lights[light]);
-	return (ray_to_light(world, prim, ctx, hit, org));
+	if (!(hit->mat->flags & RT_MAT_EMITTER))
+		return (vec_0());
+	sample = filter_sample(ctx->world, hit->mat->emission, hit->hit.uv);
+	brightness = hit->mat->brightness; // TODO: * rt_pow(rt_abs(vec_dot(ctx->ray.dir, hit->rel_shading_normal)), hit->mat->emission_exp);
+	return (vec_scale(sample, brightness));
 }
 
 static int
-	world_trace_step(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_trace_ctx *tctx)
+	world_trace_debug(t_trace_ctx *ctx, const t_world_hit *hit)
 {
-	t_world_hit				hit;
-	const GLOBAL t_material	*mat;
-	t_vec					bsdf;
-	t_vec2					uv;
+	float	uv_u;
+	float	uv_v;
 
-	if (!world_intersect(world, tctx->ray, &hit))
+	if (ctx->world->render_mode == RT_RENDER_MODE_UV)
 	{
-		if (world->flags & RT_WORLD_HAS_AMBIENT)
-		{
-			mat = get_mat_const(world, world->ambient_mat);
-			if (mat->flags & RT_MAT_EMITTER)
-			{
-				hit.hit.uv = sphere_uv_at(tctx->ray.dir);
-				tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
-			}
-		}
+		uv_u = rt_mod(rt_mod(u(hit->hit.uv), 1.0f) + 1.0f, 1.0f);
+		uv_v = rt_mod(rt_mod(v(hit->hit.uv), 1.0f) + 1.0f, 1.0f);
+		ctx->tail = vec(uv_u, uv_v, 0, 0);
+		return (1);
+	}
+	if (ctx->world->render_mode == RT_RENDER_MODE_GEOMETRIC_NORMAL)
+	{
+		ctx->tail = vec_abs(hit->hit.geometric_normal);
+		return (1);
+	}
+	if (ctx->world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
+	{
+		ctx->tail = vec_abs(hit->hit.shading_normal);
+		return (1);
+	}
+	return (0);
+}
+
+static void
+	world_trace_light(t_trace_ctx *ctx, const t_world_hit *hit)
+{
+	t_world_hit	lhit;
+	t_sample	sample;
+	t_vec		tmp;
+
+	if (!intersect_light(ctx, &lhit, hit))
+		return ;
+	sample.wo = vec_norm(vec_sub(lhit.hit.pos, hit->hit.pos));
+	sample.bsdf = bsdf_f(ctx, hit, ctx->ray.dir, sample.wo);
+	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.rel_shading_normal));
+	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->rel_shading_normal));
+	sample.pdf *= prim_area(lhit.prim, ctx->world);
+	sample.pdf *= ctx->world->lights_count;
+	sample.pdf /= lhit.hit.t * lhit.hit.t + RT_TINY_VAL; // TODO: try min()
+	tmp = vec_scale(vec_mul(le(ctx, &lhit), sample.bsdf), sample.pdf);
+	ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, tmp));
+}
+
+static int
+	world_trace_step(t_trace_ctx *ctx)
+{
+	t_world_hit	hit;
+	t_sample	sample;
+
+	intersect_transparent(ctx, &hit, ctx->ray, ctx->time);
+	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
 		return (0);
-	}
-	if (world->render_mode == RT_RENDER_MODE_GEOMETRIC_NORMAL)
-	{
-		tctx->tail = vec_abs(hit.hit.geometric_normal);
+	world_trace_light(ctx, &hit);
+	if (!hit.is_volume && (hit.is_ambient || ctx->specref || prim_is_degenerate(hit.prim)))
+		ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
+	sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
+	if (sample.pdf == 0)
 		return (0);
-	}
-	if (world->render_mode == RT_RENDER_MODE_UV)
-	{
-		uv = vec2(rt_mod(rt_mod(u(hit.hit.uv), 1.0) + 1.0, 1.0), rt_mod(rt_mod(v(hit.hit.uv), 1.0) + 1.0, 1.0));
-		tctx->tail = vec(u(uv), v(uv), 0, 0);
-		return (0);
-	}
-	mat = intersect_volume(tctx->volumes, tctx->volume_size, ctx, &hit.hit.t);
-	bsdf = vec(1, 1, 1, 1);
-	if (mat != 0)
-	{
-		tctx->ray.org = ray_at(tctx->ray, hit.hit.t);
-		hit.hit.geometric_normal = rt_random_on_hemi(&ctx->seed, tctx->ray.dir);
-		hit.hit.shading_normal = hit.hit.geometric_normal;
-		hit.hit.pos = tctx->ray.org;
-		hit.rel_geometric_normal = hit.hit.geometric_normal;
-		hit.rel_shading_normal = hit.hit.shading_normal;
-		hit.hit.dpdu = vec_0();
-		hit.hit.dpdv = vec_0();
-		bsdf = f_bsdf_sample(world, ctx, tctx, mat->volume, hit, tctx->ray.dir, &tctx->ray.dir);
-	}
-	else
-	{
-		tctx->ray.org = hit.hit.pos;
-		mat = get_mat_const(world, prim_mat(hit.prim));
-		hit.rel_geometric_normal = hit.hit.geometric_normal;
-		if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
-			hit.rel_geometric_normal = vec_neg(hit.rel_geometric_normal);
-		hit.rel_shading_normal = hit.hit.shading_normal;
-		if (mat->flags & RT_MAT_HAS_NORMAL)
-			hit.rel_shading_normal = local_to_world(hit, vec_sub(vec_mul(sample_vector(world, mat->normal_map, hit.hit.uv), vec(2, 2, 1, 1)), vec(1, 1, 0, 0)));
-		if (mat->flags & RT_MAT_HAS_BUMP)
-			hit.rel_shading_normal = local_to_world(hit, bump(world, mat->bump_map, hit.hit.uv));
-		hit.hit.shading_normal = hit.rel_shading_normal;
-		if (world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
-		{
-			tctx->tail = vec_abs(hit.hit.shading_normal);
-			return (0);
-		}
-		if ((mat->flags & RT_MAT_EMITTER) && mat->emission_exp != 0.0)
-			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness * rt_pow(rt_abs(vec_dot(tctx->ray.dir, hit.rel_shading_normal)), mat->emission_exp))));
-		else if (mat->flags & RT_MAT_EMITTER)
-			tctx->tail = vec_add(tctx->tail, vec_mul(tctx->head, vec_scale(filter_sample(world, mat->emission, hit.hit.uv), mat->brightness)));
-		if (((~mat->flags & RT_MAT_HAS_ALPHA) || rt_random_float(&ctx->seed) < w(filter_sample(world, mat->alpha, hit.hit.uv))) && mat->surface.end > mat->surface.begin)
-		{
-			if (vec_dot(hit.hit.geometric_normal, tctx->ray.dir) > 0)
-				hit.rel_shading_normal = vec_neg(hit.rel_shading_normal);
-			bsdf = f_bsdf_sample(world, ctx, tctx, mat->surface, hit, tctx->ray.dir, &tctx->ray.dir);
-		}
-		if ((mat->flags & RT_MAT_HAS_VOLUME) && vec_dot(tctx->ray.dir, hit.rel_geometric_normal) < 0)
-			toggle_volume(tctx->volumes, &tctx->volume_size, mat, vec_dot(tctx->ray.dir, hit.hit.geometric_normal));
-	}
-	tctx->head = vec_mul(tctx->head, bsdf);
-	return (!vec_eq(tctx->head, vec_0()));
+	ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
+	ctx->ray.dir = sample.wo;
+	ctx->specref = bxdf_is_perfspec(sample.bxdf);
+	if (!hit.is_volume && (hit.mat->flags & RT_MAT_HAS_VOLUME)
+			&& vec_dot(ctx->ray.dir, hit.rel_geometric_normal) < 0)
+		toggle_volume(ctx->volumes, &ctx->volume_size, hit.mat,
+				vec_dot(ctx->ray.dir, hit.hit.geometric_normal));
+	ctx->ray.org = hit.hit.pos;
+	ctx->time -= hit.hit.t;
+	return (!vec_eq(ctx->head, vec_0()) && ctx->time > 0);
 }
 
 void
-	world_trace_init(const GLOBAL t_world *world, t_trace_ctx *tctx)
+	world_trace_init(const GLOBAL t_world *world,
+			GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {
 	const GLOBAL t_material	*ambient;
 
+	tctx->world = world;
+	tctx->ctx = ctx;
 	tctx->head = vec(1, 1, 1, 1);
 	tctx->tail = vec(0, 0, 0, 0);
 	tctx->volume_size = 0;
+	tctx->time = world->ambient_dist;
+	tctx->specref = 1;
+	tctx->refractive_index = 1.0f;
 	if (world->flags & RT_WORLD_HAS_AMBIENT)
 	{
 		ambient = get_mat_const(world, world->ambient_mat);
-		if ((ambient->flags & RT_MAT_HAS_VOLUME) && tctx->volume_size < RT_MAX_VOLUMES)
+		tctx->refractive_index = ambient->refractive_index;
+		if ((ambient->flags & RT_MAT_HAS_VOLUME) && !!RT_MAX_VOLUMES)
 		{
 			tctx->volumes[tctx->volume_size] = ambient;
 			tctx->volume_size += 1;
 		}
 	}
-	eta_init(tctx, 1.0);
 }
 
 t_vec
-	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth)
+	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx,
+			t_ray ray, int depth)
 {
 	t_trace_ctx	tctx;
 	t_vec		result;
@@ -251,9 +359,9 @@ t_vec
 	while (i < world->trace_batch_size)
 	{
 		this_depth = depth;
-		world_trace_init(world, &tctx);
-		tctx.ray = ray;
-		while (this_depth > 0 && world_trace_step(world, ctx, &tctx))
+		world_trace_init(world, ctx, &tctx);
+		tctx.ray = ray; // TODO: ray has no randomness?!?
+		while (this_depth > 0 && world_trace_step(&tctx))
 			this_depth -= 1;
 		result = vec_add(result, tctx.tail);
 		i += 1;
@@ -285,11 +393,11 @@ void
 				result = vec_0();
 			}
 			depth = RT_MAX_DEPTH;
-			world_trace_init(world, &tctx);
+			world_trace_init(world, ctx, &tctx);
 			tctx.ray = project(world, ctx, begin + my_index);
 		}
 		depth -= 1;
-		if (!world_trace_step(world, ctx, &tctx))
+		if (!world_trace_step(&tctx))
 			depth = 0;
 		if (depth == 0)
 		{

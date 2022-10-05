@@ -1,5 +1,8 @@
-#include "world_impl.h"
+#include "accel.h"
+#include "accel_impl.h"
 #include "util.h"
+#include "world.h"
+#include "world_impl.h"
 #include <math.h>
 
 const t_primitive *get_primitive(const t_tree_info *info, size_t index) {
@@ -18,6 +21,24 @@ void interior_node_init(t_node_info *parent_info, const t_node_info *above_info,
 	parent_node->a.split = split->offset;
 	parent_node->b.flags = split->axis;
 	parent_node->b.above_child |= (above_info->offset << 2);
+}
+
+static void copy_indices(t_accel_node *node, t_tree_info *tree_info, t_tree_edges *edges) {
+	const t_edge	*edge;
+	size_t			index;
+	size_t			offset;
+
+	index = 0;
+	offset = 0;
+	while (index < edges->count)
+	{
+		edge = &edges->edges[AXIS_X][index];
+		if (edge->type == EDGE_START) {
+			node->a.inline_primitives[offset] = tree_info->prims[edge->index].index;
+			++offset;
+		}
+		++index;
+	}
 }
 
 static uint32_t push_back_indices(t_tree_info *tree_info, t_tree_edges *edges) {
@@ -44,17 +65,16 @@ void leaf_node_init(t_node_info *node_info) {
 	t_accel_node	*node;
 	size_t			primitive_count;
 
+
 	primitive_count = node_info->edges->count / 2;
 	/* rt_assert(primitive_count < (1 << 30), "too many primitives in leaf_node_init"); */
 	node = get_node(node_info);
 	node->b.flags = 3;
 	node->b.nprims |= ((uint32_t) primitive_count) << 2;
-	if (primitive_count == 0) {
-		node->a.one_primitive = 0;
-	} else if (primitive_count == 1) {
-		node->a.one_primitive = node_info->tree->prims[node_info->edges->edges[0][0].index].index;
+	if (primitive_count <= ACCEL_INLINE_PRIMS) {
+		copy_indices(node, node_info->tree, node_info->edges);
 	} else {
-		node->a.primitive_ioffset = push_back_indices(node_info->tree, node_info->edges);
+		node->a.primitive_offset = push_back_indices(node_info->tree, node_info->edges);
 	}
 }
 

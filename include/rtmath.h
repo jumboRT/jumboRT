@@ -7,12 +7,13 @@
 # define RT_1_PI 0.31831 
 # define RT_PI 3.14159
 # define RT_2PI 6.28319
+# define RT_PI_2 1.57080
+# define RT_PI_4 0.78540
 
 # define RT_VECTORIZE
 
 # if defined RT_VECTORIZE
 typedef float				t_vec __attribute__ ((vector_size(16)));
-typedef int					t_ivec __attribute__ ((vector_size(16))); /* TODO can probably be removed */
 typedef float				t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
@@ -151,8 +152,6 @@ float		rt_igc(float arg);
 t_vec		vec_gc(t_vec v);
 t_vec		vec_igc(t_vec v);
 
-int			float_eq(float a, float b, float error);
-
 float		x(t_vec v);
 float		y(t_vec v);
 float		z(t_vec v);
@@ -169,7 +168,7 @@ t_vec		vec_y(float y);
 t_vec		vec_z(float z);
 
 t_vec2		vec2(float x, float y);
-t_vec		vec2_0(void);
+t_vec2		vec2_0(void);
 t_vec		vec2_x(float x);
 t_vec		vec2_y(float y);
 
@@ -218,6 +217,7 @@ void		vec_angles(t_vec basis, t_vec v, t_vec *out_vec, float *out_angle);
 t_vec2		vec_change_basis2(t_vec v, t_vec tangent, t_vec bit_tangent);
 
 int			vec_eq(t_vec a, t_vec b);
+int			vec2_eq(t_vec2 a, t_vec2 b);
 
 t_ray		ray(t_vec org, t_vec dir);
 t_vec		ray_at(t_ray ray, float t);

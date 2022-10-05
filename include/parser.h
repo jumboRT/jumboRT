@@ -3,8 +3,11 @@
 
 # include "world.h"
 # include "vector.h"
+# include "tex.h"
 
 # include <stddef.h>
+
+typedef struct s_material	t_material;
 
 typedef struct s_directive	t_directive;
 typedef struct s_entry		t_entry;
@@ -108,6 +111,8 @@ void			rt_exec_volume(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cam_focus(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cam_blur(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_ambient_dist(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_refractive_index(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_comment(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_conditional(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_include(t_world *world, t_parse_ctx *ctx);

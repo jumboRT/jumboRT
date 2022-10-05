@@ -1,7 +1,13 @@
-#include "world.h"
+#include "shape.h"
+
+uint32_t
+	prim_type(const GLOBAL t_primitive *prim)
+{
+	return (prim->data & 0xFF);
+}
 
 int
-	prim_is_infinite(const t_primitive *prim)
+	prim_is_infinite(const GLOBAL t_primitive *prim)
 {
 	if (prim_type(prim) == RT_SHAPE_PLANE)
 		return (1);
@@ -13,7 +19,7 @@ int
 }
 
 int
-	prim_is_degenerate(const t_primitive *prim)
+	prim_is_degenerate(const GLOBAL t_primitive *prim)
 {
 	if (prim_is_infinite(prim))
 		return (1);
@@ -21,4 +27,3 @@ int
 		return (1);
 	return (0);
 }
-

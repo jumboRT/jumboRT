@@ -18,11 +18,9 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
 						   gamma.c vec_value.c paraboloid.c hyperboloid.c coord.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c prim_traits.c \
-						   size.c accel_algo.c accel_info.c accel_util.c \
-						   node.c bounds.c common.c trace.c camera.c \
-						   tex_sample.c material.c tex_ppm.c bsdf.c filter.c \
-						   conversion.c hash.c
+WORLD_FILES				:= impl.c intersect.c intersect_prim.c \
+						   size.c common.c trace.c camera.c \
+						   material.c tex_ppm.c conversion.c hash.c 
 PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
@@ -34,6 +32,11 @@ Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   lz77_new.c encode.c decode.c wtree.c \
 						   encode_zwtree_token.c util.c
 GFX_FILES				:= win.c
+BSDF_FILES				:= bsdf_new.c diffuse.c reflective.c transmissive.c util.c
+TEX_FILES				:= sample.c filter.c init.c
+SHAPE_FILES				:= traits.c bounds.c
+ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
+						   node.c
 BASE_FILES				:= main.c options.c perf.c
 
 PATCH_VERSION				:= 0
@@ -89,13 +92,19 @@ OPENCL_FILES			:= \
 	src/world/intersect.c \
 	src/world/intersect_prim.c \
 	src/world/size.c \
-	src/world/node.c \
 	src/world/common.c \
 	src/world/trace.c \
-	src/world/tex_sample.c \
-	src/world/bsdf.c \
-	src/world/filter.c \
-	src/world/conversion.c
+	src/world/conversion.c \
+	src/bsdf/bsdf_new.c \
+	src/bsdf/diffuse.c \
+	src/bsdf/reflective.c \
+	src/bsdf/transmissive.c \
+	src/bsdf/util.c \
+	src/tex/sample.c \
+	src/tex/filter.c \
+	src/shape/traits.c \
+	src/shape/bounds.c \
+	src/accel/node.c
 
 ifdef platform
 	ifeq ($(platform),linux)
@@ -122,6 +131,10 @@ FILE_NAMES				:= \
 	$(patsubst %.c,parser/%.c,$(PARSER_FILES)) \
 	$(patsubst %.c,net/%.c,$(NET_FILES)) \
 	$(patsubst %.c,z/%.c,$(Z_FILES)) \
+	$(patsubst %.c,bsdf/%.c,$(BSDF_FILES)) \
+	$(patsubst %.c,tex/%.c,$(TEX_FILES)) \
+	$(patsubst %.c,shape/%.c,$(SHAPE_FILES)) \
+	$(patsubst %.c,accel/%.c,$(ACCEL_FILES)) \
 	$(BASE_FILES)
 
 CC						:= clang

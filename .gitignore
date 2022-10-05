@@ -13,6 +13,8 @@ tags
 *.a
 *.exe
 /image.*
+/*.ppm
+/*.png
 kernel*.bin
 compile
 /san-miguel
