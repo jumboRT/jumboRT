@@ -11,7 +11,7 @@ static int
 	float	sin2thetai;
 	float	sin2thetat;
 
-	costhetai = z(wi);
+	costhetai = -z(wi);
 	sin2thetai = rt_max(0.0f, 1.0f - costhetai * costhetai);
 	sin2thetat = eta * eta * sin2thetai;
 	if (sin2thetat >= 1)
@@ -76,7 +76,7 @@ t_sample
 
 	// ik heb even etai en etat hier allebij op 1.0 gezet om iets te testen (scenes/jumbort/light_sampling_test.rt)
 	etai = 1.0;
-	etat = 1.0;
+	etat = 1.5;
 	result.pdf = 1.0f;
 	result.bsdf = vec3(1.0f, 1.0f, 1.0f);
 	result.bsdf = vec_scale(result.bsdf,  1.0f / rt_abs(z(wi)));
@@ -84,7 +84,7 @@ t_sample
 	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
 	{
 		// hier ook
-		etai = 1.0;
+		etai = 1.5;
 		etat = 1.0;
 	}
 	refract(wi, etai / etat, &result.wo);
