@@ -105,5 +105,6 @@ char
 		close(fd);
 	return (result);
 }
+
 #endif
 

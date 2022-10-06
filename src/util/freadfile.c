@@ -39,4 +39,6 @@ char
 	str[*len] = '\0';
 	return (str);
 }
+
 #endif
+

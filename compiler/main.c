@@ -103,27 +103,6 @@ void
 	free(len);
 }
 
-int
-	check_program(cl_program program, cl_device_id device)
-{
-	cl_int			status;
-	cl_build_status	build_status;
-	size_t			size;
-	char			*str;
-
-	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_STATUS, sizeof(build_status), &build_status, NULL);
-	assert(status == CL_SUCCESS);
-	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
-	assert(status == CL_SUCCESS);
-	str = malloc(size);
-	assert(str != NULL);
-	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, size, str, NULL);
-	assert(status == CL_SUCCESS);
-	write(STDOUT_FILENO, str, size);
-	free(str);
-	return (build_status == CL_BUILD_SUCCESS);
-}
-
 char
 	*platform_name(cl_platform_id platform)
 {
@@ -196,6 +175,27 @@ char
 	free(pname);
 	free(dname);
 	return (file);
+}
+
+int
+	check_program(cl_program program, cl_device_id device)
+{
+	cl_int			status;
+	cl_build_status	build_status;
+	size_t			size;
+	char			*str;
+
+	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_STATUS, sizeof(build_status), &build_status, NULL);
+	assert(status == CL_SUCCESS);
+	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &size);
+	assert(status == CL_SUCCESS);
+	str = malloc(size);
+	assert(str != NULL);
+	status = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, size, str, NULL);
+	assert(status == CL_SUCCESS);
+	write(STDOUT_FILENO, str, size);
+	free(str);
+	return (build_status == CL_BUILD_SUCCESS);
 }
 
 void
@@ -351,4 +351,3 @@ int
 	}
 	free(platforms);
 }
-
