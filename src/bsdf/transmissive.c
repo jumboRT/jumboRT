@@ -82,7 +82,6 @@ t_sample
 	wiw = local_to_world(hit, wi);
 	wi = vec_neg(wi);
 
-	// ik heb even etai en etat hier allebij op 1.0 gezet om iets te testen (scenes/jumbort/light_sampling_test.rt)
 	etai = 1.0;
 	etat = 1.5;
 	n = vec_z(-1.0f);
@@ -92,7 +91,6 @@ t_sample
 	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
 	{
 		n = vec_neg(n);
-		// hier ook
 		etai = 1.5;
 		etat = 1.0;
 	}
@@ -106,7 +104,8 @@ t_sample
 		return (result);
 	}
 	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
-	result.bsdf = vec_mul(vec3(1.0f, 1.0f, 1.0f), vec_sub(vec3(1.0f, 1.0f, 1.0f), 
+	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
+					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f), 
 					vec3(fresnel, fresnel, fresnel)));
 	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(n, wi)));
 	return (result);
