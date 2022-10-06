@@ -40,7 +40,7 @@ void
 
 void
 	opencl_load_program(t_opencl_program_ctx *ctx,
-			const unsigned char *string, size_t length)
+			const unsigned char *string, size_t length, int build)
 {
 	cl_int		bin_status;
 	cl_int		status;
@@ -49,9 +49,12 @@ void
 			1, &ctx->device, &length, &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS,
 			"clCreateProgramWithBinary failed");
-	status = clBuildProgram(ctx->program, 1, &ctx->device,
-			RT_WORK_OPENCL_BUILD_FLAGS, NULL, NULL);
-	opencl_check_program(ctx);
+	if (build)
+	{
+		status = clBuildProgram(ctx->program, 1, &ctx->device,
+				RT_WORK_OPENCL_BUILD_FLAGS, NULL, NULL);
+		opencl_check_program(ctx);
+	}
 	rt_assert(status == CL_SUCCESS, "clBuildProgram failed");
 }
 

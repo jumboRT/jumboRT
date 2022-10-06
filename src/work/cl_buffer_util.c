@@ -1,4 +1,5 @@
 #include "cl_impl.h"
+#include "util.h"
 
 #if RT_USE_OPENCL
 
@@ -9,7 +10,11 @@ cl_mem
 	cl_mem	mem;
 
 	if (size == 0)
+	{
+		status = clSetKernelArg(cl_ctx->work_kernel, arg, sizeof(cl_mem), NULL);
+		rt_assert(status == CL_SUCCESS, "clSetKernelArg failed");
 		return (NULL);
+	}
 	mem = clCreateBuffer(cl_ctx->context,
 			CL_MEM_READ_ONLY, size, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer failed");

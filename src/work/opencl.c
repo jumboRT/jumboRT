@@ -50,7 +50,7 @@ static void
 	program_ctx.context = cl_ctx->context;
 	program_ctx.platform = platform;
 	program_ctx.device = device;
-	opencl_load_program_path(&program_ctx, "kernel");
+	opencl_load_program_path(&program_ctx, "kernel", 1);
 	cl_ctx->program = program_ctx.program;
 	cl_ctx->work_kernel = clCreateKernel(cl_ctx->program, "work_kernel", &status);
 	rt_assert(status == CL_SUCCESS, "clCreateKernel work_kernel failed");

@@ -135,7 +135,7 @@ void				opencl_device_all(
 void				opencl_comp_program(
 		t_opencl_program_ctx *ctx, const char *string, size_t length);
 void				opencl_load_program(
-		t_opencl_program_ctx *ctx, const unsigned char *string, size_t length);
+		t_opencl_program_ctx *ctx, const unsigned char *string, size_t length, int build);
 void				opencl_link_program(
 		t_opencl_program_ctx *ctx, cl_program *programs, size_t count);
 unsigned char		*opencl_save_program(
@@ -145,13 +145,10 @@ void				opencl_release_program(
 
 void				opencl_comp_program_path(
 		t_opencl_program_ctx *ctx, const char *path);
-
 void				opencl_load_program_path(
-		t_opencl_program_ctx *ctx, const char *path);
-
+		t_opencl_program_ctx *ctx, const char *path, int build);
 void				opencl_link_program_path(
 		t_opencl_program_ctx *ctx, const char **paths, size_t count);
-
 void				opencl_save_program_path(
 		t_opencl_program_ctx *ctx, const char *path);
 
