@@ -44,30 +44,6 @@ static int
 	return (1);
 }
 
-float
-	f_dielectric(float costhetai, float etai, float etat)
-{
-	float	sinthetai;
-	float	sinthetat;
-	float	costhetat;
-	float	rparl;
-	float	rperp;
-
-	costhetai = rt_clamp(costhetai, -1.0f, 1.0f);
-
-	sinthetai = rt_sqrt(rt_max(0.0f, 1.0f - costhetai * costhetai));
-	sinthetat = etai / etat * sinthetai;
-
-	if (sinthetat >= 1.0f)
-		return (1);
-	costhetat = rt_sqrt(rt_max(0.0f, 1.0f - sinthetat * sinthetat));
-	rparl = ((etat * costhetai) - (etai * costhetat)) /
-		((etat * costhetai) + (etai * costhetat));
-	rperp = ((etai * costhetai) - (etat * costhetat)) /
-		((etai * costhetai) + (etat * costhetat));
-	return ((rparl * rparl + rperp * rperp) / 2.0f);
-}
-
 t_sample
 	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi)
@@ -85,8 +61,8 @@ t_sample
 	etai = 1.0;
 	etat = 1.5;
 	n = vec_z(-1.0f);
-	result.pdf = 1.0f;
-	result.bsdf = vec3(1.0f, 1.0f, 1.0f);
+	result.pdf = 0.0f;
+	result.bsdf = vec_0();
 	result.wo = vec3(-x(wi), -y(wi), z(wi));
 	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
 	{
@@ -96,6 +72,7 @@ t_sample
 	}
 	if (!refract(wi, n, etai / etat, &result.wo))
 	{
+		return (result);
 
 		result.wo = vec3(-x(wi), -y(wi), z(wi));
 		result.bsdf = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
@@ -103,6 +80,7 @@ t_sample
 		result.bsdf = vec_scale(result.bsdf, fresnel / rt_abs(vec_dot(n, wi)));
 		return (result);
 	}
+	result.pdf = 1.0f;
 	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
 	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
 					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f), 
