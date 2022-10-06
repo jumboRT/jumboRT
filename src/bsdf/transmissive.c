@@ -3,6 +3,7 @@
 #include "world.h"
 #include "mat.h"
 
+/*
 static int
 	refract(t_vec wi, float eta, t_vec *wt)
 {
@@ -12,6 +13,27 @@ static int
 	float	sin2thetat;
 
 	costhetai = -z(wi);
+	sin2thetai = rt_max(0.0f, 1.0f - costhetai * costhetai);
+	sin2thetat = eta * eta * sin2thetai;
+	if (sin2thetat >= 1)
+		return (0);
+	costhetat = rt_sqrt(1.0f - sin2thetat);
+	*wt = vec_add(vec_scale(vec_neg(wi), eta),
+			vec_z(eta * costhetai - costhetat));
+	return (1);
+}
+*/
+
+static int
+	refract(t_vec wi, t_vec n, float eta, t_vec *wt)
+{
+	float	costhetai;
+	float	costhetat;
+	float	sin2thetai;
+	float	sin2thetat;
+
+	costhetai = vec_dot(wi, n);
+	//costhetai = -z(wi);
 	sin2thetai = rt_max(0.0f, 1.0f - costhetai * costhetai);
 	sin2thetat = eta * eta * sin2thetai;
 	if (sin2thetat >= 1)
@@ -46,22 +68,6 @@ float
 	return ((rparl * rparl + rperp * rperp) / 2.0f);
 }
 
-/*
-static int
-	refract(t_vec wi, float eta, t_vec *wt)
-{
-	float	costheta;
-	t_vec	rperp;
-	t_vec	rparl;
-
-	costheta = rt_min(z(wi), 1.0);
-	rperp = vec_scale(vec_add(vec_z(costheta), wi), eta);
-	rparl = vec_z(rt_sqrt(rt_abs(1.0 - vec_mag2(rperp))));
-	*wt = vec_add(rperp, rparl);
-	return (1);
-}
-*/
-
 t_sample
 	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi)
@@ -69,7 +75,9 @@ t_sample
 	t_vec		wiw;
 	float		etai;
 	float		etat;
+	float		fresnel;
 	t_sample	result;
+	t_vec		n;
 
 	wiw = local_to_world(hit, wi);
 	wi = vec_neg(wi);
@@ -77,17 +85,30 @@ t_sample
 	// ik heb even etai en etat hier allebij op 1.0 gezet om iets te testen (scenes/jumbort/light_sampling_test.rt)
 	etai = 1.0;
 	etat = 1.5;
+	n = vec_z(-1.0f);
 	result.pdf = 1.0f;
 	result.bsdf = vec3(1.0f, 1.0f, 1.0f);
-	result.bsdf = vec_scale(result.bsdf,  1.0f / rt_abs(z(wi)));
 	result.wo = vec3(-x(wi), -y(wi), z(wi));
 	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
 	{
+		n = vec_neg(n);
 		// hier ook
 		etai = 1.5;
 		etat = 1.0;
 	}
-	refract(wi, etai / etat, &result.wo);
+	if (!refract(wi, n, etai / etat, &result.wo))
+	{
+
+		result.wo = vec3(-x(wi), -y(wi), z(wi));
+		result.bsdf = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
+		fresnel = f_dielectric(costheta(result.wo), etai, etat);
+		result.bsdf = vec_scale(result.bsdf, fresnel / rt_abs(vec_dot(n, wi)));
+		return (result);
+	}
+	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
+	result.bsdf = vec_mul(vec3(1.0f, 1.0f, 1.0f), vec_sub(vec3(1.0f, 1.0f, 1.0f), 
+					vec3(fresnel, fresnel, fresnel)));
+	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(n, wi)));
 	return (result);
 }
 /*
