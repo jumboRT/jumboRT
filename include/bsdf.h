@@ -12,7 +12,8 @@
 # define RT_BXDF_COOK_TORRANCE		4
 # define RT_BXDF_BLINN_PHONG		5
 # define RT_BXDF_PHONG				6
-# define RT_BXDF_COUNT				7
+# define RT_BXDF_SPECULAR			7
+# define RT_BXDF_COUNT				8
 
 typedef struct s_world				t_world;
 typedef struct s_context			t_context;
@@ -27,6 +28,7 @@ typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
 typedef struct s_bxdf_bphong		t_bxdf_bphong;
 typedef struct s_bxdf_bphong		t_bxdf_phong;
+typedef struct s_bxdf_specular		t_bxdf_specular;
 typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_sample				t_sample;
 
@@ -67,13 +69,19 @@ struct s_bxdf_bphong {
 	t_filter	spec;
 };
 
+struct s_bxdf_specular {
+	t_bxdf	base;
+};
+
 union u_bxdf_any {
 	t_bxdf					base;
 	t_bxdf_diffuse			diffuse;
 	t_bxdf_reflective		reflective;
 	t_bxdf_transmissive		transmissive;
+	t_bxdf_phong			phong;
 	t_bxdf_bphong			blinn_phong;
 	t_bxdf_cook_torrance	cook_torrance;
+	t_bxdf_specular			specular;
 };
 
 struct s_bsdf {
@@ -94,6 +102,8 @@ int			same_hemi(t_vec wa, t_vec wb);
 
 float		costheta(t_vec w);
 
+float		f_dielectric(float costhetai, float etai, float etat);
+
 t_sample	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
 t_vec		diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
 float		diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
@@ -102,9 +112,17 @@ t_sample	reflective_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBA
 t_vec		reflective_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
 float		reflective_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
 
+t_sample	specular_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi);
+t_vec		specular_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi, t_vec wo);
+float		specular_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi, t_vec wo);
+
 t_sample	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
 t_vec		transmissive_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
 float		transmissive_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+
+t_sample	fresnel_blend_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
+t_vec		fresnel_blend_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+float		fresnel_blend_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
 
 t_sample	phong_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi);
 t_vec		phong_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi, t_vec wo);

@@ -167,6 +167,19 @@ void
 }
 
 void
+	rt_exec_specular(t_world *world, t_parse_ctx *ctx)
+{
+	t_bxdf_specular	bxdf;
+
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	bxdf.base.weight = rt_float(ctx);
+	bxdf.base.type = RT_BXDF_SPECULAR;
+	bxdf.base.tex = rt_filter(world, ctx);
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
+}
+
+void
 	rt_exec_transmissive(t_world *world, t_parse_ctx *ctx)
 {
 	t_bxdf_transmissive	bxdf;

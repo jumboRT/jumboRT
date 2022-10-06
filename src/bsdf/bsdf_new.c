@@ -28,6 +28,9 @@ t_vec
 	else if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		result = transmissive_f(ctx, hit,
 				(const GLOBAL t_bxdf_transmissive*) bxdf, wi, wo);
+	else if (bxdf->type == RT_BXDF_SPECULAR)
+		result = specular_f(ctx, hit,
+				(const GLOBAL t_bxdf_specular*) bxdf, wi, wo);
 	return (vec_scale(result, bxdf->weight));
 }
 
@@ -47,6 +50,9 @@ float
 	else if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		result += transmissive_pdf(ctx, hit,
 				(const GLOBAL t_bxdf_transmissive *) bxdf, wi, wo);
+	else if (bxdf->type == RT_BXDF_SPECULAR)
+		result += specular_pdf(ctx, hit,
+				(const GLOBAL t_bxdf_specular *) bxdf, wi, wo);
 	return (result);
 }
 
@@ -65,6 +71,9 @@ t_sample
 	else if (bxdf->type == RT_BXDF_TRANSMISSIVE)
 		result = transmissive_sample(ctx, hit,
 				(const GLOBAL t_bxdf_transmissive*) bxdf, wiw);
+	else if (bxdf->type == RT_BXDF_SPECULAR)
+		result = specular_sample(ctx, hit,
+				(const GLOBAL t_bxdf_specular*) bxdf, wiw);
 	result.bsdf = vec_scale(result.bsdf, bxdf->weight);
 	result.bxdf = bxdf;
 	return (result);
@@ -95,6 +104,8 @@ static t_vec
 		}
 		type++;
 	}
+	/* TODO: check if correct */
+	result = vec_scale(result, get_bsdf(hit).end - get_bsdf(hit).begin);
 	return (result);
 }
 
@@ -173,6 +184,14 @@ static t_sample
 			result.bsdf = vec_add(result.bsdf, bxdf_f(ctx, hit, bxdf2, wiw, result.wo));
 			idx += 1;
 		}
+		/* TODO: check if correct */
+		result.bsdf = vec_scale(result.bsdf, get_bsdf(hit).end - get_bsdf(hit).begin);
+	}
+	else
+	{
+		/* TODO: check if correct */
+		result.bsdf = vec_scale(result.bsdf, bxdf->weight);
+		result.bsdf = vec_scale(result.bsdf, get_bsdf(hit).end - get_bsdf(hit).begin);
 	}
 	return (result);
 }
@@ -225,5 +244,6 @@ t_sample
 int32_t
 	bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf)
 {
-	return (bxdf->type == RT_BXDF_REFLECTIVE || bxdf->type == RT_BXDF_TRANSMISSIVE);
+	return (bxdf->type == RT_BXDF_REFLECTIVE || bxdf->type == RT_BXDF_TRANSMISSIVE
+			|| bxdf->type == RT_BXDF_SPECULAR);
 }
