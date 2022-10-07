@@ -11,12 +11,10 @@ void
 	char	*error;
 
 	error = NULL; /* TODO: check error */
-	path = device_file(path, ctx->platform, ctx->device);
 	data = rt_readfile(path, &error, &size);
 	opencl_comp_program(ctx, data, size);
 	rt_free(data);
 	rt_free(error);
-	rt_free((void *) path);
 }
 
 void
@@ -36,20 +34,17 @@ void
 }
 
 void
-	opencl_link_program_path(t_opencl_program_ctx *ctx, const char **paths,
+	opencl_link_program_path(t_opencl_program_ctx *ctx, const char *const *paths,
 			size_t count)
 {
 	size_t		index;
 	cl_program	*programs;
-	char		*path;
 
 	programs = rt_malloc(count * sizeof(*programs));
 	index = 0;
 	while (index < count)
 	{
-		path = device_file(paths[index], ctx->platform, ctx->device);
-		opencl_load_program_path(ctx, path, 0);
-		rt_free(path);
+		opencl_load_program_path(ctx, paths[index], 0);
 		programs[index] = ctx->program;
 		index += 1;
 	}

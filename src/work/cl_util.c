@@ -59,4 +59,22 @@ cl_context
 	return (result);
 }
 
+void
+	work_destroy_queue(cl_command_queue queue)
+{
+	cl_int	status;
+
+	status = clReleaseCommandQueue(queue);
+	rt_assert(status == CL_SUCCESS, "clReleaseQueue failed");
+}
+
+void
+	work_destroy_context(cl_context context)
+{
+	cl_int	status;
+
+	status = clReleaseContext(context);
+	rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
+}
+
 #endif

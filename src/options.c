@@ -1,6 +1,7 @@
 #include "state.h"
 #include "util.h"
 #include "work.h"
+#include "cl_impl.h"
 
 #include <libft.h>
 #include <ft_printf.h>
@@ -197,6 +198,18 @@ void
 		else if (ft_strcmp(argv[i], "-v") == 0)
 		{
 			ft_printf("v%d.%d.%d\n", RT_PATCH_VER, RT_MINOR_VER, RT_MAJOR_VER);
+			exit(EXIT_SUCCESS);
+		}
+		else if (ft_strcmp(argv[i], "-c") == 0)
+		{
+			rt_assert(i + 2 < argc, "-c requires two arguments");
+			opencl_compile(argv[i + 2], argv[i + 1]);
+			exit(EXIT_SUCCESS);
+		}
+		else if (ft_strcmp(argv[i], "-C") == 0)
+		{
+			rt_assert(i + 2 < argc, "-C requires at least two arguments");
+			opencl_link((const char **) argv + i + 2, argv[i + 1]);
 			exit(EXIT_SUCCESS);
 		}
 		else

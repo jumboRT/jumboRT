@@ -23,5 +23,21 @@ void
 	rt_assert(0, "not compiled with opencl support");
 }
 
+void
+	opencl_compile(const char *i, const char *o)
+{
+	(void) i;
+	(void) o;
+	rt_assert(0, "not compiled with opencl support");
+}
+
+void
+	opencl_link(const char **i, const char *o)
+{
+	(void) i;
+	(void) o;
+	rt_assert(0, "not compiled with opencl support");
+}
+
 #endif
 

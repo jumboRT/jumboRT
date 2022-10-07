@@ -56,6 +56,27 @@ static char
 }
 
 char
+	*device_token(cl_platform_id platform, cl_device_id device)
+{
+	size_t	size;
+	char	*pname;
+	char	*dname;
+	char	*file;
+
+	pname = clean_name(platform_name(platform));
+	dname = clean_name(device_name(device));
+	size = ft_strlen(pname) + ft_strlen(dname) + 2;
+	file = rt_malloc(size);
+	file[0] = '\0';
+	ft_strlcat(file, pname, size);
+	ft_strlcat(file, "-", size);
+	ft_strlcat(file, dname, size);
+	rt_free(pname);
+	rt_free(dname);
+	return (file);
+}
+
+char
 	*device_file(const char *prefix, cl_platform_id platform, cl_device_id device)
 {
 	size_t	size;

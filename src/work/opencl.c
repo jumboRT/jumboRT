@@ -93,12 +93,9 @@ void
 		if (work->workers[i]->backend == RT_BACKEND_OPENCL)
 		{
 			cl_ctx = work->workers[i]->ctx;
-			status = clReleaseContext(cl_ctx->context);
-			rt_assert(status == CL_SUCCESS, "clReleaseContext failed");
-			status = clReleaseCommandQueue(cl_ctx->command_queue[0]);
-			rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
-			status = clReleaseCommandQueue(cl_ctx->command_queue[1]);
-			rt_assert(status == CL_SUCCESS, "clReleaseCommandQueue failed");
+			work_destroy_queue(cl_ctx->command_queue[0]);
+			work_destroy_queue(cl_ctx->command_queue[1]);
+			work_destroy_context(cl_ctx->context);
 			status = clReleaseProgram(cl_ctx->program);
 			rt_assert(status == CL_SUCCESS, "clReleaseProgram failed");
 			status = clReleaseKernel(cl_ctx->work_kernel);
