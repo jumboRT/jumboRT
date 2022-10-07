@@ -231,11 +231,15 @@ static int
 	if (ctx->world->render_mode == RT_RENDER_MODE_GEOMETRIC_NORMAL)
 	{
 		ctx->tail = vec_abs(hit->hit.geometric_normal);
+		if (vec_dot(hit->hit.geometric_normal, ctx->ray.dir) > 0)
+			ctx->tail = vec_scale(ctx->tail, 0.25);
 		return (1);
 	}
 	if (ctx->world->render_mode == RT_RENDER_MODE_SHADING_NORMAL)
 	{
 		ctx->tail = vec_abs(hit->hit.shading_normal);
+		if (vec_dot(hit->hit.shading_normal, ctx->ray.dir) > 0)
+			ctx->tail = vec_scale(ctx->tail, 0.25);
 		return (1);
 	}
 	return (0);

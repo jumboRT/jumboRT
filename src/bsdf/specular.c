@@ -12,11 +12,11 @@ t_sample
 	float		etai;
 	float		etat;
 
-	/* TODO this check can be removed since f_dielectric also does it */
 	wi = vec_neg(wi);
 
 	etai = 1.0f;
 	etat = hit->mat->refractive_index;
+	/* TODO this check can be removed since f_dielectric also does it */
 	/*
 	if (costheta(wi) < 0)
 	{

@@ -58,8 +58,8 @@ t_sample
 		return (result);
 	}
 	result.pdf = 1.0f;
-	fresnel = f_dielectric(costheta(result.wo), etat, etai);
-	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
+	fresnel = f_dielectric(costheta(result.wo), 1.0f, hit->mat->refractive_index);
+	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->base.tex,
 					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f),
 					vec3(fresnel, fresnel, fresnel)));
 	result.bsdf = vec_scale(result.bsdf, (etai / etat) * (etat / etai));

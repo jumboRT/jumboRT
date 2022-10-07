@@ -48,7 +48,6 @@ struct s_bxdf_reflective {
 
 struct s_bxdf_transmissive {
 	t_bxdf		base;
-	t_filter	refraction_tex;
 };
 
 struct s_bxdf_cook_torrance {
