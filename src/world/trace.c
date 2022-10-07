@@ -165,29 +165,6 @@ static void
 	}
 }
 
-// TODO: optimize this, maybe move to world_intersect
-static void
-	intersect_transparent(const t_trace_ctx *ctx, t_world_hit *hit,
-			t_ray ray, float max)
-{
-	float	total;
-	int		count;
-
-	total = 0;
-	count = 16;
-	while (count > 0)
-	{
-		// TODO: would rather not use intersect_full here
-		intersect_full(ctx, hit, ray, max - total);
-		total += hit->hit.t; // TODO: floating point errors
-		if (alpha_test(ctx, hit))
-			break ;
-		count -= 1;
-		ray.org = hit->hit.pos;
-	}
-	hit->hit.t = total;
-}
-
 static t_ray
 	intersect_light_init(const t_trace_ctx *ctx, t_world_hit *hit,
 			const t_world_hit *whit)
@@ -214,7 +191,7 @@ static int
 	if (ctx->world->lights_count == 0)
 		return (0);
 	lray = intersect_light_init(ctx, hit, whit);
-	intersect_transparent(ctx, &lhit, lray, ctx->time);
+	intersect_partial(ctx, &lhit, lray, ctx->time);
 	if (prim_type(hit->prim) == RT_SHAPE_POINT)
 	{
 		if (hit->hit.t > ctx->time || lhit.hit.t < hit->hit.t)
@@ -227,8 +204,8 @@ static int
 		return (0);
 	if (vec_mag(vec_sub(hit->hit.pos, lhit.hit.pos)) > RT_TINY_VAL)
 		return (0);
-	// prim_hit_info(hit->prim, ctx->world, lray, &lhit);
-	// fix_normals(ctx->world, &lhit, lray);
+	prim_hit_info(hit->prim, ctx->world, lray, &lhit);
+	fix_normals(ctx->world, &lhit, lray);
 	*hit = lhit;
 	return (1);
 }
@@ -298,18 +275,23 @@ static int
 	t_world_hit	hit;
 	t_sample	sample;
 
-	intersect_transparent(ctx, &hit, ctx->ray, ctx->time);
+	intersect_full(ctx, &hit, ctx->ray, ctx->time);
 	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
 		return (0);
-	world_trace_light(ctx, &hit);
-	if (!hit.is_volume && (hit.is_ambient || ctx->specref || prim_is_degenerate(hit.prim)))
-		ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
-	sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
-	if (sample.pdf == 0)
-		return (0);
-	ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
-	ctx->ray.dir = sample.wo;
-	ctx->specref = bxdf_is_perfspec(sample.bxdf);
+	if (alpha_test(ctx, &hit))
+	{
+		world_trace_light(ctx, &hit);
+		if (!hit.is_volume && (hit.is_ambient || ctx->specref || prim_is_degenerate(hit.prim)))
+			ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
+		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
+		if (sample.pdf == 0)
+			return (0);
+		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
+		ctx->ray.dir = sample.wo;
+		ctx->specref = bxdf_is_perfspec(sample.bxdf);
+	}
+	else
+		ctx->specref = 1;
 	if (!hit.is_volume && (hit.mat->flags & RT_MAT_HAS_VOLUME)
 			&& vec_dot(ctx->ray.dir, hit.rel_geometric_normal) < 0)
 		toggle_volume(ctx->volumes, &ctx->volume_size, hit.mat,
@@ -324,7 +306,9 @@ void
 			GLOBAL t_context *ctx, t_trace_ctx *tctx)
 {
 	const GLOBAL t_material	*ambient;
+	int						max_volumes;
 
+	max_volumes = RT_MAX_VOLUMES;
 	tctx->world = world;
 	tctx->ctx = ctx;
 	tctx->head = vec(1, 1, 1, 1);
@@ -337,7 +321,7 @@ void
 	{
 		ambient = get_mat_const(world, world->ambient_mat);
 		tctx->refractive_index = ambient->refractive_index;
-		if ((ambient->flags & RT_MAT_HAS_VOLUME) && !!RT_MAX_VOLUMES)
+		if ((ambient->flags & RT_MAT_HAS_VOLUME) && max_volumes > 0)
 		{
 			tctx->volumes[tctx->volume_size] = ambient;
 			tctx->volume_size += 1;

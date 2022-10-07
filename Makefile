@@ -319,12 +319,12 @@ $(FT_PRINTF_LIB):
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
-$(CL_NAME): $(CL_OBJECTS) $(NAME)
+$(CL_NAME): $(CL_OBJECTS) | $(NAME)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
 	$(SILENT)touch $@
 
-$(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c $(NAME)
+$(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c | $(NAME)
 	$(SILENT)mkdir -p $(@D)
 	@printf $(COMPILE_COLOR)Compiling$(RESET)\ $(notdir $<)\ \(cl\)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -c $@ $<; do sleep 1; done"
