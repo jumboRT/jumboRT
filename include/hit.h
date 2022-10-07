@@ -12,8 +12,6 @@ typedef struct s_light_hit	t_light_hit;
 
 struct s_world_hit {
 	t_hit						hit;
-	t_vec						rel_geometric_normal;
-	t_vec						rel_shading_normal;
 	const GLOBAL t_primitive	*prim;
 	const GLOBAL t_material		*mat;
 	int							is_volume;

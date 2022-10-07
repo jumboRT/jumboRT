@@ -5,25 +5,28 @@
 #include "bsdf.h"
 
 static void
-	toggle_volume(const GLOBAL t_material **volumes, uint32_t *volume_size,
-			const GLOBAL t_material *mat, float norm_dir)
+	toggle_volume(t_trace_ctx *ctx, const t_world_hit *hit, t_vec new_dir)
 {
 	uint32_t	vi;
+	float		id;
+	float		od;
 
-	if (norm_dir < 0 && *volume_size < RT_MAX_VOLUMES)
+	id = vec_dot(hit->hit.geometric_normal, ctx->ray.dir);
+	od = vec_dot(hit->hit.geometric_normal, new_dir);
+	if (id < 0 && od < 0 && ctx->volume_size < RT_MAX_VOLUMES)
 	{
-		volumes[*volume_size] = mat;
-		*volume_size += 1;
+		ctx->volumes[ctx->volume_size] = hit->mat;
+		ctx->volume_size += 1;
 	}
-	else if (norm_dir > 0)
+	else if (id > 0 && od > 0)
 	{
 		vi = 0;
-		while (vi < *volume_size)
+		while (vi < ctx->volume_size)
 		{
-			if (volumes[vi] == mat)
+			if (ctx->volumes[vi] == hit->mat)
 			{
-				*volume_size -= 1;
-				volumes[vi] = volumes[*volume_size];
+				ctx->volume_size -= 1;
+				ctx->volumes[vi] = ctx->volumes[ctx->volume_size];
 				break ;
 			}
 			vi += 1;
@@ -32,20 +35,20 @@ static void
 }
 
 static void
-	intersect_volume(const GLOBAL t_material *const *volumes,
-			uint32_t volume_size, GLOBAL t_context *ctx, t_world_hit *hit)
+	intersect_volume(const t_trace_ctx *ctx, t_world_hit *hit)
 {
 	uint32_t	vi;
 	float		t;
 
 	vi = 0;
-	while (vi < volume_size)
+	while (vi < ctx->volume_size)
 	{
-		t = rt_log(1 - rt_random_float(&ctx->seed)) / -volumes[vi]->density;
+		t = rt_log(1 - rt_random_float(&ctx->ctx->seed))
+			/ -ctx->volumes[vi]->density;
 		if (t < hit->hit.t)
 		{
 			hit->hit.t = t;
-			hit->mat = volumes[vi];
+			hit->mat = ctx->volumes[vi];
 			hit->is_volume = 1;
 		}
 		vi += 1;
@@ -75,37 +78,26 @@ static void
 {
 	t_vec	tmp;
 
-	hit->rel_geometric_normal = hit->hit.geometric_normal;
-	if (vec_dot(hit->hit.geometric_normal, ray.dir) > 0)
-		hit->rel_geometric_normal = vec_neg(hit->rel_geometric_normal);
-	hit->rel_shading_normal = hit->hit.shading_normal;
+	(void) ray;
 	if (hit->mat->flags & RT_MAT_HAS_NORMAL)
 	{
 		tmp = sample_vector(world, hit->mat->normal_map, hit->hit.uv);
 		tmp = vec_sub(vec_mul(tmp, vec(2, 2, 1, 1)), vec(1, 1, 0, 0));
-		hit->rel_shading_normal = local_to_world(hit, tmp);
+		hit->hit.shading_normal = local_to_world(hit, tmp);
 	}
 	if (hit->mat->flags & RT_MAT_HAS_BUMP)
 	{
 		tmp = bump(world, hit->mat->bump_map, hit->hit.uv);
-		hit->rel_shading_normal = local_to_world(hit, tmp);
+		hit->hit.shading_normal = local_to_world(hit, tmp);
 	}
-	hit->hit.shading_normal = hit->rel_shading_normal;
-	if (vec_dot(hit->hit.shading_normal, ray.dir) > 0)
-		hit->rel_shading_normal = vec_neg(hit->rel_shading_normal);
 }
 
 static void
 	init_normals(t_world_hit *hit, t_ray ray, t_vec normal)
 {
+	(void) ray;
 	hit->hit.geometric_normal = normal;
 	hit->hit.shading_normal = normal;
-	hit->rel_geometric_normal = normal;
-	if (vec_dot(hit->hit.geometric_normal, ray.dir) > 0)
-		hit->rel_geometric_normal = vec_neg(hit->rel_geometric_normal);
-	hit->rel_shading_normal = normal;
-	if (vec_dot(hit->hit.shading_normal, ray.dir) > 0)
-		hit->rel_shading_normal = vec_neg(hit->rel_shading_normal);
 	hit->hit.dpdu = vec_tangent(hit->hit.geometric_normal);
 	hit->hit.dpdv = vec_cross(hit->hit.geometric_normal, hit->hit.dpdu);
 }
@@ -135,7 +127,7 @@ static void
 	hit->mat = 0;
 	hit->is_volume = 0;
 	hit->is_ambient = 0;
-	intersect_volume(ctx->volumes, ctx->volume_size, ctx->ctx, hit);
+	intersect_volume(ctx, hit);
 	if (hit->hit.t >= max)
 		hit->is_ambient = 1;
 }
@@ -260,8 +252,8 @@ static void
 		return ;
 	sample.wo = vec_norm(vec_sub(lhit.hit.pos, hit->hit.pos));
 	sample.bsdf = bsdf_f(ctx, hit, ctx->ray.dir, sample.wo);
-	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.rel_shading_normal));
-	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->rel_shading_normal));
+	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.hit.shading_normal));
+	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->hit.shading_normal));
 	sample.pdf *= prim_area(lhit.prim, ctx->world);
 	sample.pdf *= ctx->world->lights_count;
 	sample.pdf /= lhit.hit.t * lhit.hit.t + RT_TINY_VAL; // TODO: try min()
@@ -278,6 +270,7 @@ static int
 	intersect_full(ctx, &hit, ctx->ray, ctx->time);
 	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
 		return (0);
+	sample.wo = ctx->ray.dir;
 	if (alpha_test(ctx, &hit))
 	{
 		world_trace_light(ctx, &hit);
@@ -286,17 +279,14 @@ static int
 		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
 		if (sample.pdf == 0)
 			return (0);
-		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.rel_shading_normal)) / sample.pdf));
-		ctx->ray.dir = sample.wo;
+		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.hit.shading_normal)) / sample.pdf));
 		ctx->specref = bxdf_is_perfspec(sample.bxdf);
 	}
 	else
 		ctx->specref = 1;
-	if (!hit.is_volume && (hit.mat->flags & RT_MAT_HAS_VOLUME)
-			&& vec_dot(ctx->ray.dir, hit.rel_geometric_normal) < 0)
-		toggle_volume(ctx->volumes, &ctx->volume_size, hit.mat,
-				vec_dot(ctx->ray.dir, hit.hit.geometric_normal));
+	toggle_volume(ctx, &hit, sample.wo);
 	ctx->ray.org = hit.hit.pos;
+	ctx->ray.dir = sample.wo;
 	ctx->time -= hit.hit.t;
 	return (!vec_eq(ctx->head, vec_0()) && ctx->time > 0);
 }
@@ -316,11 +306,9 @@ void
 	tctx->volume_size = 0;
 	tctx->time = world->ambient_dist;
 	tctx->specref = 1;
-	tctx->refractive_index = 1.0f;
 	if (world->flags & RT_WORLD_HAS_AMBIENT)
 	{
 		ambient = get_mat_const(world, world->ambient_mat);
-		tctx->refractive_index = ambient->refractive_index;
 		if ((ambient->flags & RT_MAT_HAS_VOLUME) && max_volumes > 0)
 		{
 			tctx->volumes[tctx->volume_size] = ambient;

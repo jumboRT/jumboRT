@@ -5,7 +5,7 @@ t_vec world_to_local(const t_world_hit *hit, t_vec v) {
 	t_vec	ss;
 	t_vec	ts;
 
-	ns = hit->rel_shading_normal;
+	ns = hit->hit.shading_normal;
 	ss = vec_norm(hit->hit.dpdu);
 	ts = vec_norm(hit->hit.dpdv);
 	return (vec(vec_dot(v, ss),
@@ -20,7 +20,7 @@ t_vec local_to_world(const t_world_hit *hit, t_vec v) {
 	t_vec	ss;
 	t_vec	ts;
 
-	ns = hit->rel_shading_normal;
+	ns = hit->hit.shading_normal;
 	ss = vec_norm(hit->hit.dpdu);
 	ts = vec_norm(hit->hit.dpdv);
 	return (vec_norm2(vec(

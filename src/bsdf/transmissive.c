@@ -18,49 +18,53 @@ static int
 		return (0);
 	costhetat = rt_sqrt(1.0f - sin2thetat);
 	*wt = vec_add(vec_scale(vec_neg(wi), eta),
-			vec_z(eta * costhetai - costhetat));
+			vec_scale(n, eta * costhetai - costhetat));
 	return (1);
+}
+
+t_vec
+	face_forward(t_vec n, t_vec v)
+{
+	if (vec_dot(n, v) < 0)
+		return (vec_neg(n));
+	return (n);
 }
 
 t_sample
 	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit,
 			const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi)
 {
-	t_vec		wiw;
 	float		etai;
 	float		etat;
 	float		fresnel;
 	t_sample	result;
-	t_vec		n;
+	//t_vec		n;
 
-	wiw = local_to_world(hit, wi);
 	wi = vec_neg(wi);
 
-	etai = ctx->refractive_index;
-	etat = etai * hit->mat->refractive_index;
-	n = vec_z(-1.0f);
+	etai = 1.0f;
+	etat = hit->mat->refractive_index;
+	//n = vec_z(1.0f);
 	result.pdf = 0.0f;
 	result.bsdf = vec_0();
-	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
+	if (costheta(wi) < 0)
 	{
-		n = vec_neg(n);
-		etai = ctx->refractive_index;
-		etat = etai / hit->mat->refractive_index;
+		//n = vec_neg(n);
+		etai = hit->mat->refractive_index;
+		etat = 1.0f;
 	}
-	if (!refract(wi, n, etai / etat, &result.wo))
+	if (!refract(wi, face_forward(vec_z(1.0f), wi), etai / etat, &result.wo))
 	{
 		return (result);
-		result.pdf = 1.0f;
-		result.bsdf = vec3(1.0, 1.0, 1.0);
-		result.wo = vec3(-x(wi), -y(wi), z(wi));
 	}
 	result.pdf = 1.0f;
-	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
+	fresnel = f_dielectric(rt_abs(vec_dot(face_forward(vec_z(1.0f), wi), wi)),
+							etai, etat);
 	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
 					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f),
 					vec3(fresnel, fresnel, fresnel)));
-	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(n, wi)));
-	ctx->refractive_index = etat;
+	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(
+						face_forward(vec_z(1.0f), wi), wi))); /* TODO probably is result.wo, not wi */
 	return (result);
 }
 /*

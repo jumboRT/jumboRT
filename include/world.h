@@ -57,7 +57,6 @@ struct s_trace_ctx {
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
 	uint32_t				volume_size;
-	float					refractive_index;
 	float					time;
 	int						specref;
 };

@@ -9,10 +9,19 @@ t_sample
 	t_sample	result;
 	t_vec		color;
 	float		fresnel;
+	float		etai;
+	float		etat;
+
+	etai = 1.0f;
+	etat = hit->mat->refractive_index;
+	if (costheta(wi) > 0)
+	{
+		etai = hit->mat->refractive_index;
+		etat = 1.0f;
+	}
 
 	result.wo = vec_set(wi, 2, -z(wi));
-	fresnel = f_dielectric(rt_abs(costheta(result.wo)), ctx->refractive_index,
-				hit->mat->refractive_index);
+	fresnel = f_dielectric(rt_abs(costheta(result.wo)), etai, etat);
 	color = vec_scale(filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv),
 				fresnel);
 	result.bsdf = vec_scale(color, 1.0f / rt_abs(costheta(result.wo)));
