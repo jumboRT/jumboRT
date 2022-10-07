@@ -18,10 +18,19 @@ float
 	float	sinthetai;
 	float	sinthetat;
 	float	costhetat;
+	float	tmp;
 	float	rparl;
 	float	rperp;
 
+
 	costhetai = rt_clamp(costhetai, -1.0f, 1.0f);
+
+	if (costhetai < 0) {
+		tmp = etai;
+		etai = etat;
+		etat = tmp;
+		costhetai = rt_abs(costhetai);
+	}
 
 	sinthetai = rt_sqrt(rt_max(0.0f, 1.0f - costhetai * costhetai));
 	sinthetat = etai / etat * sinthetai;

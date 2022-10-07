@@ -12,16 +12,22 @@ t_sample
 	float		etai;
 	float		etat;
 
+	/* TODO this check can be removed since f_dielectric also does it */
+	wi = vec_neg(wi);
+
 	etai = 1.0f;
 	etat = hit->mat->refractive_index;
-	if (costheta(wi) > 0)
+	/*
+	if (costheta(wi) < 0)
 	{
 		etai = hit->mat->refractive_index;
 		etat = 1.0f;
 	}
 
 	result.wo = vec_set(wi, 2, -z(wi));
-	fresnel = f_dielectric(rt_abs(costheta(result.wo)), etai, etat);
+	*/
+	result.wo = vec3(-x(wi), -y(wi), z(wi));
+	fresnel = f_dielectric(costheta(result.wo), etai, etat);
 	color = vec_scale(filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv),
 				fresnel);
 	result.bsdf = vec_scale(color, 1.0f / rt_abs(costheta(result.wo)));

@@ -58,13 +58,12 @@ t_sample
 		return (result);
 	}
 	result.pdf = 1.0f;
-	fresnel = f_dielectric(rt_abs(vec_dot(face_forward(vec_z(1.0f), wi), wi)),
-							etai, etat);
+	fresnel = f_dielectric(costheta(result.wo), etat, etai);
 	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
 					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f),
 					vec3(fresnel, fresnel, fresnel)));
-	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(
-						face_forward(vec_z(1.0f), wi), wi))); /* TODO probably is result.wo, not wi */
+	result.bsdf = vec_scale(result.bsdf, (etai / etat) * (etat / etai));
+	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(costheta(result.wo)));
 	return (result);
 }
 /*
