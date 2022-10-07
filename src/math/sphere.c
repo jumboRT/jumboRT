@@ -50,6 +50,8 @@ int
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
 	hit->geometric_normal = vec_norm(vec_sub(hit->pos, sphere.pos));
+	if (sphere.radius < 0)
+		hit->geometric_normal = -hit->geometric_normal;
 	hit->shading_normal = hit->geometric_normal;
 	return (1);
 }

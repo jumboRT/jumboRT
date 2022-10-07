@@ -37,37 +37,27 @@ t_sample
 	wi = vec_neg(wi);
 
 	etai = ctx->refractive_index;
-	etat = hit->mat->refractive_index;
+	etat = etai * hit->mat->refractive_index;
 	n = vec_z(-1.0f);
 	result.pdf = 0.0f;
 	result.bsdf = vec_0();
-	result.wo = vec3(-x(wi), -y(wi), z(wi));
 	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
 	{
 		n = vec_neg(n);
-		etai = hit->mat->refractive_index;
-		etat = ctx->refractive_index;
+		etai = ctx->refractive_index;
+		etat = etai / hit->mat->refractive_index;
 	}
 	if (!refract(wi, n, etai / etat, &result.wo))
 	{
 		return (result);
-/* TODO Remove code below for reflection */
-		result.wo = vec3(-x(wi), -y(wi), z(wi));
-		result.bsdf = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
-		fresnel = f_dielectric(costheta(result.wo), etai, etat);
-		result.bsdf = vec_scale(result.bsdf, fresnel / rt_abs(vec_dot(n, wi)));
-		return (result);
 	}
 	result.pdf = 1.0f;
-	fresnel = f_dielectric(rt_abs(vec_dot(n, result.wo)), etai, etat);
+	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
 	result.bsdf = vec_mul(filter_sample(ctx->world, bxdf->refraction_tex,
-					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f), 
+					hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f),
 					vec3(fresnel, fresnel, fresnel)));
 	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(vec_dot(n, wi)));
-	if (vec_dot(hit->hit.geometric_normal, wiw) > 0)
-		ctx->refractive_index /= hit->mat->refractive_index;
-	else
-		ctx->refractive_index *= hit->mat->refractive_index;
+	ctx->refractive_index = etat;
 	return (result);
 }
 /*
