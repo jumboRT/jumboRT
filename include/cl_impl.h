@@ -51,6 +51,7 @@ typedef struct s_opencl_ctx				t_opencl_ctx;
 typedef struct s_opencl_callback_ctx	t_opencl_callback_ctx;
 typedef struct s_opencl_start_ctx		t_opencl_start_ctx;
 typedef struct s_opencl_program_ctx		t_opencl_program_ctx;
+typedef struct s_opencl_compile_ctx		t_opencl_compile_ctx;
 
 typedef void (*t_opencl_func)(void *, cl_platform_id, cl_device_id);
 
@@ -103,6 +104,14 @@ struct s_opencl_program_ctx {
 	cl_program		program;
 };
 
+struct s_opencl_compile_ctx {
+	char		**cache;
+	const void	*input;
+	const void	*output;
+};
+
+char				*device_token(
+		cl_platform_id platform, cl_device_id device);
 char				*device_file(
 		const char *prefix, cl_platform_id platform, cl_device_id device);
 void				*work_start(
@@ -124,6 +133,8 @@ void				work_release_buffers(
 cl_command_queue	work_create_queue(cl_context context, cl_device_id device,
 		cl_command_queue_properties props);
 cl_context			work_create_context(cl_platform_id device);
+void				work_destroy_queue(cl_command_queue queue);
+void				work_destroy_context(cl_context context);
 
 void				opencl_device_default(
 		t_opencl_func func, void *data);
@@ -148,9 +159,12 @@ void				opencl_comp_program_path(
 void				opencl_load_program_path(
 		t_opencl_program_ctx *ctx, const char *path, int build);
 void				opencl_link_program_path(
-		t_opencl_program_ctx *ctx, const char **paths, size_t count);
+		t_opencl_program_ctx *ctx, const char *const *paths, size_t count);
 void				opencl_save_program_path(
 		t_opencl_program_ctx *ctx, const char *path);
+
+void				opencl_compile(const char *i, const char *o);
+void				opencl_link(const char **i, const char *o);
 
 # endif
 

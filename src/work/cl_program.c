@@ -19,7 +19,8 @@ static void
 	status = clGetProgramBuildInfo(ctx->program, ctx->device,
 			CL_PROGRAM_BUILD_LOG, size, string, NULL);
 	rt_assert(status == CL_SUCCESS, "clGetProgramBuildInfo failed");
-	ft_printf("%s\n", string);
+	if (string[0] != '\0' && !(string[0] == '\n' && string[1] == '\0'))
+		ft_printf("%s\n", string);
 	rt_free(string);
 }
 

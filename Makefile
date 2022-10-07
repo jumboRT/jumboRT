@@ -1,4 +1,5 @@
 NAME					:= miniRT
+CL_NAME					:= kernel
 
 UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
 						   writefile.c lib.c atof.c random.c queue.c aabb.c \
@@ -10,7 +11,7 @@ WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
 						   context.c int.c server.c update.c cl_buffer.c \
 						   cl_buffer_util.c cl_device.c cl_fake.c cl_name.c \
 						   cl_program.c cl_program_path.c cl_program_save.c \
-						   cl_start.c cl_util.c
+						   cl_start.c cl_util.c cl_compile.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
 						   sin.c cos.c tan.c basis.c vec_arith_fast.c \
@@ -43,73 +44,73 @@ ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
 						   node.c
 BASE_FILES				:= main.c options.c perf.c
 
-PATCH_VERSION				:= 0
-MINOR_VERSION				:= 1
-MAJOR_VERSION				:= 0
+PATCH_VERSION			:= 0
+MINOR_VERSION			:= 1
+MAJOR_VERSION			:= 0
 
-OPENCL_FILES			:= \
-	src/util/random.c \
-	src/work/compute.c \
-	src/math/plane.c \
-	src/math/polynomial.c \
-	src/math/sphere.c \
-	src/math/triangle.c \
-	src/math/cylinder.c \
-	src/math/cone.c \
-	src/math/ray_constr.c \
-	src/math/vec_arith.c \
-	src/math/vec_arith_fast.c \
-	src/math/vec_constr.c \
-	src/math/vec_constr_fast.c \
-	src/math/vec_geo.c \
-	src/math/vec_geo_fast.c \
-	src/math/vec_get.c \
-	src/math/vec_get_fast.c \
-	src/math/vec_size.c \
-	src/math/vec_size_fast.c \
-	src/math/vec2.c \
-	src/math/vec2_fast.c \
-	src/math/vec2_arith_fast.c \
-	src/math/vec2_arith.c \
-	src/math/vec_rotate.c \
-	src/math/vec_set.c \
-	src/math/vec_abs_fast.c \
-	src/math/vec_abs.c \
-	src/math/tangent.c \
-	src/math/clamp.c \
-	src/math/basis.c \
-	src/math/sqrt.c \
-	src/math/coord.c \
-	src/math/sin.c \
-	src/math/cos.c \
-	src/math/tan.c \
-	src/math/min.c \
-	src/math/max.c \
-	src/math/abs.c \
-	src/math/pow.c \
-	src/math/mod.c \
-	src/math/exp.c \
-	src/math/log.c \
-	src/math/gamma.c \
-	src/math/paraboloid.c \
-	src/math/hyperboloid.c \
-	src/world/intersect.c \
-	src/world/intersect_prim.c \
-	src/world/size.c \
-	src/world/common.c \
-	src/world/trace.c \
-	src/world/conversion.c \
-	src/bsdf/bsdf_new.c \
-	src/bsdf/diffuse.c \
-	src/bsdf/reflective.c \
-	src/bsdf/specular.c \
-	src/bsdf/transmissive.c \
-	src/bsdf/util.c \
-	src/tex/sample.c \
-	src/tex/filter.c \
-	src/shape/traits.c \
-	src/shape/bounds.c \
-	src/accel/node.c
+CL_FILE_NAMES			:= \
+	util/random.c \
+	work/compute.c \
+	math/plane.c \
+	math/polynomial.c \
+	math/sphere.c \
+	math/triangle.c \
+	math/cylinder.c \
+	math/cone.c \
+	math/ray_constr.c \
+	math/vec_arith.c \
+	math/vec_arith_fast.c \
+	math/vec_constr.c \
+	math/vec_constr_fast.c \
+	math/vec_geo.c \
+	math/vec_geo_fast.c \
+	math/vec_get.c \
+	math/vec_get_fast.c \
+	math/vec_size.c \
+	math/vec_size_fast.c \
+	math/vec2.c \
+	math/vec2_fast.c \
+	math/vec2_arith_fast.c \
+	math/vec2_arith.c \
+	math/vec_rotate.c \
+	math/vec_set.c \
+	math/vec_abs_fast.c \
+	math/vec_abs.c \
+	math/tangent.c \
+	math/clamp.c \
+	math/basis.c \
+	math/sqrt.c \
+	math/coord.c \
+	math/sin.c \
+	math/cos.c \
+	math/tan.c \
+	math/min.c \
+	math/max.c \
+	math/abs.c \
+	math/pow.c \
+	math/mod.c \
+	math/exp.c \
+	math/log.c \
+	math/gamma.c \
+	math/paraboloid.c \
+	math/hyperboloid.c \
+	world/intersect.c \
+	world/intersect_prim.c \
+	world/size.c \
+	world/common.c \
+	world/trace.c \
+	world/conversion.c \
+	bsdf/bsdf_new.c \
+	bsdf/diffuse.c \
+	bsdf/reflective.c \
+	bsdf/specular.c \
+	bsdf/transmissive.c \
+	bsdf/util.c \
+	tex/sample.c \
+	tex/filter.c \
+	shape/traits.c \
+	shape/bounds.c \
+	accel/node.c
 
 ifdef platform
 	ifeq ($(platform),linux)
@@ -255,11 +256,14 @@ SOURCES					:= $(patsubst %.c,$(SRC_DIR)/%.c,$(FILE_NAMES))
 OBJECTS					:= $(patsubst %.c,$(OBJ_DIR)/%.o,$(FILE_NAMES))
 DEPENDS					:= $(patsubst %.c,$(DEP_DIR)/%.d,$(FILE_NAMES))
 
+CL_SOURCES				:= $(patsubst %.c,$(SRC_DIR)/%.c,$(CL_FILE_NAMES))
+CL_OBJECTS				:= $(patsubst %.c,$(OBJ_DIR)/%-cl,$(CL_FILE_NAMES))
+
 # all: $(NAME)
 all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
 
 bonus: CFLAGS += -DRT_BONUS -DRT_USE_LIBC
-bonus: $(NAME)
+bonus: $(NAME) $(CL_NAME)
 
 mandatory: $(NAME)
 
@@ -297,7 +301,7 @@ analyze:
 		${MAKE} fclean
 		${MAKE} ANALYZER="-fanalyzer"
 
-$(NAME): $(OBJECTS) $(TARGET_LIBS) kernel.bin
+$(NAME): $(OBJECTS) $(TARGET_LIBS)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)$(LINK_CMD) -o $@ $(OBJECTS) $(TARGET_LIBS) $(FRAMEWORKS) $(LFLAGS)
 
@@ -315,13 +319,16 @@ $(FT_PRINTF_LIB):
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
-# TODO: unhardcode these files
-compile: compiler/main.c
-	$(SILENT)$(CC) $(COMPILER_CFLAGS) compiler/main.c -o compile $(FRAMEWORKS)
+$(CL_NAME): $(CL_OBJECTS) | $(NAME)
+	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
+	$(SILENT)touch $@
 
-kernel.bin: $(OPENCL_FILES) compile
-	@printf $(COMPILE_COLOR)Compiling\ kernel$(RESET)\\n
-	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(COMPILER_EXE) $(OPENCL_FILES); do sleep 1; done"
+$(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c | $(NAME)
+	$(SILENT)mkdir -p $(@D)
+	@printf $(COMPILE_COLOR)Compiling$(RESET)\ $(notdir $<)\ \(cl\)\\n
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -c $@ $<; do sleep 1; done"
+	$(SILENT)touch $@
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n
@@ -333,7 +340,7 @@ clean:
 fclean: clean
 	@printf $(CLEAN_COLOR)Cleaning\ output\ files$(RESET)\\n
 	$(SILENT)rm -f $(NAME)
-	$(SILENT)rm -f compile kernel*.bin
+	$(SILENT)rm -f $(CL_NAME)
 
 re: fclean
 	$(MAKE) all
