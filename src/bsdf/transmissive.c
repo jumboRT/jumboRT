@@ -50,6 +50,9 @@ t_sample
 	if (!refract(wi, n, etai / etat, &result.wo))
 	{
 		return (result);
+		result.pdf = 1.0f;
+		result.bsdf = vec3(1.0, 1.0, 1.0);
+		result.wo = vec3(-x(wi), -y(wi), z(wi));
 	}
 	result.pdf = 1.0f;
 	fresnel = f_dielectric(rt_abs(vec_dot(n, wi)), etai, etat);
