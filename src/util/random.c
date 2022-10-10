@@ -12,7 +12,7 @@ t_seed
 float
 	rt_random_float(GLOBAL t_seed *seed)
 {
-	return (rt_random(seed) / 18446744073709551616.0);
+	return ((rt_random(seed) & 0xFFFFFF) / 16777216.0);
 }
 
 float

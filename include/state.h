@@ -44,7 +44,6 @@ struct s_options {
 	int			batch_size_set;
 	int			trace_batch_size_set;
 	int			cl_device_count;
-
 };
 
 #ifdef RT_JOINC

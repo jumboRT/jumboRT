@@ -4,6 +4,14 @@
 #include "mat.h"
 #include "bsdf.h"
 
+#ifndef RT_TRACE_LIGHT_SAMPLING
+# define RT_TRACE_LIGHT_SAMPLING 1
+#endif
+
+#ifndef RT_TRACE_LIGHT_SLOW
+# define RT_TRACE_LIGHT_SLOW 8
+#endif
+
 static void
 	toggle_volume(t_trace_ctx *ctx, const t_world_hit *hit, t_vec new_dir)
 {
@@ -11,6 +19,8 @@ static void
 	float		id;
 	float		od;
 
+	if (hit->is_volume || !(hit->mat->flags & RT_MAT_HAS_VOLUME))
+		return ;
 	id = vec_dot(hit->hit.geometric_normal, ctx->ray.dir);
 	od = vec_dot(hit->hit.geometric_normal, new_dir);
 	if (id < 0 && od < 0 && ctx->volume_size < RT_MAX_VOLUMES)
@@ -48,6 +58,7 @@ static void
 		if (t < hit->hit.t)
 		{
 			hit->hit.t = t;
+			hit->prim = 0;
 			hit->mat = ctx->volumes[vi];
 			hit->is_volume = 1;
 		}
@@ -108,7 +119,7 @@ static int
 	float	alpha;
 	float	sample;
 
-	if (hit->mat == 0)
+	if (hit->mat == 0 || hit->is_volume)
 		return (1);
 	if (!(hit->mat->flags & RT_MAT_HAS_ALPHA))
 		return (1);
@@ -140,7 +151,8 @@ static void
 	if (hit->is_volume)
 	{
 		hit->hit.uv = vec2(0, 0);
-		init_normals(hit, ray, rt_random_on_hemi(&ctx->ctx->seed, ray.dir));
+		hit->hit.pos = ray_at(ray, hit->hit.t);
+		init_normals(hit, ray, rt_random_on_hemi(&ctx->ctx->seed, ray.dir)); // TODO: should this be negated?
 	}
 	else if (hit->is_ambient)
 	{
@@ -155,6 +167,32 @@ static void
 		prim_hit_info(hit->prim, ctx->world, ray, hit);
 		fix_normals(ctx->world, hit, ray);
 	}
+}
+
+// TODO: accumulate alpha factor
+static void
+	intersect_slow(const t_trace_ctx *ctx, t_world_hit *hit,
+			t_ray ray, float max)
+{
+	t_trace_ctx	ctx2;
+	int			depth;
+	float		t;
+
+	ctx2 = *ctx;
+	ctx2.ray = ray; // TODO: move this into parameter of toggle_volume
+	depth = 0;
+	t = 0;
+	while (depth < RT_TRACE_LIGHT_SLOW)
+	{
+		intersect_full(&ctx2, hit, ray, max - t);
+		t += hit->hit.t;
+		if (hit->mat == 0 || alpha_test(&ctx2, hit))
+			break ;
+		toggle_volume(&ctx2, hit, ray.dir);
+		ray.org = hit->hit.pos;
+		depth += 1;
+	}
+	hit->hit.t = t;
 }
 
 static t_ray
@@ -183,7 +221,10 @@ static int
 	if (ctx->world->lights_count == 0)
 		return (0);
 	lray = intersect_light_init(ctx, hit, whit);
-	intersect_partial(ctx, &lhit, lray, ctx->time);
+	if (!RT_TRACE_LIGHT_SLOW)
+		intersect_partial(ctx, &lhit, lray, ctx->time);
+	else
+		intersect_slow(ctx, &lhit, lray, ctx->time);
 	if (prim_type(hit->prim) == RT_SHAPE_POINT)
 	{
 		if (hit->hit.t > ctx->time || lhit.hit.t < hit->hit.t)
@@ -196,8 +237,11 @@ static int
 		return (0);
 	if (vec_mag(vec_sub(hit->hit.pos, lhit.hit.pos)) > RT_TINY_VAL)
 		return (0);
-	prim_hit_info(hit->prim, ctx->world, lray, &lhit);
-	fix_normals(ctx->world, &lhit, lray);
+	if (!RT_TRACE_LIGHT_SLOW)
+	{
+		prim_hit_info(hit->prim, ctx->world, lray, &lhit);
+		fix_normals(ctx->world, &lhit, lray);
+	}
 	*hit = lhit;
 	return (1);
 }
@@ -277,17 +321,26 @@ static int
 	sample.wo = ctx->ray.dir;
 	if (alpha_test(ctx, &hit))
 	{
-		world_trace_light(ctx, &hit);
+		ctx->alpha_skips = 0;
+		if (RT_TRACE_LIGHT_SAMPLING)
+			world_trace_light(ctx, &hit);
 		if (!hit.is_volume && (hit.is_ambient || ctx->specref || prim_is_degenerate(hit.prim)))
 			ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
 		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
 		if (sample.pdf == 0)
 			return (0);
 		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.hit.shading_normal)) / sample.pdf));
-		ctx->specref = bxdf_is_perfspec(sample.bxdf);
+		if (RT_TRACE_LIGHT_SAMPLING)
+			ctx->specref = bxdf_is_perfspec(sample.bxdf);
+		else
+			ctx->specref = 1;
 	}
 	else
-		ctx->specref = 1;
+	{
+		ctx->alpha_skips += 1;
+		if (ctx->alpha_skips >= RT_TRACE_LIGHT_SLOW)
+			ctx->specref = 1;
+	}
 	toggle_volume(ctx, &hit, sample.wo);
 	ctx->ray.org = hit.hit.pos;
 	ctx->ray.dir = sample.wo;
@@ -310,6 +363,7 @@ void
 	tctx->volume_size = 0;
 	tctx->time = world->ambient_dist;
 	tctx->specref = 1;
+	tctx->alpha_skips = 0;
 	if (world->flags & RT_WORLD_HAS_AMBIENT)
 	{
 		ambient = get_mat_const(world, world->ambient_mat);

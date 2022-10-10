@@ -59,6 +59,7 @@ struct s_trace_ctx {
 	uint32_t				volume_size;
 	float					time;
 	int						specref;
+	int						alpha_skips;
 };
 
 struct s_result {
