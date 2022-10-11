@@ -27,7 +27,7 @@ typedef struct s_bxdf_transmissive	t_bxdf_transmissive;
 typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
 typedef struct s_bxdf_bphong		t_bxdf_bphong;
-typedef struct s_bxdf_bphong		t_bxdf_phong;
+typedef struct s_bxdf_phong			t_bxdf_phong;
 typedef struct s_bxdf_specular		t_bxdf_specular;
 typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_sample				t_sample;
@@ -58,8 +58,6 @@ struct s_bxdf_cook_torrance {
 
 struct s_bxdf_phong {
 	t_bxdf		base;
-	t_filter	alpha;
-	t_filter	spec;
 };
 
 struct s_bxdf_bphong {

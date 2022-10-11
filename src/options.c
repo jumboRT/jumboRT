@@ -51,6 +51,7 @@ void
 	opts->batch_size_set = 0;
 	opts->trace_batch_size_set = 0;
 	opts->cl_device_count = 0;
+	opts->default_rendering_mode = RT_RENDER_MODE_DEFAULT;
 	i = 1;
 	while (i < argc)
 	{
@@ -211,6 +212,13 @@ void
 			rt_assert(i + 2 < argc, "-C requires at least two arguments");
 			opencl_link((const char **) argv + i + 2, argv[i + 1]);
 			exit(EXIT_SUCCESS);
+		}
+		else if (ft_strcmp(argv[i], "-D") == 0)
+		{
+			rt_assert(i + 1 < argc, "-D requires an argument");
+			opts->default_rendering_mode = ft_atoi(argv[i + 1]);
+			rt_assert(opts->default_rendering_mode < RT_RENDER_MODE_COUNT, "invalid rendering mode");
+			i += 2;
 		}
 		else
 		{

@@ -167,6 +167,19 @@ void
 }
 
 void
+	rt_exec_phong(t_world *world, t_parse_ctx *ctx)
+{
+	t_bxdf_phong	bxdf;
+
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	bxdf.base.type = RT_BXDF_PHONG;
+	bxdf.base.weight = rt_float(ctx);
+	bxdf.base.tex = rt_filter(world, ctx);
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
+}
+
+void
 	rt_exec_specular(t_world *world, t_parse_ctx *ctx)
 {
 	t_bxdf_specular	bxdf;

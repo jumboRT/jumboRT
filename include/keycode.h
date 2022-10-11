@@ -21,6 +21,7 @@
 #  define RT_KEY_2 50
 #  define RT_KEY_3 51
 #  define RT_KEY_4 52
+#  define RT_KEY_5 53
 # else
 #  define RT_KEY_ESC 53
 #  define RT_KEY_Q 12
@@ -41,6 +42,7 @@
 #  define RT_KEY_2 19
 #  define RT_KEY_3 20
 #  define RT_KEY_4 21
+#  define RT_KEY_5 22
 # endif
 
 #endif

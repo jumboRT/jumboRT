@@ -4,6 +4,7 @@
 # define RT_TINY_VAL 0.001
 # define RT_HUGE_VAL 1000000000.0
 
+# define RT_E 0.57721
 # define RT_1_PI 0.31831 
 # define RT_PI 3.14159
 # define RT_2PI 6.28319

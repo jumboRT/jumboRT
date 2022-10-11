@@ -25,8 +25,8 @@ static const t_directive	directives[] = {
 	{ "mat_beg", rt_exec_mat_beg },
 	{ "diffuse", rt_exec_diffuse },
 	{ "reflective", rt_exec_reflective },
-	{ "cook_torrance", rt_exec_cook_torrance },
-	{ "bphong", rt_exec_bphong},
+	{ "bphong", rt_exec_bphong}, /* TODO remove */
+	{ "phong", rt_exec_phong},
 	{ "specular", rt_exec_specular },
 	{ "transmissive", rt_exec_transmissive },
 	{ "emission", rt_exec_emission },

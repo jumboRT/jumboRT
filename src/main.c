@@ -11,15 +11,13 @@
 #endif
 
 /* TODO: credits for all the people who helped render images */
-/* TODO: better image reconstruction */
-/* TODO: check blinn phong reflection */
+/* ODOT: better image reconstruction */
+/* TODO: add type of phong shading */
 /* TODO: help flag for help message */
-/* TODO: texture filtering */
+/* ODOT: texture filtering */
 /* TODO: material hashing to check if scene is the same as last scene in network client */
-/* TODO: better fog */
-/* TODO: split up headers */
-/* TODO: use ropes for tree traversal */
 /* TODO: remove shell scripts and python files out of repo dir */
+/* TODO: fix float maps */
 
 #include <libft.h>
 #include <ft_printf.h>
@@ -248,6 +246,12 @@ int
 		work->state->world->render_mode = RT_RENDER_MODE_SHADING_NORMAL;
 	    rt_work_unlock(work);
 	}
+	if (keycode == RT_KEY_5)
+	{
+		rt_work_lock(work);
+		work->state->world->render_mode = RT_RENDER_MODE_ALBEDO;
+	    rt_work_unlock(work);
+	}
 	if (keycode == RT_KEY_Z)
 	{
 		rt_work_lock(work);
@@ -395,6 +399,7 @@ void
 	world.img_meta.height = image.height;
 	world.batch_size = options->batch_size;
 	world.trace_batch_size = options->trace_batch_size;
+	world.render_mode = options->default_rendering_mode;
 	perf_start(&perf);
 	world_load(&world, options->scene_file, options->key);
 	perf_split(&perf, "load world");
