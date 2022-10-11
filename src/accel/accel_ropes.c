@@ -1,5 +1,7 @@
 #include "accel.h"
 #include "accel_impl.h"
+#include "world.h"
+#include "world_impl.h"
 
 #include "util.h"
 

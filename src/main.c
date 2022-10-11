@@ -152,6 +152,11 @@ int
 		rt_work_lock(work);
 		rt_work_unlock(work);
 	}
+	if (keycode == RT_KEY_I)
+	{
+		printf("cam org %f %f %f\n", x(org), y(org), z(org));
+		printf("cam dir %f %f %f\n", x(dir), y(dir), z(dir));
+	}
 	if (keycode == RT_KEY_LEFT)
 	{
 		dir = vec_rotate(vec_z(1.0), dir, -RT_PI / (12 * (90.0 / camera->fov)));

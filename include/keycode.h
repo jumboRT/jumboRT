@@ -9,6 +9,7 @@
 #  define RT_KEY_S 115
 #  define RT_KEY_A 97
 #  define RT_KEY_D 100
+#  define RT_KEY_I 105
 #  define RT_KEY_UP 65362
 #  define RT_KEY_Z 122
 #  define RT_KEY_X 120
