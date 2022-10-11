@@ -77,6 +77,9 @@ void
 				vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), bary),
 				vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), bary),
 				0.0);
+		// TODO: not sure if this is correct
+		hit->dpdu = vec_cross(hit->shading_normal, hit->dpdv);
+		hit->dpdv = vec_cross(hit->shading_normal, hit->dpdu);
 	}
 }
 

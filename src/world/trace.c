@@ -66,19 +66,6 @@ static void
 	}
 }
 
-static void
-	intersect_volume_alpha(const t_trace_ctx *ctx, t_world_hit *hit)
-{
-	uint32_t	vi;
-
-	vi = 0;
-	while (vi < ctx->volume_size)
-	{
-		hit->alpha *= rt_pow(RT_E, -ctx->volumes[vi]->density * hit->hit.t);
-		vi += 1;
-	}
-}
-
 t_vec
 	bump(const GLOBAL t_world *world, uint32_t bump_map, t_vec2 uv)
 {
@@ -142,25 +129,6 @@ static int
 }
 
 static void
-	alpha_test_alpha(const t_trace_ctx *ctx, t_world_hit *hit)
-{
-	float	alpha;
-
-	if (hit->mat == 0 || hit->is_volume)
-	{
-		hit->alpha = 0;
-		return ;
-	}
-	if (!(hit->mat->flags & RT_MAT_HAS_ALPHA))
-	{
-		hit->alpha = 0;
-		return ;
-	}
-	alpha = w(filter_sample(ctx->world, hit->mat->alpha, hit->hit.uv));
-	hit->alpha *= 1 - alpha;
-}
-
-static void
 	intersect_partial(const t_trace_ctx *ctx, t_world_hit *hit,
 			t_ray ray, float max)
 {
@@ -214,33 +182,23 @@ static void
 {
 	t_trace_ctx	ctx2;
 	int			depth;
+	float		t;
 
 	ctx2 = *ctx;
 	ctx2.ray = ray;
-	hit->alpha = 1.0f;
 	depth = 0;
+	t = 0;
 	while (depth < RT_TRACE_LIGHT_SLOW)
 	{
-		hit->hit.t = ctx2.time;
-		hit->prim = 0;
-		world_intersect(ctx2.world, ray, hit);
-		hit->mat = 0;
-		hit->is_volume = 0;
-		hit->is_ambient = 0;
-		intersect_volume_alpha(&ctx2, hit);
-		ctx2.time -= hit->hit.t;
-		if (ctx2.time < RT_TINY_VAL)
-			hit->is_ambient = 1;
-		intersect_info(&ctx2, hit, ray);
-		if (ctx->time - ctx2.time > max - RT_TINY_VAL)
+		intersect_full(&ctx2, hit, ray, max - t);
+		t += hit->hit.t;
+		if (alpha_test(&ctx2, hit))
 			break ;
-		alpha_test_alpha(&ctx2, hit);
-		if (hit->alpha == 0)
-			break ;
+		toggle_volume(&ctx2, hit, ray.dir);
 		ray.org = hit->hit.pos;
 		depth += 1;
 	}
-	hit->hit.t = ctx->time - ctx2.time;
+	hit->hit.t = t;
 }
 
 static t_ray
@@ -270,19 +228,18 @@ static int
 		return (0);
 	lray = intersect_light_init(ctx, hit, whit);
 	if (!RT_TRACE_LIGHT_SLOW)
-		intersect_partial(ctx, &lhit, lray, hit->hit.t);
+		intersect_partial(ctx, &lhit, lray, ctx->time);
 	else
-		intersect_slow(ctx, &lhit, lray, hit->hit.t);
+		intersect_slow(ctx, &lhit, lray, ctx->time);
 	if (prim_type(hit->prim) == RT_SHAPE_POINT)
 	{
-		if (hit->hit.t > ctx->time || lhit.hit.t < hit->hit.t - RT_TINY_VAL)
+		if (hit->hit.t > ctx->time || lhit.hit.t < hit->hit.t)
 			return (0);
 		hit->hit.uv = vec2(0, 0);
-		hit->alpha = lhit.alpha;
 		init_normals(hit, lray, lray.dir);
 		return (1);
 	}
-	if (lhit.hit.t >= ctx->time || lhit.prim != hit->prim)
+	if (lhit.hit.t >= ctx->time || lhit.is_volume || lhit.prim != hit->prim)
 		return (0);
 	if (vec_mag(vec_sub(hit->hit.pos, lhit.hit.pos)) > RT_TINY_VAL)
 		return (0);
@@ -338,6 +295,11 @@ static int
 	}
 	if (ctx->world->render_mode == RT_RENDER_MODE_ALBEDO)
 	{
+		if (hit->mat == 0)
+		{
+			ctx->tail = vec_0();
+			return (1);
+		}
 		sample = bsdf_sample(ctx, hit, ctx->ray.dir);
 		ctx->tail = vec_abs(vec_scale(sample.bsdf, RT_PI));
 		return (1);
@@ -360,7 +322,6 @@ static void
 	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->hit.shading_normal));
 	sample.pdf *= prim_area(lhit.prim, ctx->world);
 	sample.pdf *= ctx->world->lights_count;
-	sample.pdf *= lhit.alpha;
 	sample.pdf /= lhit.hit.t * lhit.hit.t + RT_TINY_VAL; // TODO: try min()
 	tmp = vec_scale(vec_mul(le(ctx, &lhit), sample.bsdf), sample.pdf);
 	ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, tmp));

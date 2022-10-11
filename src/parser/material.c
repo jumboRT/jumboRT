@@ -176,6 +176,7 @@ void
 	bxdf.base.type = RT_BXDF_PHONG;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
+	bxdf.roughness = rt_filter(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 

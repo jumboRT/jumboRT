@@ -16,7 +16,6 @@ struct s_world_hit {
 	const GLOBAL t_material		*mat;
 	int							is_volume;
 	int							is_ambient;
-	float						alpha;
 };
 
 #endif

@@ -106,6 +106,7 @@ CL_FILE_NAMES			:= \
 	bsdf/specular.c \
 	bsdf/transmissive.c \
 	bsdf/util.c \
+	bsdf/phong.c \
 	tex/sample.c \
 	tex/filter.c \
 	shape/traits.c \

@@ -58,6 +58,7 @@ struct s_bxdf_cook_torrance {
 
 struct s_bxdf_phong {
 	t_bxdf		base;
+	t_filter	roughness;
 };
 
 struct s_bxdf_bphong {

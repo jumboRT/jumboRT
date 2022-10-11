@@ -36,10 +36,9 @@ float
 	(void) ctx;
 	(void) hit;
 	(void) bxdf;
-	if (same_hemi(wiw, vec_neg(wow)))
-		return (rt_abs(z(wow)) * RT_1_PI);
-	else
+	if (same_hemi(wiw, wow))
 		return (0);
+	return (rt_abs(z(wow)) * RT_1_PI);
 }
 
 /*
