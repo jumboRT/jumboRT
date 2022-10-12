@@ -173,7 +173,7 @@ int
 		{
 			hit->pos = ray_at(ray, hit->t);
 			hit->dpdu = cylinder.dir;
-			if (vec_eq(cylinder.dir, vec_abs(hit->geometric_normal)))
+			if (vec_eq(vec_abs(cylinder.dir), vec_abs(hit->geometric_normal)))
 				hit->dpdu = vec_tangent(cylinder.dir);
 			hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 			return (1);
