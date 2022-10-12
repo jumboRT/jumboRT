@@ -209,7 +209,12 @@ t_vec2
 t_vec
 	rt_vec_norm(t_parse_ctx *ctx)
 {
-	return (vec_norm(rt_vec(ctx)));
+	t_vec	v;
+
+	v = rt_vec(ctx);
+	if (vec_eq(v, vec_0()))
+		rt_parse_error(ctx, "vector may not be the zero vector");
+	return (vec_norm(v));
 }
 
 char
