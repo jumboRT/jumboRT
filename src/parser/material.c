@@ -181,6 +181,24 @@ void
 }
 
 void
+	rt_exec_oren_nayar(t_world *world, t_parse_ctx *ctx)
+{
+	t_bxdf_oren_nayar	bxdf;
+	float			sigma;
+
+	if (ctx->mat == NULL)
+	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+	bxdf.base.type = RT_BXDF_OREN_NAYAR;
+	bxdf.base.weight = rt_float(ctx);
+	bxdf.base.tex = rt_filter(world, ctx);
+	sigma = rt_degtorad(rt_float(ctx));
+	sigma = sigma * sigma;
+	bxdf.A = 1.0f - (sigma / (2.0f * (sigma + 0.33f)));
+	bxdf.B = 0.45f * sigma / (sigma + 0.09f);
+	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
+}
+
+void
 	rt_exec_specular(t_world *world, t_parse_ctx *ctx)
 {
 	t_bxdf_specular	bxdf;

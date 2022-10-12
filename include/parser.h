@@ -101,6 +101,7 @@ void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_bphong(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_phong(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_oren_nayar(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_specular(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_transmissive(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_emission(t_world *world, t_parse_ctx *ctx);

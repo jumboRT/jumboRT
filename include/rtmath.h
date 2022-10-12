@@ -147,6 +147,7 @@ float		rt_mod(float a, float b);
 float		rt_exp(float arg);
 float		rt_clamp(float arg, float min, float max);
 float		rt_log(float arg);
+float		rt_degtorad(float rad);
 
 float		rt_gc(float arg);
 float		rt_igc(float arg);

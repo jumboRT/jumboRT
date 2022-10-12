@@ -21,7 +21,8 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
-						   gamma.c vec_value.c paraboloid.c hyperboloid.c coord.c
+						   gamma.c vec_value.c paraboloid.c hyperboloid.c coord.c \
+						   conversion.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c \
 						   size.c common.c trace.c camera.c \
 						   material.c tex_ppm.c conversion.c hash.c 
@@ -37,7 +38,7 @@ Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   encode_zwtree_token.c util.c
 GFX_FILES				:= win.c
 BSDF_FILES				:= bsdf_new.c diffuse.c reflective.c transmissive.c \
-						   specular.c util.c phong.c
+						   specular.c util.c phong.c oren_nayar.c
 TEX_FILES				:= sample.c filter.c init.c
 SHAPE_FILES				:= traits.c bounds.c
 ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
@@ -94,6 +95,7 @@ CL_FILE_NAMES			:= \
 	math/gamma.c \
 	math/paraboloid.c \
 	math/hyperboloid.c \
+	math/conversion.c \
 	world/intersect.c \
 	world/intersect_prim.c \
 	world/size.c \
@@ -107,6 +109,7 @@ CL_FILE_NAMES			:= \
 	bsdf/transmissive.c \
 	bsdf/util.c \
 	bsdf/phong.c \
+	bsdf/oren_nayar.c \
 	tex/sample.c \
 	tex/filter.c \
 	shape/traits.c \

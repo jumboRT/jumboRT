@@ -13,7 +13,8 @@
 # define RT_BXDF_BLINN_PHONG		5
 # define RT_BXDF_PHONG				6
 # define RT_BXDF_SPECULAR			7
-# define RT_BXDF_COUNT				8
+# define RT_BXDF_OREN_NAYAR			8
+# define RT_BXDF_COUNT				9
 
 typedef struct s_world				t_world;
 typedef struct s_context			t_context;
@@ -28,6 +29,7 @@ typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
 typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
 typedef struct s_bxdf_bphong		t_bxdf_bphong;
 typedef struct s_bxdf_phong			t_bxdf_phong;
+typedef struct s_bxdf_oren_nayar	t_bxdf_oren_nayar;
 typedef struct s_bxdf_specular		t_bxdf_specular;
 typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_sample				t_sample;
@@ -67,6 +69,12 @@ struct s_bxdf_bphong {
 	t_filter	spec;
 };
 
+struct s_bxdf_oren_nayar {
+	t_bxdf	base;
+	float	A;
+	float	B;
+};
+
 struct s_bxdf_specular {
 	t_bxdf	base;
 };
@@ -79,6 +87,7 @@ union u_bxdf_any {
 	t_bxdf_phong			phong;
 	t_bxdf_bphong			blinn_phong;
 	t_bxdf_cook_torrance	cook_torrance;
+	t_bxdf_oren_nayar		oren_nayar;
 	t_bxdf_specular			specular;
 };
 
@@ -99,12 +108,22 @@ t_sample	sample(t_vec bsdf, t_vec wo, float pdf);
 int			same_hemi(t_vec wa, t_vec wb);
 
 float		costheta(t_vec w);
+float		abscostheta(t_vec w);
+float		cos2theta(t_vec w);
+float		sin2theta(t_vec w);
+float		sintheta(t_vec w);
+float		cosphi(t_vec w);
+float		sinphi(t_vec w);
 
 float		f_dielectric(float costhetai, float etai, float etat);
 
 t_sample	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
 t_vec		diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
 float		diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+
+t_sample	oren_nayar_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi);
+t_vec		oren_nayar_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi, t_vec wo);
+float		oren_nayar_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi, t_vec wo);
 
 t_sample	reflective_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi);
 t_vec		reflective_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);

@@ -34,6 +34,9 @@ t_vec
 	else if (bxdf->type == RT_BXDF_PHONG)
 		result = phong_f(ctx, hit,
 				(const GLOBAL t_bxdf_phong*) bxdf, wi, wo);
+	else if (bxdf->type == RT_BXDF_OREN_NAYAR)
+		result = oren_nayar_f(ctx, hit,
+				(const GLOBAL t_bxdf_oren_nayar*) bxdf, wi, wo);
 	return (vec_scale(result, bxdf->weight));
 }
 
@@ -59,6 +62,9 @@ float
 	else if (bxdf->type == RT_BXDF_PHONG)
 		result += phong_pdf(ctx, hit,
 				(const GLOBAL t_bxdf_phong *) bxdf, wi, wo);
+	else if (bxdf->type == RT_BXDF_OREN_NAYAR)
+		result += oren_nayar_pdf(ctx, hit,
+				(const GLOBAL t_bxdf_oren_nayar *) bxdf, wi, wo);
 	return (result);
 }
 
@@ -83,6 +89,9 @@ t_sample
 	else if (bxdf->type == RT_BXDF_PHONG)
 		result = phong_sample(ctx, hit,
 				(const GLOBAL t_bxdf_phong*) bxdf, wiw);
+	else if (bxdf->type == RT_BXDF_OREN_NAYAR)
+		result = oren_nayar_sample(ctx, hit,
+				(const GLOBAL t_bxdf_oren_nayar*) bxdf, wiw);
 	result.bsdf = vec_scale(result.bsdf, bxdf->weight);
 	result.bxdf = bxdf;
 	return (result);
