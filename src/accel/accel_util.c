@@ -121,6 +121,8 @@ float get_split_cost(const t_bounds bounds, const t_split *split, const uint32_t
 }
 
 uint32_t world_max_depth(size_t prims_count) {
+	if (prims_count <= 1)
+		return (1);
 	return (8.0 + 1.3 * log2((float) prims_count));
 }
 
