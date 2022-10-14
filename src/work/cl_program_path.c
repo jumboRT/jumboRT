@@ -10,8 +10,9 @@ void
 	size_t	size;
 	char	*error;
 
-	error = NULL; /* TODO: check error */
+	error = NULL;
 	data = rt_readfile(path, &error, &size);
+	rt_assert(error == NULL, error);
 	opencl_comp_program(ctx, data, size);
 	rt_free(data);
 	rt_free(error);
@@ -24,9 +25,10 @@ void
 	size_t	size;
 	char	*error;
 
-	error = NULL; /* TODO: check error */
+	error = NULL;
 	path = device_file(path, ctx->platform, ctx->device);
 	data = rt_readfile(path, &error, &size);
+	rt_assert(error == NULL, error);
 	opencl_load_program(ctx, (unsigned char *) data, size, build);
 	rt_free(data);
 	rt_free(error);
@@ -65,10 +67,11 @@ void
 	size_t			size;
 	char			*error;
 
-	error = NULL; /* TODO: check error */
+	error = NULL;
 	path = device_file(path, ctx->platform, ctx->device);
 	data = opencl_save_program(ctx, &size);
 	rt_writefile(path, &error, data, size);
+	rt_assert(error == NULL, error);
 	rt_free(data);
 	rt_free(error);
 	rt_free((void *) path);

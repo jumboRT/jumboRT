@@ -261,7 +261,7 @@ static t_vec
 	if (!(hit->mat->flags & RT_MAT_EMITTER))
 		return (vec_0());
 	sample = filter_sample(ctx->world, hit->mat->emission, hit->hit.uv);
-	brightness = hit->mat->brightness; // TODO: * rt_pow(rt_abs(vec_dot(ctx->ray.dir, hit->rel_shading_normal)), hit->mat->emission_exp);
+	brightness = hit->mat->brightness * rt_pow(rt_abs(vec_dot(ctx->ray.dir, hit->hit.shading_normal)), hit->mat->emission_exp);
 	return (vec_scale(sample, brightness));
 }
 
@@ -322,7 +322,7 @@ static void
 	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->hit.shading_normal));
 	sample.pdf *= prim_area(lhit.prim, ctx->world);
 	sample.pdf *= ctx->world->lights_count;
-	sample.pdf /= lhit.hit.t * lhit.hit.t + RT_TINY_VAL; // TODO: try min()
+	sample.pdf /= rt_max(lhit.hit.t * lhit.hit.t, RT_TINY_VAL);
 	tmp = vec_scale(vec_mul(le(ctx, &lhit), sample.bsdf), sample.pdf);
 	ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, tmp));
 }
@@ -395,7 +395,7 @@ void
 
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx,
-			t_ray ray, int depth)
+			uint64_t begin, int depth)
 {
 	t_trace_ctx	tctx;
 	t_vec		result;
@@ -408,7 +408,7 @@ t_vec
 	{
 		this_depth = depth;
 		world_trace_init(world, ctx, &tctx);
-		tctx.ray = ray; // TODO: ray has no randomness?!?
+		tctx.ray = project(world, ctx, begin + i);
 		while (this_depth > 0 && world_trace_step(&tctx))
 			this_depth -= 1;
 		result = vec_add(result, tctx.tail);

@@ -12,12 +12,16 @@ t_hyperboloid
 	return (result);
 }
 
+/* TODO: compute hyperboloid hit info */
 void
 	hyperboloid_hit_info(t_ray ray, t_hyperboloid hyperboloid, t_hit *hit)
 {
 	(void) ray;
 	(void) hyperboloid;
 	(void) hit;
+	hit->dpdu = vec_0();
+	hit->dpdv = vec_0();
+	hit->uv = vec2(0, 0);
 }
 
 int

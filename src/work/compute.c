@@ -72,10 +72,8 @@ t_result
 	work_compute(GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t index)
 {
 	t_result	result;
-	t_ray		ray;
 
-	ray = project(world, ctx, index);
-	result.color = world_trace(world, ctx, ray, RT_MAX_DEPTH);
+	result.color = world_trace(world, ctx, index, RT_MAX_DEPTH);
 	return (result);
 }
 

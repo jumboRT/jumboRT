@@ -172,7 +172,7 @@ t_vec						local_to_world(const t_world_hit *hit, t_vec v);
 t_vec						world_to_local(const t_world_hit *hit, t_vec v);
 void eta_init(t_trace_ctx *trace_ctx, float eta);
 
-t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, t_ray ray, int depth);
+t_vec		world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx, uint64_t begin, int depth);
 void		world_trace_all(const GLOBAL t_world *world, GLOBAL t_context *ctx, GLOBAL t_result *results, GLOBAL unsigned int *index, uint64_t begin, uint64_t end);
 void		world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit);
 void		world_accel(t_world *world);
