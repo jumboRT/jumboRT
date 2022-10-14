@@ -12,3 +12,9 @@ float
 	return (rt_max(rt_max(rt_max(x(v), y(v)), z(v)), w(v)));
 }
 
+float
+	vec_xyz_maxv(t_vec v)
+{
+	return (rt_max(rt_max(x(v), y(v)), z(v)));
+}
+

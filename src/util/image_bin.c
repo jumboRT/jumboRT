@@ -95,8 +95,8 @@ static size_t
 		{
 			pixel = &image->data[x + y * image->width];
 			color = rt_pixel_color(pixel);
-			if (vec_maxv(color) > *max)
-				*max = vec_maxv(color);
+			if (vec_xyz_maxv(color) > *max)
+				*max = vec_xyz_maxv(color);
 			offset += rt_pfm_write_color(data + offset, color);
 			x++;
 		}
