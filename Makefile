@@ -21,7 +21,7 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
-						   gamma.c vec_value.c paraboloid.c hyperboloid.c coord.c \
+						   gamma.c vec_value.c paraboloid.c hyperboloid.c \
 						   conversion.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c \
 						   size.c common.c trace.c camera.c \
@@ -81,7 +81,6 @@ CL_FILE_NAMES			:= \
 	math/clamp.c \
 	math/basis.c \
 	math/sqrt.c \
-	math/coord.c \
 	math/sin.c \
 	math/cos.c \
 	math/tan.c \

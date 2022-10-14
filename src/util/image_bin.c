@@ -6,6 +6,7 @@
 
 #include <ft_printf.h>
 #include <stdio.h>
+#include <math.h>
 
 static size_t 
 	rt_ppm_write_header(char *header, const t_image *image)
@@ -13,12 +14,17 @@ static size_t
 	return (ft_sprintf(header,"P6\n%d\n%d\n255\n", (int) image->width, (int) image->height));
 }
 
+/* poor man's float conversion */
 static size_t
 	rt_pfm_write_header(char *header, const t_image *image, float max)
 {
-	/* TODO: replace with own? snprintf for float or smth */
-	return (sprintf(header, "PF\n%d\x20%d\n-%f\n", (int) image->width,
-				(int) image->height, max));
+	unsigned	integer;
+	unsigned	fraction;
+
+	integer = (unsigned) floor(max);
+	fraction = (unsigned) (fmod(max, 1.0f) * 1000);
+	return (ft_sprintf(header, "PF\n%d\x20%d\n-%u.%03u\n", (int) image->width,
+				(int) image->height, integer, fraction));
 }
 
 static t_vec rt_pixel_color(const t_pixel *pixel)

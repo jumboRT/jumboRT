@@ -36,8 +36,6 @@ static void
 	cl_int				status;
 	cl_event			write_event;
 
-	/* TODO: should these be in command queue 1?
-	 * or even a third command queue? */
 	if (first)
 		status = clEnqueueWriteBuffer(ctx->cl_ctx->command_queue[0],
 				ctx->cl_ctx->indices_mem[id], CL_FALSE, 0,

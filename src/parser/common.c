@@ -31,6 +31,17 @@ size_t
 }
 
 size_t
+	rt_wordnlen(const char *str, size_t n)
+{
+	size_t	i;
+
+	i = rt_wordlen(str);
+	if (i > n)
+		i = n;
+	return (i);
+}
+
+size_t
 	rt_idlen(t_parse_ctx *ctx)
 {
 	return (rt_wordlen(ctx->data));
@@ -74,7 +85,7 @@ float
 	float		fractional_part;
 	float		exp;
 	float		sign;
-	int		has_digit;
+	int			has_digit;
 	const char	*word;
 
 	rt_skip(ctx, ft_isspace);
@@ -108,9 +119,8 @@ float
 		has_digit = 1;
 	}
 	if (!has_digit) {
-		//TODO wordlen could overflow the int
 		rt_parse_error(ctx, "bad floating point value '%.*s'",
-				(int) rt_wordlen(word), word);
+				(int) rt_wordnlen(word, 64), word);
 	}
 	return ((integer_part + fractional_part) * sign);
 }
@@ -118,12 +128,15 @@ float
 float
 	rt_float_range(t_parse_ctx *ctx, float min, float max)
 {
-	float	result;
+	float		result;
+	const char	*word;
 
+	word = ctx->data;
 	result = rt_float(ctx);
 	if (result < min || result > max)
 	{
-		rt_parse_error(ctx, "float out of range"); /* TODO print out range and value of float*/
+		rt_parse_error(ctx, "float out of range '%.*s'",
+				(int) rt_wordnlen(word, 64), word);
 	}
 	return (result);
 }

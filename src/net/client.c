@@ -10,7 +10,7 @@
 
 #define PROTOVER 2
 
-/* TODO: network ping */
+/* ODOT: network ping */
 
 int
 	rt_recv_handle_packet(union u_client *client, char **error)
@@ -45,7 +45,7 @@ static void
 	}
 	if (client->any.status == SDIED)
 	{
-		fprintf(stderr, "An unrecoverable error has occurred while synching \
+		ft_fprintf(STDERR_FILENO, "An unrecoverable error has occurred while synching \
 with the server. Safely terminate this program as soon as \
 is possble.\n%s\n", error);
 		rt_free(error);
@@ -114,7 +114,7 @@ static int
 	mutex_init(&client->any.mtx);
 	if (rt_client_connect(client, ip, port, &error) < 0)
 	{
-		fprintf(stderr, "%s:%s: %s\n", ip, port, error);
+		ft_fprintf(STDERR_FILENO, "%s:%s: %s\n", ip, port, error);
 		exit(EXIT_FAILURE);
 	}
 	client->any.status = SIDLE;
@@ -144,8 +144,7 @@ static void
 	rc = rt_send_packet(&info->client->any, &packet, NULL);
 	if (rc < 0)
 	{
-		/* TODO: replace all the printf's with ft_printf's */
-		fprintf(stderr, "probably lost connection to host\n"); /*TODO reconnect*/
+		ft_fprintf(STDERR_FILENO, "probably lost connection to host\n");
 		rt_client_set_status(info->client, SIDLE);
 	}
 	rt_free(data.zdata);

@@ -22,6 +22,50 @@ t_triangle
 void
 	triangle_hit_info(t_ray ray, t_triangle triangle, t_hit *hit)
 {
+	t_vec2	duv02;
+	t_vec2	duv12;
+	t_vec	dp02;
+	t_vec	dp12;
+	float	determinant;
+	t_vec	bary;
+
+	(void) ray;
+	duv02 = vec2_sub(triangle.uvs[0], triangle.uvs[2]);
+	duv12 = vec2_sub(triangle.uvs[1], triangle.uvs[2]);
+	dp02 = vec_sub(triangle.vertices[0], triangle.vertices[2]);
+	dp12 = vec_sub(triangle.vertices[1], triangle.vertices[2]);
+	determinant = (u(duv02) * v(duv12) - v(duv02) * u(duv12));
+	if (rt_abs(determinant) < RT_TINY_VAL)
+	{
+		hit->dpdu = vec_tangent(hit->shading_normal);
+		hit->dpdv = vec_cross(hit->shading_normal, hit->dpdu);
+	}
+	else
+	{
+		determinant = 1.0 / determinant;
+		hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), determinant);
+		hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), determinant);
+	}
+	bary = vec(hit->ctx.tr.bc_u, hit->ctx.tr.bc_v, hit->ctx.tr.bc_w, 0);
+	hit->uv = vec2(
+			vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]), u(triangle.uvs[2]), 0.0), bary),
+			vec_dot(vec(v(triangle.uvs[0]), v(triangle.uvs[1]), v(triangle.uvs[2]), 0.0), bary));
+	if (triangle.is_smooth)
+	{
+		hit->shading_normal = vec(
+				vec_dot(vec(x(triangle.normals[0]), x(triangle.normals[1]), x(triangle.normals[2]), 0.0), bary),
+				vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), bary),
+				vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), bary),
+				0.0);
+		hit->dpdu = vec_cross(hit->shading_normal, hit->dpdv);
+		hit->dpdv = vec_cross(hit->shading_normal, hit->dpdu);
+	}
+}
+
+/*
+void
+	triangle_hit_info(t_ray ray, t_triangle triangle, t_hit *hit)
+{
 	t_vec	v0, v1;
 	t_vec2	duv02;
 	t_vec2	duv12;
@@ -43,15 +87,12 @@ void
 	degenerate = rt_abs(determinant) < RT_TINY_VAL;
 	hit->dpdu = vec_0();
 	hit->dpdv = vec_0();
-	/* TODO check if triangle has UV's before reading degenerate. Use of unitialized value */
 	if (!degenerate)
 	{
 		determinant = 1.0 / determinant;
 		hit->dpdu = vec_scale(vec_sub(vec_scale(dp02, v(duv12)), vec_scale(dp12, v(duv02))), determinant);
 		hit->dpdv = vec_scale(vec_add(vec_scale(dp02, -u(duv12)), vec_scale(dp12, u(duv02))), determinant);
 	}
-	/* When I changed this below to an else statement, it was WAAAAY faster. Probably something to do with branching! Try to 
-	 * optimize this! */
 	if (degenerate || vec_mag2(vec_cross(hit->dpdu, hit->dpdv)) == 0.0)	
 	{
 		tmp = vec_norm(vec_cross(v1, v0));
@@ -77,11 +118,11 @@ void
 				vec_dot(vec(y(triangle.normals[0]), y(triangle.normals[1]), y(triangle.normals[2]), 0.0), bary),
 				vec_dot(vec(z(triangle.normals[0]), z(triangle.normals[1]), z(triangle.normals[2]), 0.0), bary),
 				0.0);
-		// TODO: not sure if this is correct
 		hit->dpdu = vec_cross(hit->shading_normal, hit->dpdv);
 		hit->dpdv = vec_cross(hit->shading_normal, hit->dpdu);
 	}
 }
+*/
 
 int
 	ray_triangle_intersect(t_ray ray, t_triangle triangle, float min, t_hit *hit)
