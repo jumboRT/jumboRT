@@ -4,6 +4,9 @@
 # include "types.h"
 # include "rtmath.h"
 
+#define RT_FLOAT_MANTISSA_BITS 8
+#define RT_FLOAT_EXPONENT_BITS 8
+
 void	*rt_packu64(void *dst, uint64_t i);
 void	*rt_packfl(void *dst, float f);
 void	*rt_packvec(void *dst, t_vec vec);

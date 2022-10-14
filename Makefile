@@ -32,7 +32,8 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   texture.c init.c ambient.c conditional.c include.c \
 						   boloid.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
-						   handler.c jobs.c string.c size.c compression.c
+						   handler.c jobs.c string.c size.c compression.c \
+						   unpack.c
 Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   lz77_new.c encode.c decode.c wtree.c \
 						   encode_zwtree_token.c util.c

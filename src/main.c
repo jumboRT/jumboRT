@@ -10,9 +10,7 @@
 # include <fenv.h>
 #endif
 
-/* TODO: credits for all the people who helped render images */
 /* ODOT: better image reconstruction */
-/* TODO: help flag for help message */
 /* ODOT: texture filtering */
 /* ODOT: material hashing to check if scene is the same as last scene in network client */
 
