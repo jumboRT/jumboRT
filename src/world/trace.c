@@ -190,7 +190,16 @@ static void
 	t = 0;
 	while (depth < RT_TRACE_LIGHT_SLOW)
 	{
-		intersect_full(&ctx2, hit, ray, max - t);
+		intersect_partial(&ctx2, hit, ray, max - t);
+		if (hit->is_volume)
+			break ;
+		if (hit->is_ambient)
+		{
+			t = max;
+			break ;
+		}
+		prim_hit_info(hit->prim, ctx->world, ray, hit);
+		fix_normals(ctx->world, hit, ray);
 		t += hit->hit.t;
 		if (alpha_test(&ctx2, hit))
 			break ;

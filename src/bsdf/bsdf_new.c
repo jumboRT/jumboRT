@@ -109,7 +109,6 @@ static t_vec
 	result = vec_0();
 	idx = get_bsdf(hit).begin;
 	type = 0;
-	/* TODO: check if this is still faster with an increasing number of bxdfs */
 	while (type < RT_BXDF_TYPE_COUNT)
 	{
 		while (idx < get_bsdf(hit).end)
@@ -140,7 +139,6 @@ static float
 	idx = get_bsdf(hit).begin;
 	type = 0;
 	match = 0;
-	/* TODO: check if this is still faster with an increasing number of bxdfs */
 	while (type < RT_BXDF_TYPE_COUNT)
 	{
 		while (idx < get_bsdf(hit).end)
@@ -171,7 +169,6 @@ static t_sample
 	result = bxdf_sample(ctx, hit, bxdf, wiw);
 	if (!bxdf_is_perfspec(bxdf))
 	{
-		/* TODO: optimize these loops */
 		start = get_bsdf(hit).begin;
 		while (start < get_bsdf(hit).end)
 		{
