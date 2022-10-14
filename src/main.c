@@ -12,12 +12,9 @@
 
 /* TODO: credits for all the people who helped render images */
 /* ODOT: better image reconstruction */
-/* TODO: add type of phong shading */
 /* TODO: help flag for help message */
 /* ODOT: texture filtering */
-/* TODO: material hashing to check if scene is the same as last scene in network client */
-/* TODO: remove shell scripts and python files out of repo dir */
-/* TODO: fix float maps */
+/* ODOT: material hashing to check if scene is the same as last scene in network client */
 
 #include <libft.h>
 #include <ft_printf.h>

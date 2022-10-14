@@ -14,7 +14,7 @@
 # define RT_BXDF_PHONG				6
 # define RT_BXDF_SPECULAR			7
 # define RT_BXDF_OREN_NAYAR			8
-# define RT_BXDF_COUNT				9
+# define RT_BXDF_TYPE_COUNT			9
 
 typedef struct s_world				t_world;
 typedef struct s_context			t_context;

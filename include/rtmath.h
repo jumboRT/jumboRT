@@ -209,6 +209,7 @@ t_vec		vec_min(t_vec a, t_vec b);
 t_vec		vec_max(t_vec a, t_vec b);
 float		vec_minv(t_vec v);
 float		vec_maxv(t_vec v);
+float		vec_xyz_maxv(t_vec v);
 t_vec		vec_clamp(t_vec v, float min, float max);
 t_vec		vec_abs(t_vec a);
 

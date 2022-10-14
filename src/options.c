@@ -17,7 +17,7 @@
 # define RT_PATCH_VER 0
 #endif
 
-/* TODO: dynamic job allocation */
+/* ODOT: dynamic job allocation */
 void
 	parse_options(t_options *opts, int argc, char **argv)
 {

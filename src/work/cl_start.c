@@ -53,7 +53,7 @@ static void
 			ctx->cl_ctx->work_kernel, 1, NULL, global_work_size,
 			local_work_size, 1, &write_event, &ctx->kernel_event[id]);
 	rt_assert(status == CL_SUCCESS, "clEnqueueNDRangeKernel failed");
-	status = clReleaseEvent(write_event); /* TODO: check this */
+	status = clReleaseEvent(write_event);
 	rt_assert(status == CL_SUCCESS, "clReleaseEvent failed");
 }
 

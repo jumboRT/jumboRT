@@ -16,16 +16,6 @@ t_sample
 
 	etai = 1.0f;
 	etat = hit->mat->refractive_index;
-	/* TODO this check can be removed since f_dielectric also does it */
-	/*
-	if (costheta(wi) < 0)
-	{
-		etai = hit->mat->refractive_index;
-		etat = 1.0f;
-	}
-
-	result.wo = vec_set(wi, 2, -z(wi));
-	*/
 	result.wo = vec3(-x(wi), -y(wi), z(wi));
 	fresnel = f_dielectric(costheta(result.wo), etai, etat);
 	color = vec_scale(filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv),

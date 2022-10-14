@@ -151,7 +151,7 @@ static void
 	{
 		hit->hit.uv = vec2(0, 0);
 		hit->hit.pos = ray_at(ray, hit->hit.t);
-		init_normals(hit, ray, rt_random_on_hemi(&ctx->ctx->seed, ray.dir)); // TODO: should this be negated?
+		init_normals(hit, ray, rt_random_on_hemi(&ctx->ctx->seed, vec_neg(ray.dir)));
 	}
 	else if (hit->is_ambient)
 	{

@@ -110,7 +110,7 @@ static t_vec
 	idx = get_bsdf(hit).begin;
 	type = 0;
 	/* TODO: check if this is still faster with an increasing number of bxdfs */
-	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */
+	while (type < RT_BXDF_TYPE_COUNT)
 	{
 		while (idx < get_bsdf(hit).end)
 		{
@@ -122,7 +122,6 @@ static t_vec
 		}
 		type++;
 	}
-	/* TODO: check if correct */
 	result = vec_scale(result, get_bsdf(hit).end - get_bsdf(hit).begin);
 	return (result);
 }
@@ -142,7 +141,7 @@ static float
 	type = 0;
 	match = 0;
 	/* TODO: check if this is still faster with an increasing number of bxdfs */
-	while (type < RT_BXDF_COUNT) /* TODO rename to BXDF_TYPE_COUNT */
+	while (type < RT_BXDF_TYPE_COUNT)
 	{
 		while (idx < get_bsdf(hit).end)
 		{
@@ -202,12 +201,10 @@ static t_sample
 			result.bsdf = vec_add(result.bsdf, bxdf_f(ctx, hit, bxdf2, wiw, result.wo));
 			idx += 1;
 		}
-		/* TODO: check if correct */
 		result.bsdf = vec_scale(result.bsdf, get_bsdf(hit).end - get_bsdf(hit).begin);
 	}
 	else
 	{
-		/* TODO: check if correct */
 		result.bsdf = vec_scale(result.bsdf, bxdf->weight);
 		result.bsdf = vec_scale(result.bsdf, get_bsdf(hit).end - get_bsdf(hit).begin);
 	}
