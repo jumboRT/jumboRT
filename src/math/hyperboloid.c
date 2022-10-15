@@ -12,18 +12,18 @@ t_hyperboloid
 	return (result);
 }
 
-/* TODO: compute hyperboloid hit info */
 void
 	hyperboloid_hit_info(t_ray ray, t_hyperboloid hyperboloid, t_hit *hit)
 {
 	(void) ray;
 	(void) hyperboloid;
 	(void) hit;
-	hit->dpdu = vec_0();
-	hit->dpdv = vec_0();
-	hit->uv = vec2(0, 0);
+	hit->dpdu = vec_tangent(hit->geometric_normal);
+	hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
+	hit->uv = vec2(x(hit->pos), y(hit->pos));
 }
 
+/* https://www.cs.uaf.edu/2012/spring/cs481/section/0/lecture/01_26_ray_intersections.html */
 int
 	ray_hyperboloid_intersect(t_ray ray, t_hyperboloid hyperboloid, float min, t_hit *hit)
 {
