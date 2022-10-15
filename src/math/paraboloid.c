@@ -11,7 +11,6 @@ t_paraboloid
 	return (result);
 }
 
-/* TODO: compute paraboloid hit info */
 void
 	paraboloid_hit_info(t_ray ray, t_paraboloid paraboloid, t_hit *hit)
 {
@@ -39,13 +38,14 @@ int
 	quadratic.c = x(oc) * x(oc) + y(oc) * y(oc) - z(oc);
 	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
+	if (t[0] < 0)
+		t[0] = t[1];
 	if (t[1] < t[0] && t[1] >= min)
 		t[0] = t[1];
 	else if (t[0] < min)
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
-	/* TODO: compute normal */
 	hit->geometric_normal =
 		vec_norm(vec3(
 			2.0f * rt_pow(paraboloid.a, -2.0f) * x(hit->pos),
