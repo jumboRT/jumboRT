@@ -40,13 +40,15 @@ int
 	quadratic.c = x(oc) * x(oc) + y(oc) * y(oc) - z(oc) * z(oc) + 1;
 	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
+	if (t[0] < 0)
+		t[0] = t[1];
 	if (t[1] < t[0] && t[1] >= min)
 		t[0] = t[1];
 	else if (t[0] < min)
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
-	/* TODO: compute normal */
+	// TODO: compute normal 
 	hit->geometric_normal = vec(0, 0, 1, 0);
 	hit->shading_normal = vec(0, 0, 1, 0);
 	return (1);
