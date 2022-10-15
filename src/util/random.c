@@ -85,23 +85,6 @@ t_vec
 	return (result);
 }
 
-t_vec
-	rt_random_on_hemi_cos(GLOBAL t_seed *seed)
-{
-	float	a;
-	float	b;
-	float	u1;
-	float	u2;
-
-	u1 = rt_random_float(seed);
-	u2 = rt_random_float(seed);
-	a = rt_sqrt(u1);
-	b = RT_2PI * u2;
-	return (vec3(a * rt_cos(b),
-				a * rt_sin(b),
-				rt_sqrt(1.0f - u1)));
-}
-
 /* https://stats.stackexchange.com/a/481544 */
 t_vec
 	rt_random_in_disk(GLOBAL t_seed *seed, t_vec right, t_vec up, float radius)
