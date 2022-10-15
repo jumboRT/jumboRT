@@ -48,9 +48,17 @@ int
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
-	// TODO: compute normal 
-	hit->geometric_normal = vec(0, 0, 1, 0);
-	hit->shading_normal = vec(0, 0, 1, 0);
+	hit->geometric_normal =
+		vec_norm(vec3(
+			-2.0f * rt_pow(hyperboloid.a, -2.0f) * x(hit->pos),
+			-2.0f * rt_pow(hyperboloid.b, -2.0f) * y(hit->pos),
+			2.0f * rt_pow(hyperboloid.c, -2.0f) * z(hit->pos)));
+	if ((z(hit->geometric_normal) > 0
+		&& z(vec_sub(hit->pos, hyperboloid.pos)) > 0) ||
+		(z(hit->geometric_normal < 0)
+		 && z(vec_sub(hit->pos, hyperboloid.pos)) < 0))
+		hit->geometric_normal = vec_neg(hit->geometric_normal);	
+	hit->shading_normal = hit->geometric_normal;
 	return (1);
 }
 
