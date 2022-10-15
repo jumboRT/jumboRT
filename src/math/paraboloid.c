@@ -18,6 +18,8 @@ void
 	(void) ray;
 	(void) paraboloid;
 	(void) hit;
+	hit->dpdu = vec_tangent(hit->geometric_normal);
+	hit->dpdv = vec_norm(vec_cross(hit->dpdu, hit->geometric_normal));
 	hit->uv = vec2(x(hit->pos), y(hit->pos));
 }
 
@@ -28,10 +30,6 @@ int
 	t_vec		oc;
 	t_vec		dir;
 	float		t[2];
-	float		xgradient;
-	float		ygradient;
-	float		x1;
-	float		y1;
 
 	oc = vec_sub(ray.org, paraboloid.pos);
 	oc = vec(x(oc) / paraboloid.a, y(oc) / paraboloid.b, z(oc), 0);
@@ -48,17 +46,11 @@ int
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
 	/* TODO: compute normal */
-	x1 = x(vec_sub(paraboloid.pos, hit->pos));
-	y1 = y(vec_sub(paraboloid.pos, hit->pos));
-	xgradient = 2 * rt_pow(paraboloid.a, -2.0f) * x1;
-	ygradient = 2 * rt_pow(paraboloid.b, -2.0f) * y1;
-	hit->dpdu = vec_norm(vec3(1.0f, 0.0f, xgradient));
-	hit->dpdv = vec_norm(vec3(0.0f, 1.0f, ygradient));
-	hit->geometric_normal = vec_norm(vec_cross(hit->dpdu, hit->dpdv));
-	/*
-	if (vec_dot(ray.dir, hit->geometric_normal) > 0)
-		hit->geometric_normal = vec_neg(hit->geometric_normal);
-	*/
+	hit->geometric_normal =
+		vec_norm(vec3(
+			2.0f * rt_pow(paraboloid.a, -2.0f) * x(hit->pos),
+			2.0f * rt_pow(paraboloid.b, -2.0f) * y(hit->pos),
+			1.0f));
 	if (z(hit->geometric_normal) < 0)
 		hit->geometric_normal = vec_neg(hit->geometric_normal);
 	hit->shading_normal = hit->geometric_normal;
