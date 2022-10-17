@@ -42,9 +42,9 @@
 #  endif
 
 #  if defined RT_MACOS
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global"
+#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -DRT_VECTORIZE=1"
 #  else
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math"
+#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -DRT_VECTORIZE=1 -cl-fast-relaxed-math"
 #  endif
 
 typedef struct s_opencl_ctx				t_opencl_ctx;

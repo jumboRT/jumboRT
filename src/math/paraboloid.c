@@ -46,13 +46,12 @@ int
 		return (0);
 	hit->t = t[0];
 	hit->pos = ray_at(ray, t[0]);
+	oc = vec_sub(hit->pos, paraboloid.pos);
 	hit->geometric_normal =
 		vec_norm(vec3(
-			2.0f * rt_pow(paraboloid.a, -2.0f) * x(hit->pos),
-			2.0f * rt_pow(paraboloid.b, -2.0f) * y(hit->pos),
-			1.0f));
-	if (z(hit->geometric_normal) < 0)
-		hit->geometric_normal = vec_neg(hit->geometric_normal);
+			2.0f * rt_pow(paraboloid.a, -2.0f) * x(oc),
+			2.0f * rt_pow(paraboloid.b, -2.0f) * y(oc),
+			-1.0f));
 	hit->shading_normal = hit->geometric_normal;
 	return (1);
 }

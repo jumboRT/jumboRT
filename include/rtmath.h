@@ -11,8 +11,6 @@
 # define RT_PI_2 1.57080
 # define RT_PI_4 0.78540
 
-# define RT_VECTORIZE
-
 # if defined RT_VECTORIZE
 typedef float				t_vec __attribute__ ((vector_size(16)));
 typedef float				t_vec2 __attribute__ ((vector_size(8)));

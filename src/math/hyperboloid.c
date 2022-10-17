@@ -55,7 +55,7 @@ int
 			2.0f * rt_pow(hyperboloid.c, -2.0f) * z(hit->pos)));
 	if ((z(hit->geometric_normal) > 0
 		&& z(vec_sub(hit->pos, hyperboloid.pos)) > 0) ||
-		(z(hit->geometric_normal < 0)
+		(z(hit->geometric_normal) < 0
 		 && z(vec_sub(hit->pos, hyperboloid.pos)) < 0))
 		hit->geometric_normal = vec_neg(hit->geometric_normal);	
 	hit->shading_normal = hit->geometric_normal;

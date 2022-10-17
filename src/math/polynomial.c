@@ -6,6 +6,7 @@ int
 	float	a;
 	float	b;
 	float	c;
+	float	q;
 	float	discriminant;
 
 	a = quadratic->a;
@@ -15,8 +16,17 @@ int
 	if (discriminant < 0.0)
 		return (0);
 	discriminant = rt_sqrt(discriminant);
-	a = 1.0 / (2.0 * a);
-	solutions[0] = (-b + discriminant) * a;
-	solutions[1] = (-b - discriminant) * a;
-	return ((discriminant == 0.0) + 1);
+	if (b < 0)
+		q = -0.5 * (b - discriminant);
+	else
+		q = -0.5 * (b + discriminant);
+	solutions[0] = q / a;
+	solutions[1] = c / q;
+	if (solutions[0] > solutions[1])
+	{
+		q = solutions[0];
+		solutions[0] = solutions[1];
+		solutions[1] = q;
+	}
+	return (1);
 }

@@ -225,6 +225,11 @@ ifndef san
 	san := address
 endif 
 
+# TODO MAKE THIS THE OTHER WAY AROUND BEFORE TURNING IN
+ifndef vectorize
+	CFLAGS += -DRT_VECTORIZE
+endif
+
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3
