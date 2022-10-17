@@ -42,10 +42,8 @@ typedef struct s_hit		t_hit;
 
 typedef struct s_quadratic	t_quadratic;
 
-/* TODO: make all the attributes conditional */
-
 # if !defined RT_VECTORIZE
-typedef struct __attribute__((aligned(16))) s_vec {
+typedef struct s_vec {
 	float	x;
 	float	y;
 	float	z;
@@ -63,11 +61,19 @@ struct s_ray {
 	t_vec	dir;
 };
 
+# if defined RT_VECTORIZE
 struct __attribute__((aligned(16))) s_quadratic {
 	float	a;
 	float	b;
 	float	c;
 };
+#else
+struct s_quadratic {
+	float	a;
+	float	b;
+	float	c;
+};
+#endif
 
 struct s_plane {
 	t_vec	pos;
