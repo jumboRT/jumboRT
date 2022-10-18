@@ -12,7 +12,8 @@
 
 /* ODOT: better image reconstruction */
 /* ODOT: texture filtering */
-/* ODOT: material hashing to check if scene is the same as last scene in network client */
+/* ODOT: material hashing to check if scene is the
+ * same as last scene in network client */
 
 #include <libft.h>
 #include <ft_printf.h>
@@ -334,50 +335,6 @@ static void
 
 #endif
 
-/*
-#define RT_VERBOSE
-void
-	dump_tree(t_world *world, uint32_t offset, int depth, t_vec min, t_vec max)
-{
-	int				i;
-	t_accel_node	*node;
-	t_vec			vec;
-
-	i = 0;
-	while (i < depth)
-	{
-		fprintf(stdout, "  ");
-		i += 1;
-	}
-	node = &world->accel_nodes[offset];
-	if (is_leaf(*node))
-	{
-#ifdef RT_VERBOSE
-		if (nprims(*node) == 0)
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), none (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), offset);
-		else if (nprims(*node) == 1)
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), one %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), node->a.one_primitive, offset);
-		else
-			fprintf(stdout, "leaf %d (%f %f %f | %f %f %f), first %d (offset %d)\n", (int) nprims(*node), x(min), y(min), z(min), x(max), y(max), z(max), world->accel_indices[node->a.primitive_ioffset], offset);
-#else
-		fprintf(stdout, "leaf %d\n", (int) nprims(*node));
-#endif
-	}
-	else
-	{
-#ifdef RT_VERBOSE
-		fprintf(stdout, "branch (%f %f %f | %f %f %f) (%f %d) (offset %d)\n", x(min), y(min), z(min), x(max), y(max), z(max), split_pos(*node), split_axis(*node), offset);
-#else
-		fprintf(stdout, "branch\n");
-#endif
-		vec = vec_set(max, split_axis(*node), split_pos(*node));
-		dump_tree(world, offset + 1, depth + 1, min, vec);
-		vec = vec_set(min, split_axis(*node), split_pos(*node));
-		dump_tree(world, above_child(*node), depth + 1, vec, max);
-	}
-}
-*/
-
 void
 	world_load(t_world *world, const char *filename, const char *key)
 {
@@ -420,28 +377,6 @@ void
 	main_run(options, &work);
 	world_destroy(&world);
 	work_destroy(&work);
-}
-
-static void
-	print_ztokens(t_ztoken *token, size_t count)
-{
-	size_t	idx;
-
-	idx = 0;
-	while (idx < count)
-	{
-		if (token->length == 0)
-		{
-			printf("(0,0,%c)", (char) token->data.character);
-		}
-		else
-		{
-			printf("(%d,%d,\\0)", token->data.distance, token->length);
-		}
-		token++;
-		idx++;
-	}
-	printf("\n");
 }
 
 int
