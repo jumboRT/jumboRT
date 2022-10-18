@@ -45,4 +45,3 @@ void
 	view->data = rt_reallog(view->data, &vector->capacity, view->size);
 	rt_memcpy(view_get(*view, index), element, view->elem_size);
 }
-

@@ -1,7 +1,8 @@
 #include "tex.h"
 
 t_vec
-	filter_sample_offset(const GLOBAL t_world *world, t_filter filter, t_vec2 uv, t_vec2 poffset)
+	filter_sample_offset(const GLOBAL t_world *world,
+			t_filter filter, t_vec2 uv, t_vec2 poffset)
 {
 	t_vec	tex1;
 	t_vec	tex2;

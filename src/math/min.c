@@ -1,5 +1,4 @@
 #include "rtmath.h"
-#include <math.h>
 
 #ifndef RT_OPENCL
 

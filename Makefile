@@ -6,7 +6,7 @@ UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
 						   hash.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c \
-						   thread_mt.c pool.c pool_mt.c task.c
+						   thread_mt.c pool.c pool_mt.c task.c pool_create_int.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
 						   context.c int.c server.c update.c cl_buffer.c \
 						   cl_buffer_util.c cl_device.c cl_fake.c cl_name.c \
@@ -41,7 +41,7 @@ GFX_FILES				:= win.c color.c
 BSDF_FILES				:= bsdf.c diffuse.c reflective.c transmissive.c \
 						   specular.c util.c phong.c oren_nayar.c bsdf_util.c \
 						   bsdf_sample_int.c bsdf_forward.c polar.c
-TEX_FILES				:= sample.c filter.c init.c
+TEX_FILES				:= sample.c filter.c init.c sample_vector.c
 SHAPE_FILES				:= traits.c bounds.c
 ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
 						   node1.c accel_save.c accel_load.c accel_split_axis.c \
@@ -117,6 +117,7 @@ CL_FILE_NAMES			:= \
 	bsdf/phong.c \
 	bsdf/oren_nayar.c \
 	tex/sample.c \
+	tex/sample_vector.c \
 	tex/filter.c \
 	shape/traits.c \
 	shape/bounds.c \

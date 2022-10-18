@@ -28,4 +28,3 @@ void
 	else
 		swap(view_get(view, a), view_get(view, b), view.elem_size);
 }
-

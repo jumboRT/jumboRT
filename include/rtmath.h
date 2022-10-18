@@ -1,6 +1,10 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
+# ifndef RT_OPENCL
+#  include <math.h>
+# endif
+
 # define RT_TINY_VAL 0.001
 # define RT_HUGE_VAL 1000000000.0
 
@@ -12,8 +16,9 @@
 # define RT_PI_4 0.78540
 
 # if defined RT_VECTORIZE
-typedef float				t_vec __attribute__ ((vector_size(16)));
-typedef float				t_vec2 __attribute__ ((vector_size(8)));
+
+typedef float					t_vec __attribute__ ((vector_size(16)));
+typedef float					t_vec2 __attribute__ ((vector_size(8)));
 
 typedef union u_vec_conv {
 	t_vec	vec;
@@ -26,7 +31,7 @@ typedef union u_vec2_conv {
 }	t_vec2_conv;
 # endif
 
-typedef struct s_ray		t_ray;
+typedef struct s_ray			t_ray;
 
 typedef struct s_plane			t_plane;
 typedef struct s_triangle		t_triangle;
@@ -36,11 +41,12 @@ typedef struct s_cone			t_cone;
 typedef struct s_paraboloid		t_paraboloid;
 typedef struct s_hyperboloid	t_hyperboloid;
 
-typedef struct s_hit		t_hit;
+typedef struct s_hit			t_hit;
 
-typedef struct s_quadratic	t_quadratic;
+typedef struct s_quadratic		t_quadratic;
 
 # if !defined RT_VECTORIZE
+
 typedef struct s_vec {
 	float	x;
 	float	y;
@@ -60,18 +66,22 @@ struct s_ray {
 };
 
 # if defined RT_VECTORIZE
+
 struct __attribute__((aligned(16))) s_quadratic {
 	float	a;
 	float	b;
 	float	c;
 };
-#else
+
+# else
+
 struct s_quadratic {
 	float	a;
 	float	b;
 	float	c;
 };
-#endif
+
+# endif
 
 struct s_plane {
 	t_vec	pos;
