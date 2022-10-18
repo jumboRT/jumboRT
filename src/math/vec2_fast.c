@@ -13,9 +13,9 @@ t_vec2
 }
 
 t_vec2
-	vec2_0()
+	vec2_0(void)
 {
 	return (vec2(0.0f, 0.0f));
 }
-	
+
 #endif

@@ -17,4 +17,3 @@ float
 {
 	return (rt_max(rt_max(x(v), y(v)), z(v)));
 }
-

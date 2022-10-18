@@ -19,7 +19,7 @@ t_vec
 {
 	return (vec(x, y, z, 0.0));
 }
-	
+
 t_vec
 	vec_0(void)
 {

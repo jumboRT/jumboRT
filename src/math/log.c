@@ -1,8 +1,7 @@
 #include "rtmath.h"
+#include <math.h>
 
 #ifndef RT_OPENCL
-
-# include <math.h>
 
 float
 	rt_log(float arg)
@@ -19,4 +18,3 @@ float
 }
 
 #endif
-

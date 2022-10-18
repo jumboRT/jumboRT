@@ -6,7 +6,7 @@ UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
 						   hash.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c \
-						   thread_mt.c pool.c pool_mt.c
+						   thread_mt.c pool.c pool_mt.c task.c
 WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
 						   context.c int.c server.c update.c cl_buffer.c \
 						   cl_buffer_util.c cl_device.c cl_fake.c cl_name.c \
@@ -37,7 +37,7 @@ NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   lz77_new.c encode.c decode.c wtree.c \
 						   encode_zwtree_token.c util.c
-GFX_FILES				:= win.c
+GFX_FILES				:= win.c color.c
 BSDF_FILES				:= bsdf.c diffuse.c reflective.c transmissive.c \
 						   specular.c util.c phong.c oren_nayar.c bsdf_util.c \
 						   bsdf_sample_int.c bsdf_forward.c polar.c

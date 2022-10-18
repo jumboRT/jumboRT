@@ -1,9 +1,6 @@
 #include "mt.h"
 #include "util.h"
 
-
-#include <errno.h>
-
 #ifdef RT_MT
 
 void

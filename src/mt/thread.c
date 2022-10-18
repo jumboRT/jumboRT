@@ -1,7 +1,7 @@
 #include "mt.h"
+#include "util.h"
 
 #ifndef RT_MT
-# include "util.h"
 
 void
 	thread_create(t_thread *thr, t_start start, void *arg)

@@ -13,4 +13,3 @@ t_vec
 			rt_sin(phi) * rt_sin(theta),
 			rt_cos(theta)));
 }
-

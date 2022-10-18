@@ -37,6 +37,8 @@ struct s_task_item {
 	size_t	id;
 };
 
+void	*pool_create_int(void *ctx);
+
 void	task_init(t_task *task, t_pool_start start, void *ctx);
 void	pool_create(t_pool *pool, size_t count);
 void	pool_destroy(t_pool *pool);

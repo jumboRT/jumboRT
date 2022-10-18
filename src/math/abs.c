@@ -1,8 +1,8 @@
 #include "rtmath.h"
 
-#ifndef RT_OPENCL
+#include <math.h>
 
-# include <math.h>
+#ifndef RT_OPENCL
 
 float
 	rt_abs(float a)
@@ -19,4 +19,3 @@ float
 }
 
 #endif
-

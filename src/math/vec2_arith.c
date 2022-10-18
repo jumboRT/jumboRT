@@ -2,7 +2,6 @@
 
 #if !defined RT_VECTORIZE
 
-
 __attribute__ ((const))
 t_vec2
 	vec2_neg(t_vec2 v)
