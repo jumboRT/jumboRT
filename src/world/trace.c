@@ -280,6 +280,7 @@ static int
 	float		uv_u;
 	float		uv_v;
 	t_sample	sample;
+	t_bxdf_ctx	bxdf_ctx;
 
 	if (ctx->world->render_mode == RT_RENDER_MODE_UV)
 	{
@@ -309,7 +310,10 @@ static int
 			ctx->tail = vec_0();
 			return (1);
 		}
-		sample = bsdf_sample(ctx, hit, ctx->ray.dir);
+		bxdf_ctx.ctx = ctx;
+		bxdf_ctx.hit = hit;
+		bxdf_ctx.wi = ctx->ray.dir;
+		sample = bsdf_sample(&bxdf_ctx);
 		ctx->tail = vec_abs(vec_scale(sample.bsdf, RT_PI));
 		return (1);
 	}
@@ -322,11 +326,15 @@ static void
 	t_world_hit	lhit;
 	t_sample	sample;
 	t_vec		tmp;
+	t_bxdf_ctx	bxdf_ctx;
 
 	if (!intersect_light(ctx, &lhit, hit))
 		return ;
 	sample.wo = vec_norm(vec_sub(lhit.hit.pos, hit->hit.pos));
-	sample.bsdf = bsdf_f(ctx, hit, ctx->ray.dir, sample.wo);
+	bxdf_ctx.ctx = ctx;
+	bxdf_ctx.hit = hit;
+	bxdf_ctx.wi = ctx->ray.dir;
+	sample.bsdf = bsdf_f(&bxdf_ctx, sample.wo);
 	sample.pdf = rt_abs(vec_dot(sample.wo, lhit.hit.shading_normal));
 	sample.pdf *= rt_abs(vec_dot(sample.wo, hit->hit.shading_normal));
 	sample.pdf *= prim_area(lhit.prim, ctx->world);
@@ -341,6 +349,7 @@ static int
 {
 	t_world_hit	hit;
 	t_sample	sample;
+	t_bxdf_ctx	bxdf_ctx;
 
 	intersect_full(ctx, &hit, ctx->ray, ctx->time);
 	if (world_trace_debug(ctx, &hit) || hit.mat == 0)
@@ -353,7 +362,10 @@ static int
 			world_trace_light(ctx, &hit);
 		if (!hit.is_volume && (hit.is_ambient || ctx->specref || prim_is_degenerate(hit.prim)))
 			ctx->tail = vec_add(ctx->tail, vec_mul(ctx->head, le(ctx, &hit)));
-		sample = bsdf_sample(ctx, &hit, ctx->ray.dir);
+		bxdf_ctx.ctx = ctx;
+		bxdf_ctx.hit = &hit;
+		bxdf_ctx.wi = ctx->ray.dir;
+		sample = bsdf_sample(&bxdf_ctx);
 		if (sample.pdf == 0)
 			return (0);
 		ctx->head = vec_mul(ctx->head, vec_scale(sample.bsdf, rt_abs(vec_dot(sample.wo, hit.hit.shading_normal)) / sample.pdf));

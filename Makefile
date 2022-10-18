@@ -38,12 +38,14 @@ Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
 						   lz77_new.c encode.c decode.c wtree.c \
 						   encode_zwtree_token.c util.c
 GFX_FILES				:= win.c
-BSDF_FILES				:= bsdf_new.c diffuse.c reflective.c transmissive.c \
-						   specular.c util.c phong.c oren_nayar.c
+BSDF_FILES				:= bsdf.c diffuse.c reflective.c transmissive.c \
+						   specular.c util.c phong.c oren_nayar.c bsdf_util.c \
+						   bsdf_sample_int.c bsdf_forward.c polar.c
 TEX_FILES				:= sample.c filter.c init.c
 SHAPE_FILES				:= traits.c bounds.c
 ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
-						   node.c
+						   node1.c accel_save.c accel_load.c accel_split_axis.c \
+						   accel_info_init.c node2.c
 BASE_FILES				:= main.c options.c perf.c
 
 PATCH_VERSION			:= 0
@@ -102,7 +104,11 @@ CL_FILE_NAMES			:= \
 	world/common.c \
 	world/trace.c \
 	world/conversion.c \
-	bsdf/bsdf_new.c \
+	bsdf/bsdf.c \
+	bsdf/bsdf_util.c \
+	bsdf/bsdf_sample_int.c \
+	bsdf/bsdf_forward.c \
+	bsdf/polar.c \
 	bsdf/diffuse.c \
 	bsdf/reflective.c \
 	bsdf/specular.c \
@@ -114,7 +120,8 @@ CL_FILE_NAMES			:= \
 	tex/filter.c \
 	shape/traits.c \
 	shape/bounds.c \
-	accel/node.c
+	accel/node1.c \
+	accel/node2.c
 
 ifdef platform
 	ifeq ($(platform),linux)

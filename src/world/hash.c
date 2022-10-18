@@ -129,8 +129,8 @@ uint64_t
 	}
 	else if (bxdf->base.type == RT_BXDF_OREN_NAYAR)
 	{
-		hash ^= hash_data(seed, &bxdf->oren_nayar.A, sizeof(bxdf->oren_nayar.A));
-		hash ^= hash_data(seed, &bxdf->oren_nayar.B, sizeof(bxdf->oren_nayar.B));
+		hash ^= hash_data(seed, &bxdf->oren_nayar.alpha, sizeof(bxdf->oren_nayar.alpha));
+		hash ^= hash_data(seed, &bxdf->oren_nayar.beta, sizeof(bxdf->oren_nayar.beta));
 	}
 	return (hash);
 }

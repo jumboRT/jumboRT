@@ -20,6 +20,7 @@ typedef struct s_world				t_world;
 typedef struct s_context			t_context;
 typedef struct s_trace_ctx			t_trace_ctx;
 
+typedef struct s_bxdf_ctx			t_bxdf_ctx;
 typedef struct s_bsdf				t_bsdf;
 typedef struct s_bxdf				t_bxdf;
 typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
@@ -34,9 +35,15 @@ typedef struct s_bxdf_specular		t_bxdf_specular;
 typedef union u_bxdf_any			t_bxdf_any;
 typedef struct s_sample				t_sample;
 
+struct s_bxdf_ctx {
+	t_trace_ctx			*ctx;
+	const t_world_hit	*hit;
+	t_vec				wi;
+};
+
 struct s_bxdf {
 	uint32_t	type;
-	t_filter	tex; // TODO: move to individual bxdfs
+	t_filter	tex;
 	float		weight;
 };
 
@@ -71,8 +78,8 @@ struct s_bxdf_bphong {
 
 struct s_bxdf_oren_nayar {
 	t_bxdf	base;
-	float	A;
-	float	B;
+	float	alpha;
+	float	beta;
 };
 
 struct s_bxdf_specular {
@@ -117,36 +124,65 @@ float		sinphi(t_vec w);
 
 float		f_dielectric(float costhetai, float etai, float etat);
 
-t_sample	diffuse_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi);
-t_vec		diffuse_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
-float		diffuse_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_diffuse *bxdf, t_vec wi, t_vec wo);
+t_sample	diffuse_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_diffuse *bxdf);
+t_vec		diffuse_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_diffuse *bxdf, t_vec wo);
+float		diffuse_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_diffuse *bxdf, t_vec wo);
 
-t_sample	oren_nayar_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi);
-t_vec		oren_nayar_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi, t_vec wo);
-float		oren_nayar_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi, t_vec wo);
+t_sample	oren_nayar_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_oren_nayar *bxdf);
+t_vec		oren_nayar_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wo);
+float		oren_nayar_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wo);
 
-t_sample	reflective_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi);
-t_vec		reflective_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
-float		reflective_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_reflective *bxdf, t_vec wi, t_vec wo);
+t_sample	reflective_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_reflective *bxdf);
+t_vec		reflective_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_reflective *bxdf, t_vec wo);
+float		reflective_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_reflective *bxdf, t_vec wo);
 
-t_sample	specular_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi);
-t_vec		specular_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi, t_vec wo);
-float		specular_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_specular *bxdf, t_vec wi, t_vec wo);
+t_sample	specular_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_specular *bxdf);
+t_vec		specular_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_specular *bxdf, t_vec wo);
+float		specular_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_specular *bxdf, t_vec wo);
 
-t_sample	transmissive_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
-t_vec		transmissive_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
-float		transmissive_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+t_sample	transmissive_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf);
+t_vec		transmissive_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf, t_vec wo);
+float		transmissive_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf, t_vec wo);
 
-t_sample	fresnel_blend_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi);
-t_vec		fresnel_blend_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
-float		fresnel_blend_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_transmissive *bxdf, t_vec wi, t_vec wo);
+t_sample	fresnel_blend_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf);
+t_vec		fresnel_blend_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf, t_vec wo);
+float		fresnel_blend_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_transmissive *bxdf, t_vec wo);
 
-t_sample	phong_sample(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi);
-t_vec		phong_f(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi, t_vec wo);
-float		phong_pdf(t_trace_ctx *ctx, const t_world_hit *hit, const GLOBAL t_bxdf_phong *bxdf, t_vec wi, t_vec wo);
+t_sample	phong_sample(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_phong *bxdf);
+t_vec		phong_f(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_phong *bxdf, t_vec wo);
+float		phong_pdf(const t_bxdf_ctx *ctx,
+				const GLOBAL t_bxdf_phong *bxdf, t_vec wo);
 
-t_sample	bsdf_sample(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi);
-t_vec		bsdf_f(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);
-float		bsdf_pdf(t_trace_ctx *ctx, const t_world_hit *hit, t_vec wi, t_vec wo);
-int32_t		bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf); // TODO: compute at parse time
+t_bsdf		get_bsdf(const t_world_hit *hit);
+t_sample	bxdf_sample_int(const t_bxdf_ctx *bxdf_ctx,
+				const GLOBAL t_bxdf *bxdf);
+t_sample	bxdf_sample(const t_bxdf_ctx *ctx, const GLOBAL t_bxdf *bxdf);
+t_vec		bxdf_f(const t_bxdf_ctx *ctx, const GLOBAL t_bxdf *bxdf,
+				t_vec wo);
+float		bxdf_pdf(const t_bxdf_ctx *ctx, const GLOBAL t_bxdf *bxdf,
+				t_vec wo);
+t_sample	bsdf_sample(const t_bxdf_ctx *ctx);
+t_vec		bsdf_f(const t_bxdf_ctx *ctx, t_vec wo);
+float		bsdf_pdf(const t_bxdf_ctx *ctx, t_vec wo);
+int32_t		bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf);
 #endif

@@ -9,7 +9,7 @@
 int
 	has_prefix(const t_parse_ctx *ctx, const char *prefix)
 {
-	const char *word;
+	const char	*word;
 
 	word = ctx->data;
 	while (ft_isspace(*word))
@@ -115,7 +115,7 @@ void
 	t_bxdf_diffuse	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_DIFFUSE;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -128,7 +128,7 @@ void
 	t_bxdf_reflective	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_REFLECTIVE;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -138,17 +138,16 @@ void
 void
 	rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx)
 {
-	t_bxdf_cook_torrance bxdf;
+	t_bxdf_cook_torrance	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_COOK_TORRANCE;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.roughness = rt_float(ctx);
 	bxdf.k = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
-
 }
 
 void
@@ -157,7 +156,7 @@ void
 	t_bxdf_bphong	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_BLINN_PHONG;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -172,7 +171,7 @@ void
 	t_bxdf_phong	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_PHONG;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -184,17 +183,17 @@ void
 	rt_exec_oren_nayar(t_world *world, t_parse_ctx *ctx)
 {
 	t_bxdf_oren_nayar	bxdf;
-	float			sigma;
+	float				sigma;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.type = RT_BXDF_OREN_NAYAR;
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.tex = rt_filter(world, ctx);
 	sigma = rt_degtorad(rt_float(ctx));
 	sigma = sigma * sigma;
-	bxdf.A = 1.0f - (sigma / (2.0f * (sigma + 0.33f)));
-	bxdf.B = 0.45f * sigma / (sigma + 0.09f);
+	bxdf.alpha = 1.0f - (sigma / (2.0f * (sigma + 0.33f)));
+	bxdf.beta = 0.45f * sigma / (sigma + 0.09f);
 	world_insert_bxdf(world, ctx->mat, &bxdf, sizeof(bxdf));
 }
 
@@ -204,7 +203,7 @@ void
 	t_bxdf_specular	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.type = RT_BXDF_SPECULAR;
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -217,7 +216,7 @@ void
 	t_bxdf_transmissive	bxdf;
 
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	bxdf.base.weight = rt_float(ctx);
 	bxdf.base.type = RT_BXDF_TRANSMISSIVE;
 	bxdf.base.tex = rt_filter(world, ctx);
@@ -228,7 +227,7 @@ void
 	rt_exec_emission(t_world *world, t_parse_ctx *ctx)
 {
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->brightness = rt_float(ctx);
 	ctx->mat->emission = rt_filter(world, ctx);
 	ctx->mat->flags |= RT_MAT_EMITTER;
@@ -239,7 +238,7 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->emission_exp = rt_float(ctx);
 }
 
@@ -248,7 +247,7 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->flags |= RT_MAT_SMOOTH;
 }
 
@@ -256,7 +255,7 @@ void
 	rt_exec_alpha(t_world *world, t_parse_ctx *ctx)
 {
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->alpha = rt_filter(world, ctx);
 	ctx->mat->flags |= RT_MAT_HAS_ALPHA;
 }
@@ -266,7 +265,7 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->normal_map = rt_texture(world, ctx);
 	ctx->mat->flags |= RT_MAT_HAS_NORMAL;
 }
@@ -276,7 +275,7 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->bump_map = rt_texture(world, ctx);
 	ctx->mat->flags |= RT_MAT_HAS_BUMP;
 }
@@ -286,7 +285,7 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->density = rt_float(ctx);
 	ctx->mat->flags |= RT_MAT_HAS_VOLUME;
 	ctx->mat->volume.begin = world->bxdfs_count;
@@ -298,16 +297,15 @@ void
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat->refractive_index = rt_float(ctx);
 }
-
 
 void
 	rt_exec_mat_end(t_world *world, t_parse_ctx *ctx)
 {
 	(void) world;
 	if (ctx->mat == NULL)
-	    rt_parse_error(ctx, "unexpected directive, did not start a material");
+		rt_parse_error(ctx, "unexpected directive, did not start a material");
 	ctx->mat = NULL;
 }

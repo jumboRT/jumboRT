@@ -1,8 +1,10 @@
 #ifndef ACCEL_IMPL_H
 # define ACCEL_IMPL_H
 
-#include "accel.h"
-#include <stddef.h>
+# include "accel.h"
+# include <stddef.h>
+
+typedef struct s_accel_init_ctx	t_accel_init_ctx;
 
 struct s_edge {
 	float		offset;
@@ -22,6 +24,15 @@ struct s_tree_info {
 	t_tree_edges	*edges;
 };
 
+struct s_accel_init_ctx {
+	t_tree_info		tree;
+	t_node_info		node;
+	t_accel_node	root;
+};
+
+void				world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis);
+int					world_accel_load(t_world *world, const char *file, uint64_t hash);
+void				world_accel_save(t_world *world, const char *file, uint64_t hash);
 void				world_info_create(t_tree_info *tree, t_node_info *node,
 						t_world *world);
 void				world_info_init(t_tree_info *tree, t_node_info *node,

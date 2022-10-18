@@ -3,16 +3,16 @@
 #include "world.h"
 
 t_sample
-	oren_nayar_sample(t_trace_ctx *ctx, const t_world_hit *hit,
-			const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wi)
+	oren_nayar_sample(const t_bxdf_ctx *ctx,
+			const GLOBAL t_bxdf_oren_nayar *bxdf)
 {
 	t_sample	result;
 
-	result.wo = rt_random_cosine_hemi(&ctx->ctx->seed);
-	if (z(wi) > 0)
+	result.wo = rt_random_cosine_hemi(&ctx->ctx->ctx->seed);
+	if (z(ctx->wi) > 0)
 		result.wo = vec_set(result.wo, 2, -z(result.wo));
-	result.bsdf = oren_nayar_f(ctx, hit, bxdf, wi, result.wo);
-	result.pdf = oren_nayar_pdf(ctx, hit, bxdf, wi, result.wo);
+	result.bsdf = oren_nayar_f(ctx, bxdf, result.wo);
+	result.pdf = oren_nayar_pdf(ctx, bxdf, result.wo);
 	return (result);
 }
 
@@ -27,7 +27,6 @@ static float
 
 	sinphii = sinphi(wi);
 	cosphii = cosphi(wi);
-
 	sinphio = sinphi(wo);
 	cosphio = cosphi(wo);
 	dcos = cosphii * cosphio + sinphii * sinphio;
@@ -35,46 +34,42 @@ static float
 }
 
 t_vec
-	oren_nayar_f(t_trace_ctx *ctx, const t_world_hit *hit,
-			const GLOBAL t_bxdf_oren_nayar *bxdf,
-			t_vec wi, t_vec wo)
+	oren_nayar_f(const t_bxdf_ctx *ctx,
+			const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wo)
 {
 	t_vec	color;
-	float	sinthetai;
-	float	sinthetao;
-	float	max_cos;
-	float	sinalpha;
-	float	tanbeta;
+	float	norminette[5];
+	t_vec	wi;
 
-	wi = vec_neg(wi);
-	sinthetai = sintheta(wi);
-	sinthetao = sintheta(wo);
-	max_cos = 0.0f;
-	if (sinthetai > 1e-4 && sinthetao > 1e-4)
-		max_cos = oren_nayar_maxcos(wi, wo);
-
-	if (abscostheta(wi) > abscostheta(wo)) {
-		sinalpha = sinthetao;
-		tanbeta = sinthetai / abscostheta(wi);
-	} else {
-		sinalpha = sinthetai;
-		tanbeta = sinthetao / abscostheta(wo);
+	wi = vec_neg(ctx->wi);
+	norminette[0] = sintheta(wi);
+	norminette[1] = sintheta(wo);
+	norminette[2] = 0.0f;
+	if (norminette[0] > 1e-4 && norminette[1] > 1e-4)
+		norminette[2] = oren_nayar_maxcos(wi, wo);
+	if (abscostheta(wi) > abscostheta(wo))
+	{
+		norminette[3] = norminette[1];
+		norminette[4] = norminette[0] / abscostheta(wi);
 	}
-	color = filter_sample(ctx->world, bxdf->base.tex, hit->hit.uv);
+	else
+	{
+		norminette[3] = norminette[0];
+		norminette[4] = norminette[1] / abscostheta(wo);
+	}
+	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);
 	return (vec_scale(color, RT_1_PI * (
-					bxdf->A + bxdf->B * max_cos * sinalpha
-					* tanbeta)));
+				bxdf->alpha + bxdf->beta * norminette[2] * norminette[3]
+				* norminette[4])));
 }
 
 float
-	oren_nayar_pdf(t_trace_ctx *ctx, const t_world_hit *hit,
-			const GLOBAL t_bxdf_oren_nayar *bxdf,
-			t_vec wi, t_vec wo)
+	oren_nayar_pdf(const t_bxdf_ctx *ctx,
+			const GLOBAL t_bxdf_oren_nayar *bxdf, t_vec wo)
 {
 	(void) ctx;
-	(void) hit;
 	(void) bxdf;
-	if (same_hemi(wi, wo))
+	if (same_hemi(ctx->wi, wo))
 		return (0);
 	return (rt_abs(z(wo)) * RT_1_PI);
 }

@@ -30,6 +30,22 @@ static void
 }
 
 static void
+	process_node_rope(t_world *world, t_accel_node *node, t_rope_data rope_data,
+			t_rope_data child_rope_data)
+{
+	child_rope_data = rope_data;
+	child_rope_data.bounds[split_axis(*node) + 0] = split_pos(*node);
+	child_rope_data.ropes[split_axis(*node) + 0]
+		= (node - world->accel_nodes) + 1;
+	process_node(world, world->accel_nodes + above_child(*node),
+		child_rope_data);
+	child_rope_data = rope_data;
+	child_rope_data.bounds[split_axis(*node) + 3] = split_pos(*node);
+	child_rope_data.ropes[split_axis(*node) + 3] = above_child(*node);
+	process_node(world, node + 1, child_rope_data);
+}
+
+static void
 	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data)
 {
 	t_rope_data	child_rope_data;
@@ -50,14 +66,7 @@ static void
 	}
 	else
 	{
-		child_rope_data = rope_data;
-		child_rope_data.bounds[split_axis(*node) + 0] = split_pos(*node);
-		child_rope_data.ropes[split_axis(*node) + 0] = (node - world->accel_nodes) + 1;
-		process_node(world, world->accel_nodes + above_child(*node), child_rope_data);
-		child_rope_data = rope_data;
-		child_rope_data.bounds[split_axis(*node) + 3] = split_pos(*node);
-		child_rope_data.ropes[split_axis(*node) + 3] = above_child(*node);
-		process_node(world, node + 1, child_rope_data);
+		proccess_node_rope(world, node, rope_data, child_rope_data);
 	}
 }
 
