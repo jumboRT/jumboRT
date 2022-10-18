@@ -42,43 +42,41 @@ mijn implementatie werkt als volgt:
 static void
 	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
 {
-	const t_edge	*edge;
-	const t_edge	*end;
+	const t_edge	*edge_end[2];
 	t_split			current;
-	uint32_t		prim_count[2];
-	uint32_t		edge_count[2];
+	uint32_t		prim_edge_count[2][2];
 	int				in_bounds;
 
-	edge = node->edges->edges[axis];
-	end = edge + node->edges->count;
+	edge_end[0] = node->edges->edges[axis];
+	edge_end[1] = edge_end[0] + node->edges->count;
 	current.axis = axis;
-	prim_count[ACCEL_BELOW] = 0;
-	prim_count[ACCEL_ABOVE] = node->edges->count / 2;
-	while (edge != end)
+	prim_edge_count[0][ACCEL_BELOW] = 0;
+	prim_edge_count[0][ACCEL_ABOVE] = node->edges->count / 2;
+	while (edge_end[0] != edge_end[1])
 	{
-		current.offset = edge->offset;
-		edge_count[EDGE_START] = 0;
-		edge_count[EDGE_END] = 0;
+		current.offset = edge_end[0]->offset;
+		prim_edge_count[1][EDGE_START] = 0;
+		prim_edge_count[1][EDGE_END] = 0;
 		while (1)
 		{
-			edge_count[edge->type] += 1;
-			edge += 1;
-			if (edge == end || edge->offset != current.offset)
+			prim_edge_count[1][edge_end[0]->type] += 1;
+			edge_end[0] += 1;
+			if (edge_end[0] == edge_end[1] || edge_end[0]->offset != current.offset)
 				break ;
 		}
 		in_bounds = (current.offset > xyz(node->bounds.min, axis)
 			&& current.offset < xyz(node->bounds.max, axis));
-		if (in_bounds && edge_count[EDGE_START] > 0)
+		if (in_bounds && prim_edge_count[1][EDGE_START] > 0)
 		{
-			current.cost = get_split_cost(node->bounds, &current, prim_count);
+			current.cost = get_split_cost(node->bounds, &current, prim_edge_count[0]);
 			if (current.cost < best->cost)
 				*best = current;
 		}
-		prim_count[ACCEL_BELOW] += edge_count[EDGE_START];
-		prim_count[ACCEL_ABOVE] -= edge_count[EDGE_END];
-		if (in_bounds && edge_count[EDGE_END] > 0)
+		prim_edge_count[0][ACCEL_BELOW] += prim_edge_count[1][EDGE_START];
+		prim_edge_count[0][ACCEL_ABOVE] -= prim_edge_count[1][EDGE_END];
+		if (in_bounds && prim_edge_count[1][EDGE_END] > 0)
 		{
-			current.cost = get_split_cost(node->bounds, &current, prim_count);
+			current.cost = get_split_cost(node->bounds, &current, prim_edge_count[0]);
 			if (current.cost < best->cost)
 				*best = current;
 		}
@@ -86,7 +84,8 @@ static void
 }
 
 static void
-	world_split_edges(t_node_info *node, t_split *split, uint8_t axis, size_t *counts)
+	world_split_edges(t_node_info *node, t_split *split,
+			uint8_t axis, size_t *counts)
 {
 	t_edge	*below;
 	t_edge	*above;
