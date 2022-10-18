@@ -1,4 +1,3 @@
-#if defined RT_BONUS
 #include "net.h"
 
 #include "ser.h"
@@ -130,4 +129,3 @@ void
 	memcpy(dst->zdata, src, dst->zsize);
 	return ((char *) src + dst->zsize);
 }
-#endif

@@ -1,4 +1,4 @@
-#if defined RT_BONUS
+#if RT_BONUS
 #include "net.h"
 #include <sys/types.h>
 # if defined RT_WINDOWS
@@ -15,6 +15,8 @@
 
 #include <string.h>
 
+#include <libft.h>
+
 static struct addrinfo
 	*rt_get_addrinfo(const char *ip, const char *port, char **error)
 {
@@ -22,7 +24,7 @@ static struct addrinfo
 	struct addrinfo *result;
 	int				rc;
 
-	memset(&hints, 0, sizeof hints);
+	ft_memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	rc = getaddrinfo(ip, port, &hints, &result);

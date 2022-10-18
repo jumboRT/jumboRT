@@ -11,7 +11,7 @@ WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
 						   context.c int.c server.c update.c cl_buffer.c \
 						   cl_buffer_util.c cl_device.c cl_fake.c cl_name.c \
 						   cl_program.c cl_program_path.c cl_program_save.c \
-						   cl_start.c cl_util.c cl_compile.c
+						   cl_start.c cl_util.c cl_compile.c server_fake.c
 MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
 						   sin.c cos.c tan.c basis.c vec_arith_fast.c \

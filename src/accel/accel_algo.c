@@ -40,6 +40,20 @@ mijn implementatie werkt als volgt:
 - herhaal alles tot er geen edges meer over zijn
 */
 static void
+	world_best_split_axis_iter(uint32_t prim_edge_count[2][2],
+			const t_edge *edge_end[2], t_split current)
+{
+		while (1)
+		{
+			prim_edge_count[1][edge_end[0]->type] += 1;
+			edge_end[0] += 1;
+			if (edge_end[0] == edge_end[1]
+					|| edge_end[0]->offset != current.offset)
+				break ;
+		}
+}
+
+static void
 	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
 {
 	const t_edge	*edge_end[2];
@@ -57,13 +71,7 @@ static void
 		current.offset = edge_end[0]->offset;
 		prim_edge_count[1][EDGE_START] = 0;
 		prim_edge_count[1][EDGE_END] = 0;
-		while (1)
-		{
-			prim_edge_count[1][edge_end[0]->type] += 1;
-			edge_end[0] += 1;
-			if (edge_end[0] == edge_end[1] || edge_end[0]->offset != current.offset)
-				break ;
-		}
+		world_best_split_axis_iter(prim_edge_count, edge_end, current);
 		in_bounds = (current.offset > xyz(node->bounds.min, axis)
 			&& current.offset < xyz(node->bounds.max, axis));
 		if (in_bounds && prim_edge_count[1][EDGE_START] > 0)

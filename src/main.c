@@ -65,7 +65,7 @@ sig_atomic_t should_exit(sig_atomic_t incr)
 	return val;
 }
 
-#if defined RT_BONUS && !defined RT_JOINC
+#if RT_BONUS && !defined RT_JOINC
 
 static void
 	sigint_handler(int sig)
@@ -79,7 +79,7 @@ static void
 static void
 	setup_sighandlers(void)
 {
-#if defined RT_BONUS && !defined RT_JOINC
+#if RT_BONUS && !defined RT_JOINC
 	struct sigaction	action;
 
 	rt_assert(sigemptyset(&action.sa_mask) != -1, "failed to empty sa_mask");
@@ -112,7 +112,9 @@ static void
 			break ;
 		}
 		mutex_unlock(&work->state_mtx);
+#if RT_BONUS
 		usleep(10000);
+#endif
 	}
 	perf_split(&perf, "draw image");
 	mutex_lock(&work->state_mtx);
@@ -481,9 +483,12 @@ int
 	parse_options(&options, argc, argv);
 	if (options.worker)
 	{
+		ft_printf("Can't run in worker mode for mandatory part\n");
+#if RT_BONUS
 		rt_worker_create(&client, options, options.net_ip, options.net_port);
 		rt_client_start(&client);
 		rt_client_destroy(&client);
+#endif
 	}
 	else
 	{

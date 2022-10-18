@@ -9,7 +9,7 @@ static const t_directive	directives[] = {
 	{ "pl", rt_exec_plane },
 	{ "cy", rt_exec_cylinder },
 	{ "L", rt_exec_light },
-#ifdef RT_BONUS
+#if RT_BONUS
 	{ "l", rt_exec_light },
 	{ "co", rt_exec_cone },
 	{ "pa", rt_exec_paraboloid },

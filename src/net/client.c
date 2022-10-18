@@ -1,4 +1,3 @@
-#if defined RT_BONUS
 #include "net.h"
 
 #include "mt.h"
@@ -8,6 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ft_printf.h>
+
+#if RT_BONUS
 
 #define PROTOVER 2
 
@@ -249,4 +250,21 @@ void
 #endif
 	mutex_destroy(&client->any.mtx);
 }
+
+#else
+
+void
+	rt_send_results(union u_client *client, t_result *results, uint64_t begin,
+			uint64_t end)
+{
+	(void) client;
+	(void) results;
+	(void) begin;
+	(void) end;
+	ft_printf("Yup, we totally just sent some results\n");
+	ft_printf("Nothing funny going on here\n");
+	ft_printf("Definitely do not look at the line below this one\n");
+	rt_free(results);
+}
+
 #endif

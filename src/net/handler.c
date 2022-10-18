@@ -1,4 +1,4 @@
-#if defined RT_BONUS
+#if RT_BONUS
 #include "net.h"
 
 #include "util.h"
