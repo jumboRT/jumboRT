@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 uint64_t
@@ -11,3 +12,4 @@ uint64_t
 {
 	return (92 + packet.scene_file.len + packet.scene_key.len);
 }
+#endif

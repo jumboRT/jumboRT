@@ -172,7 +172,7 @@ MLX_LIB					:= $(MLX_DIR)/libmlx.a
 
 INC_DIR					:= include $(LIBFT_DIR) $(FT_PRINTF_DIR)
 
-CFLAGS          		+= -DRT_MT
+CFLAGS          		+=
 LFLAGS          		+=
 
 BLACK					:="\033[0;30m"
@@ -205,12 +205,13 @@ ifndef target
 	FILE_NAMES += $(patsubst %.c,gfx/%.c,$(GFX_FILES))
 	TARGET_LIBS := $(LIBFT_LIB) $(FT_PRINTF_LIB) $(MLX_LIB)
 else ifeq ($(target),joinc)
-	CFLAGS += -DRT_BONUS -DRT_USE_LIBC -DRT_JOINC
+	CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_JOINC
 	TARGET_LIBS := $(LIBFT_LIB) $(FT_PRINTF_LIB)
 else
 $(error "unknown target $(target)")
 endif
 
+# TODO DEFAULT DISABLE OPENCL
 ifdef use_opencl
 	ifeq ($(use_opencl),0)
 		CFLAGS += -DRT_USE_OPENCL=0
@@ -224,11 +225,6 @@ endif
 ifndef san
 	san := address
 endif 
-
-# TODO MAKE THIS THE OTHER WAY AROUND BEFORE TURNING IN
-ifndef vectorize
-	CFLAGS += -DRT_VECTORIZE
-endif
 
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
@@ -271,9 +267,10 @@ CL_OBJECTS				:= $(patsubst %.c,$(OBJ_DIR)/%-cl,$(CL_FILE_NAMES))
 # all: $(NAME)
 all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
 
-bonus: CFLAGS += -DRT_BONUS -DRT_USE_LIBC
+bonus: CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_MT -DRT_VECTORIZE
 bonus: $(NAME) $(CL_NAME)
 
+mandatory: CFLAGS += -DRT_BONUS=0
 mandatory: $(NAME)
 
 SILENT			:=

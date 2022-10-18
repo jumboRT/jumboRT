@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include "util.h"
@@ -222,3 +223,4 @@ int
 		ft_asprintf(error, "unknown packet type %d\n", packet.type);
 	return (-1);
 }
+#endif

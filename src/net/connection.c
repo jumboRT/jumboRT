@@ -1,14 +1,15 @@
+#if defined RT_BONUS
 #include "net.h"
 #include <sys/types.h>
-#if defined RT_WINDOWS
+# if defined RT_WINDOWS
 #include <winsock.h>
 #include <ws2def.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#else
+# else
 #include <sys/socket.h>
 #include <netdb.h>
-#endif
+# endif
 #include <ft_printf.h>
 #include <unistd.h>
 
@@ -80,3 +81,4 @@ int
 	}
 	return (sockfd);
 }
+#endif

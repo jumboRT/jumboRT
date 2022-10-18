@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include "z.h"
@@ -65,3 +66,4 @@ t_result
 	rt_free(data);
 	return (result);
 }
+#endif

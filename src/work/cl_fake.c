@@ -1,4 +1,5 @@
 #include "cl_impl.h"
+#include "work.h"
 
 #if !RT_USE_OPENCL
 

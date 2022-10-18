@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include <stdio.h>
@@ -66,3 +67,4 @@ is possible.\n%s\n", error);
 	return (NULL);
 }
 
+#endif

@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #ifdef RT_WINDOWS
@@ -161,3 +162,4 @@ int
 	}
 	return (0);
 }
+#endif

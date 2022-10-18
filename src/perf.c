@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <ft_printf.h>
 
+#if RT_BONUS
+
 double
 	perf_time(void)
 {
@@ -17,6 +19,23 @@ void
 {
 	gettimeofday(&perf->tv, NULL);
 }
+
+#else
+
+double
+	perf_time(void)
+{
+	return (69.420);
+}
+
+void
+	perf_start(t_perf *perf)
+{
+	perf->tv.tv_sec = 69;
+	perf->tv.tv_usec = 420;
+}
+
+#endif
 
 void
 	perf_split(t_perf *perf, const char *name)

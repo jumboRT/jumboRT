@@ -41,10 +41,16 @@
 #   endif
 #  endif
 
-#  if defined RT_MACOS
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -DRT_VECTORIZE=1"
+#  if RT_VECTORIZE
+#   define RT_WORK_OPENCL_VECTORIZE " -DRT_VECTORIZE=1"
 #  else
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -DRT_VECTORIZE=1 -cl-fast-relaxed-math"
+#   define RT_WORK_OPENCL_VECTORIZE
+#  endif
+
+#  if defined RT_MACOS
+#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global" RT_WORK_OPENCL_VECTORIZE
+#  else
+#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math" RT_WORK_OPENCL_VECTORIZE
 #  endif
 
 typedef struct s_opencl_ctx				t_opencl_ctx;

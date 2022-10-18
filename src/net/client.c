@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include "mt.h"
@@ -248,3 +249,4 @@ void
 #endif
 	mutex_destroy(&client->any.mtx);
 }
+#endif

@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "work.h"
 
 #include "util.h"
@@ -93,3 +94,4 @@ void
 	rt_packet_destroy(&packet);
 }
 
+#endif

@@ -65,10 +65,10 @@ void
 
 	opts->scene_file = NULL;
 	opts->image_file = NULL;
-	opts->samples = 1048576;
+	opts->samples = 1;
 	opts->width = 1920;
 	opts->height = 1080;
-	opts->backends = RT_BACKEND_THREAD;
+	opts->backends = RT_BACKEND_SINGLE;
 	opts->worker = 0;
 	opts->net_ip = "localhost";
 	opts->net_port = "29300";
@@ -76,7 +76,7 @@ void
 	opts->req_jobs = 4;
 	opts->key = NULL;
 	opts->threads = 8;
-	opts->batch_size = 16;
+	opts->batch_size = 1;
 	opts->trace_batch_size = 1;
 	opts->compression = 1;
 	opts->samples_set = 0;
@@ -92,6 +92,10 @@ void
 	opts->trace_batch_size_set = 0;
 	opts->cl_device_count = 0;
 	opts->default_rendering_mode = RT_RENDER_MODE_DEFAULT;
+#if RT_BONUS
+	opts->backends = RT_BACKEND_THREAD;
+	opts->samples = 1048576;
+#endif
 	i = 1;
 	while (i < argc)
 	{
@@ -136,11 +140,11 @@ void
 				opts->backends = 0;
 			if (ft_strcmp(argv[i + 1], "1") == 0)
 				opts->backends |= RT_BACKEND_SINGLE;
-			else if (ft_strcmp(argv[i + 1], "cpu") == 0)
+			else if (ft_strcmp(argv[i + 1], "cpu") == 0 && RT_BONUS)
 				opts->backends |= RT_BACKEND_THREAD;
-			else if (ft_strcmp(argv[i + 1], "gpu") == 0)
+			else if (ft_strcmp(argv[i + 1], "gpu") == 0 && RT_BONUS)
 				opts->backends |= RT_BACKEND_OPENCL;
-			else if (ft_strcmp(argv[i + 1], "net") == 0)
+			else if (ft_strcmp(argv[i + 1], "net") == 0 && RT_BONUS)
 				opts->backends |= RT_BACKEND_SERVER;
 			else
 				rt_assert(0, "invalid rendering backend");

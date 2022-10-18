@@ -33,7 +33,9 @@ int
 	rt_exit(t_work *work)
 {
 	work_pause(work);
+#if RT_BONUS
 	work_update_stop(work);
+#endif
 	work_destroy(work);
 	exit(EXIT_SUCCESS);
 }
@@ -96,7 +98,9 @@ static void
 	const char	*ext;
 
 	setup_sighandlers();
+#if RT_BONUS
 	work_update_start(work);
+#endif
 	perf_start(&perf);
 	work_resume(work);
 	while (1)
@@ -293,7 +297,9 @@ static void
 	main_window(t_work *work)
 {
 	setup_sighandlers();
+#if RT_BONUS
 	work_update_start(work);
+#endif
 	work_resume(work);
 	win_create(&work->state->win, work->state->image->width, work->state->image->height);
 	win_event_hook(&work->state->win, RT_WIN_EVENT_KEY_DOWN, rt_key_down, work);

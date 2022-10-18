@@ -37,30 +37,102 @@ uint64_t
 }
 
 uint64_t
+	hash_bsdf(const GLOBAL t_bsdf *bsdf, const GLOBAL t_world *world, t_seed *seed)
+{
+	uint64_t	hash;
+
+	(void) world;
+	hash = 0;
+	hash ^= hash_data(seed, &bsdf->begin, sizeof(bsdf->begin));
+	hash ^= hash_data(seed, &bsdf->end, sizeof(bsdf->end));
+	hash ^= hash_data(seed, &bsdf->weight, sizeof(bsdf->weight));
+	return (hash);
+}
+
+uint64_t
+	hash_filter(const GLOBAL t_filter *filter, const GLOBAL t_world *world, t_seed *seed)
+{
+	uint64_t	hash;
+
+	(void) world;
+	hash = 0;
+	hash ^= hash_data(seed, filter->tex, sizeof(filter->tex));
+	return (hash);
+}
+
+uint64_t
 	hash_mat(const GLOBAL t_material *mat, const GLOBAL t_world *world, t_seed *seed)
 {
-	(void) mat;
-	(void) world;
-	(void) seed;
-	return (0);
+	uint64_t	hash;
+
+	hash = 0;
+	hash_data(seed, &mat->flags, sizeof(mat->flags));
+	hash_bsdf(&mat->surface, world, seed);
+	hash_bsdf(&mat->volume, world, seed);
+	hash_filter(&mat->alpha, world, seed);
+	hash_filter(&mat->emission, world, seed);
+	hash_data(seed, &mat->refractive_index, sizeof(mat->refractive_index));
+	hash_data(seed, &mat->emission_exp, sizeof(mat->emission_exp));
+	hash_data(seed, &mat->brightness, sizeof(mat->brightness));
+	hash_data(seed, &mat->normal_map, sizeof(mat->normal_map));
+	hash_data(seed, &mat->bump_map, sizeof(mat->bump_map));
+	hash_data(seed, &mat->density, sizeof(mat->density));
+	return (hash);
 }
 
 uint64_t
 	hash_tex(const GLOBAL t_tex *tex, const GLOBAL t_world *world, t_seed *seed)
 {
-	(void) tex;
+	uint64_t	hash;
+
 	(void) world;
-	(void) seed;
-	return (0);
+	hash = hash_salt(seed, tex->type);
+	if (tex->type == RT_TEX_COLOR)
+	{
+		hash ^= hash_data(seed, &tex->a.color, sizeof(tex->a.color));
+	}
+	else if (tex->type == RT_TEX_TEXTURE)
+	{
+		hash ^= hash_data(seed, &tex->a.tex.width, sizeof(tex->a.tex.width));
+		hash ^= hash_data(seed, &tex->a.tex.height, sizeof(tex->a.tex.height));
+		hash ^= hash_data(seed, &tex->a.tex.offset, sizeof(tex->a.tex.offset));
+	}
+	else if (tex->type == RT_TEX_CHECKER)
+	{
+		hash ^= hash_data(seed, &tex->a.checker.odd_color, sizeof(tex->a.checker.odd_color));
+		hash ^= hash_data(seed, &tex->a.checker.even_color, sizeof(tex->a.checker.even_color));
+	}
+	return (hash);
 }
 
 uint64_t
 	hash_bxdf(const GLOBAL t_bxdf_any *bxdf, const GLOBAL t_world *world, t_seed *seed)
 {
-	(void) bxdf;
-	(void) world;
-	(void) seed;
-	return (0);
+	uint64_t	hash;
+
+	hash = hash_salt(seed, bxdf->base.type);
+	hash ^= hash_filter(&bxdf->base.tex, world, seed);
+	hash ^= hash_data(seed, &bxdf->base.weight, sizeof(bxdf->base.weight));
+	if (bxdf->base.type == RT_BXDF_COOK_TORRANCE)
+	{
+		hash ^= hash_data(seed, &bxdf->cook_torrance.roughness, sizeof(bxdf->cook_torrance.roughness));
+		hash ^= hash_data(seed, &bxdf->cook_torrance.k, sizeof(bxdf->cook_torrance.k));
+	}
+	else if (bxdf->base.type == RT_BXDF_PHONG)
+	{
+		hash ^= hash_data(seed, &bxdf->phong.roughness, sizeof(bxdf->phong.roughness));
+	}
+	else if (bxdf->base.type == RT_BXDF_BLINN_PHONG)
+	{
+		hash ^= hash_data(seed, &bxdf->blinn_phong.alpha, sizeof(bxdf->blinn_phong.alpha));
+		hash ^= hash_data(seed, &bxdf->blinn_phong.spec, sizeof(bxdf->blinn_phong.spec));
+	}
+	else if (bxdf->base.type == RT_BXDF_OREN_NAYAR)
+	{
+		hash ^= hash_data(seed, &bxdf->oren_nayar.A, sizeof(bxdf->oren_nayar.A));
+		hash ^= hash_data(seed, &bxdf->oren_nayar.B, sizeof(bxdf->oren_nayar.B));
+	}
+	return (hash);
 }
 
 uint64_t
@@ -139,6 +211,48 @@ uint64_t
 }
 
 uint64_t
+	hash_paraboloid(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_seed *seed)
+{
+	const GLOBAL t_shape_paraboloid	*shape;
+	uint64_t						hash;
+
+	(void) world;
+	shape = (const GLOBAL t_shape_paraboloid *) prim;
+	hash = 0;
+	hash_data(seed, &shape->paraboloid.a, sizeof(shape->paraboloid.a));
+	hash_data(seed, &shape->paraboloid.b, sizeof(shape->paraboloid.b));
+	return (hash);
+}
+
+uint64_t
+	hash_hyperboloid(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_seed *seed)
+{
+	const GLOBAL t_shape_hyperboloid	*shape;
+	uint64_t							hash;
+
+	(void) world;
+	shape = (const GLOBAL t_shape_hyperboloid *) prim;
+	hash = 0;
+	hash_data(seed, &shape->hyperboloid.a, sizeof(shape->hyperboloid.a));
+	hash_data(seed, &shape->hyperboloid.b, sizeof(shape->hyperboloid.b));
+	hash_data(seed, &shape->hyperboloid.c, sizeof(shape->hyperboloid.c));
+	return (hash);
+}
+
+uint64_t
+	hash_point(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_seed *seed)
+{
+	const GLOBAL t_shape_point	*shape;
+	uint64_t					hash;
+
+	(void) world;
+	shape = (const GLOBAL t_shape_point *) prim;
+	hash = 0;
+	hash ^= hash_data(seed, &shape->pos, sizeof(shape->pos));
+	return (hash);
+}
+
+uint64_t
 	hash_prim(const GLOBAL t_primitive *prim, const GLOBAL t_world *world, t_seed *seed)
 {
 	uint64_t	hash;
@@ -154,7 +268,19 @@ uint64_t
 		hash ^= hash_cylinder(prim, world, seed);
 	else if (prim_type(prim) == RT_SHAPE_CONE)
 		hash ^= hash_cone(prim, world, seed);
+	else if (prim_type(prim) == RT_SHAPE_PARABOLOID)
+		hash ^= hash_paraboloid(prim, world, seed);
+	else if (prim_type(prim) == RT_SHAPE_HYPERBOLOID)
+		hash ^= hash_hyperboloid(prim, world, seed);
+	else if (prim_type(prim) == RT_SHAPE_POINT)
+		hash ^= hash_point(prim, world, seed);
 	return (hash);
+}
+
+uint64_t
+	hash_prim_size(uint32_t shape, t_seed *seed)
+{
+	return (hash_data(seed, &shape, sizeof(shape)));
 }
 
 uint64_t
@@ -169,6 +295,14 @@ uint64_t
 	hash = 0;
 	seed = 7549087012;
 	primitives = (const GLOBAL char *) world->primitives;
+	hash ^= hash_prim_size(RT_SHAPE_SPHERE, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_TRIANGLE, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_PLANE, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_CYLINDER, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_CONE, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_PARABOLOID, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_HYPERBOLOID, &seed);
+	hash ^= hash_prim_size(RT_SHAPE_POINT, &seed);
 	if (flags & RT_HASH_GEOMETRY)
 	{
 		index = 0;
@@ -187,6 +321,9 @@ uint64_t
 	}
 	if (flags & RT_HASH_MATERIALS)
 	{
+		hash ^= hash_data(&seed, &world->flags, sizeof(world->flags));
+		hash ^= hash_data(&seed, &world->ambient_mat, sizeof(world->ambient_mat));
+		hash ^= hash_data(&seed, &world->ambient_dist, sizeof(world->ambient_dist));
 		index = 0;
 		while (index < world->materials_count)
 		{

@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include "util.h"
@@ -16,3 +17,4 @@ void
 	packet->type = type;
 	packet->data = data;
 }
+#endif

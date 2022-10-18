@@ -1,3 +1,4 @@
+#if defined RT_BONUS
 #include "net.h"
 
 #include "util.h"
@@ -18,3 +19,4 @@ void
 	string->len = 0;
 	rt_free(string->str);
 }
+#endif
