@@ -78,51 +78,62 @@ unsigned int
 
 #include <stdlib.h>
 
+void
+	rt_strtof_init(const char *str, float ifes[4], char **end,
+			int *seen_digit)
+{
+	*seen_digit = 0;
+	ifes[3] = 1.0f;
+	ifes[0] = 0.0f;
+	ifes[1] = 0.0f;
+	ifes[2] = 1.0f;
+	*end = (char *) str;
+}
+
+float
+	rt_strtof(const char *str, char **end)
+{
+	float	ifes[4];
+	int	seen_digit;
+
+	rt_strtof_init(str, ifes, end, &seen_digit);
+	if (*str == '-')
+	{
+		ifes[3] = -1.0f;
+		str++;
+	}
+	while (ft_isdigit(*str))
+	{
+		ifes[0] = (ifes[0] * 10.0f) + (*str++ - '0');
+		seen_digit = 1;
+	}
+	str += *str == '.';
+	while (ft_isdigit(*str))
+	{
+		ifes[2] /= 10.0f;
+		ifes[1] += (*str++ - '0') * ifes[2];
+		seen_digit = 1;
+	}
+	if (seen_digit)
+		*end = (char *) str;
+	return ((ifes[0] + ifes[1]) * ifes[3]);
+}
+
 float
 	rt_float(t_parse_ctx *ctx)
 {
-	float		integer_part;
-	float		fractional_part;
-	float		exp;
-	float		sign;
-	int			has_digit;
-	const char	*word;
+	float	val;
+	char	*end;
 
 	rt_skip(ctx, ft_isspace);
-	word = ctx->data;
-	has_digit = 0;
-	sign = 1.0f;
-	integer_part = 0.0f;
-	fractional_part = 0.0f;
-	exp = 1.0f;
-	if (*ctx->data == '-')
-	{
-		sign = -1.0f;
-		rt_advance(ctx);
-	}
-	while (ft_isdigit(*ctx->data))
-	{
-		integer_part *= 10.0f;
-		integer_part += *ctx->data - '0';
-		ctx->data += 1;
-		has_digit = 1;
-	}
-	if (*ctx->data == '.')
-	{
-		rt_advance(ctx);
-	}
-	while (ft_isdigit(*ctx->data))
-	{
-		exp /= 10.0f;
-		fractional_part += (*ctx->data - '0') * exp;
-		ctx->data += 1;
-		has_digit = 1;
-	}
-	if (!has_digit) {
-		rt_parse_error(ctx, "bad floating point value '%.*s'",
-				(int) rt_wordnlen(word, 64), word);
-	}
-	return ((integer_part + fractional_part) * sign);
+	val = rt_strtof(ctx->data, &end);
+	if (end - ctx->begin == 0)
+		rt_parse_error(ctx, "bad floating point value");
+	if (!isfinite(val))
+		rt_parse_error(ctx,
+			"could not represent value as finite number");
+	ctx->data = end;
+	return (val);
 }
 
 float
@@ -266,23 +277,4 @@ char
 	result = ft_strndup(ctx->data, id_len);
 	rt_idskip(ctx, id_len);
 	return (result);
-}
-
-int
-	rt_bool(t_parse_ctx *ctx)
-{
-	rt_skip(ctx, ft_isspace);
-	if (ft_strncmp(ctx->data, "true", 4) == 0)
-	{
-		rt_idskip(ctx, 4);
-		return (1);
-	}
-	else if (ft_strncmp(ctx->data, "false", 5) == 0)
-	{
-		rt_idskip(ctx, 5);
-		return (0);
-	}
-	rt_parse_error(ctx, "unexpected word %.*s, expected 'true' or 'false'",
-			rt_idlen(ctx), ctx->data);
-	return (0);
 }
