@@ -23,7 +23,7 @@ static void
 }
 
 static void
-	world_intersect_tree_exit(t_ray ray, const GLOBAL t_leaf_data *leaf,
+	world_intersect_tree_exit(t_ray ray, const GLOBAL t_rope_data *rope,
 			uint32_t *exit_rope, float *exit_distance)
 {
 	float		org_t;
@@ -37,15 +37,12 @@ static void
 	{
 		org_t = xyz(ray.org, index);
 		dir_t = xyz(ray.dir, index);
-		if (dir_t != 0)
+		rope_index = index + (dir_t > 0) * 3;
+		distance = (rope->bounds[rope_index] - org_t) / dir_t;
+		if (dir_t != 0 && distance < *exit_distance)
 		{
-			rope_index = index + (dir_t > 0) * 3;
-			distance = (leaf->rope_data.bounds[rope_index] - org_t) / dir_t;
-			if (distance < *exit_distance)
-			{
-				*exit_distance = distance;
-				*exit_rope = leaf->rope_data.ropes[rope_index];
-			}
+			*exit_distance = distance;
+			*exit_rope = rope->ropes[rope_index];
 		}
 		index += 1;
 	}
@@ -72,7 +69,8 @@ static int
 		exit_rope = 0xFFFFFFFF;
 		exit_distance = RT_HUGE_VAL;
 		leaf = &world->leaf_data[ctx->node->leaf_data_index];
-		world_intersect_tree_exit(ray, leaf, &exit_rope, &exit_distance);
+		world_intersect_tree_exit(ray, &leaf->rope_data,
+			&exit_rope, &exit_distance);
 		if (exit_rope == 0xFFFFFFFF)
 			return (0);
 		ctx->node = world->accel_nodes + exit_rope;

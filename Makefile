@@ -302,7 +302,7 @@ $(MLX_LIB):
 ifeq ($(cl_compile_all_at_once), 1)
 
 $(CL_NAME): $(CL_SOURCES) | $(NAME)
-	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
+	@printf $(LINK_COLOR)Compiling$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(LINK_COLOR)\ all\ at\ once$(RESET)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT --build $(CL_NAME) $(CL_SOURCES); do sleep 1; done"
 	$(SILENT)touch $@
 
@@ -313,7 +313,7 @@ $(CL_NAME): $(CL_OBJECTS) | $(NAME)
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
 	$(SILENT)touch $@
 
-$(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c | $(NAME)
+$(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c $(OBJ_DIR)/%.o | $(NAME)
 	$(SILENT)mkdir -p $(@D)
 	@printf $(COMPILE_COLOR)Compiling$(RESET)\ $(notdir $<)\ \(cl\)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -c $@ $<; do sleep 1; done"

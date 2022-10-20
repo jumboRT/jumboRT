@@ -8,6 +8,9 @@
 #if ACCEL_USE_ROPES
 
 static void
+	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data);
+
+static void
 	optimize(t_world *world, t_rope_data *rope_data, uint32_t index)
 {
 	t_accel_node	*node;
@@ -30,9 +33,10 @@ static void
 }
 
 static void
-	process_node_rope(t_world *world, t_accel_node *node, t_rope_data rope_data,
-			t_rope_data child_rope_data)
+	process_node_rope(t_world *world, t_accel_node *node, t_rope_data rope_data)
 {
+	t_rope_data	child_rope_data;
+
 	child_rope_data = rope_data;
 	child_rope_data.bounds[split_axis(*node) + 0] = split_pos(*node);
 	child_rope_data.ropes[split_axis(*node) + 0]
@@ -48,7 +52,6 @@ static void
 static void
 	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data)
 {
-	t_rope_data	child_rope_data;
 	t_leaf_data	leaf_data;
 	uint32_t	i;
 
@@ -66,7 +69,7 @@ static void
 	}
 	else
 	{
-		proccess_node_rope(world, node, rope_data, child_rope_data);
+		process_node_rope(world, node, rope_data);
 	}
 }
 

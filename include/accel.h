@@ -16,13 +16,13 @@
 # define RT_INTERSECT_COST 80
 # define RT_TRAVERSAL_COST 80
 # define RT_EMPTY_BONUS (float) 0.3
-# define RT_MAX_PRIMITIVES 5
+# define RT_MAX_PRIMITIVES 3
 
 # ifndef ACCEL_USE_TREE
 #  define ACCEL_USE_TREE 1
 # endif
 # ifndef ACCEL_USE_ROPES
-#  define ACCEL_USE_ROPES 0
+#  define ACCEL_USE_ROPES 1
 # endif
 # ifndef ACCEL_INLINE_PRIMS
 #  define ACCEL_INLINE_PRIMS 1

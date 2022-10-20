@@ -41,8 +41,8 @@
 #   endif
 #  endif
 
-#  if RT_VECTORIZE
-#   define RT_WORK_OPENCL_VECTORIZE " -DRT_VECTORIZE=1"
+#  ifdef RT_VECTORIZE
+#   define RT_WORK_OPENCL_VECTORIZE " -DRT_VECTORIZE"
 #  else
 #   define RT_WORK_OPENCL_VECTORIZE
 #  endif

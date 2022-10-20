@@ -9,7 +9,7 @@ void
 	opencl_build_program(t_opencl_program_ctx *ctx,
 			const char **strings, const size_t *lengths, size_t count)
 {
-	cl_int		status;
+	cl_int	status;
 
 	ctx->program = clCreateProgramWithSource(ctx->context,
 			count, strings, lengths, &status);
