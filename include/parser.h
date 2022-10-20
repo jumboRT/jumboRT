@@ -52,6 +52,7 @@ uint32_t		mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
 uint32_t		mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
 uint32_t		tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
 uint32_t		tex_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
+void			rt_check_in_mat(t_parse_ctx *ctx);
 
 void			rt_parse_error(t_parse_ctx *ctx, const char *fmt, ...);
 void			rt_advance(t_parse_ctx *ctx);
@@ -98,8 +99,6 @@ void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_checker_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_diffuse(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_cook_torrance(t_world *world, t_parse_ctx *ctx);
-void			rt_exec_bphong(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_phong(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_oren_nayar(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_specular(t_world *world, t_parse_ctx *ctx);
