@@ -169,30 +169,34 @@ static float
 }
 
 t_vec
+	rt_fcolor(t_parse_ctx *ctx)
+{
+	t_vec	result;
+
+	rt_skip(ctx, ft_isspace);
+	rt_expect(ctx, '(');
+	result = rt_vec(ctx);
+	result = vec_set(result, 3, 1.0);
+	if (*ctx->data == ',')
+	{
+		rt_advance(ctx);
+		result = vec_set(result, 3, rt_float(ctx));
+	}
+	rt_skip(ctx, ft_isspace);
+	rt_expect(ctx, ')');
+	return (result);
+}
+
+t_vec
 	rt_color(t_parse_ctx *ctx)
 {
 	float	red;
 	float	green;
 	float	blue;
-	t_vec	result;
 
 	rt_skip(ctx, ft_isspace);
-#ifdef RT_BONUS
-	if (*ctx->data == '(')
-	{
-		rt_advance(ctx);
-		result = rt_vec(ctx);
-		result = vec_set(result, 3, 1.0);
-		if (*ctx->data == ',')
-		{
-			rt_advance(ctx);
-			result = vec_set(result, 3, rt_float(ctx));
-		}
-		rt_skip(ctx, ft_isspace);
-		rt_expect(ctx, ')');
-		return (result);
-	}
-#endif
+	if (RT_BONUS && *ctx->data == '(')
+		return rt_fcolor(ctx);
 	red = rt_color_part(ctx);
 	rt_expect(ctx, ',');
 	green = rt_color_part(ctx);
