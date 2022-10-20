@@ -73,10 +73,10 @@ void
 		if (depth == 0)
 		{
 			if (i[0] == world->trace_batch_size)
-				t->results[i[1]] = vec_0();
+				t->results[i[1]].color = vec_0();
 			i[0] %= world->trace_batch_size;
 			depth = RT_MAX_DEPTH;
-			world_trace_init(world, ctx, &tctx, t->begin - i[1]);
+			world_trace_init(world, ctx, &tctx, t->begin + i[1]);
 		}
 		depth = (depth - 1) * !!world_trace_step(&tctx);
 		if (depth == 0)

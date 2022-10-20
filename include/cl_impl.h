@@ -7,7 +7,7 @@
 
 # if RT_USE_OPENCL
 
-# include "work.h"
+#  include "work.h"
 
 #  if defined RT_LINUX
 #   include <CL/cl.h>
@@ -116,58 +116,49 @@ struct s_opencl_compile_ctx {
 	const void	*output;
 };
 
-char				*device_token(
-		cl_platform_id platform, cl_device_id device);
-char				*device_file(
-		const char *prefix, cl_platform_id platform, cl_device_id device);
-void				*work_start(
-		void *data);
-void				work_callback(
-		cl_event event, cl_int event_command_status, void *user_data);
+char				*device_token(cl_platform_id platform, cl_device_id device);
+char				*device_file(const char *prefix, cl_platform_id platform,
+						cl_device_id device);
+void				*work_start(void *data);
+void				work_callback(cl_event event, cl_int event_command_status,
+						void *user_data);
 
-cl_mem				work_copy_ptr(
-		t_opencl_ctx *cl_ctx, size_t size, void *ptr, int arg);
-void				work_destroy_ptr(
-		cl_mem mem);
-void				work_create_buffers(
-		t_work *work, t_opencl_ctx *cl_ctx);
-void				work_null_buffers(
-		t_opencl_ctx *cl_ctx);
-void				work_release_buffers(
-		t_opencl_ctx *cl_ctx);
+cl_mem				work_copy_ptr(t_opencl_ctx *cl_ctx, size_t size, void *ptr,
+						int arg);
+void				work_destroy_ptr(cl_mem mem);
+void				work_create_buffers(t_work *work, t_opencl_ctx *cl_ctx);
+void				work_null_buffers(t_opencl_ctx *cl_ctx);
+void				work_release_buffers(t_opencl_ctx *cl_ctx);
 
 cl_command_queue	work_create_queue(cl_context context, cl_device_id device,
-		cl_command_queue_properties props);
+						cl_command_queue_properties props);
 cl_context			work_create_context(cl_platform_id device);
 void				work_destroy_queue(cl_command_queue queue);
 void				work_destroy_context(cl_context context);
 
-void				opencl_device_default(
-		t_opencl_func func, void *data);
-void				opencl_device_by_index(
-		int pi, int di, t_opencl_func func, void *data);
-void				opencl_device_all(
-		t_opencl_func func, void *data);
+void				opencl_device_default(t_opencl_func func, void *data);
+void				opencl_device_by_index(int pi, int di, t_opencl_func func,
+						void *data);
+void				opencl_device_all(t_opencl_func func, void *data);
 
-void				opencl_comp_program(
-		t_opencl_program_ctx *ctx, const char *string, size_t length);
-void				opencl_load_program(
-		t_opencl_program_ctx *ctx, const unsigned char *string, size_t length, int build);
-void				opencl_link_program(
-		t_opencl_program_ctx *ctx, cl_program *programs, size_t count);
-unsigned char		*opencl_save_program(
-		t_opencl_program_ctx *ctx, size_t *length);
-void				opencl_release_program(
-		cl_program program);
+void				opencl_comp_program(t_opencl_program_ctx *ctx,
+						const char *string, size_t length);
+void				opencl_load_program(t_opencl_program_ctx *ctx,
+						const unsigned char *string, size_t length, int build);
+void				opencl_link_program(t_opencl_program_ctx *ctx,
+						cl_program *programs, size_t count);
+unsigned char		*opencl_save_program(t_opencl_program_ctx *ctx,
+						size_t *length);
+void				opencl_release_program(cl_program program);
 
-void				opencl_comp_program_path(
-		t_opencl_program_ctx *ctx, const char *path);
-void				opencl_load_program_path(
-		t_opencl_program_ctx *ctx, const char *path, int build);
-void				opencl_link_program_path(
-		t_opencl_program_ctx *ctx, const char *const *paths, size_t count);
-void				opencl_save_program_path(
-		t_opencl_program_ctx *ctx, const char *path);
+void				opencl_comp_program_path(t_opencl_program_ctx *ctx,
+						const char *path);
+void				opencl_load_program_path(t_opencl_program_ctx *ctx,
+						const char *path, int build);
+void				opencl_link_program_path(t_opencl_program_ctx *ctx,
+						const char *const *paths, size_t count);
+void				opencl_save_program_path(t_opencl_program_ctx *ctx,
+						const char *path);
 
 void				opencl_compile(const char *i, const char *o);
 void				opencl_link(const char **i, const char *o);

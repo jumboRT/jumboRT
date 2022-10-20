@@ -54,7 +54,7 @@ static void
 	}
 }
 
-void
+static int
 	world_intersect_tree_step(const GLOBAL t_world *world, t_ray ray,
 			struct s_intersect_ctx *ctx, t_world_hit *hit)
 {
@@ -69,12 +69,13 @@ void
 	if (ctx->prim_index >= ctx->prim_count)
 	{
 		if (ctx->stack_index == 0)
-			return ;
+			return (0);
 		ctx->min_t = rt_max(ctx->min_t, ctx->max_t - RT_TINY_VAL);
 		ctx->stack_index -= 1;
 		ctx->node = world->accel_nodes + ctx->stack[ctx->stack_index].index;
 		ctx->max_t = ctx->stack[ctx->stack_index].max;
 	}
+	return (1);
 }
 
 void
@@ -90,7 +91,8 @@ void
 	ctx.prim_index = 0;
 	ctx.prim_count = 0;
 	while (ctx.min_t < hit->hit.t)
-		world_intersect_tree_step(world, ray, &ctx, hit);
+		if (!world_intersect_tree_step(world, ray, &ctx, hit))
+			return ;
 }
 
 #endif

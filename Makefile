@@ -1,137 +1,94 @@
 NAME					:= miniRT
 CL_NAME					:= kernel
 
-UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
-						   writefile.c lib.c atof.c random.c queue.c aabb.c \
-						   hash.c poll.c send.c recv.c
-VECTOR_FILES			:= vector.c sort.c swap.c view.c
-MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c \
-						   thread_mt.c pool.c pool_mt.c task.c pool_create_int.c
-WORK_FILES				:= work.c util.c single.c compute.c thread.c opencl.c \
-						   context.c int.c server.c update.c cl_buffer.c \
-						   cl_buffer_util.c cl_device.c cl_fake.c cl_name.c \
-						   cl_program.c cl_program_path.c cl_program_save.c \
-						   cl_start.c cl_util.c cl_compile.c server_fake.c
-MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
-						   vec_constr.c vec_geo.c vec_get.c vec_size.c sqrt.c \
-						   sin.c cos.c tan.c basis.c vec_arith_fast.c \
-						   vec_constr_fast.c vec_geo_fast.c vec_get_fast.c \
-						   vec_size_fast.c sphere.c triangle.c vec_clamp.c \
-						   vec_clamp_fast.c min.c max.c abs.c vec_set.c \
-						   pow.c cylinder.c vec_rotate.c cone.c vec2.c \
-						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
-						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
-						   gamma.c vec_value.c paraboloid.c hyperboloid.c \
-						   conversion.c atan.c vec_constr2.c \
-						   vec_constr_fast2.c vec2_get.c vec_eq.c \
-						   vec2_get_fast.c infinite_cylinder.c \
-						   cylinder_sample.c cylinder_util.c sphere_sample.c \
-						   cone_sample.c cone_util.c
-WORLD_FILES				:= impl.c intersect.c intersect_prim.c \
-						   size.c common.c trace.c camera.c \
-						   material.c tex_ppm.c conversion.c hash.c 
-PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
-						   sphere.c plane.c cylinder.c cone.c comment.c \
-						   world.c light.c material.c material_table.c \
-						   texture.c init.c ambient.c conditional.c include.c \
-						   boloid.c float.c word.c color.c vec.c \
-						   texture_table.c mat1.c mat2.c
-NET_FILES				:= client.c connection.c pack.c packet.c data.c \
-						   handler.c jobs.c string.c size.c compression.c \
-						   unpack.c client_create.c handshake.c client_loop.c \
-						   new_work.c send_results.c job_request.c \
-						   pack_basic.c pack_packet.c unpack_basic.c \
-						   unpack_packet.c
-Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
-						   lz77.c encode.c decode.c wtree.c \
-						   encode_zwtree_token.c util.c zring.c ztable.c \
-						   lz77_util1.c lz77_util2.c
-GFX_FILES				:= win.c color.c
-BSDF_FILES				:= bsdf.c diffuse.c reflective.c transmissive.c \
-						   specular.c util.c phong.c oren_nayar.c bsdf_util.c \
-						   bsdf_sample_int.c bsdf_forward.c polar.c
-TEX_FILES				:= sample.c filter.c init.c sample_vector.c
-SHAPE_FILES				:= traits.c bounds.c
-ACCEL_FILES				:= accel_algo.c accel_info.c accel_util1.c accel_ropes.c \
-						   node1.c accel_save.c accel_load.c accel_split_axis.c \
-						   accel_info_init.c node2.c accel_util2.c accel_init.c
-BASE_FILES				:= main.c options.c perf.c
+BASE_FILES := main.c main_image.c main_key.c main_signal.c main_update.c \
+			  main_util.c main_viewer.c main_window.c main_windows.c \
+			  main_worker.c option.c option1.c options.c perf.c
+ACCEL_FILES := accel_algo.c accel_info.c accel_info_init.c accel_init.c \
+			   accel_load.c accel_ropes.c accel_save.c accel_split_axis.c \
+			   accel_util1.c accel_util2.c node1.c node2.c
+BSDF_FILES := bsdf.c bsdf_forward.c bsdf_sample_int.c bsdf_util.c diffuse.c \
+			  oren_nayar.c phong.c polar.c reflective.c specular.c \
+			  transmissive.c util.c
+GFX_FILES := color.c win.c
+MATH_FILES := abs.c atan.c basis.c clamp.c cone.c cone_sample.c cone_util.c \
+			  conversion.c cos.c cylinder.c cylinder_sample.c cylinder_util.c \
+			  exp.c gamma.c hyperboloid.c infinite_cylinder.c log.c \
+			  max.c min.c mod.c paraboloid.c plane.c polynomial.c pow.c \
+			  ray_constr.c sin.c sphere.c sphere_sample.c sqrt.c tan.c \
+			  tangent.c triangle.c vec2.c vec2_arith.c vec2_arith_fast.c \
+			  vec2_fast.c vec2_get.c vec2_get_fast.c vec_abs.c vec_abs_fast.c \
+			  vec_arith.c vec_arith_fast.c vec_clamp.c vec_clamp_fast.c \
+			  vec_constr.c vec_constr2.c vec_constr_fast.c vec_constr_fast2.c \
+			  vec_eq.c vec_geo.c vec_geo_fast.c vec_get.c vec_get_fast.c \
+			  vec_rotate.c vec_set.c vec_size.c vec_size_fast.c vec_value.c
+MT_FILES := cond.c cond_mt.c mutex.c mutex_mt.c pool.c pool_create_int.c \
+			pool_mt.c task.c thread.c thread_mt.c
+NET_FILES := client.c client_create.c client_loop.c compression.c connection.c \
+			 data.c handler.c handshake.c job_request.c jobs.c new_work.c \
+			 pack.c pack_basic.c pack_packet.c packet.c recv.c send.c \
+			 send_results.c size.c string.c unpack.c unpack_basic.c \
+			 unpack_packet.c
+PARSER_FILES := ambient.c boloid.c camera.c color.c comment.c common.c \
+				conditional.c cone.c cylinder.c float.c include.c init.c \
+				light.c mat1.c mat2.c material.c material_table.c plane.c \
+				sphere.c texture.c texture_table.c triangle.c util.c vec.c \
+				vertex.c word.c world.c mat3.c
+SHAPE_FILES := bounds.c traits.c
+TEX_FILES := filter.c init.c sample.c sample_vector.c
+UTIL_FILES := aabb.c atof.c freadfile.c hash.c image.c image_bin.c image_pfm.c \
+			  image_ppm.c lib.c memory.c poll.c queue.c random1.c random2.c \
+			  readfile.c util.c writefile.c
+VECTOR_FILES := sort.c swap.c vector.c view.c
+WORK_FILES := cl_buffer.c cl_buffer_util.c cl_compile.c cl_device.c cl_fake.c \
+			  cl_name.c cl_program.c cl_program_path.c cl_program_save.c \
+			  cl_start.c cl_util.c compute.c context.c int.c kernel.c opencl.c \
+			  opencl_create.c server.c server_fake.c single.c thread.c \
+			  update.c util.c work.c work_create.c
+WORLD_FILES := camera.c common.c common_prim.c common_tex.c conversion.c \
+			   hash.c hash_mat.c hash_prim1.c hash_prim2.c hash_util.c impl.c \
+			   impl_add1.c impl_add2.c impl_add3.c intersect.c \
+			   intersect_prim.c intersect_prim_util.c intersect_ropeless.c \
+			   intersect_ropes.c material.c size.c tex_bmp.c trace.c \
+			   trace_intersect.c trace_light.c trace_step.c trace_util.c \
+			   trace_volume.c
+Z_FILES := data.c decode.c deflate1.c deflate2.c encode.c \
+		   encode_zwtree_token.c inflate.c lz77.c lz77_util1.c lz77_util2.c \
+		   tree.c util.c wtree.c wtree_find.c wtree_util.c zbuf.c zbuf_read.c \
+		   zbuf_write.c zring.c ztable.c
 
 PATCH_VERSION			:= 0
 MINOR_VERSION			:= 1
 MAJOR_VERSION			:= 0
 
 CL_FILE_NAMES			:= \
-	util/random.c \
+	util/random1.c \
+	util/random2.c \
+	util/aabb.c \
+	work/kernel.c \
 	work/compute.c \
-	math/plane.c \
-	math/polynomial.c \
-	math/sphere.c \
-	math/triangle.c \
-	math/cylinder.c \
-	math/cone.c \
-	math/ray_constr.c \
-	math/vec_arith.c \
-	math/vec_arith_fast.c \
-	math/vec_constr.c \
-	math/vec_constr_fast.c \
-	math/vec_geo.c \
-	math/vec_geo_fast.c \
-	math/vec_get.c \
-	math/vec_get_fast.c \
-	math/vec_size.c \
-	math/vec_size_fast.c \
-	math/vec2.c \
-	math/vec2_fast.c \
-	math/vec2_arith_fast.c \
-	math/vec2_arith.c \
-	math/vec_rotate.c \
-	math/vec_set.c \
-	math/vec_abs_fast.c \
-	math/vec_abs.c \
-	math/tangent.c \
-	math/clamp.c \
-	math/basis.c \
-	math/sqrt.c \
-	math/sin.c \
-	math/cos.c \
-	math/tan.c \
-	math/min.c \
-	math/max.c \
-	math/abs.c \
-	math/pow.c \
-	math/mod.c \
-	math/exp.c \
-	math/log.c \
-	math/gamma.c \
-	math/paraboloid.c \
-	math/hyperboloid.c \
-	math/conversion.c \
+	$(patsubst %.c,math/%.c,$(MATH_FILES)) \
+	$(patsubst %.c,bsdf/%.c,$(BSDF_FILES)) \
+	$(patsubst %.c,shape/%.c,$(SHAPE_FILES)) \
+	$(patsubst %.c,tex/%.c,$(TEX_FILES)) \
+	accel/node1.c \
+	accel/node2.c \
+	world/common.c \
+	world/common_prim.c \
+	world/common_tex.c \
+	world/conversion.c \
 	world/intersect.c \
 	world/intersect_prim.c \
+	world/intersect_prim_util.c \
+	world/intersect_ropeless.c \
+	world/intersect_ropes.c \
 	world/size.c \
-	world/common.c \
 	world/trace.c \
-	world/conversion.c \
-	bsdf/bsdf.c \
-	bsdf/bsdf_util.c \
-	bsdf/bsdf_sample_int.c \
-	bsdf/bsdf_forward.c \
-	bsdf/polar.c \
-	bsdf/diffuse.c \
-	bsdf/reflective.c \
-	bsdf/specular.c \
-	bsdf/transmissive.c \
-	bsdf/util.c \
-	bsdf/phong.c \
-	bsdf/oren_nayar.c \
-	tex/sample.c \
-	tex/sample_vector.c \
-	tex/filter.c \
-	shape/traits.c \
-	shape/bounds.c \
-	accel/node1.c \
-	accel/node2.c
+	world/trace_intersect.c \
+	world/trace_light.c \
+	world/trace_step.c \
+	world/trace_util.c \
+	world/trace_volume.c
 
 ifdef platform
 	ifeq ($(platform),linux)

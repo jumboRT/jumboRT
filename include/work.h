@@ -6,10 +6,10 @@
 # include "queue.h"
 # include "work_compute.h"
 
-#define RT_BACKEND_SINGLE 1
-#define RT_BACKEND_THREAD 2
-#define RT_BACKEND_OPENCL 4
-#define RT_BACKEND_SERVER 8
+# define RT_BACKEND_SINGLE 1
+# define RT_BACKEND_THREAD 2
+# define RT_BACKEND_OPENCL 4
+# define RT_BACKEND_SERVER 8
 
 typedef struct s_worker			t_worker;
 typedef struct s_work			t_work;
@@ -58,7 +58,8 @@ struct s_result_block {
 	uint64_t	end;
 };
 
-void	work_create(t_work *work, t_state *state, t_options *opts, union u_client *client);
+void	work_create(t_work *work, t_state *state, t_options *opts,
+			union u_client *client);
 void	work_destroy(t_work *work);
 void	work_resume(t_work *work);
 void	work_pause(t_work *work);
@@ -68,11 +69,13 @@ void	work_reset(t_work *work);
 void	work_send(t_work *work, uint64_t begin, uint64_t end);
 void	work_add(t_work *work, t_start start, void *ctx, int backend);
 int		work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size);
-void	work_done(t_work *work, t_result *results, uint64_t begin, uint64_t end);
+void	work_done(t_work *work, t_result *results, uint64_t begin,
+			uint64_t end);
 
 void	work_update_start(t_work *work);
 void	work_update_stop(t_work *work);
-void	work_send_results(t_worker *worker, t_result *results, uint64_t begin, uint64_t end);
+void	work_send_results(t_worker *worker, t_result *results, uint64_t begin,
+			uint64_t end);
 
 void	work_int_create(t_work *work);
 void	work_int_destroy(t_work *work);

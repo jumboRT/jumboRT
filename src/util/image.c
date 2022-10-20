@@ -4,14 +4,14 @@
 #include <ft_printf.h>
 
 static size_t
-	rt_ppm_write_header(char *header, const t_image *image)
+	rt_ppm_write_header_txt(char *header, const t_image *image)
 {
 	return (ft_sprintf(header, "P3\n%d\n%d\n255\n",
 			(int) image->width, (int) image->height));
 }
 
 static size_t
-	rt_ppm_write_pixel(char *dest, const t_pixel *pixel)
+	rt_ppm_write_pixel_txt(char *dest, const t_pixel *pixel)
 {
 	t_vec	final_color;
 
@@ -27,7 +27,7 @@ static size_t
 }
 
 static size_t
-	rt_ppm_write_data(char *data, const t_image *image)
+	rt_ppm_write_data_txt(char *data, const t_image *image)
 {
 	size_t	x;
 	size_t	y;
@@ -40,7 +40,7 @@ static size_t
 		x = 0;
 		while (x < image->width)
 		{
-			offset += rt_ppm_write_pixel(data + offset,
+			offset += rt_ppm_write_pixel_txt(data + offset,
 					&image->data[x + y * image->width]);
 			data[offset] = '\t';
 			offset += 1;
@@ -54,7 +54,7 @@ static size_t
 }
 
 size_t
-	rt_image_to_ppm(char **dest, const t_image *image)
+	rt_image_to_ppm_txt(char **dest, const t_image *image)
 {
 	size_t	size;
 	int		offset;
@@ -63,13 +63,13 @@ size_t
 		"image width and height must be postive integers");
 	size = (image->width * image->height) * 12 + 31;
 	*dest = rt_malloc(size);
-	offset = rt_ppm_write_header(*dest, image);
-	offset += rt_ppm_write_data(*dest + offset, image);
+	offset = rt_ppm_write_header_txt(*dest, image);
+	offset += rt_ppm_write_data_txt(*dest + offset, image);
 	return (offset);
 }
 
 size_t
-	rt_write_ppm(const char *path, const t_image *image)
+	rt_write_ppm_txt(const char *path, const t_image *image)
 {
 	char	*error;
 	size_t	size;

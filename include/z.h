@@ -22,15 +22,16 @@
 #  error "ZHASH_SIZE cannot be bigger than ZTOKEN_MIN_LENGTH"
 # endif
 
-typedef struct s_zbuf	t_zbuf;
-typedef struct s_ztree	t_ztree;
-typedef struct s_zwtree	t_zwtree;
-typedef struct s_ztoken	t_ztoken;
-typedef struct s_ztable	t_ztable;
-typedef struct s_zchain	t_zchain;
-typedef struct s_zstate	t_zstate;
-typedef struct s_zring	t_zring;
-typedef struct s_zlzctx	t_zlzctx;
+typedef struct s_zbuf			t_zbuf;
+typedef struct s_ztree			t_ztree;
+typedef struct s_zwtree			t_zwtree;
+typedef struct s_ztoken			t_ztoken;
+typedef struct s_ztable			t_ztable;
+typedef struct s_zchain			t_zchain;
+typedef struct s_zstate			t_zstate;
+typedef struct s_zring			t_zring;
+typedef struct s_zlzctx			t_zlzctx;
+typedef struct s_ztoken_data	t_ztoken_data;
 
 struct s_zbuf {
 	unsigned char	*data;
@@ -131,6 +132,24 @@ struct s_zlzctx {
 	uint32_t	hash;
 };
 
+struct s_deflate_fixed_trees {
+	t_zwtree	*lt;
+	t_zwtree	*dt;
+};
+
+struct s_deflate_dynamic_trees {
+	t_zwtree	ct;
+	t_zwtree	lt;
+	t_zwtree	dt;
+};
+
+void			z_deflate_plant_trees(t_ztoken *tokens, size_t count,
+					t_zwtree *lt, t_zwtree *dt);
+unsigned int	z_deflate_analyze_lens(struct s_zwtree_token *tokens,
+					unsigned char *lens, unsigned int size);
+void			z_deflate_plant_special_tree(struct s_zwtree_token *tokens,
+					unsigned int size, t_zwtree *ct);
+
 unsigned int	zfrob(unsigned int x);
 
 void			zbuf_create(t_zbuf *zb, void *data, size_t size);
@@ -144,26 +163,35 @@ void			zbuf_copy(t_zbuf *zb, t_zbuf *src, size_t size);
 void			zbuf_repeat(t_zbuf *zb, size_t dist, size_t size);
 
 void			zdecode_code(t_zbuf *ib, unsigned int code, unsigned int *n);
-void			zdecode_length(t_zbuf *ib, unsigned int code, unsigned int *value);
+void			zdecode_length(t_zbuf *ib, unsigned int code,
+					unsigned int *value);
 void			zdecode_dist(t_zbuf *ib, unsigned int code, unsigned int *dist);
-void			zencode_length(unsigned int length, unsigned int *code_out, unsigned int *extra_bits_out, unsigned int *value_out);
-void			zencode_dist(unsigned int dist, unsigned int *code_out, unsigned int *extra_bits_out, unsigned int *value_out);
-struct s_ztoken_data
-				zencode_token(t_ztoken token);
-unsigned int	zencode_zwtree_token(struct s_zwtree_token *data, unsigned int length, unsigned int count);
+void			zencode_length(unsigned int length, unsigned int *code_out,
+					unsigned int *extra_bits_out, unsigned int *value_out);
+void			zencode_dist(unsigned int dist, unsigned int *code_out,
+					unsigned int *extra_bits_out, unsigned int *value_out);
+t_ztoken_data	zencode_token(t_ztoken token);
+unsigned int	zencode_zwtree_token(struct s_zwtree_token *data,
+					unsigned int length, unsigned int count);
 
-void			ztree_find_counts(unsigned int *counts, unsigned char *lens, unsigned int count);
-void			ztree_find_codes(unsigned short *codes, unsigned int *counts, unsigned char *lens, unsigned int count);
+void			ztree_find_counts(unsigned int *counts, unsigned char *lens,
+					unsigned int count);
+void			ztree_find_codes(unsigned short *codes, unsigned int *counts,
+					unsigned char *lens, unsigned int count);
 void			ztree_default(t_ztree *tree, t_ztree **dst);
-void			ztree_init(t_ztree *tree, unsigned char *lens, unsigned int count);
+void			ztree_init(t_ztree *tree, unsigned char *lens,
+					unsigned int count);
 unsigned int	ztree_get(t_ztree *tree, t_zbuf *zb);
 
-void			zwtree_find_codes(unsigned int *codes, unsigned int *counts, unsigned char *lens);
+void			zwtree_find_codes(unsigned int *codes, unsigned int *counts,
+					unsigned char *lens);
 void			zwtree_default(t_zwtree *tree, t_zwtree **dst);
-void			zwtree_init(t_zwtree *tree, size_t *weights, unsigned int max_len);
+void			zwtree_init(t_zwtree *tree, size_t *weights,
+					unsigned int max_len);
 void			zwtree_put(t_zwtree *tree, t_zbuf *zb, unsigned int value);
 
-void			*z_deflate(void *src, size_t src_size, size_t *dst_size, int level);
+void			*z_deflate(void *src, size_t src_size, size_t *dst_size,
+					int level);
 void			*z_inflate(void *src, size_t src_size, size_t *dst_size);
 
 t_ztoken		*lz77_deflate(const void *src, size_t src_size,
@@ -190,6 +218,10 @@ t_ztoken		lz_encode(t_zstate *state, uint32_t hash, t_vector *out);
 t_ztoken		ztoken_at(t_zstate *state, size_t offset);
 size_t			ztoken_mismatch(t_zstate *state, size_t offset_a,
 					size_t offset_b, size_t min);
+
+void			zwtree_find_lens(unsigned char *lens,
+					struct s_zwtree_list *lists, unsigned int max_len);
+int				zwtree_node_cmp(const void *a_ptr, const void *b_ptr);
 
 unsigned int	reverse_bits(unsigned int x, unsigned int n);
 

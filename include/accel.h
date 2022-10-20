@@ -102,5 +102,4 @@ uint32_t			split_axis(t_accel_node node);
 uint32_t			is_leaf(t_accel_node node);
 uint32_t			above_child(t_accel_node node);
 
-
 #endif

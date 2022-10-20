@@ -12,7 +12,6 @@ uint64_t
 	uint64_t	result;
 	size_t		extra;
 
-	//rt_assert(src_size - offset >= ZHASH_SIZE, "cannot peek past end of buffer"); // this assert makes the code faster !?!?!
 	extra = 0;
 	result = 0;
 	(void) src_size;

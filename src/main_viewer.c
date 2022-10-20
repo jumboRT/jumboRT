@@ -22,8 +22,8 @@ static void
 	image->height = options->height;
 	image->data = rt_malloc(sizeof(*image->data)
 			* image->width * image->height);
-	state->image = &image;
-	state->world = &world;
+	state->image = image;
+	state->world = world;
 	world_create(world);
 	world->img_meta.width = image->width;
 	world->img_meta.height = image->height;

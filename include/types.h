@@ -1,15 +1,17 @@
 #ifndef TYPES_H
 # define TYPES_H
 
-typedef void			t_void;
-
 # ifndef RT_OPENCL
 
 #  include <stdint.h>
 
 #  define GLOBAL
 
+typedef void			t_void;
+
 # else
+
+typedef void			t_void;
 
 typedef signed char		int8_t;
 typedef signed short	int16_t;

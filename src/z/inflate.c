@@ -45,7 +45,8 @@ static void
 }
 
 static void
-	z_inflate_trees(t_zbuf *ib, t_ztree *tree, unsigned char *lens, unsigned int count)
+	z_inflate_trees(t_zbuf *ib, t_ztree *tree,
+			unsigned char *lens, unsigned int count)
 {
 	unsigned char	l[19];
 	unsigned int	i;

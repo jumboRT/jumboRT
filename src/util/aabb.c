@@ -1,6 +1,5 @@
 #include "aabb.h"
-
-#include <math.h>
+#include "rtmath.h"
 
 t_bounds
 	bounds(t_vec min, t_vec max)
@@ -33,7 +32,7 @@ float
 	t_vec	s;
 
 	s = vec_sub(a.max, a.min);
-	return (fabs(x(s) * y(s) * 2)
-		+ fabs(x(s) * z(s) * 2)
-		+ fabs(y(s) * z(s) * 2));
+	return (rt_abs(x(s) * y(s) * 2)
+		+ rt_abs(x(s) * z(s) * 2)
+		+ rt_abs(y(s) * z(s) * 2));
 }

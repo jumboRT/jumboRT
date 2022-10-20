@@ -60,7 +60,7 @@ int
 }
 
 int
-	parse_options_3(t_options *opts, int argc, char **argv, int *i)
+	parse_option_3(t_options *opts, int argc, char **argv, int *i)
 {
 	if (ft_strcmp(argv[*i], "-i") == 0 || ft_strcmp(argv[*i], "--ip") == 0)
 	{
@@ -85,7 +85,7 @@ int
 }
 
 int
-	parse_options_4(t_options *opts, int argc, char **argv, int *i)
+	parse_option_4(t_options *opts, int argc, char **argv, int *i)
 {
 	if (ft_strcmp(argv[*i], "-j") == 0 || !ft_strcmp(argv[*i], "--net-jobs"))
 	{
@@ -115,7 +115,7 @@ int
 }
 
 int
-	parse_options_5(t_options *opts, int argc, char **argv, int *i)
+	parse_option_5(t_options *opts, int argc, char **argv, int *i)
 {
 	if (ft_strcmp(argv[*i], "-c") == 0 || ft_strcmp(argv[*i], "--compile") == 0)
 	{

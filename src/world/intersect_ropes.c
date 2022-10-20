@@ -51,7 +51,7 @@ static void
 	}
 }
 
-void
+static int
 	world_intersect_tree_step(const GLOBAL t_world *world, t_ray ray,
 			struct s_intersect_ctx *ctx, t_world_hit *hit)
 {
@@ -74,10 +74,11 @@ void
 		leaf = &world->leaf_data[ctx->node->leaf_data_index];
 		world_intersect_tree_exit(ray, leaf, &exit_rope, &exit_distance);
 		if (exit_rope == 0xFFFFFFFF)
-			return ;
+			return (0);
 		ctx->node = world->accel_nodes + exit_rope;
 		ctx->min_t = rt_max(ctx->min_t, exit_distance - RT_TINY_VAL);
 	}
+	return (1);
 }
 
 void
@@ -91,7 +92,8 @@ void
 	ctx.prim_index = 0;
 	ctx.prim_count = 0;
 	while (ctx.min_t < hit->hit.t)
-		world_intersect_tree_step(world, ray, &ctx, hit);
+		if (!world_intersect_tree_step(world, ray, &ctx, hit))
+			return ;
 }
 
 #endif

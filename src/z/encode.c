@@ -5,7 +5,7 @@
 static unsigned int
 	clz(unsigned int x)
 {
-	unsigned int i;
+	unsigned int	i;
 
 	i = 0;
 	while (x >> i)

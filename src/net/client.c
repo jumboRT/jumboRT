@@ -10,8 +10,6 @@
 
 #if RT_BONUS
 
-# define PROTOVER 2
-
 /* ODOT: network ping */
 
 static void

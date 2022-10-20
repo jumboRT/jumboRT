@@ -4,6 +4,8 @@
 
 #if RT_BONUS
 
+# define PROTOVER 2
+
 static int
 	rt_handshake_send(union u_client *client, char **error)
 {

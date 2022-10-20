@@ -6,6 +6,9 @@
 # include "types.h"
 # include "mt.h"
 # include "image.h"
+# ifndef RT_JOINC
+#  include "gfx.h"
+# endif
 
 # include <stddef.h>
 # include <signal.h>
@@ -18,6 +21,12 @@
 
 typedef struct s_state		t_state;
 typedef struct s_options	t_options;
+
+# ifdef RT_JOINC
+
+typedef int					t_win;
+
+# endif
 
 struct s_options {
 	const char	*scene_file;
@@ -52,16 +61,6 @@ struct s_options {
 	int			cl_device_count;
 	int			default_rendering_mode;
 };
-
-#ifdef RT_JOINC
-
-typedef int	t_win;
-
-#else
-
-# include "gfx.h"
-
-#endif
 
 struct s_state {
 	t_image			*image;

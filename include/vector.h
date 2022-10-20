@@ -31,6 +31,7 @@ void	*view_get(t_view view, size_t index);
 void	view_each(t_view view, t_function func);
 void	view_swap(t_view view, size_t a, size_t b);
 void	view_sort(t_view view, t_compare cmp);
-void	view_sort_array(void *data, size_t size, size_t elem_size, t_compare cmp);
+void	view_sort_array(void *data, size_t size, size_t elem_size,
+			t_compare cmp);
 
 #endif

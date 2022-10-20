@@ -23,37 +23,42 @@ void
 	counts[0] = 0;
 }
 
+static void
+	ztree_find_codes_fill(unsigned short *codes, unsigned int cij[3],
+			unsigned int count)
+{
+	while (cij[1] < 32768)
+		codes[cij[1]++] = count;
+}
+
 void
 	ztree_find_codes(unsigned short *codes, unsigned int *counts,
 			unsigned char *lens, unsigned int count)
 {
 	unsigned int	indices[16];
-	unsigned int	code;
-	unsigned int	i;
-	unsigned int	j;
+	unsigned int	cij[3];
 
 	indices[0] = 0;
-	i = 1;
-	while (i < 16)
+	cij[1] = 1;
+	while (cij[1] < 16)
 	{
-		indices[i] = (indices[i - 1] + counts[i - 1]) << 1;
-		i += 1;
+		indices[cij[1]] = (indices[cij[1] - 1] + counts[cij[1] - 1]) << 1;
+		cij[1] += 1;
 	}
-	i = 0;
-	while (i < 32768)
-		codes[i++] = count;
-	i = 0;
-	while (i < count)
+	cij[1] = 0;
+	ztree_find_codes_fill(codes, cij, count);
+	cij[1] = 0;
+	while (cij[1] < count)
 	{
-		if (lens[i] != 0)
+		if (lens[cij[1]] != 0)
 		{
-			code = reverse_bits(indices[lens[i]], lens[i]);
-			j = 0;
-			while (j < (1 << (15 - lens[i])))
-				codes[code + (j++ << lens[i])] = i;
-			indices[lens[i]] += 1;
+			cij[0] = reverse_bits(indices[lens[cij[1]]], lens[cij[1]]);
+			cij[2] = 0;
+			while (cij[2] < (1 << (15 - lens[cij[1]])))
+				codes[cij[0] + (cij[2]++ << lens[cij[1]])] = cij[1];
+			indices[lens[cij[1]]] += 1;
 		}
-		i += 1;
+		cij[1] += 1;
 	}
 }
 
