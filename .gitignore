@@ -16,6 +16,6 @@ tags
 /*.pfm
 /*.exr
 /*.jpg
-kernel*
+/kernel*
 /.*.jrtastic
 /build
