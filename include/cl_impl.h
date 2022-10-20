@@ -116,6 +116,9 @@ struct s_opencl_compile_ctx {
 	const void	*output;
 };
 
+int					opencl_check_cache(t_opencl_compile_ctx *ctx,
+						cl_platform_id platform, cl_device_id device);
+
 char				*device_token(cl_platform_id platform, cl_device_id device);
 char				*device_file(const char *prefix, cl_platform_id platform,
 						cl_device_id device);
@@ -141,12 +144,17 @@ void				opencl_device_by_index(int pi, int di, t_opencl_func func,
 						void *data);
 void				opencl_device_all(t_opencl_func func, void *data);
 
+void				opencl_check_program(t_opencl_program_ctx *ctx,
+						cl_program program);
 void				opencl_comp_program(t_opencl_program_ctx *ctx,
 						const char *string, size_t length);
 void				opencl_load_program(t_opencl_program_ctx *ctx,
 						const unsigned char *string, size_t length, int build);
 void				opencl_link_program(t_opencl_program_ctx *ctx,
 						cl_program *programs, size_t count);
+void				opencl_build_program(t_opencl_program_ctx *ctx,
+						const char **strings, const size_t *lengths,
+						size_t count);
 unsigned char		*opencl_save_program(t_opencl_program_ctx *ctx,
 						size_t *length);
 void				opencl_release_program(cl_program program);
@@ -157,11 +165,14 @@ void				opencl_load_program_path(t_opencl_program_ctx *ctx,
 						const char *path, int build);
 void				opencl_link_program_path(t_opencl_program_ctx *ctx,
 						const char *const *paths, size_t count);
+void				opencl_build_program_path(t_opencl_program_ctx *ctx,
+						const char *const *paths, size_t count);
 void				opencl_save_program_path(t_opencl_program_ctx *ctx,
 						const char *path);
 
 void				opencl_compile(const char *i, const char *o);
 void				opencl_link(const char **i, const char *o);
+void				opencl_build(const char **i, const char *o);
 
 # endif
 

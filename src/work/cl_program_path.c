@@ -1,6 +1,8 @@
 #include "cl_impl.h"
 #include "util.h"
 
+#include <libft.h>
+
 #if RT_USE_OPENCL
 
 void
@@ -42,12 +44,17 @@ void
 {
 	size_t		index;
 	cl_program	*programs;
+	const char	*ext;
 
 	programs = rt_malloc(count * sizeof(*programs));
 	index = 0;
 	while (index < count)
 	{
-		opencl_load_program_path(ctx, paths[index], 0);
+		ext = ft_strrchr(paths[index], '.');
+		if (ext && ft_strcmp(ext, ".c") == 0)
+			opencl_comp_program_path(ctx, paths[index]);
+		else
+			opencl_load_program_path(ctx, paths[index], 0);
 		programs[index] = ctx->program;
 		index += 1;
 	}

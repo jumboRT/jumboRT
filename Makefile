@@ -44,7 +44,7 @@ WORK_FILES := cl_buffer.c cl_buffer_util.c cl_compile.c cl_device.c cl_fake.c \
 			  cl_name.c cl_program.c cl_program_path.c cl_program_save.c \
 			  cl_start.c cl_util.c compute.c context.c int.c kernel.c opencl.c \
 			  opencl_create.c server.c server_fake.c single.c thread.c \
-			  update.c util.c work.c work_create.c
+			  update.c util.c work.c work_create.c cl_cache.c cl_build.c
 WORLD_FILES := camera.c common.c common_prim.c common_tex.c conversion.c \
 			   hash.c hash_mat.c hash_prim1.c hash_prim2.c hash_util.c impl.c \
 			   impl_add1.c impl_add2.c impl_add3.c intersect.c \
@@ -299,6 +299,15 @@ $(FT_PRINTF_LIB):
 $(MLX_LIB):
 	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
 
+ifeq ($(cl_compile_all_at_once), 1)
+
+$(CL_NAME): $(CL_SOURCES) | $(NAME)
+	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT --build $(CL_NAME) $(CL_SOURCES); do sleep 1; done"
+	$(SILENT)touch $@
+
+else
+
 $(CL_NAME): $(CL_OBJECTS) | $(NAME)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
@@ -309,6 +318,8 @@ $(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c | $(NAME)
 	@printf $(COMPILE_COLOR)Compiling$(RESET)\ $(notdir $<)\ \(cl\)\\n
 	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -c $@ $<; do sleep 1; done"
 	$(SILENT)touch $@
+
+endif
 
 clean:
 	@printf $(CLEAN_COLOR)Cleaning\ object\ files\ and\ dependencies$(RESET)\\n

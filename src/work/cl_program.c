@@ -5,7 +5,7 @@
 
 #if RT_USE_OPENCL
 
-static void
+void
 	opencl_check_program(t_opencl_program_ctx *ctx, cl_program program)
 {
 	cl_int	status;

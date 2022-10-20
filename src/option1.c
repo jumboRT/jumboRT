@@ -70,14 +70,19 @@ int
 		opts->net_ip_set = 1;
 		*i += 2;
 	}
-	else if (ft_strcmp(argv[*i], "-p") == 0
-		|| ft_strcmp(argv[*i], "--port") == 0)
+	else if (ft_strcmp(argv[*i], "-p") == 0 || !ft_strcmp(argv[*i], "--port"))
 	{
 		rt_assert(!opts->net_port_set, "more than one port specified");
 		rt_assert(*i + 1 < argc, "--port requires an argument");
 		opts->net_port = argv[*i + 1];
 		opts->net_port_set = 1;
 		*i += 2;
+	}
+	else if (ft_strcmp(argv[*i], "--build") == 0)
+	{
+		rt_assert(*i + 2 < argc, "--build requires at least two arguments");
+		opencl_build((const char **) argv + *i + 2, argv[*i + 1]);
+		exit(EXIT_SUCCESS);
 	}
 	else
 		return (0);

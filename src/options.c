@@ -30,6 +30,7 @@ static void
 	ft_printf("\t{-v --version}          print version information\n");
 	ft_printf("\t{-c --compile} PATH     invoke opencl compiler\n");
 	ft_printf("\t{-C --link} PATH...     invoke opencl linker\n");
+	ft_printf("\t--build PATH...         invoke opencl builder\n");
 	ft_printf("\t{-D --mode} MODE        select default render mode\n");
 	ft_printf("\t{-h --help}             show this help message\n");
 }

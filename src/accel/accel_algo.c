@@ -1,5 +1,6 @@
 #include "accel.h"
 #include "accel_impl.h"
+#include "hash.h"
 
 #include "world.h"
 #include "world_impl.h"
@@ -100,7 +101,9 @@ void
 	hash = hash_world(world, RT_HASH_GEOMETRY);
 	perf_split(&perf, "compute hash");
 	ft_sprintf(file, ".%08x.jrtastic", (unsigned int) hash);
-	ft_printf("world hash: %x\n", (unsigned int) hash);
+	ft_printf("world hash: %08x%08x\n",
+		(unsigned int)(hash >> 32 & 0xFFFFFFFFU),
+		(unsigned int)(hash & 0xFFFFFFFFU));
 	if (!world_accel_load(world, file, hash))
 	{
 		world_add_accel_node(world, &ctx.root);

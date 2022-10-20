@@ -66,11 +66,11 @@ int
 	if (data_ptr[0] == NULL)
 		return (rt_free(error), 0);
 	if (size < sizeof(uint64_t) * 5)
-		return (rt_free(error), 0);
+		return (rt_free(data_ptr[0]), 0);
 	data_ptr[1] = data_ptr[0];
 	data_ptr[1] = rt_upacku64(data_ptr[1], &file_hash);
 	if (hash != file_hash)
-		return (rt_free(error), 0);
+		return (rt_free(data_ptr[0]), 0);
 	world_accel_load_unpack(world, data_ptr);
 	world_accel_load_alloc(world);
 	world_accel_load_cpy(world, data_ptr);
