@@ -1,57 +1,5 @@
 #include "rand.h"
 
-t_seed
-	rt_random(GLOBAL t_seed *seed)
-{
-	*seed ^= *seed << 12;
-	*seed ^= *seed >> 25;
-	*seed ^= *seed << 27;
-	return (*seed * (((t_seed) 0x2545F491 << 32) | 0x4F6CDD1D));
-}
-
-float
-	rt_random_float(GLOBAL t_seed *seed)
-{
-	return ((rt_random(seed) & 0xFFFFFF) / 16777216.0);
-}
-
-float
-	rt_random_gauss(GLOBAL t_seed *seed)
-{
-	float	sum;
-	int	idx;
-
-	sum = 0.0f;
-	idx = 0;
-	while (idx < 12)
-	{
-		sum += rt_random_float(seed);
-		idx++;
-	}
-	return (6.0f - sum);
-}
-
-float
-	rt_random_float_range(GLOBAL t_seed *seed, float min, float max)
-{
-	return (min + (max - min) * (rt_random_float(seed)));
-}
-
-t_vec
-	rt_random_in_sphere(GLOBAL t_seed *seed)
-{
-	t_vec	result;
-	float	len;
-
-	while (1)
-	{
-		result = vec(rt_random_float_range(seed, -1, 1), rt_random_float_range(seed, -1, 1), rt_random_float_range(seed, -1, 1), 0.0);
-		len = vec_mag(result);
-		if (len <= 1)
-			return (result);
-	}
-}
-
 t_vec
 	rt_random_unit_sphere(GLOBAL t_seed *seed)
 {
@@ -67,10 +15,10 @@ t_vec
 		aa = a * a;
 		bb = b * b;
 		if (aa + bb >= 1.0f)
-			continue;
-		return vec3((2.0f * a) * rt_sqrt(1.0f - aa - bb),
+			continue ;
+		return (vec3((2.0f * a) * rt_sqrt(1.0f - aa - bb),
 				(2.0f * b) * rt_sqrt(1.0f - aa - bb),
-				1.0f - (2.0f * rt_sqrt(aa + bb)));
+				1.0f - (2.0f * rt_sqrt(aa + bb))));
 	}
 }
 
@@ -110,7 +58,6 @@ t_vec2
 
 	epsilon = vec2(rt_random_float(seed), rt_random_float(seed));
 	epsilon = vec2_sub(vec2_scale(epsilon, 2.0f), vec2(1.0f, 1.0f));
-
 	if (vec2_eq(epsilon, vec2_0()))
 		return (epsilon);
 	if (rt_abs(u(epsilon)) > rt_abs(v(epsilon)))

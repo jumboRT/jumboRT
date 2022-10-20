@@ -18,7 +18,6 @@ cl_mem
 	mem = clCreateBuffer(cl_ctx->context,
 			CL_MEM_READ_ONLY, size, NULL, &status);
 	rt_assert(status == CL_SUCCESS, "clCreateBuffer failed");
-	/* ODOT: async copy may be significantly faster for multi gpu systems */
 	status = clEnqueueWriteBuffer(cl_ctx->command_queue[0],
 			mem, CL_TRUE, 0, size, ptr, 0, NULL, NULL);
 	rt_assert(status == CL_SUCCESS, "clEnqueueWriteBuffer failed");
@@ -39,4 +38,3 @@ void
 }
 
 #endif
-

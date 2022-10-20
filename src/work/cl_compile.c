@@ -6,7 +6,8 @@
 #if RT_USE_OPENCL
 
 static int
-	opencl_check_cache(t_opencl_compile_ctx *ctx, cl_platform_id platform, cl_device_id device)
+	opencl_check_cache(t_opencl_compile_ctx *ctx,
+			cl_platform_id platform, cl_device_id device)
 {
 	char					*tmp;
 	size_t					index;

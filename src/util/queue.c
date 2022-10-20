@@ -52,4 +52,3 @@ size_t
 	mutex_unlock(&queue->mtx);
 	return (size);
 }
-

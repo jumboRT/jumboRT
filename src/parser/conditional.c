@@ -16,4 +16,3 @@ void
 	else
 		rt_idskip(ctx, len);
 }
-

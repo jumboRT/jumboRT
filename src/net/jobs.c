@@ -1,9 +1,10 @@
 #if RT_BONUS
-#include "net.h"
+# include "net.h"
 
-#include <stdio.h>
+# include <ft_printf.h>
+# include <unistd.h>
 
-static ssize_t 
+static ssize_t
 	rt_send_job(union u_client *client, t_work *work, char **error)
 {
 	struct s_send_work	data;
@@ -25,7 +26,9 @@ int
 {
 	ssize_t	rc;
 
-	while (client->viewer.active_work < (uint64_t) client->viewer.worker->work->opts->net_jobs * RT_NET_JOBSIZE)
+	while (client->viewer.active_work
+		< (uint64_t) client->viewer.worker->work->opts->net_jobs
+		* RT_NET_JOBSIZE)
 	{
 		mutex_unlock(&client->viewer.job_mtx);
 		rc = rt_send_job(client,
@@ -56,7 +59,7 @@ void
 	{
 		rc = rt_send_jobs(client, &error);
 		if (rc < 0)
-			fprintf(stderr, "An unrecoverable error has occurred while \
+			ft_fprintf(STDOUT_FILENO, "An unrecoverable error has occurred while \
 synching with the server. Safely terminate this program as soon as \
 is possible.\n%s\n", error);
 		if (rc <= 0)

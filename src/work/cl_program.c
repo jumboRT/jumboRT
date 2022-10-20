@@ -49,7 +49,7 @@ void
 	ctx->program = clCreateProgramWithBinary(ctx->context,
 			1, &ctx->device, &length, &string, &bin_status, &status);
 	rt_assert(status == CL_SUCCESS && bin_status == CL_SUCCESS,
-			"clCreateProgramWithBinary failed");
+		"clCreateProgramWithBinary failed");
 	if (build)
 	{
 		status = clBuildProgram(ctx->program, 1, &ctx->device,

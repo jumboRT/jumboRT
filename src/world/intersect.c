@@ -3,220 +3,71 @@
 #include "shape.h"
 #include "accel.h"
 
-#ifndef ACCEL_NODE_STACK_SIZE
-# define ACCEL_NODE_STACK_SIZE 64
-#endif
-
-struct s_stack_node {
-	uint32_t	index;
-	float		max;
-};
-
 static void
-	world_intersect_primitives(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
+	world_intersect_primitives(const GLOBAL t_world *world,
+			t_ray ray, t_world_hit *hit)
 {
 	uint64_t					index;
 	const GLOBAL char			*primitives;
 	const GLOBAL t_primitive	*primitive;
 	t_world_hit					current;
+	t_ray_min					ray_min;
 
 	index = 0;
-	primitives = (const GLOBAL char*) world->primitives;
+	primitives = (const GLOBAL char *) world->primitives;
+	ray_min.ray = ray;
+	ray_min.min = RT_TINY_VAL;
 	while (index < world->primitives_size)
 	{
-		primitive = (const GLOBAL t_primitive *) (primitives + index);
-		if (prim_intersect(primitive, world, ray, RT_TINY_VAL, &current) && current.hit.t < hit->hit.t)
+		primitive = (const GLOBAL t_primitive *)(primitives + index);
+		if (prim_intersect(primitive, world, ray_min, &current)
+			&& current.hit.t < hit->hit.t)
 			*hit = current;
 		index += world_primitive_size(prim_type(primitive));
 	}
 }
 
 static void
-	world_intersect_degenerates(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
+	world_intersect_degenerates(const GLOBAL t_world *world,
+			t_ray ray, t_world_hit *hit)
 {
 	uint32_t					index;
 	const GLOBAL t_primitive	*primitive;
 	t_world_hit					current;
+	t_ray_min					ray_min;
 
 	index = 0;
+	ray_min.ray = ray;
+	ray_min.min = RT_TINY_VAL;
 	while (index < world->accel_degenerates_count)
 	{
 		primitive = get_prim_const(world, world->accel_degenerates[index]);
-		if (prim_intersect(primitive, world, ray, RT_TINY_VAL, &current) && current.hit.t < hit->hit.t)
+		if (prim_intersect(primitive, world, ray_min, &current)
+			&& current.hit.t < hit->hit.t)
 			*hit = current;
 		index += 1;
 	}
 }
 
-#if ACCEL_USE_ROPES
-
-static void
-	world_intersect_tree(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
+void
+	world_intersect_step(const GLOBAL t_world *world, t_ray ray,
+			struct s_intersect_ctx *ctx, t_world_hit *hit)
 {
-	const GLOBAL t_accel_node	*node;
 	const GLOBAL t_primitive	*prim;
-	uint32_t					iprim;
-	const GLOBAL uint32_t		*prims;
-	uint32_t					nprim;
-	float						min_t;
-	float						org_t;
-	float						dir_t;
-	float						split_t;
 	t_world_hit					current;
-	uint32_t					exit_rope;
-	float						exit_distance;
-	uint32_t					index;
-	float						distance;
-	uint32_t					rope_index;
-	const GLOBAL t_leaf_data	*leaf_data;
+	t_ray_min					ray_min;
 
-	min_t = RT_TINY_VAL;
-	node = world->accel_nodes;
-	iprim = 0;
-	nprim = 0;
-	while (min_t < hit->hit.t)
+	if (ctx->prim_index < ctx->prim_count)
 	{
-		if (iprim >= nprim)
-		{
-			while (!is_leaf(*node))
-			{
-				org_t = xyz(ray.org, split_axis(*node));
-				dir_t = xyz(ray.dir, split_axis(*node));
-				split_t = split_pos(*node);
-				if (org_t + dir_t * min_t < split_t)
-					node = node + 1;
-				else
-					node = world->accel_nodes + above_child(*node);
-			}
-			prims = node_prims(world, node);
-			iprim = 0;
-			nprim = nprims(*node);
-		}
-		if (iprim < nprim)
-		{
-			prim = get_prim_const(world, prims[iprim]);
-			if (prim_intersect(prim, world, ray, min_t, &current) && current.hit.t < hit->hit.t)
-				*hit = current;
-			iprim += 1;
-		}
-		if (iprim >= nprim)
-		{
-			exit_rope = 0xFFFFFFFF;
-			exit_distance = RT_HUGE_VAL;
-			index = 0;
-			leaf_data = &world->leaf_data[node->leaf_data_index];
-			while (index < 3)
-			{
-				org_t = xyz(ray.org, index);
-				dir_t = xyz(ray.dir, index);
-				if (dir_t != 0)
-				{
-					if (dir_t < 0)
-						rope_index = index + 0;
-					else
-						rope_index = index + 3;
-					distance = (leaf_data->rope_data.bounds[rope_index] - org_t) / dir_t;
-					if (distance < exit_distance)
-					{
-						exit_distance = distance;
-						exit_rope = leaf_data->rope_data.ropes[rope_index];
-					}
-				}
-				index += 1;
-			}
-			if (exit_rope == 0xFFFFFFFF)
-				return ;
-			node = world->accel_nodes + exit_rope;
-			min_t = rt_max(min_t, exit_distance - RT_TINY_VAL);
-		}
+		prim = get_prim_const(world, ctx->prims[ctx->prim_index]);
+		ray_min.ray = ray;
+		ray_min.min = ctx->min_t;
+		if (prim_intersect(prim, world, ray_min, &current)
+			&& current.hit.t < hit->hit.t)
+			*hit = current;
+		ctx->prim_index += 1;
 	}
 }
-
-#else
-
-static void
-	world_intersect_tree(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)
-{
-	struct s_stack_node			stack[ACCEL_NODE_STACK_SIZE];
-	uint32_t					istack;
-	const GLOBAL t_accel_node	*node;
-	const GLOBAL t_primitive	*prim;
-	uint32_t					iprim;
-	const GLOBAL uint32_t		*prims;
-	uint32_t					nprim;
-	float						org_t;
-	float						dir_t;
-	float						split_t;
-	float						min_t;
-	float						max_t;
-	float						plane_t;
-	float						tmp;
-	uint32_t					next_child;
-	t_world_hit					current;
-
-	min_t = RT_TINY_VAL;
-	max_t = RT_HUGE_VAL;
-	istack = 0;
-	node = world->accel_nodes;
-	iprim = 0;
-	nprim = 0;
-	while (min_t < hit->hit.t)
-	{
-		if (iprim >= nprim)
-		{
-			while (!is_leaf(*node))
-			{
-				org_t = xyz(ray.org, split_axis(*node));
-				dir_t = xyz(ray.dir, split_axis(*node));
-				split_t = split_pos(*node);
-				if (org_t + dir_t * min_t < split_t)
-				{
-					next_child = above_child(*node);
-					node = node + 1;
-					tmp = dir_t;
-				}
-				else
-				{
-					next_child = node - world->accel_nodes + 1;
-					node = world->accel_nodes + above_child(*node);
-					tmp = -dir_t;
-				}
-				if (dir_t != 0)
-				{
-					plane_t = (split_t - org_t) / dir_t;
-					if (tmp > 0 && plane_t < max_t)
-					{
-						stack[istack].index = next_child;
-						stack[istack].max = max_t;
-						istack += 1;
-						max_t = plane_t;
-					}
-				}
-			}
-			prims = node_prims(world, node);
-			iprim = 0;
-			nprim = nprims(*node);
-		}
-		if (iprim < nprim)
-		{
-			prim = get_prim_const(world, prims[iprim]);
-			if (prim_intersect(prim, world, ray, min_t, &current) && current.hit.t < hit->hit.t)
-				*hit = current;
-			iprim += 1;
-		}
-		if (iprim >= nprim)
-		{
-			if (istack == 0)
-				return ;
-			min_t = rt_max(min_t, max_t - RT_TINY_VAL);
-			istack -= 1;
-			node = world->accel_nodes + stack[istack].index;
-			max_t = stack[istack].max;
-		}
-	}
-}
-
-#endif
 
 void
 	world_intersect(const GLOBAL t_world *world, t_ray ray, t_world_hit *hit)

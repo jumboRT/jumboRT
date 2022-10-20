@@ -26,7 +26,7 @@ static void
 	cl_int			status;
 	cl_uint			num_devices;
 	cl_device_id	*devices;
-	
+
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL,
 			0, NULL, &num_devices);
 	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
@@ -46,7 +46,7 @@ void
 	cl_int			status;
 	cl_uint			num_platforms;
 	cl_platform_id	*platforms;
-	
+
 	status = clGetPlatformIDs(
 			0, NULL, &num_platforms);
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");
@@ -67,7 +67,7 @@ static void
 	cl_uint			num_devices;
 	cl_device_id	*devices;
 	cl_uint			di;
-	
+
 	status = clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL,
 			0, NULL, &num_devices);
 	rt_assert(status == CL_SUCCESS, "clGetDeviceIDs failed");
@@ -92,7 +92,7 @@ void
 	cl_uint			num_platforms;
 	cl_platform_id	*platforms;
 	cl_uint			pi;
-	
+
 	status = clGetPlatformIDs(
 			0, NULL, &num_platforms);
 	rt_assert(status == CL_SUCCESS, "clGetPlatformIDs failed");

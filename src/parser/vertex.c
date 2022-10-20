@@ -49,4 +49,3 @@ void
 	ctx->max_index += 1;
 	world_add_vertex(world, &vertex);
 }
-

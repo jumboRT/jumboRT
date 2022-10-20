@@ -39,24 +39,6 @@ float
 }
 
 float
-	u(t_vec2 v)
-{
-	t_vec2_conv	conv;
-
-	conv.vec = v;
-	return (conv.elem[0]);
-}
-
-float
-	v(t_vec2 v)
-{
-	t_vec2_conv	conv;
-
-	conv.vec = v;
-	return (conv.elem[1]);
-}
-
-float
 	xyz(t_vec v, int i)
 {
 	if (i == 0)
@@ -65,18 +47,6 @@ float
 		return (y(v));
 	else
 		return (z(v));
-}
-
-int
-	vec_eq(t_vec a, t_vec b)
-{
-	return (x(a) == x(b) && y(a) == y(b) && z(a) == z(b) && w(a) == w(b));
-}
-
-int
-	vec2_eq(t_vec2 a, t_vec2 b)
-{
-	return (u(a) == u(b) && v(a) == v(b));
 }
 
 #endif

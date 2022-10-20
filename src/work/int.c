@@ -38,4 +38,3 @@ void
 	if (work->opts->backends & RT_BACKEND_SERVER)
 		work_int_resume_server(work);
 }
-

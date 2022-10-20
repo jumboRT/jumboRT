@@ -1,21 +1,22 @@
 #if RT_BONUS
-#include "net.h"
 
-#include "z.h"
-#include "ser.h"
-#include "util.h"
+# include "net.h"
+
+# include "z.h"
+# include "ser.h"
+# include "util.h"
 
 void
-	rt_results_deflate(struct s_send_results *packet, size_t batch_size, t_result *results, int level)
+	rt_results_deflate(struct s_send_results *packet, size_t sz,
+			t_result *results, int level)
 {
-	unsigned char	*data;
-	unsigned char	*ptr;
+	unsigned char	*dp[2];
 	size_t			index;
 	t_vec			color;
 	uint64_t		samples;
 
-	data = rt_malloc(6 * ((packet->end - packet->begin + batch_size - 2) / batch_size + 1));
-	ptr = data;
+	dp[0] = rt_malloc(6 * ((packet->end - packet->begin + sz - 2) / sz + 1));
+	dp[1] = dp[0];
 	index = packet->begin;
 	while (index < packet->end)
 	{
@@ -26,15 +27,14 @@ void
 			color = vec_add(color, results[index - packet->begin].color);
 			samples += 1;
 			index += 1;
-			if (index % batch_size == 0)
+			if (index % sz == 0)
 				break ;
 		}
 		color = vec_scale(color, 1.0 / samples);
-		ptr = rt_packhvec(ptr, color);
+		dp[1] = rt_packhvec(dp[1], color);
 	}
-	packet->zdata = z_deflate(data, ptr - data, &packet->zsize, level);
-	// printf("deflated size: %zu\n", packet->zsize, batch_size);
-	rt_free(data);
+	packet->zdata = z_deflate(dp[0], dp[1] - dp[0], &packet->zsize, level);
+	rt_free(dp[0]);
 }
 
 t_result
@@ -42,24 +42,23 @@ t_result
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
-	size_t			index;
-	size_t			size;
+	size_t			si[2];
 	t_vec			color;
 	t_result		*result;
 
-	data = z_inflate(packet.zdata, packet.zsize, &size);
+	data = z_inflate(packet.zdata, packet.zsize, &si[1]);
 	result = rt_malloc((packet.end - packet.begin) * sizeof(*result));
 	ptr = data;
-	index = packet.begin;
-	while (index < packet.end)
+	si[0] = packet.begin;
+	while (si[0] < packet.end)
 	{
-		rt_assert((size_t) (ptr - data + 6) <= size, "corrupted packet");
+		rt_assert((size_t)(ptr - data + 6) <= si[1], "corrupted packet");
 		ptr = rt_upackhvec(ptr, &color);
-		while (index < packet.end)
+		while (si[0] < packet.end)
 		{
-			result[index - packet.begin].color = color;
-			index += 1;
-			if (index % batch_size == 0)
+			result[si[0] - packet.begin].color = color;
+			si[0] += 1;
+			if (si[0] % batch_size == 0)
 				break ;
 		}
 	}

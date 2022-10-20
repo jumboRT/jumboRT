@@ -8,18 +8,6 @@ float
 	return (tanf(a));
 }
 
-float
-	rt_atan(float a)
-{
-	return (atanf(a));
-}
-
-float
-	rt_atan2(float y, float x)
-{
-	return (atan2f(y, x));
-}
-
 #else
 
 float
@@ -27,17 +15,4 @@ float
 {
 	return (tan(a));
 }
-
-float
-	rt_atan(float a)
-{
-	return (atan(a));
-}
-
-float
-	rt_atan2(float y, float x)
-{
-	return (atan2(y, x));
-}
-
 #endif

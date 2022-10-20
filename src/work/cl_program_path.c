@@ -19,7 +19,8 @@ void
 }
 
 void
-	opencl_load_program_path(t_opencl_program_ctx *ctx, const char *path, int build)
+	opencl_load_program_path(t_opencl_program_ctx *ctx,
+			const char *path, int build)
 {
 	char	*data;
 	size_t	size;
@@ -36,8 +37,8 @@ void
 }
 
 void
-	opencl_link_program_path(t_opencl_program_ctx *ctx, const char *const *paths,
-			size_t count)
+	opencl_link_program_path(t_opencl_program_ctx *ctx,
+			const char *const *paths, size_t count)
 {
 	size_t		index;
 	cl_program	*programs;

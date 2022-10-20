@@ -77,17 +77,17 @@ struct s_shape_point {
 
 uint32_t	prim_type(const GLOBAL t_primitive *prim);
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim,
-						const GLOBAL t_world *world);
+				const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim,
-						const GLOBAL t_world *world, t_ray ray, float min,
-						t_world_hit *hit);
+				const GLOBAL t_world *world, t_ray_min ray,
+				t_world_hit *hit);
 void		prim_hit_info(const GLOBAL t_primitive *prim,
-						const GLOBAL t_world *world, t_ray ray,
-						t_world_hit *hit);
+				const GLOBAL t_world *world, t_ray ray,
+				t_world_hit *hit);
 t_vec		prim_sample(const GLOBAL t_primitive *prim,
-						const GLOBAL t_world *world, GLOBAL t_context *ctx);
+				const GLOBAL t_world *world, GLOBAL t_context *ctx);
 float		prim_area(const GLOBAL t_primitive *prim,
-						const GLOBAL t_world *world);
+				const GLOBAL t_world *world);
 int			prim_is_infinite(const GLOBAL t_primitive *prim);
 int			prim_is_degenerate(const GLOBAL t_primitive *prim);
 

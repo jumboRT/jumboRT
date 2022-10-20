@@ -117,4 +117,3 @@ void
 	*dst_size = ob.size;
 	return (ob.data);
 }
-

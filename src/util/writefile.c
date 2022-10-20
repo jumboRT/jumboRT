@@ -16,7 +16,7 @@ static int
 		if (fd >= 0)
 			break ;
 		if (errno == EINTR)
-			continue;
+			continue ;
 		ft_asprintf(error, "failed to open %s: %s", path, strerror(errno));
 		return (-1);
 	}
@@ -34,7 +34,7 @@ static int
 		if (return_code == 0)
 			break ;
 		if (errno == EINTR)
-			continue;
+			continue ;
 		ft_asprintf(error, "failed to close fd %d: %s", fd, strerror(errno));
 		return (-1);
 	}
@@ -56,8 +56,9 @@ static ssize_t
 		if (nwritten < 0)
 		{
 			if (errno == EINTR)
-				continue;
-			ft_asprintf(error, "failed to write to fd %d: %s", fd, strerror(errno));
+				continue ;
+			ft_asprintf(error, "failed to write to fd %d: %s",
+				fd, strerror(errno));
 			return (-1);
 		}
 		buf_pos += nwritten;

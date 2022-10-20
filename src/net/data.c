@@ -1,77 +1,20 @@
 #if RT_BONUS
-#include "net.h"
+# include "net.h"
 
-#ifdef RT_WINDOWS
-# include <winsock2.h>
-# include <winsock.h>
-#else
-# include <sys/socket.h>
-# include <poll.h>
-#endif
+# include "util.h"
+# ifdef RT_WINDOWS
+#  include <winsock2.h>
+#  include <winsock.h>
+# else
+#  include <sys/socket.h>
+#  include <poll.h>
+# endif
 
-#include <ft_printf.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-
-
-#include <stdio.h>
-
-int
-	rt_send(int sockfd, const void *data, uint64_t size, char **error)
-{
-	ssize_t	nwritten;
-
-	nwritten = 0;
-	while (size > 0)
-	{
-#if defined RT_WINDOWS
-		nwritten = send(sockfd, ((const char *) data) + nwritten, size, 0);
-#else
-		nwritten = send(sockfd, ((const char *) data) + nwritten, size, 0);
-#endif
-		if (nwritten < 0)
-		{
-			if (errno == EINTR)
-				continue;
-			if (error != NULL)
-				ft_asprintf(error, "failed to send %u bytes of data: %s", (uint32_t) size, strerror(errno));
-			return (-1);
-		}
-		size -= nwritten;
-	}
-	return (0);
-}
-
-ssize_t
-	rt_recv(int sockfd, void *buffer, uint64_t length, char **error)
-{
-	ssize_t	total_read;
-	ssize_t	nread;
-
-	total_read = 0;
-	while (length > 0)
-	{
-#if defined RT_WINDOWS
-		nread = recv(sockfd, ((char *) buffer) + total_read, length, 0);
-#else
-		nread = recv(sockfd, ((char *) buffer) + total_read, length, 0);
-#endif
-		if (nread < 0 && errno == EINTR)
-			continue;
-		if (nread <= 0)
-		{
-			if (error != NULL && nread < 0)
-				ft_asprintf(error, "failed to receive %u bytes of data %s", (int) length, strerror(errno));
-			if (error != NULL && nread == 0)
-				ft_asprintf(error, "failed to receive %u bytes of data", (int) length);
-			return (-1);
-		}
-		length -= nread;
-		total_read += nread;
-	}
-	return total_read;
-}
+# include <ft_printf.h>
+# include <errno.h>
+# include <string.h>
+# include <stdlib.h>
+# include <stdio.h>
 
 int
 	rt_has_data(int sockfd, int timeout, char **error)
@@ -83,14 +26,10 @@ int
 	p.events = POLLIN;
 	while (1)
 	{
-#if defined RT_WINDOWS
-		rc = WSAPoll(&p, 1, timeout);
-#else
-		rc = poll(&p, 1, timeout);
-#endif
+		rc = rt_poll(&p, 1, timeout);
 		if (rc < 0 && errno == EINTR)
-			continue;
-		break;
+			continue ;
+		break ;
 	}
 	if (rc >= 0)
 		return (rc);
@@ -103,63 +42,5 @@ int
 	rt_peek(int sockfd, char **error)
 {
 	return (rt_has_data(sockfd, 1, error));
-}
-
-static int
-	rt_send_packet_int(int sockfd, const struct s_packet *packet, char **error)
-{
-	int	rc;
-
-	rc = rt_send(sockfd, &packet->size, sizeof(packet->size), error);
-	if (rc >= 0)
-		rc = rt_send(sockfd, &packet->type, sizeof(packet->type), error);
-	if (rc >= 0)
-		rc = rt_send(sockfd, packet->data, packet->size, error);
-	if (rc < 0)
-		return (-1);
-	return (0);
-}
-
-int
-	rt_send_packet(struct s_client_base *client, const struct s_packet *packet,
-			char **error)
-{
-	int	rc;
-
-	mutex_lock(&client->mtx);
-	rc = rt_send_packet_int(client->sockfd, packet, error);
-	mutex_unlock(&client->mtx);
-	return (rc);
-}
-
-int
-	rt_recv_packet(int sockfd, struct s_packet *packet, char **error)
-{
-	ssize_t	read;
-
-	read = rt_recv(sockfd, &packet->size, sizeof(packet->size), error);
-	if (read < 0)
-		return (-1);
-	read = rt_recv(sockfd, &packet->type, sizeof(packet->type), error);
-	if (read < 0)
-		return (-1);
-	packet->data = malloc(packet->size); /* ODOT: Change to rt_malloc? */
-	if (packet->data == NULL)
-	{
-		if (error != NULL)
-			*error = NULL; /* we cannot print use asprintf in this case probably since it allocates */
-		return (-1);
-	}
-	read = rt_recv(sockfd, packet->data, packet->size, 0);
-	if (read < 0)
-		return (-1);
-	if ((uint64_t) read != packet->size)
-	{
-		free(packet->data);
-		ft_asprintf(error, "could not read entire %u packet, expected %u bytes\
- got %u", (unsigned) packet->type, packet->size, (unsigned) read);
-		return (-1);
-	}
-	return (0);
 }
 #endif

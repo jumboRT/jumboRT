@@ -3,10 +3,11 @@
 #include "rtmath.h"
 #include <ft_printf.h>
 
-static size_t 
+static size_t
 	rt_ppm_write_header(char *header, const t_image *image)
 {
-	return (ft_sprintf(header,"P3\n%d\n%d\n255\n", (int) image->width, (int) image->height));
+	return (ft_sprintf(header, "P3\n%d\n%d\n255\n",
+			(int) image->width, (int) image->height));
 }
 
 static size_t
@@ -19,10 +20,13 @@ static size_t
 		final_color = vec_scale(pixel->color, 1.0 / pixel->samples);
 	final_color = vec_gc(final_color);
 	final_color = vec_clamp(vec_scale(final_color, 255.0), 0, 255.0);
-	return (ft_sprintf(dest, "%.3d\t%.3d\t%.3d", (int) x(final_color), (int) y(final_color), (int) z(final_color)));
+	return (ft_sprintf(dest, "%.3d\t%.3d\t%.3d",
+			(int) x(final_color),
+			(int) y(final_color),
+			(int) z(final_color)));
 }
 
-static size_t 
+static size_t
 	rt_ppm_write_data(char *data, const t_image *image)
 {
 	size_t	x;
@@ -36,7 +40,8 @@ static size_t
 		x = 0;
 		while (x < image->width)
 		{
-			offset += rt_ppm_write_pixel(data + offset, &image->data[x + y * image->width]);
+			offset += rt_ppm_write_pixel(data + offset,
+					&image->data[x + y * image->width]);
 			data[offset] = '\t';
 			offset += 1;
 			x++;
@@ -54,7 +59,8 @@ size_t
 	size_t	size;
 	int		offset;
 
-	rt_assert(image->width > 0 && image->height > 0, "image width and height must be postive integers");
+	rt_assert(image->width > 0 && image->height > 0,
+		"image width and height must be postive integers");
 	size = (image->width * image->height) * 12 + 31;
 	*dest = rt_malloc(size);
 	offset = rt_ppm_write_header(*dest, image);

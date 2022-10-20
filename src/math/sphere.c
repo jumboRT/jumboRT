@@ -1,5 +1,4 @@
 #include "rtmath.h"
-#include "sample.h"
 
 t_sphere
 	sphere(t_vec pos, float radius)
@@ -15,8 +14,8 @@ t_vec2
 	sphere_uv_at(t_vec point)
 {
 	return (vec2(
-		    0.5 + (rt_atan2(x(point), y(point)) / RT_2PI),
-		    0.5 + (rt_asin(z(point)) / RT_PI)));
+			0.5 + (rt_atan2(x(point), y(point)) / RT_2PI),
+			0.5 + (rt_asin(z(point)) / RT_PI)));
 }
 
 void
@@ -31,7 +30,7 @@ void
 
 /* https://raytracing.github.io/books/RayTracingInOneWeekend.html */
 int
-	ray_sphere_intersect(t_ray ray, t_sphere sphere, float min, t_hit *hit)
+	sphere_intersect(t_ray ray, t_sphere sphere, float min, t_hit *hit)
 {
 	t_quadratic	quadratic;
 	t_vec		oc;
@@ -55,16 +54,3 @@ int
 	hit->shading_normal = hit->geometric_normal;
 	return (1);
 }
-
-t_vec
-	sphere_sample(t_sphere sphere, GLOBAL t_context *ctx)
-{
-	return (vec_add(sphere.pos, vec_scale(vec_norm(rt_random_in_sphere(&ctx->seed)), sphere.radius)));
-}
-
-float
-	sphere_area(t_sphere sphere)
-{
-	return (4.0f * RT_PI * sphere.radius * sphere.radius);
-}
-

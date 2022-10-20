@@ -19,7 +19,7 @@ static void
 unsigned int
 	zfrob(unsigned int x)
 {
-	static const unsigned int frobnication_table[] = {
+	static const unsigned int	frobnication_table[] = {
 		16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15
 	};
 
@@ -55,4 +55,3 @@ void
 			*dst = tree;
 	}
 }
-

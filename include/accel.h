@@ -41,7 +41,6 @@ typedef struct s_node_info			t_node_info;
 typedef struct s_split				t_split;
 typedef struct s_edge				t_edge;
 
-
 struct s_rope_data {
 	float		bounds[6];
 	uint32_t	ropes[6];

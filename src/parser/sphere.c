@@ -14,4 +14,3 @@ void
 	rt_material(ctx, world, &sphere.base);
 	world_add_primitive(world, &sphere, sizeof(sphere));
 }
-

@@ -34,7 +34,8 @@ void
 {
 	mutex_lock(&work->mtx);
 	work->pending_size += sizeof(begin) + sizeof(end);
-	work->pending = rt_reallog(work->pending, &work->pending_capacity, work->pending_size);
+	work->pending = rt_reallog(work->pending,
+			&work->pending_capacity, work->pending_size);
 	work->pending[work->pending_size / sizeof(uint64_t) - 2] = begin;
 	work->pending[work->pending_size / sizeof(uint64_t) - 1] = end;
 	work->work_size += end - begin;
@@ -53,8 +54,8 @@ void
 	queue_create(&worker->queue);
 	worker->ctx = ctx;
 	work->workers = rt_realloc(work->workers,
-		sizeof(*work->workers) * (work->count + 0),
-		sizeof(*work->workers) * (work->count + 1));
+			sizeof(*work->workers) * (work->count + 0),
+			sizeof(*work->workers) * (work->count + 1));
 	work->workers[work->count] = worker;
 	work->count += 1;
 	thread_create(&worker->thread, start, worker);
@@ -112,23 +113,4 @@ void
 		}
 		rt_free(results);
 	}
-}
-
-void
-	work_reset(t_work *work)
-{
-	size_t	i;
-
-	if (work->state->image != NULL)
-	{
-		i = 0;
-		while (i < work->state->image->width * work->state->image->height)
-		{
-			work->state->image->data[i].samples = 0;
-			work->state->image->data[i].color = vec(0, 0, 0, 0);
-			i += 1;
-		}
-	}
-	work->work_index = 0;
-	work->work_progress = 0;
 }

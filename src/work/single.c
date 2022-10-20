@@ -30,4 +30,3 @@ void
 	}
 	ctx_destroy(&ctx);
 }
-

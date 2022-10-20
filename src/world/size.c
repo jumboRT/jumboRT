@@ -5,7 +5,8 @@
 static uint64_t
 	world_primitive_size_adjust(uint64_t size)
 {
-	return ((size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN * RT_PRIMITIVE_ALIGN);
+	return ((size + RT_PRIMITIVE_ALIGN - 1) / RT_PRIMITIVE_ALIGN
+		* RT_PRIMITIVE_ALIGN);
 }
 
 uint64_t
@@ -29,4 +30,3 @@ uint64_t
 		return (world_primitive_size_adjust(sizeof(t_shape_point)));
 	return (RT_PRIMITIVE_ALIGN);
 }
-	

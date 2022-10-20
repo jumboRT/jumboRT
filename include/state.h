@@ -10,6 +10,12 @@
 # include <stddef.h>
 # include <signal.h>
 
+# if RT_BONUS
+#  define RT_BONUS_OPTIONS 1
+# else
+#  define RT_BONUS_OPTIONS 0
+# endif
+
 typedef struct s_state		t_state;
 typedef struct s_options	t_options;
 
@@ -63,6 +69,17 @@ struct s_state {
 	t_win			win;
 };
 
+int		parse_option_1(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_2(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_3(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_4(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_5(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_6(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_7(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_8(t_options *opts, int argc, char **argv, int *i);
+int		parse_option_9(t_options *opts, int argc, char **argv, int *i);
+
+int		parse_option(t_options *opts, int argc, char **argv, int *i);
 void	parse_options(t_options *opts, int argc, char **argv);
 
 #endif

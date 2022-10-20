@@ -1,7 +1,8 @@
 #include "z.h"
 
 static unsigned int
-	zwtt_write(struct s_zwtree_token *data, unsigned int code, unsigned int value)
+	zwtt_write(struct s_zwtree_token *data, unsigned int code,
+			unsigned int value)
 {
 	data->code = code;
 	if (code == 16)
@@ -28,7 +29,8 @@ static unsigned int
 }
 
 unsigned int
-	zwtt_write_part(struct s_zwtree_token *data, unsigned int code, unsigned int max, unsigned int *count)
+	zwtt_write_part(struct s_zwtree_token *data, unsigned int code,
+			unsigned int max, unsigned int *count)
 {
 	unsigned int	n;
 
@@ -40,7 +42,8 @@ unsigned int
 }
 
 unsigned int
-	zencode_zwtree_token(struct s_zwtree_token *data, unsigned int length, unsigned int count)
+	zencode_zwtree_token(struct s_zwtree_token *data, unsigned int length,
+			unsigned int count)
 {
 	unsigned int	i;
 
@@ -66,4 +69,3 @@ unsigned int
 	}
 	return (i);
 }
-

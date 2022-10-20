@@ -2,9 +2,9 @@
 
 #include "util.h"
 
-# ifndef RT_WORK_THREAD_CHUNK_SIZE
-#  define RT_WORK_THREAD_CHUNK_SIZE 65536
-# endif
+#ifndef RT_WORK_THREAD_CHUNK_SIZE
+# define RT_WORK_THREAD_CHUNK_SIZE 65536
+#endif
 
 static void
 	*work_start(void *data)
@@ -21,7 +21,8 @@ static void
 		i = 0;
 		while (i < end - begin)
 		{
-			result[i] = work_compute(worker->work->state->world, worker->ctx, begin + i);
+			result[i] = work_compute(worker->work->state->world,
+					worker->ctx, begin + i);
 			i += 1;
 		}
 		work_send_results(worker, result, begin, end);
@@ -67,4 +68,3 @@ void
 {
 	(void) work;
 }
-

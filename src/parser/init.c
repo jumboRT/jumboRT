@@ -35,28 +35,29 @@ void
 	parser_push(t_parse_ctx *ctx, const char *filename)
 {
 	char	*error;
-	char	*include_data;
+	char	*im[2];
 	size_t	include_size;
-	char	*merged_data;
 
-	include_data = rt_readfile(filename, &error, &include_size);
-	if (include_data == NULL)
+	im[0] = rt_readfile(filename, &error, &include_size);
+	if (im[0] == NULL)
 	{
 		ft_fprintf(STDERR_FILENO, "Error\n%s\n", error);
 		rt_free(error);
 		exit(EXIT_FAILURE);
 	}
-	merged_data = rt_malloc(ctx->size + include_size + 3);
-	rt_memcpy(merged_data, ctx->begin, ctx->data - ctx->begin);
-	merged_data[ctx->data - ctx->begin] = '\n';
-	rt_memcpy(merged_data + (ctx->data - ctx->begin) + 1, include_data, include_size);
-	merged_data[ctx->data - ctx->begin + include_size + 1] = '\n';
-	rt_memcpy(merged_data + (ctx->data - ctx->begin) + include_size + 2, ctx->data, ctx->begin + ctx->size - ctx->data);
-	merged_data[ctx->size + include_size + 2] = '\0';
+	im[1] = rt_malloc(ctx->size + include_size + 3);
+	rt_memcpy(im[1], ctx->begin, ctx->data - ctx->begin);
+	im[1][ctx->data - ctx->begin] = '\n';
+	rt_memcpy(im[1] + (ctx->data - ctx->begin) + 1,
+		im[0], include_size);
+	im[1][ctx->data - ctx->begin + include_size + 1] = '\n';
+	rt_memcpy(im[1] + (ctx->data - ctx->begin) + include_size + 2,
+		ctx->data, ctx->begin + ctx->size - ctx->data);
+	im[1][ctx->size + include_size + 2] = '\0';
 	rt_free(ctx->begin);
-	rt_free(include_data);
-	ctx->data = merged_data + (ctx->data - ctx->begin);
-	ctx->begin = merged_data;
+	rt_free(im[0]);
+	ctx->data = im[1] + (ctx->data - ctx->begin);
+	ctx->begin = im[1];
 	ctx->size = ctx->size + include_size + 2;
 }
 

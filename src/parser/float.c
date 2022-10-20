@@ -17,7 +17,7 @@ float
 	rt_strtof(const char *str, char **end)
 {
 	float	ifes[4];
-	int	seen_digit;
+	int		seen_digit;
 
 	rt_strtof_init(str, ifes, end, &seen_digit);
 	if (*str == '-')
@@ -70,7 +70,7 @@ float
 	if (result < min || result > max)
 	{
 		rt_parse_error(ctx, "float out of range '%.*s'",
-				(int) rt_wordnlen(word, 64), word);
+			(int) rt_wordnlen(word, 64), word);
 	}
 	return (result);
 }

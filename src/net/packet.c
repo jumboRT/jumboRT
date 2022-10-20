@@ -1,7 +1,7 @@
 #if RT_BONUS
-#include "net.h"
+# include "net.h"
 
-#include "util.h"
+# include "util.h"
 
 void
 	rt_packet_destroy(struct s_packet *packet)

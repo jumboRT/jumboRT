@@ -1,4 +1,3 @@
-
 #include <libft.h>
 
 #include "rtmath.h"
@@ -13,7 +12,7 @@ static float
 	magnitude = 0.0;
 	while (ft_isdigit(*(*str)))
 	{
-		magnitude = magnitude * 10 + ((float) (int) *(*str) - '0');
+		magnitude = magnitude * 10 + ((float)(int)*(*str) - '0');
 		*str += 1;
 	}
 	return (magnitude);
@@ -29,7 +28,7 @@ static float
 	exp = 10.0;
 	while (ft_isdigit(*(*str)))
 	{
-		mantissa = mantissa + (((float) (int) *(*str) - '0') / exp);
+		mantissa = mantissa + (((float)(int)*(*str) - '0') / exp);
 		*str += 1;
 		exp *= 10.0;
 	}
@@ -60,4 +59,3 @@ int
 	*dst = (magnitude + mantissa) * sign;
 	return (!isinf(*dst));
 }
-

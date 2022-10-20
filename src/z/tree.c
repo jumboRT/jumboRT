@@ -3,7 +3,8 @@
 #include "util.h"
 
 void
-	ztree_find_counts(unsigned int *counts, unsigned char *lens, unsigned int count)
+	ztree_find_counts(unsigned int *counts, unsigned char *lens,
+			unsigned int count)
 {
 	unsigned int	i;
 
@@ -23,7 +24,8 @@ void
 }
 
 void
-	ztree_find_codes(unsigned short *codes, unsigned int *counts, unsigned char *lens, unsigned int count)
+	ztree_find_codes(unsigned short *codes, unsigned int *counts,
+			unsigned char *lens, unsigned int count)
 {
 	unsigned int	indices[16];
 	unsigned int	code;
@@ -39,10 +41,7 @@ void
 	}
 	i = 0;
 	while (i < 32768)
-	{
-		codes[i] = count;
-		i += 1;
-	}
+		codes[i++] = count;
 	i = 0;
 	while (i < count)
 	{
@@ -77,7 +76,8 @@ unsigned int
 
 	peek = zbuf_peek(zb, 15, &count);
 	value = tree->codes[peek];
-	rt_assert(value < tree->count && tree->lens[value] <= count, "ztree_get: too many bits in huffman code");
+	rt_assert(value < tree->count && tree->lens[value] <= count,
+		"ztree_get: too many bits in huffman code");
 	zbuf_skip(zb, tree->lens[value]);
 	return (value);
 }

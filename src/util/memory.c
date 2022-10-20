@@ -55,3 +55,11 @@ void
 	free(ptr);
 }
 
+void
+	rt_free4(void *a, void *b, void *c, void *d)
+{
+	rt_free(a);
+	rt_free(b);
+	rt_free(c);
+	rt_free(d);
+}

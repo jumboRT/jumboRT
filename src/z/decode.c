@@ -55,4 +55,3 @@ void
 		*dist = start_offset + block_offset + zbuf_read(ib, extra_bits) + 3;
 	}
 }
-

@@ -23,7 +23,7 @@ cl_command_queue
 		result = clCreateCommandQueueWithProperties(
 				context, device, queue_props, &status);
 	rt_assert(status == CL_SUCCESS,
-			"clCreateCommandQueueWithProperties failed");
+		"clCreateCommandQueueWithProperties failed");
 	return (result);
 }
 

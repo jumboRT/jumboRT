@@ -39,4 +39,3 @@ void
 	rt_material(ctx, world, &hyperboloid.base);
 	world_add_primitive(world, &hyperboloid, sizeof(hyperboloid));
 }
-

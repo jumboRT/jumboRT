@@ -15,7 +15,8 @@ void
 	rt_expect(t_parse_ctx *ctx, int ch)
 {
 	if (*ctx->data != ch)
-		rt_parse_error(ctx, "unexpected character %c expected %c", (int) *ctx->data, ch);
+		rt_parse_error(ctx,
+			"unexpected character %c expected %c", (int) *ctx->data, ch);
 	rt_advance(ctx);
 }
 
@@ -48,7 +49,8 @@ unsigned int
 	result = ft_atol(ctx->data);
 	if (result < 0 || (unsigned long) result > UINT_MAX)
 	{
-		rt_parse_error(ctx, "%.*s would not fit in unsigned int", rt_idlen(ctx), ctx->data);
+		rt_parse_error(ctx, "%.*s would not fit in unsigned int",
+			rt_idlen(ctx), ctx->data);
 	}
 	rt_skip(ctx, ft_isdigit);
 	return ((unsigned int) result);

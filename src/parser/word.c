@@ -38,7 +38,6 @@ char
 	result = ft_strndup(ctx->data, id_len);
 	rt_idskip(ctx, id_len);
 	return (result);
-	
 }
 
 char
@@ -54,7 +53,7 @@ char
 	if (ft_strncmp(ctx->data, prefix, prefix_len))
 	{
 		rt_parse_error(ctx, "unexpected keyword %.*s, expected keyword"
-				" starting with: '%s'", id_len, ctx->data, prefix);
+			" starting with: '%s'", id_len, ctx->data, prefix);
 	}
 	result = ft_strndup(ctx->data, id_len);
 	rt_idskip(ctx, id_len);

@@ -1,5 +1,7 @@
-#ifndef TYPE_H
-# define TYPE_H
+#ifndef TYPES_H
+# define TYPES_H
+
+typedef void			t_void;
 
 # ifndef RT_OPENCL
 

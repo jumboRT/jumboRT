@@ -1,11 +1,11 @@
 #include "util.h"
 
 #if !defined RT_WINDOWS
-#include <ft_printf.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
+# include <ft_printf.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <errno.h>
+# include <string.h>
 
 static int
 	rt_open(const char *path, int oflag)
@@ -18,7 +18,7 @@ static int
 		if (fd >= 0)
 			break ;
 		if (fd < 0 && errno == EINTR)
-			continue;
+			continue ;
 		return (-1);
 	}
 	return (fd);
@@ -37,7 +37,7 @@ static ssize_t
 	{
 		read_size = read(fildes, &buf_cpy[bytes_read], nbyte - bytes_read);
 		if (read_size < 0 && errno == EINTR)
-			continue;
+			continue ;
 		else if (read_size < 0)
 			return (-1);
 		if (read_size == 0)
@@ -107,4 +107,3 @@ char
 }
 
 #endif
-

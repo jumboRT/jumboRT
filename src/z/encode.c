@@ -14,7 +14,8 @@ static unsigned int
 }
 
 void
-	zencode_length(unsigned int length, unsigned int *code_out, unsigned int *extra_bits_out, unsigned int *value_out)
+	zencode_length(unsigned int length, unsigned int *code_out,
+			unsigned int *extra_bits_out, unsigned int *value_out)
 {
 	unsigned int	code;
 	unsigned int	extra_bits;
@@ -44,7 +45,8 @@ void
 }
 
 void
-	zencode_dist(unsigned int dist, unsigned int *code_out, unsigned int *extra_bits_out, unsigned int *value_out)
+	zencode_dist(unsigned int dist, unsigned int *code_out,
+			unsigned int *extra_bits_out, unsigned int *value_out)
 {
 	unsigned int	code;
 	unsigned int	extra_bits;
@@ -77,9 +79,8 @@ struct s_ztoken_data
 	struct s_ztoken_data	data;
 
 	zencode_length(token.length, &data.length_code,
-			&data.length_extra_bits, &data.length_value);
+		&data.length_extra_bits, &data.length_value);
 	zencode_dist(token.data.distance, &data.dist_code,
-			&data.dist_extra_bits, &data.dist_value);
+		&data.dist_extra_bits, &data.dist_value);
 	return (data);
 }
-

@@ -1,6 +1,5 @@
 #include "util.h"
 
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <libft.h>
@@ -27,7 +26,6 @@ void
 	if (!condition)
 	{
 		ft_fprintf(STDERR_FILENO, "assertion failed: %s\n", msg);
-		/* exit(EXIT_FAILURE); */
 		raise(SIGTRAP);
 	}
 }
@@ -43,4 +41,3 @@ void
 	rt_memcpy(cpy, src, size);
 	return (cpy);
 }
-

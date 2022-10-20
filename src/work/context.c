@@ -9,7 +9,7 @@ void
 	{
 		ctx->seed = rt_random(&seed);
 		if (ctx->seed != 0)
-			break;
+			break ;
 	}
 }
 
@@ -18,4 +18,3 @@ void
 {
 	(void) ctx;
 }
-

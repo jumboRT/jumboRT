@@ -1,8 +1,8 @@
 #if RT_BONUS
-#include "work.h"
+# include "work.h"
 
-#include "util.h"
-#include "net.h"
+# include "util.h"
+# include "net.h"
 
 static void
 	*work_start(void *data)
@@ -44,7 +44,7 @@ void
 	}
 }
 
-static struct s_packet 
+static struct s_packet
 	work_int_create_request_packet(t_work *work)
 {
 	struct s_packet			packet;
@@ -86,7 +86,8 @@ void
 		if (work->workers[i]->backend == RT_BACKEND_SERVER)
 		{
 			client = work->workers[i]->ctx;
-			if (rt_send_packet((struct s_client_base *) client, &packet, &error) < 0)
+			if (rt_send_packet((struct s_client_base *)
+					client, &packet, &error) < 0)
 				rt_free(error);
 		}
 		i += 1;

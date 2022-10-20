@@ -1,27 +1,26 @@
 #if RT_BONUS
-#include "net.h"
-#include <sys/types.h>
+
+# include "net.h"
+# include <sys/types.h>
 # if defined RT_WINDOWS
-#include <winsock.h>
-#include <ws2def.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <winsock.h>
+#  include <ws2def.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 # else
-#include <sys/socket.h>
-#include <netdb.h>
+#  include <sys/socket.h>
+#  include <netdb.h>
 # endif
-#include <ft_printf.h>
-#include <unistd.h>
-
-#include <string.h>
-
-#include <libft.h>
+# include <ft_printf.h>
+# include <unistd.h>
+# include <string.h>
+# include <libft.h>
 
 static struct addrinfo
 	*rt_get_addrinfo(const char *ip, const char *port, char **error)
 {
 	struct addrinfo	hints;
-	struct addrinfo *result;
+	struct addrinfo	*result;
 	int				rc;
 
 	ft_memset(&hints, 0, sizeof hints);
@@ -32,7 +31,7 @@ static struct addrinfo
 	{
 		if (error != NULL)
 			ft_asprintf(error, "failed to get information about address: %s",
-					gai_strerror(rc));
+				gai_strerror(rc));
 		return (NULL);
 	}
 	return (result);
@@ -52,12 +51,8 @@ static int
 		{
 			rc = connect(sockfd, info->ai_addr, info->ai_addrlen);
 			if (rc == 0)
-				break;
-#if defined RT_WINDOWS
-			closesocket(sockfd);
-#else
-			close(sockfd);
-#endif
+				break ;
+			rt_closesocket(sockfd);
 		}
 		info = info->ai_next;
 	}
@@ -68,7 +63,7 @@ int
 	rt_connect(const char *ip, const char *port, char **error)
 {
 	struct addrinfo	*result;
-	int	sockfd;
+	int				sockfd;
 
 	result = rt_get_addrinfo(ip, port, error);
 	if (result == NULL)
@@ -83,4 +78,20 @@ int
 	}
 	return (sockfd);
 }
+
+# if defined RT_WINDOWS
+
+int
+	rt_closesocket(int sockfd)
+{
+	return (closesocket(sockfd));
+}
+# else
+
+int
+	rt_closesocket(int sockfd)
+{
+	return (close(sockfd));
+}
+# endif
 #endif

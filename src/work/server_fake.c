@@ -1,8 +1,8 @@
 #if !RT_BONUS
-#include "work.h"
+# include "work.h"
 
-#include "util.h"
-#include "net.h"
+# include "util.h"
+# include "net.h"
 
 void
 	work_int_create_server(t_work *work)
@@ -23,4 +23,3 @@ void
 }
 
 #endif
-

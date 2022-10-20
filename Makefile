@@ -3,7 +3,7 @@ CL_NAME					:= kernel
 
 UTIL_FILES				:= util.c readfile.c freadfile.c memory.c image_bin.c \
 						   writefile.c lib.c atof.c random.c queue.c aabb.c \
-						   hash.c
+						   hash.c poll.c send.c recv.c
 VECTOR_FILES			:= vector.c sort.c swap.c view.c
 MT_FILES				:= cond.c cond_mt.c mutex.c mutex_mt.c thread.c \
 						   thread_mt.c pool.c pool_mt.c task.c pool_create_int.c
@@ -22,7 +22,11 @@ MATH_FILES				:= plane.c polynomial.c ray_constr.c vec_arith.c \
 						   vec2_fast.c mod.c vec2_arith_fast.c exp.c clamp.c \
 						   log.c tangent.c vec_abs_fast.c vec_abs.c vec2_arith.c \
 						   gamma.c vec_value.c paraboloid.c hyperboloid.c \
-						   conversion.c
+						   conversion.c atan.c vec_constr2.c \
+						   vec_constr_fast2.c vec2_get.c vec_eq.c \
+						   vec2_get_fast.c infinite_cylinder.c \
+						   cylinder_sample.c cylinder_util.c sphere_sample.c \
+						   cone_sample.c cone_util.c
 WORLD_FILES				:= impl.c intersect.c intersect_prim.c \
 						   size.c common.c trace.c camera.c \
 						   material.c tex_ppm.c conversion.c hash.c 
@@ -30,22 +34,27 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
 						   texture.c init.c ambient.c conditional.c include.c \
-						   boloid.c float.c word.c color.c vec.c
+						   boloid.c float.c word.c color.c vec.c \
+						   texture_table.c mat1.c mat2.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c \
-						   unpack.c
+						   unpack.c client_create.c handshake.c client_loop.c \
+						   new_work.c send_results.c job_request.c \
+						   pack_basic.c pack_packet.c unpack_basic.c \
+						   unpack_packet.c
 Z_FILES					:= inflate.c deflate.c zbuf.c data.c tree.c \
-						   lz77_new.c encode.c decode.c wtree.c \
-						   encode_zwtree_token.c util.c
+						   lz77.c encode.c decode.c wtree.c \
+						   encode_zwtree_token.c util.c zring.c ztable.c \
+						   lz77_util1.c lz77_util2.c
 GFX_FILES				:= win.c color.c
 BSDF_FILES				:= bsdf.c diffuse.c reflective.c transmissive.c \
 						   specular.c util.c phong.c oren_nayar.c bsdf_util.c \
 						   bsdf_sample_int.c bsdf_forward.c polar.c
 TEX_FILES				:= sample.c filter.c init.c sample_vector.c
 SHAPE_FILES				:= traits.c bounds.c
-ACCEL_FILES				:= accel_algo.c accel_info.c accel_util.c accel_ropes.c \
+ACCEL_FILES				:= accel_algo.c accel_info.c accel_util1.c accel_ropes.c \
 						   node1.c accel_save.c accel_load.c accel_split_axis.c \
-						   accel_info_init.c node2.c
+						   accel_info_init.c node2.c accel_util2.c accel_init.c
 BASE_FILES				:= main.c options.c perf.c
 
 PATCH_VERSION			:= 0

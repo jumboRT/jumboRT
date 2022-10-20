@@ -45,7 +45,7 @@ t_vec
 
 	rt_skip(ctx, ft_isspace);
 	if (RT_BONUS && *ctx->data == '(')
-		return rt_fcolor(ctx);
+		return (rt_fcolor(ctx));
 	red = rt_color_part(ctx);
 	rt_expect(ctx, ',');
 	green = rt_color_part(ctx);

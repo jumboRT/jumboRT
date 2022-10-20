@@ -21,7 +21,8 @@ void
 		while (j < n)
 		{
 			work->work_progress += work->data[j].end - work->data[j].begin;
-			work_done(work, work->data[j].results, work->data[j].begin, work->data[j].end);
+			work_done(work, work->data[j].results,
+				work->data[j].begin, work->data[j].end);
 			j += 1;
 		}
 		i += 1;
@@ -31,7 +32,7 @@ void
 static void
 	*rt_work_start(void *arg)
 {
-	t_work *work;
+	t_work	*work;
 
 	work = arg;
 	mutex_lock(&work->update_mtx);
@@ -73,7 +74,8 @@ void
 }
 
 void
-	work_send_results(t_worker *worker, t_result *results, uint64_t begin, uint64_t end)
+	work_send_results(t_worker *worker, t_result *results,
+			uint64_t begin, uint64_t end)
 {
 	t_result_block	block;
 
@@ -88,4 +90,3 @@ void
 	cond_broadcast(&worker->work->update_cnd);
 	mutex_unlock(&worker->work->update_mtx);
 }
-

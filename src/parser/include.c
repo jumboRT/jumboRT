@@ -18,4 +18,3 @@ void
 	parser_push(ctx, file);
 	rt_free(file);
 }
-

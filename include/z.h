@@ -1,35 +1,36 @@
 #ifndef Z_H
-#define Z_H
+# define Z_H
 
 # include "types.h"
 # include "vector.h"
 # include <stdlib.h>
 
 //#define ZWINDOW_SIZE (32768)
-#define ZWINDOW_SIZE (1024)
-#define ZEMPTY ((int16_t) -1)
-#define ZHASH_SIZE 2
-#define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
-#define ZHASH_MASK (ZTABLE_SIZE - 1)
-#define ZTOKEN_MIN_LENGTH 3
-#define ZTOKEN_MAX_LENGTH 258
+# define ZWINDOW_SIZE (1024)
+# define ZEMPTY ((int16_t) -1)
+# define ZHASH_SIZE 2
+# define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
+# define ZHASH_MASK (ZTABLE_SIZE - 1)
+# define ZTOKEN_MIN_LENGTH 3
+# define ZTOKEN_MAX_LENGTH 258
 
-#if ZHASH_SIZE >= 8
-#error "ZHASH_SIZE way to big"
-#endif
+# if ZHASH_SIZE >= 8
+#  error "ZHASH_SIZE way to big"
+# endif
 
-#if ZHASH_SIZE > ZTOKEN_MIN_LENGTH
-#error "ZHASH_SIZE cannot be bigger than ZTOKEN_MIN_LENGTH"
-#endif
+# if ZHASH_SIZE > ZTOKEN_MIN_LENGTH
+#  error "ZHASH_SIZE cannot be bigger than ZTOKEN_MIN_LENGTH"
+# endif
 
 typedef struct s_zbuf	t_zbuf;
 typedef struct s_ztree	t_ztree;
 typedef struct s_zwtree	t_zwtree;
 typedef struct s_ztoken	t_ztoken;
-typedef struct s_ztable t_ztable;
+typedef struct s_ztable	t_ztable;
 typedef struct s_zchain	t_zchain;
-typedef struct s_zstate t_zstate;
+typedef struct s_zstate	t_zstate;
 typedef struct s_zring	t_zring;
+typedef struct s_zlzctx	t_zlzctx;
 
 struct s_zbuf {
 	unsigned char	*data;
@@ -120,6 +121,16 @@ struct s_zstate {
 	size_t				offset;
 };
 
+struct s_zlzctx {
+	t_zchain	*chain;
+	t_zchain	*chain_ref;
+	t_ztoken	best;
+	size_t		current_length;
+	size_t		prev_length;
+	t_zstate	*state;
+	uint32_t	hash;
+};
+
 unsigned int	zfrob(unsigned int x);
 
 void			zbuf_create(t_zbuf *zb, void *data, size_t size);
@@ -157,6 +168,28 @@ void			*z_inflate(void *src, size_t src_size, size_t *dst_size);
 
 t_ztoken		*lz77_deflate(const void *src, size_t src_size,
 					size_t *dst_size);
+
+void			zring_create(t_zring *ring, size_t n);
+void			zring_destroy(t_zring *ring);
+t_zchain		*zring_at(t_zring *ring, int16_t index);
+int				zring_isfull(t_zring *ring);
+void			zring_advance(t_zring *ring);
+
+void			ztable_create(t_ztable *table, size_t n);
+void			ztable_destroy(t_ztable *table);
+int16_t			ztable_at(t_ztable *table, uint32_t hash);
+
+uint32_t		lz_hash(uint64_t data);
+uint64_t		lz_peek_next(const unsigned char *src, size_t offset,
+					size_t src_size);
+void			lz_advance(t_zstate *state, size_t amount);
+void			lz77_init(t_zstate *state, const void *src, size_t src_size);
+void			lz77_destroy(t_zstate *state);
+t_ztoken		lz_deflate(t_zstate *state, uint32_t hash);
+t_ztoken		lz_encode(t_zstate *state, uint32_t hash, t_vector *out);
+t_ztoken		ztoken_at(t_zstate *state, size_t offset);
+size_t			ztoken_mismatch(t_zstate *state, size_t offset_a,
+					size_t offset_b, size_t min);
 
 unsigned int	reverse_bits(unsigned int x, unsigned int n);
 

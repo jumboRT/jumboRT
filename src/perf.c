@@ -54,4 +54,3 @@ void
 		tv.tv_usec = perf->tv.tv_usec - tv.tv_usec;
 	ft_printf("perf: %s: %u.%03u\n", name, tv.tv_sec, tv.tv_usec / 1000);
 }
-

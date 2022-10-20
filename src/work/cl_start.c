@@ -31,8 +31,8 @@ static void
 static void
 	work_enqueue_kernel(t_opencl_start_ctx *ctx, int first, int id)
 {
-	static const size_t	global_work_size[1] = { RT_WORK_OPENCL_GLOBAL_SIZE };
-	static const size_t	local_work_size[1] = { RT_WORK_OPENCL_LOCAL_SIZE };
+	static const size_t	global_work_size[1] = {RT_WORK_OPENCL_GLOBAL_SIZE};
+	static const size_t	local_work_size[1] = {RT_WORK_OPENCL_LOCAL_SIZE};
 	cl_int				status;
 	cl_event			write_event;
 
@@ -122,4 +122,3 @@ void
 }
 
 #endif
-

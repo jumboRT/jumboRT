@@ -1,5 +1,5 @@
 #if RT_BONUS
-#include "net.h"
+# include "net.h"
 
 uint64_t
 	rt_sizesr(struct s_send_results packet)

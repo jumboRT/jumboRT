@@ -77,7 +77,8 @@ char
 }
 
 char
-	*device_file(const char *prefix, cl_platform_id platform, cl_device_id device)
+	*device_file(const char *prefix,
+			cl_platform_id platform, cl_device_id device)
 {
 	size_t	size;
 	char	*pname;
@@ -101,4 +102,3 @@ char
 }
 
 #endif
-
