@@ -30,7 +30,7 @@ PARSER_FILES			:= common.c util.c camera.c vertex.c triangle.c \
 						   sphere.c plane.c cylinder.c cone.c comment.c \
 						   world.c light.c material.c material_table.c \
 						   texture.c init.c ambient.c conditional.c include.c \
-						   boloid.c
+						   boloid.c float.c word.c color.c vec.c
 NET_FILES				:= client.c connection.c pack.c packet.c data.c \
 						   handler.c jobs.c string.c size.c compression.c \
 						   unpack.c

@@ -63,8 +63,8 @@ size_t			rt_idlen(t_parse_ctx *ctx);
 void			rt_idskip(t_parse_ctx *ctx, size_t len);
 
 float			rt_float(t_parse_ctx *ctx);
-int				rt_bool(t_parse_ctx *ctx);
 unsigned int	rt_uint(t_parse_ctx *ctx);
+t_vec			rt_fcolor(t_parse_ctx *ctx);
 t_vec			rt_color(t_parse_ctx *ctx);
 t_vec			rt_vec(t_parse_ctx *ctx);
 t_vec2			rt_vec2(t_parse_ctx *ctx);
