@@ -36,6 +36,8 @@ void
 		tmp = bump(world, hit->mat->bump_map, hit->hit.uv);
 		hit->hit.shading_normal = local_to_world(hit, tmp);
 	}
+	hit->hit.dpdu = vec_cross(hit->hit.shading_normal, hit->hit.dpdv);
+	hit->hit.dpdv = vec_cross(hit->hit.shading_normal, hit->hit.dpdu);
 }
 
 void

@@ -53,8 +53,9 @@ static void
 		bxdf2 = get_bxdf_const(bxdf_ctx->ctx->world, idx);
 		if (bxdf2->type > bxdf->type)
 			break ;
-		result->bsdf = vec_add(result->bsdf,
-				bxdf_f(bxdf_ctx, bxdf2, result->wo));
+		if (bxdf_match(bxdf_ctx, bxdf2, result->wo))
+			result->bsdf = vec_add(result->bsdf,
+					bxdf_f(bxdf_ctx, bxdf2, result->wo));
 		idx += 1;
 	}
 }

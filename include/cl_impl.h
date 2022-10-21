@@ -19,25 +19,25 @@
 
 #  ifndef RT_WORK_OPENCL_GLOBAL_SIZE
 #   if defined RT_MACOS
-#    define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 10)
+#    define RT_WORK_OPENCL_GLOBAL_SIZE 1024ULL
 #   else
-#    define RT_WORK_OPENCL_GLOBAL_SIZE (1ULL << 16)
+#    define RT_WORK_OPENCL_GLOBAL_SIZE 65536ULL
 #   endif
 #  endif
 
 #  ifndef RT_WORK_OPENCL_LOCAL_SIZE
 #   if defined RT_MACOS
-#    define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 6)
+#    define RT_WORK_OPENCL_LOCAL_SIZE 64ULL
 #   else
-#    define RT_WORK_OPENCL_LOCAL_SIZE (1ULL << 5)
+#    define RT_WORK_OPENCL_LOCAL_SIZE 32ULL
 #   endif
 #  endif
 
 #  ifndef RT_WORK_OPENCL_CHUNK_SIZE
 #   if defined RT_MACOS
-#    define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 10)
+#    define RT_WORK_OPENCL_CHUNK_SIZE 1024ULL
 #   else
-#    define RT_WORK_OPENCL_CHUNK_SIZE (1ULL << 18)
+#    define RT_WORK_OPENCL_CHUNK_SIZE 262144ULL
 #   endif
 #  endif
 
@@ -47,10 +47,22 @@
 #   define RT_WORK_OPENCL_VECTORIZE
 #  endif
 
-#  if defined RT_MACOS
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global" RT_WORK_OPENCL_VECTORIZE
+#  ifdef RT_VECTORIZE
+#   if defined RT_MACOS
+#    define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL \
+-D GLOBAL=__global -DRT_VECTORIZE"
+#   else
+#    define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL \
+-D GLOBAL=__global -cl-fast-relaxed-math -DRT_VECTORIZE"
+#   endif
 #  else
-#   define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL -D GLOBAL=__global -cl-fast-relaxed-math" RT_WORK_OPENCL_VECTORIZE
+#   if defined RT_MACOS
+#    define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL \
+-D GLOBAL=__global"
+#   else
+#    define RT_WORK_OPENCL_BUILD_FLAGS "-I include -D RT_OPENCL \
+-D GLOBAL=__global -cl-fast-relaxed-math"
+#   endif
 #  endif
 
 typedef struct s_opencl_ctx				t_opencl_ctx;
@@ -59,7 +71,8 @@ typedef struct s_opencl_start_ctx		t_opencl_start_ctx;
 typedef struct s_opencl_program_ctx		t_opencl_program_ctx;
 typedef struct s_opencl_compile_ctx		t_opencl_compile_ctx;
 
-typedef void (*t_opencl_func)(void *, cl_platform_id, cl_device_id);
+typedef void							(*t_opencl_func)(void *,
+	cl_platform_id, cl_device_id);
 
 struct s_opencl_ctx {
 	cl_context			context;

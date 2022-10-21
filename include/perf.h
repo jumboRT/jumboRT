@@ -1,7 +1,7 @@
 #ifndef PERF_H
 # define PERF_H
 
-#include <sys/time.h>
+# include <sys/time.h>
 
 typedef struct s_perf	t_perf;
 

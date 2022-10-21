@@ -21,8 +21,10 @@ t_vec
 {
 	t_vec	color;
 
+	/*
 	if (same_hemi(ctx->wi, wow))
 		return (vec_0());
+		*/
 	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);
 	return (vec_scale(color, RT_1_PI));
 }

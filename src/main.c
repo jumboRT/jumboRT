@@ -15,11 +15,11 @@
 /* ODOT: texture filtering */
 /* ODOT: material hashing to check if scene is the
  * same as last scene in network client */
+/* ODOT: ropes heap buffer overflow */
+/* ODOT: pre-normalize tangents */
 
 /* TODO: rays sometimes bounce back into the surface with smooth shading */
 /* TODO: bump/normal maps are broken? */
-/* TODO: ropes heap buffer overflow */
-/* TODO: pre-normalize tangents */
 
 #include <libft.h>
 #include <ft_printf.h>

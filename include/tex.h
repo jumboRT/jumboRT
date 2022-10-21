@@ -17,20 +17,26 @@ struct s_filter {
 	uint32_t	tex[2];
 };
 
+struct s_hwo {
+	uint64_t	width;
+	uint64_t	height;
+	uint32_t	offset;
+};
+
+struct s_checker {
+	t_vec		odd_color;
+	t_vec		even_color;
+};
+
+union u_tex_extra {
+	t_vec				color;
+	struct s_hwo		tex;
+	struct s_checker	checker;
+};
+
 struct s_tex {
-	uint32_t	type;
-	union {
-		t_vec	color;
-		struct {
-			uint64_t	width;
-			uint64_t	height;
-			uint32_t	offset;
-		}	tex;
-		struct {
-			t_vec		odd_color;
-			t_vec		even_color;
-		}	checker;
-	}	a;
+	uint32_t			type;
+	union u_tex_extra	a;
 };
 
 t_vec	filter_sample_offset(const GLOBAL t_world *world, t_filter filter,

@@ -160,8 +160,8 @@ struct s_hit {
 			float	bc_u;
 			float	bc_v;
 			float	bc_w;
-		} tr;
-	} ctx;
+		} s_tr;
+	} u_ctx;
 };
 
 float			rt_sqrt(float a);

@@ -7,7 +7,8 @@ void
 	t_vec	bary;
 
 	(void) unused;
-	bary = vec(hit->ctx.tr.bc_u, hit->ctx.tr.bc_v, hit->ctx.tr.bc_w, 0);
+	bary = vec(hit->u_ctx.s_tr.bc_u, hit->u_ctx.s_tr.bc_v,
+			hit->u_ctx.s_tr.bc_w, 0);
 	hit->uv = vec2(
 			vec_dot(vec(u(triangle.uvs[0]), u(triangle.uvs[1]),
 					u(triangle.uvs[2]), 0.0), bary),
@@ -78,11 +79,11 @@ int
 	val[3] = vec_dot(n012[3], n012[1]);
 	val[4] = vec_dot(n012[3], n012[2]);
 	val[5] = 1.0 / ((val[0] * val[2]) - (val[1] * val[1]));
-	hit->ctx.tr.bc_v = ((val[2] * val[3]) - (val[1] * val[4])) * val[5];
-	hit->ctx.tr.bc_w = ((val[0] * val[4]) - (val[1] * val[3])) * val[5];
-	hit->ctx.tr.bc_u = 1 - hit->ctx.tr.bc_v - hit->ctx.tr.bc_w;
-	return (hit->ctx.tr.bc_v >= 0 && hit->ctx.tr.bc_w >= 0
-		&& hit->ctx.tr.bc_v + hit->ctx.tr.bc_w <= 1);
+	hit->u_ctx.s_tr.bc_v = ((val[2] * val[3]) - (val[1] * val[4])) * val[5];
+	hit->u_ctx.s_tr.bc_w = ((val[0] * val[4]) - (val[1] * val[3])) * val[5];
+	hit->u_ctx.s_tr.bc_u = 1 - hit->u_ctx.s_tr.bc_v - hit->u_ctx.s_tr.bc_w;
+	return (hit->u_ctx.s_tr.bc_v >= 0 && hit->u_ctx.s_tr.bc_w >= 0
+		&& hit->u_ctx.s_tr.bc_v + hit->u_ctx.s_tr.bc_w <= 1);
 }
 
 t_vec

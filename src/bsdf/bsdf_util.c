@@ -1,6 +1,7 @@
 #include "bsdf.h"
 
 #include "mat.h"
+#include "world.h"
 
 t_bsdf
 	get_bsdf(const t_world_hit *hit)
@@ -17,4 +18,36 @@ int32_t
 	return (bxdf->type == RT_BXDF_REFLECTIVE
 		|| bxdf->type == RT_BXDF_TRANSMISSIVE
 		|| bxdf->type == RT_BXDF_SPECULAR);
+}
+
+static int32_t
+	bxdf_is_reflective(const GLOBAL t_bxdf *bxdf)
+{
+	return (bxdf->type == RT_BXDF_DIFFUSE
+		|| bxdf->type == RT_BXDF_REFLECTIVE
+		|| bxdf->type == RT_BXDF_MF_REFLECTIVE
+		|| bxdf->type == RT_BXDF_COOK_TORRANCE
+		|| bxdf->type == RT_BXDF_BLINN_PHONG
+		|| bxdf->type == RT_BXDF_PHONG
+		|| bxdf->type == RT_BXDF_SPECULAR
+		|| bxdf->type == RT_BXDF_OREN_NAYAR);
+}
+
+static int32_t
+	bxdf_is_transmissive(const GLOBAL t_bxdf *bxdf)
+{
+	return (bxdf->type == RT_BXDF_TRANSMISSIVE);
+}
+
+int32_t
+	bxdf_match(const t_bxdf_ctx *bxdf_ctx,
+			const GLOBAL t_bxdf *bxdf, t_vec wo)
+{
+	t_vec	gn;
+	int		reflect;
+
+	gn = world_to_local(bxdf_ctx->hit, bxdf_ctx->hit->hit.geometric_normal);
+	reflect = vec_dot(gn, bxdf_ctx->wi) * vec_dot(gn, wo) < 0;
+	return ((reflect && bxdf_is_reflective(bxdf))
+		|| (!reflect && bxdf_is_transmissive(bxdf)));
 }

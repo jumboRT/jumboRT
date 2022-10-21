@@ -21,7 +21,8 @@ static t_vec
 			bxdf = get_bxdf_const(bxdf_ctx->ctx->world, idx);
 			if (bxdf->type != type)
 				break ;
-			result = vec_add(bxdf_f(bxdf_ctx, bxdf, wo), result);
+			if (bxdf_match(bxdf_ctx, bxdf, wo))
+				result = vec_add(bxdf_f(bxdf_ctx, bxdf, wo), result);
 			idx++;
 		}
 		type++;

@@ -92,4 +92,14 @@ void
 	rt_free(ctx.cache);
 }
 
+#else
+
+void
+	opencl_build(const char **i, const char *o)
+{
+	(void) i;
+	(void) o;
+	rt_assert(0, "not compiled with opencl support");
+}
+
 #endif

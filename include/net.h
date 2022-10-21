@@ -7,7 +7,7 @@
 # include <stdint.h>
 # include <sys/types.h> /* TODO make this portable */
 
-# define RT_NET_JOBSIZE			(1ULL << 18)
+# define RT_NET_JOBSIZE			262144ULL
 # define RT_NET_POOL_SIZE		8
 
 # define RT_HANDSHAKE_PACKET	0x00

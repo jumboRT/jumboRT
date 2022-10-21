@@ -6,11 +6,20 @@
 # include <stdlib.h>
 
 //#define ZWINDOW_SIZE (32768)
+/*
 # define ZWINDOW_SIZE (1024)
 # define ZEMPTY ((int16_t) -1)
 # define ZHASH_SIZE 2
 # define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
 # define ZHASH_MASK (ZTABLE_SIZE - 1)
+# define ZTOKEN_MIN_LENGTH 3
+# define ZTOKEN_MAX_LENGTH 258
+*/
+# define ZWINDOW_SIZE (1024)
+# define ZEMPTY -1
+# define ZHASH_SIZE 2
+# define ZTABLE_SIZE 65536
+# define ZHASH_MASK 65535
 # define ZTOKEN_MIN_LENGTH 3
 # define ZTOKEN_MAX_LENGTH 258
 
@@ -71,12 +80,14 @@ struct s_zwtree_token {
 	unsigned int	value;
 };
 
+union u_dc {
+	unsigned int	distance;
+	unsigned int	character;
+};
+
 struct s_ztoken {
-	unsigned int		length;
-	union {
-		unsigned int	distance;
-		unsigned int	character;
-	} data;
+	unsigned int	length;
+	union u_dc		data;
 };
 
 struct s_ztoken_data {

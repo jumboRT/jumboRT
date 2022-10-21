@@ -6,10 +6,17 @@
 
 # ifdef RT_LINUX
 #  include <X11/Xlib.h>
+/*
 #  define RT_WIN_EVENT_KEY_DOWN KeyPress
 #  define RT_WIN_EVENT_KEY_MASK KeyPressMask
 #  define RT_WIN_EVENT_BUTTON_DOWN ButtonPress
 #  define RT_WIN_EVENT_BUTTON_MASK ButtonPressMask
+*/
+#  define RT_WIN_EVENT_KEY_DOWN 2
+#  define RT_WIN_EVENT_KEY_MASK 1
+#  define RT_WIN_EVENT_BUTTON_DOWN 4
+#  define RT_WIN_EVENT_BUTTON_MASK 4
+
 #  define RT_WIN_EVENT_CLOSE 17
 # else
 #  define RT_WIN_EVENT_KEY_DOWN 2

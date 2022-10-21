@@ -174,6 +174,8 @@ float		phong_pdf(const t_bxdf_ctx *ctx,
 				const GLOBAL t_bxdf_phong *bxdf, t_vec wo);
 
 t_bsdf		get_bsdf(const t_world_hit *hit);
+int32_t		bxdf_match(const t_bxdf_ctx *bxdf_ctx,
+				const GLOBAL t_bxdf *bxdf, t_vec wo);
 t_sample	bxdf_sample_int(const t_bxdf_ctx *bxdf_ctx,
 				const GLOBAL t_bxdf *bxdf);
 t_sample	bxdf_sample(const t_bxdf_ctx *ctx, const GLOBAL t_bxdf *bxdf);

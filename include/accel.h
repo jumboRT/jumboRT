@@ -57,12 +57,12 @@ struct s_accel_node {
 		float		split;
 		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
 		uint32_t	primitive_offset;
-	}	a;
+	}	u_a;
 	union {
 		uint32_t	flags;
 		uint32_t	nprims;
 		uint32_t	above_child;
-	}	b;
+	}	u_b;
 	uint32_t	leaf_data_index;
 };
 
@@ -73,12 +73,12 @@ struct s_accel_node {
 		float		split;
 		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
 		uint32_t	primitive_offset;
-	}	a;
+	}	u_a;
 	union {
 		uint32_t	flags;
 		uint32_t	nprims;
 		uint32_t	above_child;
-	}	b;
+	}	u_b;
 };
 # endif
 
