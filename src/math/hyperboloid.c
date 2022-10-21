@@ -50,7 +50,7 @@ int
 	quadratic.c = x(oc) * x(oc) + y(oc) * y(oc) - z(oc) * z(oc) + 1;
 	if (quadratic_solve(&quadratic, t) == 0)
 		return (0);
-	if (t[0] < 0)
+	if (t[0] < min)
 		t[0] = t[1];
 	if (t[1] < t[0] && t[1] >= min)
 		t[0] = t[1];

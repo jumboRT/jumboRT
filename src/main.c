@@ -16,6 +16,10 @@
 /* ODOT: material hashing to check if scene is the
  * same as last scene in network client */
 
+/* TODO: rays sometimes bounce back into the surface with smooth shading */
+/* TODO: bump/normal maps are broken? */
+/* TODO: cone... */
+
 #include <libft.h>
 #include <ft_printf.h>
 #include <stdlib.h>

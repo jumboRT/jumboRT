@@ -66,10 +66,10 @@ t_vec
 	t_vec	color;
 	float	roughness;
 
-	if (same_hemi(ctx->wi, wow))
-		return (vec_0());
 	reflect = vec_set(ctx->wi, 2, -z(ctx->wi));
 	wo = wtol(reflect, wow);
+	if (same_hemi(ctx->wi, wo))
+		return (vec_0());
 	roughness = w(filter_sample(ctx->ctx->world, bxdf->roughness,
 				ctx->hit->hit.uv));
 	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);

@@ -185,13 +185,6 @@ else
 $(error "unknown target $(target)")
 endif
 
-# TODO DEFAULT DISABLE OPENCL
-ifdef use_opencl
-	ifeq ($(use_opencl),0)
-		CFLAGS += -DRT_USE_OPENCL=0
-	endif
-endif
-
 ifndef config
 	config = distr
 endif
@@ -221,8 +214,8 @@ else ifeq ($(config), profile)
 	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
-		CFLAGS		+= -g3 -gdwarf-4 -Ofast -flto -march=native
-		LFLAGS		+= -g3 -gdwarf-4 -Ofast -flto -march=native
+		CFLAGS		+= -g3 -gdwarf-4 -Ofast -flto # -march=native
+		LFLAGS		+= -g3 -gdwarf-4 -Ofast -flto # -march=native
 	else
 		CFLAGS		+= -g3 -Ofast
 		LFLAGS		+= -g3 -Ofast
@@ -244,7 +237,10 @@ all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
 bonus: CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_MT -DRT_VECTORIZE
 bonus: $(NAME) $(CL_NAME)
 
-mandatory: CFLAGS += -DRT_BONUS=0
+cpu_only: CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_MT -DRT_VECTORIZE -DRT_USE_OPENCL=0
+cpu_only: $(NAME)
+
+mandatory: CFLAGS += -DRT_BONUS=0 -DRT_USE_OPENCL=0
 mandatory: $(NAME)
 
 SILENT			:=

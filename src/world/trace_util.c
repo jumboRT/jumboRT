@@ -7,8 +7,8 @@ t_vec
 	float	dfdx;
 	float	dfdy;
 
-	dfdx = sample_float_offset(world, bump_map, uv, vec2(2, 0)) * 5;
-	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 2)) * 5;
+	dfdx = sample_float_offset(world, bump_map, uv, vec2(5, 0)) * 2;
+	dfdy = sample_float_offset(world, bump_map, uv, vec2(0, 5)) * 2;
 	dfdx -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	dfdy -= sample_float_offset(world, bump_map, uv, vec2(0, 0));
 	return (vec_scale(vec(

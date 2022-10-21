@@ -29,8 +29,8 @@ t_triangle
 	result.uvs[1] = world->vertices[tr->b].uv;
 	result.uvs[2] = world->vertices[tr->c].uv;
 	result.normals[0] = world->vertices[tr->a].normal;
-	result.normals[1] = world->vertices[tr->a].normal;
-	result.normals[2] = world->vertices[tr->a].normal;
+	result.normals[1] = world->vertices[tr->b].normal;
+	result.normals[2] = world->vertices[tr->c].normal;
 	result.is_smooth = (mat->flags & RT_MAT_SMOOTH) != 0;
 	return (result);
 }
