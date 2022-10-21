@@ -46,6 +46,8 @@ static void
 {
 	float	radius;
 
+	plane_hit_info(ray(vec_0(), vec_0()), plane(vec_add(cone.pos,
+				vec_scale(cone.dir, cone.height)), cone.dir), &end_hit);
 	radius = rt_tan(cone.angle) * cone.height;
 	if (end_hit.t < hit->t && end_hit.t >= min)
 	{
@@ -73,17 +75,17 @@ int
 		end_hit.t = RT_HUGE_VAL;
 	hit->t = RT_HUGE_VAL;
 	cone_intesect_part(end_hit, hit, min, cone);
-	if (t_side[0] < hit->t && t_side[0] >= min)
+	if (t_side[0] < hit->t && t_side[0] >= min
+		&& hit_on_finite_cone(ray_at(ray, t_side[0]), cone))
 	{
 		hit->pos = ray_at(ray, t_side[0]);
-		if (hit_on_finite_cone(hit->pos, cone))
-			mantle_hit_info(cone, hit, t_side[0]);
+		mantle_hit_info(cone, hit, t_side[0]);
 	}
-	if (t_side[1] < hit->t && t_side[1] >= min)
+	if (t_side[1] < hit->t && t_side[1] >= min
+		&& hit_on_finite_cone(ray_at(ray, t_side[1]), cone))
 	{
 		hit->pos = ray_at(ray, t_side[1]);
-		if (hit_on_finite_cone(hit->pos, cone))
-			mantle_hit_info(cone, hit, t_side[1]);
+		mantle_hit_info(cone, hit, t_side[1]);
 	}
 	return (hit->t < RT_HUGE_VAL);
 }

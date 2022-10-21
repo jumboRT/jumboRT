@@ -18,7 +18,8 @@
 
 /* TODO: rays sometimes bounce back into the surface with smooth shading */
 /* TODO: bump/normal maps are broken? */
-/* TODO: cone... */
+/* TODO: ropes heap buffer overflow */
+/* TODO: pre-normalize tangents */
 
 #include <libft.h>
 #include <ft_printf.h>
