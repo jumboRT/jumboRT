@@ -214,15 +214,15 @@ ifeq ($(config), debug)
 		LFLAGS	+= -fsanitize=thread,undefined
 	endif
 else ifeq ($(config), release)
-	CFLAGS		+= -g3 -O2 -DRT_DEBUG=1
-	LFLAGS		+= -g3 -O2 -DRT_DEBUG=1
+	CFLAGS		+= -g3 -gdwarf-4 -O2 -DRT_DEBUG=1
+	LFLAGS		+= -g3 -gdwarf-4 -O2 -DRT_DEBUG=1
 else ifeq ($(config), profile)
 	CFLAGS		+= -g3 -Ofast -pg -flto -march=native
 	LFLAGS		+= -g3 -Ofast -pg -flto -march=native
 else ifeq ($(config), distr)
 	ifeq ($(platform), linux)
-		CFLAGS		+= -g3 -Ofast -flto -march=native
-		LFLAGS		+= -g3 -Ofast -flto -march=native
+		CFLAGS		+= -g3 -gdwarf-4 -Ofast -flto -march=native
+		LFLAGS		+= -g3 -gdwarf-4 -Ofast -flto -march=native
 	else
 		CFLAGS		+= -g3 -Ofast
 		LFLAGS		+= -g3 -Ofast
