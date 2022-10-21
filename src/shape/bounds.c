@@ -29,9 +29,9 @@ static t_bounds
 	top = vec_add(cylinder->cylinder.pos, dif);
 	dot = cylinder->cylinder.height * cylinder->cylinder.height;
 	box = vec_scale(vec(
-				rt_sqrt(1.0 - x(dif) * x(dif) / dot),
-				rt_sqrt(1.0 - y(dif) * y(dif) / dot),
-				rt_sqrt(1.0 - z(dif) * z(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - x(dif) * x(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - y(dif) * y(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - z(dif) * z(dif) / dot),
 				0.0), radius);
 	return (bounds(
 			vec_min(vec_sub(cylinder->cylinder.pos, box), vec_sub(top, box)),
@@ -62,9 +62,9 @@ static t_bounds
 	top = vec_add(shape->cone.pos, dif);
 	dot = shape->cone.height * shape->cone.height;
 	box = vec_scale(vec(
-				rt_sqrt(1.0 - x(dif) * x(dif) / dot),
-				rt_sqrt(1.0 - y(dif) * y(dif) / dot),
-				rt_sqrt(1.0 - z(dif) * z(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - x(dif) * x(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - y(dif) * y(dif) / dot),
+				rt_sqrt(1.0 + RT_TINY_VAL - z(dif) * z(dif) / dot),
 				0.0), radius);
 	return (bounds(
 			vec_min(shape->cone.pos, vec_sub(top, box)),
