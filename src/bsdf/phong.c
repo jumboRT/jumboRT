@@ -38,6 +38,7 @@ t_sample
 	phong_sample(const t_bxdf_ctx *ctx,
 			const GLOBAL t_bxdf_phong *bxdf)
 {
+	/* TODO: check */
 	t_sample	result;
 	float		epsilon[2];
 	float		theta;

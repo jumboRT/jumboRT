@@ -25,6 +25,26 @@ void
 }
 
 void
+	rt_exec_tex_def_filtered(t_world *world, t_parse_ctx *ctx)
+{
+	t_tex	tex;
+	char	*kpce[4];
+	size_t	size;
+
+	texture_init(&tex);
+	tex.type = RT_TEX_FILTERED;
+	kpce[0] = rt_keyword(ctx, "tex_");
+	kpce[1] = rt_word(ctx);
+	kpce[2] = rt_readfile(kpce[1], &kpce[3], &size);
+	rt_assert(kpce[2] != NULL, kpce[3]);
+	world_load_bmp(world, &tex, (unsigned char *) kpce[2], size);
+	tex_add(ctx, kpce[0], world_add_tex(world, &tex));
+	rt_free(kpce[0]);
+	rt_free(kpce[1]);
+	rt_free(kpce[2]);
+}
+
+void
 	rt_exec_checker_def(t_world *world, t_parse_ctx *ctx)
 {
 	t_tex	tex;

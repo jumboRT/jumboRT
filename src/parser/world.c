@@ -21,6 +21,7 @@ static const t_directive	g_directives[] = {
 {"x", rt_exec_vertex_texture_normal},
 {"f", rt_exec_triangle},
 {"tex_def", rt_exec_tex_def},
+{"tex_def_filtered", rt_exec_tex_def_filtered},
 {"checker_def", rt_exec_checker_def},
 {"mat_use", rt_exec_mat_use},
 {"mat_beg", rt_exec_mat_beg},

@@ -18,9 +18,6 @@
 /* ODOT: ropes heap buffer overflow */
 /* ODOT: pre-normalize tangents */
 
-/* TODO: rays sometimes bounce back into the surface with smooth shading */
-/* TODO: bump/normal maps are broken? */
-
 #include <libft.h>
 #include <ft_printf.h>
 #include <stdlib.h>

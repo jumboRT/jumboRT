@@ -7,8 +7,6 @@
 
 # include <stddef.h>
 
-typedef struct s_material	t_material;
-
 typedef struct s_directive	t_directive;
 typedef struct s_entry		t_entry;
 typedef struct s_parse_ctx	t_parse_ctx;
@@ -101,6 +99,7 @@ void			rt_exec_mat_use(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_beg(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_mat_end(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_tex_def(t_world *world, t_parse_ctx *ctx);
+void			rt_exec_tex_def_filtered(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_checker_def(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_diffuse(t_world *world, t_parse_ctx *ctx);
 void			rt_exec_reflective(t_world *world, t_parse_ctx *ctx);

@@ -15,12 +15,15 @@ t_hyperboloid
 void
 	hyper_hit_info(t_ray ray, t_hyperboloid hyperboloid, t_hit *hit)
 {
+	t_vec	oc;
+
 	(void) ray;
+	oc = vec_sub(hit->pos, hyperboloid.pos);
 	hit->geometric_normal
 		= vec_norm(vec3(
-				-2.0f * rt_pow(hyperboloid.a, -2.0f) * x(hit->pos),
-				-2.0f * rt_pow(hyperboloid.b, -2.0f) * y(hit->pos),
-				2.0f * rt_pow(hyperboloid.c, -2.0f) * z(hit->pos)));
+				-2.0f * rt_pow(hyperboloid.a, -2.0f) * x(oc),
+				-2.0f * rt_pow(hyperboloid.b, -2.0f) * y(oc),
+				2.0f * rt_pow(hyperboloid.c, -2.0f) * z(oc)));
 	if ((z(hit->geometric_normal) > 0
 			&& z(vec_sub(hit->pos, hyperboloid.pos)) > 0)
 		|| (z(hit->geometric_normal) < 0

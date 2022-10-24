@@ -1,6 +1,12 @@
 #include "tex.h"
 #include "world.h"
 
+static float
+	rt_fmod(float x, float y)
+{
+	return (rt_mod(rt_mod(x, y) + y, y));
+}
+
 static t_vec
 	sample_texture(const GLOBAL t_world *world, t_tex tex, t_vec2 uv,
 					t_vec2 offset)
@@ -10,8 +16,7 @@ static t_vec
 	const GLOBAL unsigned char	*pixels;
 	unsigned char				colors[4];
 
-	uv = vec2(rt_mod(rt_mod(u(uv), 1.0) + 1.0, 1.0),
-			rt_mod(rt_mod(v(uv), 1.0) + 1.0, 1.0));
+	uv = vec2(rt_fmod(u(uv), 1.0f), rt_fmod(v(uv), 1.0f));
 	xv = ((uint64_t)(u(uv) * tex.a.tex.width)
 			+ (uint64_t) u(offset)) % tex.a.tex.width;
 	yv = ((uint64_t)(v(uv) * tex.a.tex.height)
@@ -41,6 +46,31 @@ static t_vec
 	return (tex.a.checker.even_color);
 }
 
+static t_vec
+	sample_texture_filtered(const GLOBAL t_world *world,
+			t_tex tex, t_vec2 uv, t_vec2 offset)
+{
+	t_vec	corners[4];
+	float	scale[2];
+	t_vec	edges[2];
+
+	scale[0] = 1.0f - rt_fmod(u(uv) * tex.a.tex.width, 1.0f);
+	scale[1] = 1.0f - rt_fmod(v(uv) * tex.a.tex.height, 1.0f);
+	corners[0] = sample_texture(world, tex, uv, vec2_add(offset, vec2(0, 0)));
+	corners[1] = sample_texture(world, tex, uv, vec2_add(offset, vec2(1, 0)));
+	corners[2] = sample_texture(world, tex, uv, vec2_add(offset, vec2(0, 1)));
+	corners[3] = sample_texture(world, tex, uv, vec2_add(offset, vec2(1, 1)));
+	corners[0] = vec_scale(corners[0], 0.0f + scale[0]);
+	corners[1] = vec_scale(corners[1], 1.0f - scale[0]);
+	corners[2] = vec_scale(corners[2], 0.0f + scale[0]);
+	corners[3] = vec_scale(corners[3], 1.0f - scale[0]);
+	edges[0] = vec_add(corners[0], corners[1]);
+	edges[1] = vec_add(corners[2], corners[3]);
+	edges[0] = vec_scale(edges[0], 0.0f + scale[1]);
+	edges[1] = vec_scale(edges[1], 1.0f - scale[1]);
+	return (vec_add(edges[0], edges[1]));
+}
+
 t_vec
 	sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv,
 			t_vec2 offset)
@@ -52,5 +82,7 @@ t_vec
 		return (tex->a.color);
 	if (tex->type == RT_TEX_CHECKER)
 		return (sample_checker(world, *tex, uv, offset));
+	if (tex->type == RT_TEX_FILTERED)
+		return (sample_texture_filtered(world, *tex, uv, offset));
 	return (sample_texture(world, *tex, uv, offset));
 }

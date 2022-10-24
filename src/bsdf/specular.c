@@ -11,16 +11,21 @@ t_sample
 	float		fresnel;
 
 	result.wo = vec3(x(ctx->wi), y(ctx->wi), -z(ctx->wi));
-	fresnel = f_dielectric(costheta(result.wo), 1.0f,
-			ctx->hit->mat->refractive_index);
-	color = vec_scale(filter_sample(ctx->ctx->world, bxdf->base.tex,
-				ctx->hit->hit.uv), fresnel);
 	result.bsdf = vec_0();
 	result.pdf = 0.0f;
+	fresnel = f_dielectric(costheta(result.wo), 1.0f,
+			ctx->hit->mat->refractive_index);
+	/*
+	// TODO: this removes fireflies
+	if (fresnel > 0.5)
+		return (result);
+	*/
+	color = vec_scale(filter_sample(ctx->ctx->world, bxdf->base.tex,
+				ctx->hit->hit.uv), fresnel);
 	if (vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) < 0)
 	{
 		result.bsdf = vec_scale(color, 1.0f / rt_abs(costheta(result.wo)));
-		result.pdf = 1;
+		result.pdf = 1.0f;
 	}
 	return (result);
 }
