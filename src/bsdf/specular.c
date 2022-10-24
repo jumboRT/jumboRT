@@ -15,8 +15,13 @@ t_sample
 			ctx->hit->mat->refractive_index);
 	color = vec_scale(filter_sample(ctx->ctx->world, bxdf->base.tex,
 				ctx->hit->hit.uv), fresnel);
-	result.bsdf = vec_scale(color, 1.0f / rt_abs(costheta(result.wo)));
-	result.pdf = 1;
+	result.bsdf = vec_0();
+	result.pdf = 0.0f;
+	if (vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) < 0)
+	{
+		result.bsdf = vec_scale(color, 1.0f / rt_abs(costheta(result.wo)));
+		result.pdf = 1;
+	}
 	return (result);
 }
 

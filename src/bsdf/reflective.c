@@ -10,8 +10,13 @@ t_sample
 
 	result.wo = vec_set(ctx->wi, 2, -z(ctx->wi));
 	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);
-	result.bsdf = vec_scale(color, 1.0f / rt_abs(z(result.wo)));
-	result.pdf = 1;
+	result.bsdf = vec_0();
+	result.pdf = 0.0f;
+	if (vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) < 0)
+	{
+		result.bsdf = vec_scale(color, 1.0f / rt_abs(z(result.wo)));
+		result.pdf = 1.0f;
+	}
 	return (result);
 }
 

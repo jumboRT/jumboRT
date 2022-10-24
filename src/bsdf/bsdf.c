@@ -71,6 +71,8 @@ t_vec
 	new_bxdf_ctx.ctx = bxdf_ctx->ctx;
 	new_bxdf_ctx.hit = bxdf_ctx->hit;
 	new_bxdf_ctx.wi = world_to_local(bxdf_ctx->hit, bxdf_ctx->wi);
+	new_bxdf_ctx.gn = world_to_local(bxdf_ctx->hit,
+			bxdf_ctx->hit->hit.geometric_normal);
 	wo = world_to_local(bxdf_ctx->hit, wo);
 	return (bsdf_f_int(&new_bxdf_ctx, wo));
 }
@@ -83,6 +85,8 @@ float
 	new_bxdf_ctx.ctx = bxdf_ctx->ctx;
 	new_bxdf_ctx.hit = bxdf_ctx->hit;
 	new_bxdf_ctx.wi = world_to_local(bxdf_ctx->hit, bxdf_ctx->wi);
+	new_bxdf_ctx.gn = world_to_local(bxdf_ctx->hit,
+			bxdf_ctx->hit->hit.geometric_normal);
 	wo = world_to_local(bxdf_ctx->hit, wo);
 	return (bsdf_pdf_int(&new_bxdf_ctx, wo));
 }
@@ -110,6 +114,8 @@ t_sample
 	bxdf = get_bxdf_const(bxdf_ctx->ctx->world, get_bsdf(bxdf_ctx->hit).begin
 			+ idx);
 	new_bxdf_ctx.wi = world_to_local(bxdf_ctx->hit, bxdf_ctx->wi);
+	new_bxdf_ctx.gn = world_to_local(bxdf_ctx->hit,
+			bxdf_ctx->hit->hit.geometric_normal);
 	result = bxdf_sample_int(&new_bxdf_ctx, bxdf);
 	result.wo = local_to_world(bxdf_ctx->hit, result.wo);
 	return (result);

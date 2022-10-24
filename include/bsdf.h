@@ -39,6 +39,7 @@ struct s_bxdf_ctx {
 	t_trace_ctx			*ctx;
 	const t_world_hit	*hit;
 	t_vec				wi;
+	t_vec				gn;
 };
 
 struct s_bxdf {

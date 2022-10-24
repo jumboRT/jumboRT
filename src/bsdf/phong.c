@@ -66,6 +66,8 @@ t_vec
 	t_vec	color;
 	float	roughness;
 
+	if (vec_dot(ctx->gn, ctx->wi) * z(wow) > 0)
+		return (vec_0());
 	reflect = vec_set(ctx->wi, 2, -z(ctx->wi));
 	wo = wtol(reflect, wow);
 	if (same_hemi(ctx->wi, wo))
@@ -87,7 +89,7 @@ float
 	t_vec	wo;
 	float	roughness;
 
-	if (same_hemi(ctx->wi, wow))
+	if (vec_dot(ctx->gn, ctx->wi) * z(wow) > 0)
 		return (0.0f);
 	reflect = vec_set(ctx->wi, 2, -z(ctx->wi));
 	wo = wtol(reflect, wow);

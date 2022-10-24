@@ -9,8 +9,8 @@ t_sample
 	t_sample	result;
 
 	result.wo = rt_random_cosine_hemi(&ctx->ctx->ctx->seed);
-	if (z(ctx->wi) > 0)
-		result.wo = vec_set(result.wo, 2, -z(result.wo));
+	if (vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) > 0)
+		result.wo = vec_neg(result.wo);
 	result.bsdf = oren_nayar_f(ctx, bxdf, result.wo);
 	result.pdf = oren_nayar_pdf(ctx, bxdf, result.wo);
 	return (result);
@@ -41,21 +41,20 @@ t_vec
 	float	norminette[5];
 	t_vec	wi;
 
+	if (vec_dot(ctx->gn, ctx->wi) * z(wo) > 0)
+		return (vec_0());
 	wi = vec_neg(ctx->wi);
 	norminette[0] = sintheta(wi);
 	norminette[1] = sintheta(wo);
 	norminette[2] = 0.0f;
 	if (norminette[0] > 1e-4 && norminette[1] > 1e-4)
 		norminette[2] = oren_nayar_maxcos(wi, wo);
+	norminette[3] = norminette[0];
+	norminette[4] = norminette[1] / abscostheta(wo);
 	if (abscostheta(wi) > abscostheta(wo))
 	{
 		norminette[3] = norminette[1];
 		norminette[4] = norminette[0] / abscostheta(wi);
-	}
-	else
-	{
-		norminette[3] = norminette[0];
-		norminette[4] = norminette[1] / abscostheta(wo);
 	}
 	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);
 	return (vec_scale(color, RT_1_PI * (
@@ -69,7 +68,7 @@ float
 {
 	(void) ctx;
 	(void) bxdf;
-	if (same_hemi(ctx->wi, wo))
+	if (vec_dot(ctx->gn, ctx->wi) * z(wo) > 0)
 		return (0);
 	return (rt_abs(z(wo)) * RT_1_PI);
 }

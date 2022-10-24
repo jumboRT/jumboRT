@@ -45,7 +45,8 @@ t_sample
 	result.bsdf = vec_0();
 	if (costheta(wi) < 0)
 		eta = 1.0f / eta;
-	if (!refract(wi, face_forward(vec_z(1.0f), wi), eta, &result.wo))
+	if (!refract(wi, face_forward(vec_z(1.0f), wi), eta, &result.wo)
+		|| vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) < 0)
 		return (result);
 	result.pdf = 1.0f;
 	fresnel = f_dielectric(costheta(result.wo), 1.0f,
@@ -54,7 +55,8 @@ t_sample
 				ctx->hit->hit.uv), vec_sub(vec3(1.0f, 1.0f, 1.0f),
 				vec3(fresnel, fresnel, fresnel)));
 	result.bsdf = vec_scale(result.bsdf, (eta) * (1.0f / eta));
-	result.bsdf = vec_scale(result.bsdf, 1.0f / rt_abs(costheta(result.wo)));
+	result.bsdf = vec_scale(result.bsdf, 1.0f
+			/ rt_abs(costheta(result.wo)));
 	return (result);
 }
 

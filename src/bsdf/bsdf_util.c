@@ -43,11 +43,10 @@ int32_t
 	bxdf_match(const t_bxdf_ctx *bxdf_ctx,
 			const GLOBAL t_bxdf *bxdf, t_vec wo)
 {
-	t_vec	gn;
 	int		reflect;
 
-	gn = world_to_local(bxdf_ctx->hit, bxdf_ctx->hit->hit.geometric_normal);
-	reflect = vec_dot(gn, bxdf_ctx->wi) * vec_dot(gn, wo) < 0;
+	reflect = vec_dot(bxdf_ctx->gn, bxdf_ctx->wi)
+		* vec_dot(bxdf_ctx->gn, wo) < 0;
 	return ((reflect && bxdf_is_reflective(bxdf))
 		|| (!reflect && bxdf_is_transmissive(bxdf)));
 }
