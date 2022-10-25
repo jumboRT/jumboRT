@@ -2,6 +2,10 @@
 #include "world.h"
 #include "mat.h"
 
+/* ODOT: this is an ugly hack but we don't care
+if (fresnel > 1.0f - RT_TINY_VAL)
+	return (result);
+*/
 t_sample
 	specular_sample(const t_bxdf_ctx *ctx,
 			const GLOBAL t_bxdf_specular *bxdf)
@@ -15,11 +19,8 @@ t_sample
 	result.pdf = 0.0f;
 	fresnel = f_dielectric(costheta(result.wo), 1.0f,
 			ctx->hit->mat->refractive_index);
-	/*
-	// TODO: this removes fireflies
-	if (fresnel > 0.5)
+	if (fresnel > 1.0f - RT_TINY_VAL)
 		return (result);
-	*/
 	color = vec_scale(filter_sample(ctx->ctx->world, bxdf->base.tex,
 				ctx->hit->hit.uv), fresnel);
 	if (vec_dot(ctx->gn, ctx->wi) * vec_dot(ctx->gn, result.wo) < 0)

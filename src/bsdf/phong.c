@@ -38,7 +38,6 @@ t_sample
 	phong_sample(const t_bxdf_ctx *ctx,
 			const GLOBAL t_bxdf_phong *bxdf)
 {
-	/* TODO: check */
 	t_sample	result;
 	float		epsilon[2];
 	float		theta;
@@ -50,7 +49,7 @@ t_sample
 	epsilon[1] = rt_random_float(&ctx->ctx->ctx->seed);
 	roughness = w(filter_sample(ctx->ctx->world,
 				bxdf->roughness, ctx->hit->hit.uv));
-	theta = rt_acos(rt_pow(epsilon[0], 1.0f / roughness));
+	theta = rt_acos(rt_pow(epsilon[0], 1.0f / (roughness + 1)));
 	phi = RT_2PI * epsilon[1];
 	result.wo = ltow(result.wo, sphere_to_cart(theta, phi));
 	result.pdf = phong_pdf(ctx, bxdf, result.wo);
@@ -76,10 +75,8 @@ t_vec
 	roughness = w(filter_sample(ctx->ctx->world, bxdf->roughness,
 				ctx->hit->hit.uv));
 	color = filter_sample(ctx->ctx->world, bxdf->base.tex, ctx->hit->hit.uv);
-	return (vec_mul(vec_scale(vec_scale(vec3(1.0f, 1.0f, 1.0f),
-					(((roughness + 2) / RT_2PI)
-						* rt_pow(costheta(wo), roughness))),
-				1.0 / rt_abs(costheta(wow))), color));
+	return (vec_scale(color, ((roughness + 2) / RT_2PI) * rt_pow(costheta(wo),
+				roughness) / rt_abs(costheta(wow))));
 }
 
 float
