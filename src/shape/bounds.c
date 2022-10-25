@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:20 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:20 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:37:06 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 #include "world.h"
 
 static t_bounds
-	get_bounds_triangle(const t_world *world, const t_shape_triangle *triangle)
+	get_bounds_triangle(const GLOBAL t_world *world,
+			const GLOBAL t_shape_triangle *triangle)
 {
 	t_vec	points[3];
 
@@ -28,7 +29,7 @@ static t_bounds
 }
 
 static t_bounds
-	get_bounds_cylinder(const t_shape_cylinder *cylinder)
+	get_bounds_cylinder(const GLOBAL t_shape_cylinder *cylinder)
 {
 	float	radius;
 	float	dot;
@@ -51,7 +52,7 @@ static t_bounds
 }
 
 static t_bounds
-	get_bounds_sphere(const t_shape_sphere *sphere)
+	get_bounds_sphere(const GLOBAL t_shape_sphere *sphere)
 {
 	return (bounds(
 			vec_sub(sphere->pos,
@@ -61,7 +62,7 @@ static t_bounds
 }
 
 static t_bounds
-	get_bounds_cone(const t_shape_cone *shape)
+	get_bounds_cone(const GLOBAL t_shape_cone *shape)
 {
 	float	radius;
 	float	dot;
@@ -89,12 +90,13 @@ t_bounds
 {
 	if (prim_type(primitive) == RT_SHAPE_TRIANGLE)
 		return (get_bounds_triangle(world,
-				(const t_shape_triangle *) primitive));
+				(const GLOBAL t_shape_triangle *) primitive));
 	else if (prim_type(primitive) == RT_SHAPE_SPHERE)
-		return (get_bounds_sphere((const t_shape_sphere *) primitive));
+		return (get_bounds_sphere((const GLOBAL t_shape_sphere *) primitive));
 	else if (prim_type(primitive) == RT_SHAPE_CYLINDER)
-		return (get_bounds_cylinder((const t_shape_cylinder *) primitive));
+		return (get_bounds_cylinder((const GLOBAL t_shape_cylinder *)
+				primitive));
 	else if (prim_type(primitive) == RT_SHAPE_CONE)
-		return (get_bounds_cone((const t_shape_cone *) primitive));
+		return (get_bounds_cone((const GLOBAL t_shape_cone *) primitive));
 	return (bounds_0());
 }

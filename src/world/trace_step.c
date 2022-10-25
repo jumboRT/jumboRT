@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:34:34 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static int
 	return (0);
 }
 
-int
+static int
 	world_trace_step_int(t_trace_ctx *ctx, t_world_hit *hit, t_sample *sample)
 {
 	t_bxdf_ctx	bxdf_ctx;

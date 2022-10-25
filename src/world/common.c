@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:28 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:28 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:37:28 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "mat.h"
 
 t_vec
-	get_vertex(const t_world *world, t_uint32 index)
+	get_vertex(const GLOBAL t_world *world, t_uint32 index)
 {
 	return (world->vertices[index].pos);
 }

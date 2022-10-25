@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:53 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:53 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:37:36 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,7 +235,7 @@ const GLOBAL t_bxdf			*get_bxdf_const(const GLOBAL t_world *world,
 								t_uint32 index);
 GLOBAL t_bxdf				*get_bxdf(GLOBAL t_world *world,
 								t_uint32 index);
-t_vec						get_vertex(const t_world *world,
+t_vec						get_vertex(const GLOBAL t_world *world,
 								t_uint32 index);
 t_vec						get_albedo(const GLOBAL t_world *world,
 								const GLOBAL t_material *mat, t_vec2 uv);

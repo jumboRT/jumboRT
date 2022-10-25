@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:51 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:51 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:33:22 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,7 @@ t_vec			vec_0(void);
 t_vec			vec_x(float x);
 t_vec			vec_y(float y);
 t_vec			vec_z(float z);
+t_vec			vec_w(float x);
 
 t_vec2			vec2(float x, float y);
 t_vec2			vec2_0(void);

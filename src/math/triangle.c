@@ -6,14 +6,14 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:22 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:22 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:32:44 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtmath.h"
 #include "sample.h"
 
-void
+static void
 	triangle_hit_info_bary(t_ray unused, t_triangle triangle, t_hit *hit)
 {
 	t_vec	bary;

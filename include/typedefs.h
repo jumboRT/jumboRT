@@ -6,11 +6,12 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 13:26:31 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 13:26:31 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:31:54 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPEDEFS_H
+# define TYPEDEFS_H
 
 typedef struct s_accel_init_ctx			t_accel_init_ctx;
 typedef struct s_accel_node				t_accel_node;

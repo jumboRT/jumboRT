@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:17 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:17 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:33:38 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int
 	return (1);
 }
 
-t_vec
+static t_vec
 	face_forward(t_vec n, t_vec v)
 {
 	if (vec_dot(n, v) < 0)
