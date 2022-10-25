@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:09:21 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ static void
 }
 
 void
-	*z_deflate(void *src, size_t src_size, size_t *dst_size, int level)
+	*z_deflate(void *src, uint64_t src_size, uint64_t *dst_size, int level)
 {
 	t_zbuf		ib;
 	t_zbuf		ob;

@@ -6,12 +6,13 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:06:18 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "net.h"
 
+#if RT_BONUS
 #include "util.h"
 #include <ft_printf.h>
 #include <unistd.h>
@@ -78,3 +79,4 @@ void
 		client_loop(client, rt_recv_handle_packet);
 	}
 }
+#endif

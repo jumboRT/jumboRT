@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:55 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:55 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:08:46 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,9 +213,9 @@ void			zwtree_init(t_zwtree *tree, size_t *weights,
 					unsigned int max_len);
 void			zwtree_put(t_zwtree *tree, t_zbuf *zb, unsigned int value);
 
-void			*z_deflate(void *src, size_t src_size, size_t *dst_size,
+void			*z_deflate(void *src, uint64_t src_size, uint64_t *dst_size,
 					int level);
-void			*z_inflate(void *src, size_t src_size, size_t *dst_size);
+void			*z_inflate(void *src, uint64_t src_size, uint64_t *dst_size);
 
 t_ztoken		*lz77_deflate(const void *src, size_t src_size,
 					size_t *dst_size);

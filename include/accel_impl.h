@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:48 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:48 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:03:50 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void				world_info_destroy(t_tree_info *tree, t_node_info *node);
 int					world_axis_side(const t_tree_info *tree,
 						const t_split *split, t_uint32 index);
 
-const t_primitive	*get_primitive(const t_tree_info *info, t_uint64 index);
+const t_primitive	*get_primitive(const t_tree_info *info, size_t index);
 
 void				interior_node_init(t_node_info *parent_info,
 						const t_node_info *above_info, const t_split *split);
@@ -65,7 +65,7 @@ void				leaf_node_init(t_node_info *node_info);
 float				get_split_cost(const t_bounds bounds, const t_split *split,
 						const t_uint32 primitive_counts[2]);
 
-t_uint32			world_max_depth(t_uint64 prims_count);
+t_uint32			world_max_depth(size_t prims_count);
 t_uint32			new_node(t_world *world);
 t_bounds			get_bounds(const t_world *world,
 						const t_primitive *primitive);

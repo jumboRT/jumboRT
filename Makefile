@@ -259,8 +259,7 @@ endif
 ifeq ($(platform), macos)
 	FRAMEWORKS	:= -framework OpenGL -framework AppKit -framework OpenCL
 	CFLAGS		+= -DRT_MACOS -DclCreateCommandQueueWithProperties=clCreateCommandQueue
-	COMPILER_CFLAGS	+= -DRT_MACOS
-	COMPILER_EXE := compile
+	cl_compile_all_at_once := 1
 else ifeq ($(platform), linux)
 	ifeq ($(target), joinc)
 		FRAMEWORKS	:= -lm -lpthread -lOpenCL
@@ -268,13 +267,9 @@ else ifeq ($(platform), linux)
 		FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
 	endif
 	CFLAGS		+= -DRT_LINUX
-	COMPILER_CFLAGS	+= -DRT_LINUX
-	COMPILER_EXE := compile
 else ifeq ($(platform), win)
 	FRAMEWORKS	:= /usr/lib/wine/x86_64-windows/opencl.dll -lws2_32 -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
 	CFLAGS		+= -DRT_WINDOWS
-	COMPILER_CFLAGS	+= -DRT_WINDOWS
-	COMPILER_EXE := compile.exe
 	CC			:= x86_64-w64-mingw32-gcc
 	LINK_CMD	:= $(CC)
 endif

@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:09:57 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ t_result
 {
 	unsigned char	*data;
 	unsigned char	*ptr;
-	size_t			si[2];
+	uint64_t		si[2];
 	t_vec			color;
 	t_result		*result;
 

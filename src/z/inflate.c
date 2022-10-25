@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:14 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:14 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:09:05 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ static void
 }
 
 void
-	*z_inflate(void *src, size_t src_size, size_t *dst_size)
+	*z_inflate(void *src, uint64_t src_size, uint64_t *dst_size)
 {
 	t_zbuf			ib;
 	t_zbuf			ob;

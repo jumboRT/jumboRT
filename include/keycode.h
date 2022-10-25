@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:50 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:50 by csteenvo                                 */
+/*   Updated: 2022/10/25 13:08:19 by csteenvo            :      ..            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 #   define RT_KEY_S 1
 #   define RT_KEY_A 0
 #   define RT_KEY_D 2
+#   define RT_KEY_I 34
 #   define RT_KEY_UP 126
 #   define RT_KEY_DOWN 125
 #   define RT_KEY_Z 6
