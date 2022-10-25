@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   trace_volume.c                                 #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 #include "mat.h"
 
@@ -11,7 +23,7 @@ static void
 static void
 	disable_volume(t_trace_ctx *ctx, const GLOBAL t_material *mat)
 {
-	uint32_t	vi;
+	t_uint32	vi;
 
 	vi = 0;
 	while (vi < ctx->volume_size)
@@ -45,7 +57,7 @@ void
 void
 	intersect_volume(const t_trace_ctx *ctx, t_world_hit *hit)
 {
-	uint32_t	vi;
+	t_uint32	vi;
 	float		t;
 
 	vi = 0;

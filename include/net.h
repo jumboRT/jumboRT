@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   net.h                                          #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:50 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:50 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef NET_H
 # define NET_H
 
@@ -29,16 +41,16 @@ enum e_status {
 };
 
 struct s_packet {
-	uint64_t	size;
-	uint8_t		type;
+	t_uint64	size;
+	t_uint8		type;
 	void		*data;
 };
 
 struct s_client_base {
 	t_mutex			mtx;
-	uint8_t			client_type;
+	t_uint8			client_type;
 	int				sockfd;
-	uint64_t		seq_id;
+	t_uint64		seq_id;
 	enum e_status	status;
 	t_pool			pool;
 };
@@ -46,7 +58,7 @@ struct s_client_base {
 struct s_net_viewer {
 	struct s_client_base	base;
 	t_worker				*worker;
-	uint64_t				active_work;
+	t_uint64				active_work;
 	t_mutex					job_mtx;
 	t_cond					job_cnd;
 	t_thread				job_thrd;
@@ -65,24 +77,24 @@ union u_client {
 };
 
 struct s_string {
-	uint64_t	len;
+	t_uint64	len;
 	char		*str;
 };
 
 struct s_handshake {
-	uint8_t		client_type;
-	uint64_t	protover;
-	uint64_t	req_jobs;
+	t_uint8		client_type;
+	t_uint64	protover;
+	t_uint64	req_jobs;
 };
 
 struct s_send_work {
-	uint64_t	begin;
-	uint64_t	end;
+	t_uint64	begin;
+	t_uint64	end;
 };
 
 struct s_cjob_request {
-	uint64_t		width;
-	uint64_t		height;
+	t_uint64		width;
+	t_uint64		height;
 	t_vec			cam_pos;
 	t_vec			cam_dir;
 	float			cam_fov;
@@ -90,15 +102,15 @@ struct s_cjob_request {
 	float			cam_blur;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
-	uint64_t		render_mode;
-	uint64_t		batch_size;
-	uint64_t		trace_batch_size;
+	t_uint64		render_mode;
+	t_uint64		batch_size;
+	t_uint64		trace_batch_size;
 };
 
 struct s_sjob_request {
-	uint64_t		seq_id;
-	uint64_t		width;
-	uint64_t		height;
+	t_uint64		seq_id;
+	t_uint64		width;
+	t_uint64		height;
 	t_vec			cam_pos;
 	t_vec			cam_dir;
 	float			cam_fov;
@@ -106,24 +118,24 @@ struct s_sjob_request {
 	float			cam_blur;
 	struct s_string	scene_file;
 	struct s_string	scene_key;
-	uint64_t		render_mode;
-	uint64_t		batch_size;
-	uint64_t		trace_batch_size;
+	t_uint64		render_mode;
+	t_uint64		batch_size;
+	t_uint64		trace_batch_size;
 };
 
 struct s_send_results {
-	uint64_t	seq_id;
-	uint64_t	begin;
-	uint64_t	end;
-	uint64_t	zsize;
+	t_uint64	seq_id;
+	t_uint64	begin;
+	t_uint64	end;
+	t_uint64	zsize;
 	void		*zdata;
 };
 
 struct s_send_results_ctx {
 	union u_client	*client;
 	t_result		*results;
-	uint64_t		begin;
-	uint64_t		end;
+	t_uint64		begin;
+	t_uint64		end;
 };
 
 struct s_handle_send_results_ctx {
@@ -133,8 +145,8 @@ struct s_handle_send_results_ctx {
 
 int			rt_connect(const char *ip, const char *port, char **error);
 int			rt_closesocket(int sockfd);
-int			rt_send(int sockfd, const void *data, uint64_t size, char **error);
-ssize_t		rt_recv(int sockfd, void *buffer, uint64_t length, char **error);
+int			rt_send(int sockfd, const void *data, t_uint64 size, char **error);
+ssize_t		rt_recv(int sockfd, void *buffer, t_uint64 length, char **error);
 int			rt_peek(int sockfd, char **error);
 int			rt_has_data(int sockfd, int timeout, char **error);
 
@@ -156,11 +168,11 @@ void		rt_results_deflate(struct s_send_results *packet, size_t batch_size,
 				t_result *results, int level);
 t_result	*rt_results_inflate(struct s_send_results packet,
 				size_t batch_size);
-uint64_t	rt_sizesr(struct s_send_results packet);
-uint64_t	rt_sizecjr(struct s_cjob_request packet);
+t_uint64	rt_sizesr(struct s_send_results packet);
+t_uint64	rt_sizecjr(struct s_cjob_request packet);
 
-void		rt_packet_create(struct s_packet *packet, uint64_t data_size,
-				uint8_t type, void *data);
+void		rt_packet_create(struct s_packet *packet, t_uint64 data_size,
+				t_uint8 type, void *data);
 void		rt_packet_destroy(struct s_packet *packet);
 
 int			rt_handle_packet(union u_client *client, struct s_packet packet,
@@ -179,7 +191,7 @@ void		rt_client_destroy(union u_client *client);
 void		*rt_send_jobs_start(void *data);
 int			rt_send_jobs(union u_client *client, char **error);
 void		rt_send_results(union u_client *client, t_result *results,
-				uint64_t begin, uint64_t end);
+				t_uint64 begin, t_uint64 end);
 
 void		rt_string_create(struct s_string *dst, const char *str);
 void		rt_string_destroy(struct s_string *string);

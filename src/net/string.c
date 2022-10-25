@@ -1,8 +1,21 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   string.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "util.h"
-# include <string.h>
+#include "net.h"
+
+#include "util.h"
+#include <string.h>
+
+#if RT_BONUS
 
 void
 	rt_string_create(struct s_string *dst, const char *str)

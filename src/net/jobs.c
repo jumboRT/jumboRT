@@ -1,8 +1,21 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   jobs.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include <ft_printf.h>
-# include <unistd.h>
+#include "net.h"
+
+#include <ft_printf.h>
+#include <unistd.h>
+
+#if RT_BONUS
 
 static ssize_t
 	rt_send_job(union u_client *client, t_work *work, char **error)
@@ -27,7 +40,7 @@ int
 	ssize_t	rc;
 
 	while (client->viewer.active_work
-		< (uint64_t) client->viewer.worker->work->opts->net_jobs
+		< (t_uint64) client->viewer.worker->work->opts->net_jobs
 		* RT_NET_JOBSIZE)
 	{
 		mutex_unlock(&client->viewer.job_mtx);

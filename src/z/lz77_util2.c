@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   lz77_util2.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:14 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:14 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 #include "vector.h"
 #include "util.h"
@@ -20,12 +32,12 @@ size_t
 	end_a = a + max_offset;
 	a += min;
 	b += min;
-	while (a + 7 < end_a && *(uint64_t *) a == *(uint64_t *) b)
+	while (a + 7 < end_a && *(t_uint64 *) a == *(t_uint64 *) b)
 	{
 		a += 8;
 		b += 8;
 	}
-	while (a + 0 < end_a && *(uint8_t *) a == *(uint8_t *) b)
+	while (a + 0 < end_a && *(t_uint8 *) a == *(t_uint8 *) b)
 	{
 		a += 1;
 		b += 1;
@@ -34,7 +46,7 @@ size_t
 }
 
 static void
-	lz_push(t_zstate *state, uint32_t hash, size_t offset)
+	lz_push(t_zstate *state, t_uint32 hash, size_t offset)
 {
 	t_zchain	*link;
 	t_zchain	*last;
@@ -73,7 +85,7 @@ t_ztoken
 }
 
 t_ztoken
-	lz_encode(t_zstate *state, uint32_t hash, t_vector *out)
+	lz_encode(t_zstate *state, t_uint32 hash, t_vector *out)
 {
 	t_ztoken	token;
 	size_t		length;

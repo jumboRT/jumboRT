@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_algo.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 #include "hash.h"
@@ -12,7 +24,7 @@
 
 static void
 	world_split_edges(t_node_info *node, t_split *split,
-			uint8_t axis, size_t *counts)
+			t_uint8 axis, size_t *counts)
 {
 	t_edge	*below_above_cur_end[4];
 	int		side;
@@ -93,7 +105,7 @@ void
 	world_accel(t_world *world)
 {
 	t_accel_init_ctx	ctx;
-	uint64_t			hash;
+	t_uint64			hash;
 	char				file[64];
 	t_perf				perf;
 

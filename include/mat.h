@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   mat.h                                          #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:50 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:50 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MAT_H
 # define MAT_H
 
@@ -15,7 +27,7 @@
 typedef struct s_material			t_material;
 
 struct s_material {
-	uint32_t	flags;
+	t_uint32	flags;
 	t_bsdf		surface;
 	t_bsdf		volume;
 	t_filter	alpha;
@@ -23,8 +35,8 @@ struct s_material {
 	float		refractive_index;
 	float		emission_exp;
 	float		brightness;
-	uint32_t	normal_map;
-	uint32_t	bump_map;
+	t_uint32	normal_map;
+	t_uint32	bump_map;
 	float		density;
 };
 #endif

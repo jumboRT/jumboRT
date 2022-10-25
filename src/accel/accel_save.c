@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_save.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 
 #include "util.h"
@@ -5,14 +17,14 @@
 #include "world.h"
 
 void
-	world_accel_save(t_world *world, const char *file, uint64_t hash)
+	world_accel_save(t_world *world, const char *file, t_uint64 hash)
 {
 	size_t			size;
 	unsigned char	*data;
 	unsigned char	*ptr;
 	char			*error;
 
-	size = sizeof(uint64_t) * 5;
+	size = sizeof(t_uint64) * 5;
 	size += world->accel_nodes_size + world->accel_indices_size
 		+ world->accel_degenerates_size + world->leaf_data_size;
 	data = rt_malloc(size);

@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_util2.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel_impl.h"
+#include "world_impl.h"
 
 static inline float
 	calculate_cost(float total_sa, const float sub_sa[2],
-		const uint32_t primitive_count[2])
+		const t_uint32 primitive_count[2])
 {
 	float	inv_total_sa;
 	float	below_chance;
@@ -43,7 +56,7 @@ static void
 
 float
 	get_split_cost(const t_bounds bounds, const t_split *split,
-		const uint32_t primitive_counts[2])
+		const t_uint32 primitive_counts[2])
 {
 	float		surface_areas[2];
 
@@ -52,7 +65,7 @@ float
 			surface_areas, primitive_counts));
 }
 
-uint32_t
+t_uint32
 	world_max_depth(size_t prims_count)
 {
 	if (prims_count <= 1)
@@ -60,7 +73,7 @@ uint32_t
 	return (8.0 + 1.3 * log2((float) prims_count));
 }
 
-uint32_t
+t_uint32
 	new_node(t_world *world)
 {
 	t_accel_node	new_node;

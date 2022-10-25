@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   material.c                                     #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:07 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:07 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 #include "mat.h"
@@ -6,11 +18,11 @@
 #include "world_impl.h"
 #include <libft.h>
 
-uint32_t
+t_uint32
 	rt_material_int(t_parse_ctx *ctx, t_world *world)
 {
 	char		*keyword;
-	uint32_t	mat_index;
+	t_uint32	mat_index;
 
 	if (has_prefix(ctx, "mat_"))
 	{
@@ -47,7 +59,7 @@ void
 {
 	t_material		material;
 	char			*keyword;
-	uint32_t		mat_index;
+	t_uint32		mat_index;
 
 	material_init(&material, world);
 	keyword = rt_keyword(ctx, "mat_");

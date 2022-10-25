@@ -1,6 +1,18 @@
-#if RT_BONUS
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   connection.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "net.h"
+#include "net.h"
+
+#if RT_BONUS
 # include <sys/types.h>
 # if defined RT_WINDOWS
 #  include <winsock.h>

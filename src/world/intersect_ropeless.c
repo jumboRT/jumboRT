@@ -1,14 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   intersect_ropeless.c                           #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:33 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:33 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 #include "accel.h"
 #include "shape.h"
 
 #if !ACCEL_USE_ROPES
 
-static uint32_t
+static t_uint32
 	world_intersect_find_next_child(const GLOBAL t_world *world,
 			struct s_intersect_ctx *ctx, float a, float b)
 {
-	uint32_t	next_child;
+	t_uint32	next_child;
 
 	if (a < b)
 	{
@@ -31,7 +43,7 @@ static void
 	float		dir_t;
 	float		split_t;
 	float		plane_t;
-	uint32_t	next_child;
+	t_uint32	next_child;
 
 	while (!is_leaf(*ctx->node))
 	{

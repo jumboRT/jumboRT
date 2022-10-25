@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   parser.h                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:50 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:50 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSER_H
 # define PARSER_H
 
@@ -17,7 +29,7 @@ struct s_directive {
 };
 
 struct s_entry {
-	uint32_t	index;
+	t_uint32	index;
 	char		*name;
 	t_vec		color;
 };
@@ -34,7 +46,7 @@ struct s_parse_ctx {
 	t_vector	materials;
 	t_vector	textures;
 	int			mat_use_set;
-	uint32_t	mat_use;
+	t_uint32	mat_use;
 	size_t		max_index;
 	const char	*key;
 };
@@ -45,12 +57,12 @@ void			parser_init(t_parse_ctx *ctx, const char *filename,
 					const char *key);
 void			parser_push(t_parse_ctx *ctx, const char *filename);
 void			parser_destroy(t_parse_ctx *ctx);
-void			mat_add(t_parse_ctx *ctx, const char *name, uint32_t index);
-void			tex_add(t_parse_ctx *ctx, const char *name, uint32_t index);
-uint32_t		mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
-uint32_t		mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
-uint32_t		tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
-uint32_t		tex_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
+void			mat_add(t_parse_ctx *ctx, const char *name, t_uint32 index);
+void			tex_add(t_parse_ctx *ctx, const char *name, t_uint32 index);
+t_uint32		mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
+t_uint32		mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
+t_uint32		tex_by_name(t_world *world, t_parse_ctx *ctx, const char *name);
+t_uint32		tex_by_color(t_world *world, t_parse_ctx *ctx, t_vec color);
 void			rt_check_in_mat(t_parse_ctx *ctx);
 
 void			rt_parse_assert(t_parse_ctx *ctx, int cond, const char *fmt,
@@ -75,7 +87,7 @@ t_vec			rt_vec_norm(t_parse_ctx *ctx);
 char			*rt_word(t_parse_ctx *ctx);
 char			*rt_keyword(t_parse_ctx *ctx, const char *prefix);
 float			rt_float_range(t_parse_ctx *ctx, float min, float max);
-uint32_t		rt_texture(t_world *world, t_parse_ctx *ctx);
+t_uint32		rt_texture(t_world *world, t_parse_ctx *ctx);
 t_filter		rt_filter(t_world *world, t_parse_ctx *ctx);
 void			rt_material(t_parse_ctx *ctx, t_world *world,
 					t_primitive *shape);

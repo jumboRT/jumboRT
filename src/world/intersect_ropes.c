@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   intersect_ropes.c                              #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:33 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:33 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 
 #if ACCEL_USE_ROPES
@@ -24,12 +36,12 @@ static void
 
 static void
 	world_intersect_tree_exit(t_ray ray, const GLOBAL t_rope_data *rope,
-			uint32_t *exit_rope, float *exit_distance)
+			t_uint32 *exit_rope, float *exit_distance)
 {
 	float		org_t;
 	float		dir_t;
-	uint32_t	index;
-	uint32_t	rope_index;
+	t_uint32	index;
+	t_uint32	rope_index;
 	float		distance;
 
 	index = 0;
@@ -52,7 +64,7 @@ static int
 	world_intersect_tree_step(const GLOBAL t_world *world, t_ray ray,
 			struct s_intersect_ctx *ctx, t_world_hit *hit)
 {
-	uint32_t					exit_rope;
+	t_uint32					exit_rope;
 	float						exit_distance;
 	const GLOBAL t_leaf_data	*leaf;
 

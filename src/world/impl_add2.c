@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   impl_add2.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world_impl.h"
 #include "accel.h"
 #include "util.h"
 
-uint32_t
+t_uint32
 	world_add_accel_node(t_world *world, t_accel_node *accel_node)
 {
 	size_t	old_size;
@@ -17,8 +29,8 @@ uint32_t
 	return (old_size / sizeof(*accel_node));
 }
 
-uint32_t
-	world_add_accel_index(t_world *world, uint32_t accel_index)
+t_uint32
+	world_add_accel_index(t_world *world, t_uint32 accel_index)
 {
 	size_t	old_size;
 
@@ -32,8 +44,8 @@ uint32_t
 	return (old_size / sizeof(accel_index));
 }
 
-uint32_t
-	world_add_accel_degenerate(t_world *world, uint32_t accel_degenerate)
+t_uint32
+	world_add_accel_degenerate(t_world *world, t_uint32 accel_degenerate)
 {
 	size_t	old_size;
 
@@ -47,7 +59,7 @@ uint32_t
 	return (old_size / sizeof(accel_degenerate));
 }
 
-uint32_t
+t_uint32
 	world_add_leaf_data(t_world *world, t_leaf_data leaf_data)
 {
 	size_t	old_size;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   cl_impl.h                                      #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:49 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:49 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CL_IMPL_H
 # define CL_IMPL_H
 
@@ -105,8 +117,8 @@ struct s_opencl_callback_ctx {
 	t_opencl_ctx	*cl_ctx;
 	int				id;
 	cl_event		event;
-	uint64_t		begin;
-	uint64_t		end;
+	t_uint64		begin;
+	t_uint64		end;
 };
 
 struct s_opencl_start_ctx {
@@ -183,10 +195,10 @@ void				opencl_build_program_path(t_opencl_program_ctx *ctx,
 void				opencl_save_program_path(t_opencl_program_ctx *ctx,
 						const char *path);
 
+# endif
+
 void				opencl_compile(const char *i, const char *o);
 void				opencl_link(const char **i, const char *o);
 void				opencl_build(const char **i, const char *o);
-
-# endif
 
 #endif

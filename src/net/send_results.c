@@ -1,8 +1,20 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   send_results.c                                 #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "util.h"
-# include <ft_printf.h>
+#include "net.h"
+#include "util.h"
+#include <ft_printf.h>
+
+#if RT_BONUS
 
 static void
 	rt_handle_send_results_task(void *ctx, size_t id)

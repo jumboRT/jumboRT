@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   shape.h                                        #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:52 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:52 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SHAPE_H
 # define SHAPE_H
 
@@ -29,14 +41,14 @@ typedef struct s_shape_hyperboloid	t_shape_hyperboloid;
 typedef struct s_shape_point		t_shape_point;
 
 struct s_primitive {
-	uint32_t	data;
+	t_uint32	data;
 };
 
 struct s_shape_triangle {
 	t_primitive	base;
-	uint32_t	a;
-	uint32_t	b;
-	uint32_t	c;
+	t_uint32	a;
+	t_uint32	b;
+	t_uint32	c;
 };
 
 struct s_shape_sphere {
@@ -75,7 +87,7 @@ struct s_shape_point {
 	t_vec		pos;
 };
 
-uint32_t	prim_type(const GLOBAL t_primitive *prim);
+t_uint32	prim_type(const GLOBAL t_primitive *prim);
 t_bounds	prim_bounds(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world);
 int			prim_intersect(const GLOBAL t_primitive *prim,

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   bsdf.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:18 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:18 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "bsdf.h"
 
 #include "world.h"
@@ -6,8 +18,8 @@
 static t_vec
 	bsdf_f_int(const t_bxdf_ctx *bxdf_ctx, t_vec wo)
 {
-	uint32_t			idx;
-	uint32_t			type;
+	t_uint32			idx;
+	t_uint32			type;
 	const GLOBAL t_bxdf	*bxdf;
 	t_vec				result;
 
@@ -36,8 +48,8 @@ static float
 	bsdf_pdf_int(const t_bxdf_ctx *bxdf_ctx,
 			t_vec wo)
 {
-	uint32_t			idx;
-	uint32_t			type;
+	t_uint32			idx;
+	t_uint32			type;
 	const GLOBAL t_bxdf	*bxdf;
 	float				result[2];
 
@@ -94,7 +106,7 @@ float
 t_sample
 	bsdf_sample(const t_bxdf_ctx *bxdf_ctx)
 {
-	uint32_t			idx;
+	t_uint32			idx;
 	const GLOBAL t_bxdf	*bxdf;
 	t_sample			result;
 	t_bxdf_ctx			new_bxdf_ctx;

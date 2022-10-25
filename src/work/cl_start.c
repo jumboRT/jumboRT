@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   cl_start.c                                     #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:10 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:10 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cl_impl.h"
 #include "util.h"
 
@@ -7,7 +19,7 @@
 
 static void
 	work_set_kernel_args(t_opencl_start_ctx *ctx,
-			uint64_t begin, uint64_t end, int id)
+			t_uint64 begin, t_uint64 end, int id)
 {
 	cl_int				status;
 
@@ -96,8 +108,8 @@ void
 	*work_start(void *data)
 {
 	t_opencl_start_ctx	ctx;
-	uint64_t			begin;
-	uint64_t			end;
+	t_uint64			begin;
+	t_uint64			end;
 	int					id;
 
 	ctx.worker = data;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   bsdf.h                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:49 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:49 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BSDF_H
 # define BSDF_H
 
@@ -43,7 +55,7 @@ struct s_bxdf_ctx {
 };
 
 struct s_bxdf {
-	uint32_t	type;
+	t_uint32	type;
 	t_filter	tex;
 	float		weight;
 };
@@ -100,8 +112,8 @@ union u_bxdf_any {
 };
 
 struct s_bsdf {
-	uint32_t	begin;
-	uint32_t	end;
+	t_uint32	begin;
+	t_uint32	end;
 	float		weight;
 };
 
@@ -175,7 +187,7 @@ float		phong_pdf(const t_bxdf_ctx *ctx,
 				const GLOBAL t_bxdf_phong *bxdf, t_vec wo);
 
 t_bsdf		get_bsdf(const t_world_hit *hit);
-int32_t		bxdf_match(const t_bxdf_ctx *bxdf_ctx,
+t_int32		bxdf_match(const t_bxdf_ctx *bxdf_ctx,
 				const GLOBAL t_bxdf *bxdf, t_vec wo);
 t_sample	bxdf_sample_int(const t_bxdf_ctx *bxdf_ctx,
 				const GLOBAL t_bxdf *bxdf);
@@ -187,5 +199,5 @@ float		bxdf_pdf(const t_bxdf_ctx *ctx, const GLOBAL t_bxdf *bxdf,
 t_sample	bsdf_sample(const t_bxdf_ctx *ctx);
 t_vec		bsdf_f(const t_bxdf_ctx *ctx, t_vec wo);
 float		bsdf_pdf(const t_bxdf_ctx *ctx, t_vec wo);
-int32_t		bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf);
+t_int32		bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf);
 #endif

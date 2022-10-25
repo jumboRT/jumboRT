@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   util.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:09 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:09 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "work.h"
 
 #include "util.h"
@@ -5,7 +17,7 @@
 #include <libft.h>
 
 static void
-	work_recv(t_work *work, uint64_t *begin, uint64_t *end, size_t size)
+	work_recv(t_work *work, t_uint64 *begin, t_uint64 *end, size_t size)
 {
 	if (work->opts->worker)
 	{
@@ -30,14 +42,14 @@ static void
 }
 
 void
-	work_send(t_work *work, uint64_t begin, uint64_t end)
+	work_send(t_work *work, t_uint64 begin, t_uint64 end)
 {
 	mutex_lock(&work->mtx);
 	work->pending_size += sizeof(begin) + sizeof(end);
 	work->pending = rt_reallog(work->pending,
 			&work->pending_capacity, work->pending_size);
-	work->pending[work->pending_size / sizeof(uint64_t) - 2] = begin;
-	work->pending[work->pending_size / sizeof(uint64_t) - 1] = end;
+	work->pending[work->pending_size / sizeof(t_uint64) - 2] = begin;
+	work->pending[work->pending_size / sizeof(t_uint64) - 1] = end;
 	work->work_size += end - begin;
 	cond_broadcast(&work->cnd);
 	mutex_unlock(&work->mtx);
@@ -62,7 +74,7 @@ void
 }
 
 int
-	work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size)
+	work_sync(t_work *work, t_uint64 *begin, t_uint64 *end, size_t size)
 {
 	mutex_lock(&work->mtx);
 	work->paused += 1;
@@ -87,11 +99,11 @@ int
 }
 
 void
-	work_done(t_work *work, t_result *results, uint64_t begin, uint64_t end)
+	work_done(t_work *work, t_result *results, t_uint64 begin, t_uint64 end)
 {
 	t_pixel		*data;
-	uint64_t	i;
-	uint64_t	index;
+	t_uint64	i;
+	t_uint64	index;
 
 	if (work->opts->worker)
 	{

@@ -1,14 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:28 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:28 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "hash.h"
 #include "mat.h"
 #include "shape.h"
 
-static uint64_t
+static t_uint64
 	hash_geometry(const GLOBAL t_world *world, int flags, t_seed *seed)
 {
-	uint64_t					index;
+	t_uint64					index;
 	const GLOBAL char			*primitives;
 	const GLOBAL t_primitive	*primitive;
-	uint64_t					hash;
+	t_uint64					hash;
 
 	(void) flags;
 	hash = 0;
@@ -30,11 +42,11 @@ static uint64_t
 	return (hash);
 }
 
-static uint64_t
+static t_uint64
 	hash_materials_int(const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	index;
-	uint64_t	hash;
+	t_uint64	index;
+	t_uint64	hash;
 
 	hash = 0;
 	index = 0;
@@ -58,11 +70,11 @@ static uint64_t
 	return (hash);
 }
 
-static uint64_t
+static t_uint64
 	hash_materials(const GLOBAL t_world *world, int flags, t_seed *seed)
 {
-	uint64_t	index;
-	uint64_t	hash;
+	t_uint64	index;
+	t_uint64	hash;
 
 	(void) flags;
 	hash = 0;
@@ -83,10 +95,10 @@ static uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_world(const GLOBAL t_world *world, int flags)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 	t_seed		seed;
 
 	seed = 7549087012;

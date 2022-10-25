@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   update.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:09 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:09 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "work.h"
 
 #include "util.h"
@@ -75,7 +87,7 @@ void
 
 void
 	work_send_results(t_worker *worker, t_result *results,
-			uint64_t begin, uint64_t end)
+			t_uint64 begin, t_uint64 end)
 {
 	t_result_block	block;
 

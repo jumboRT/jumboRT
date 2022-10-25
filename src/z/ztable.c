@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   ztable.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:14 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:14 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 
 #include "util.h"
@@ -21,8 +33,8 @@ void
 	table->size = 0;
 }
 
-int16_t
-	ztable_at(t_ztable *table, uint32_t hash)
+t_int16
+	ztable_at(t_ztable *table, t_uint32 hash)
 {
 	return (table->data[hash].first);
 }

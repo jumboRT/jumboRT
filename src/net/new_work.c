@@ -1,6 +1,18 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   new_work.c                                     #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "net.h"
+
+#if RT_BONUS
 # include "util.h"
 # include "world_impl.h"
 # include "parser.h"
@@ -15,8 +27,8 @@ static int
 	return (worker->work != NULL
 		&& ft_strcmp(worker->opts.scene_file, request.scene_file.str) == 0
 		&& ft_strcmp(worker->opts.key, request.scene_key.str) == 0
-		&& (uint64_t) worker->opts.width == request.width
-		&& (uint64_t) worker->opts.height == request.height);
+		&& (t_uint64) worker->opts.width == request.width
+		&& (t_uint64) worker->opts.height == request.height);
 }
 
 static void

@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   rand.h                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:51 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:51 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef RAND_H
 # define RAND_H
 # include "types.h"
 
 # include "rtmath.h"
 
-typedef uint64_t	t_seed;
+typedef t_uint64	t_seed;
 
 t_seed	rt_random(GLOBAL t_seed *seed);
 float	rt_random_float(GLOBAL t_seed *seed);

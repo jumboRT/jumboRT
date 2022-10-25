@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   impl.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:29 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:29 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 #include "util.h"
 
 static void
-	*world_zero(uint32_t *count, uint64_t *size, uint64_t *capacity)
+	*world_zero(t_uint32 *count, t_uint64 *size, t_uint64 *capacity)
 {
 	if (count != NULL)
 		*count = 0;
@@ -66,7 +78,7 @@ void
 }
 
 void
-	*world_reallog(void *ptr, uint64_t *capacity, uint64_t size)
+	*world_reallog(void *ptr, t_uint64 *capacity, t_uint64 size)
 {
 	size_t	capacity_size;
 

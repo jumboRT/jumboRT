@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   job_request.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "net.h"
+#include "ser.h"
+
 #if RT_BONUS
-# include "net.h"
-# include "ser.h"
 
 static int
 	rt_handle_job_request_worker(struct s_net_worker *client,
@@ -21,7 +34,7 @@ static int
 	rt_handle_job_request_viewer(struct s_net_viewer *client,
 					struct s_packet packet, char **error)
 {
-	uint64_t	seq_id;
+	t_uint64	seq_id;
 
 	(void) error;
 	rt_upacku64(packet.data, &seq_id);

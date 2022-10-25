@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   tex.h                                          #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:52 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:52 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TEX_H
 # define TEX_H
 
@@ -15,13 +27,13 @@ typedef struct s_tex	t_tex;
 typedef struct s_filter	t_filter;
 
 struct s_filter {
-	uint32_t	tex[2];
+	t_uint32	tex[2];
 };
 
 struct s_hwo {
-	uint64_t	width;
-	uint64_t	height;
-	uint32_t	offset;
+	t_uint64	width;
+	t_uint64	height;
+	t_uint32	offset;
 };
 
 struct s_checker {
@@ -36,7 +48,7 @@ union u_tex_extra {
 };
 
 struct s_tex {
-	uint32_t			type;
+	t_uint32			type;
 	union u_tex_extra	a;
 };
 
@@ -44,15 +56,15 @@ t_vec	filter_sample_offset(const GLOBAL t_world *world, t_filter filter,
 			t_vec2 uv, t_vec2 poffset);
 t_vec	filter_sample(const GLOBAL t_world *world, t_filter filter,
 			t_vec2 uv);
-t_vec	sample_vector_offset(const GLOBAL t_world *world, uint32_t id,
+t_vec	sample_vector_offset(const GLOBAL t_world *world, t_uint32 id,
 			t_vec2 uv, t_vec2 offset);
-t_vec	sample_color_offset(const GLOBAL t_world *world, uint32_t id,
+t_vec	sample_color_offset(const GLOBAL t_world *world, t_uint32 id,
 			t_vec2 uv, t_vec2 offset);
-float	sample_float_offset(const GLOBAL t_world *world, uint32_t id,
+float	sample_float_offset(const GLOBAL t_world *world, t_uint32 id,
 			t_vec2 uv, t_vec2 offset);
-t_vec	sample_vector(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
-t_vec	sample_color(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
-float	sample_float(const GLOBAL t_world *world, uint32_t id, t_vec2 uv);
+t_vec	sample_vector(const GLOBAL t_world *world, t_uint32 id, t_vec2 uv);
+t_vec	sample_color(const GLOBAL t_world *world, t_uint32 id, t_vec2 uv);
+float	sample_float(const GLOBAL t_world *world, t_uint32 id, t_vec2 uv);
 
 void	texture_init(t_tex *tex);
 

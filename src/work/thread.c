@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   thread.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:09 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:09 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "work.h"
 
 #include "util.h"
@@ -10,8 +22,8 @@ static void
 	*work_start(void *data)
 {
 	t_worker	*worker;
-	uint64_t	begin;
-	uint64_t	end;
+	t_uint64	begin;
+	t_uint64	end;
 	size_t		i;
 	t_result	result[RT_WORK_THREAD_CHUNK_SIZE];
 

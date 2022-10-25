@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_init.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel_impl.h"
 #include "world_impl.h"
 
@@ -29,13 +41,13 @@ static void
 	}
 }
 
-static uint32_t
+static t_uint32
 	push_back_indices(t_tree_info *tree_info, t_tree_edges *edges)
 {
 	const t_edge	*edge;
-	uint32_t		first_offset;
+	t_uint32		first_offset;
 	size_t			index;
-	uint32_t		edge_type;
+	t_uint32		edge_type;
 
 	edge = &edges->edges[AXIS_X][0];
 	first_offset = world_add_accel_index(tree_info->world,
@@ -75,7 +87,7 @@ void
 	primitive_count = node_info->edges->count / 2;
 	node = get_node(node_info);
 	node->u_b.flags = 3;
-	node->u_b.nprims |= ((uint32_t) primitive_count) << 2;
+	node->u_b.nprims |= ((t_uint32) primitive_count) << 2;
 	if (primitive_count <= ACCEL_INLINE_PRIMS)
 		copy_indices(node, node_info->tree, node_info->edges);
 	else

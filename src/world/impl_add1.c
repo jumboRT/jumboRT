@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   impl_add1.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world_impl.h"
 
 #include "mat.h"
 #include "util.h"
 #include "shape.h"
 
-uint32_t
+t_uint32
 	world_add_material(t_world *world, t_material *material)
 {
 	size_t	old_size;
@@ -19,7 +31,7 @@ uint32_t
 	return (old_size / sizeof(*material));
 }
 
-uint32_t
+t_uint32
 	world_add_primitive(t_world *world, void *primitive, size_t size)
 {
 	size_t				old_size;
@@ -38,7 +50,7 @@ uint32_t
 	return (old_size / RT_PRIMITIVE_ALIGN);
 }
 
-uint32_t
+t_uint32
 	world_add_vertex(t_world *world, t_vertex *vertex)
 {
 	size_t	old_size;
@@ -52,8 +64,8 @@ uint32_t
 	return (old_size / sizeof(*vertex));
 }
 
-uint32_t
-	world_add_light(t_world *world, uint32_t light)
+t_uint32
+	world_add_light(t_world *world, t_uint32 light)
 {
 	size_t	old_size;
 

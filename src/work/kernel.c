@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   kernel.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:10 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:10 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 
 #ifdef RT_OPENCL
@@ -12,8 +24,8 @@ __kernel void
 	work_kernel(
 		GLOBAL t_world *world,
 		GLOBAL t_context *ctx,
-		uint64_t begin,
-		uint64_t end,
+		t_uint64 begin,
+		t_uint64 end,
 		GLOBAL t_result *results,
 		GLOBAL unsigned int *index,
 		GLOBAL void *primitives,

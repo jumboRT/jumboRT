@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   z.h                                            #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:55 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:55 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef Z_H
 # define Z_H
 
@@ -8,7 +20,7 @@
 //#define ZWINDOW_SIZE (32768)
 /*
 # define ZWINDOW_SIZE (1024)
-# define ZEMPTY ((int16_t) -1)
+# define ZEMPTY ((t_int16) -1)
 # define ZHASH_SIZE 2
 # define ZTABLE_SIZE (1 << (ZHASH_SIZE * 8))
 # define ZHASH_MASK (ZTABLE_SIZE - 1)
@@ -100,8 +112,8 @@ struct s_ztoken_data {
 };
 
 struct s_ztable_entry {
-	int16_t	first;
-	int16_t	last;
+	t_int16	first;
+	t_int16	last;
 };
 
 struct s_ztable {
@@ -111,11 +123,11 @@ struct s_ztable {
 
 struct s_zchain {
 	size_t		offset;
-	uint64_t	hash;
+	t_uint64	hash;
 	size_t		next_length;
-	int16_t		next;
+	t_int16		next;
 	size_t		next_best_length;
-	int16_t		next_best;
+	t_int16		next_best;
 };
 
 struct s_zring {
@@ -140,7 +152,7 @@ struct s_zlzctx {
 	size_t		current_length;
 	size_t		prev_length;
 	t_zstate	*state;
-	uint32_t	hash;
+	t_uint32	hash;
 };
 
 struct s_deflate_fixed_trees {
@@ -210,22 +222,22 @@ t_ztoken		*lz77_deflate(const void *src, size_t src_size,
 
 void			zring_create(t_zring *ring, size_t n);
 void			zring_destroy(t_zring *ring);
-t_zchain		*zring_at(t_zring *ring, int16_t index);
+t_zchain		*zring_at(t_zring *ring, t_int16 index);
 int				zring_isfull(t_zring *ring);
 void			zring_advance(t_zring *ring);
 
 void			ztable_create(t_ztable *table, size_t n);
 void			ztable_destroy(t_ztable *table);
-int16_t			ztable_at(t_ztable *table, uint32_t hash);
+t_int16			ztable_at(t_ztable *table, t_uint32 hash);
 
-uint32_t		lz_hash(uint64_t data);
-uint64_t		lz_peek_next(const unsigned char *src, size_t offset,
+t_uint32		lz_hash(t_uint64 data);
+t_uint64		lz_peek_next(const unsigned char *src, size_t offset,
 					size_t src_size);
 void			lz_advance(t_zstate *state, size_t amount);
 void			lz77_init(t_zstate *state, const void *src, size_t src_size);
 void			lz77_destroy(t_zstate *state);
-t_ztoken		lz_deflate(t_zstate *state, uint32_t hash);
-t_ztoken		lz_encode(t_zstate *state, uint32_t hash, t_vector *out);
+t_ztoken		lz_deflate(t_zstate *state, t_uint32 hash);
+t_ztoken		lz_encode(t_zstate *state, t_uint32 hash, t_vector *out);
 t_ztoken		ztoken_at(t_zstate *state, size_t offset);
 size_t			ztoken_mismatch(t_zstate *state, size_t offset_a,
 					size_t offset_b, size_t min);

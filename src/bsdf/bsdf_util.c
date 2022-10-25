@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   bsdf_util.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:18 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:18 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "bsdf.h"
 
 #include "mat.h"
@@ -12,7 +24,7 @@ t_bsdf
 		return (hit->mat->surface);
 }
 
-int32_t
+t_int32
 	bxdf_is_perfspec(const GLOBAL t_bxdf *bxdf)
 {
 	return (bxdf->type == RT_BXDF_REFLECTIVE
@@ -20,7 +32,7 @@ int32_t
 		|| bxdf->type == RT_BXDF_SPECULAR);
 }
 
-static int32_t
+static t_int32
 	bxdf_is_reflective(const GLOBAL t_bxdf *bxdf)
 {
 	return (bxdf->type == RT_BXDF_DIFFUSE
@@ -33,13 +45,13 @@ static int32_t
 		|| bxdf->type == RT_BXDF_OREN_NAYAR);
 }
 
-static int32_t
+static t_int32
 	bxdf_is_transmissive(const GLOBAL t_bxdf *bxdf)
 {
 	return (bxdf->type == RT_BXDF_TRANSMISSIVE);
 }
 
-int32_t
+t_int32
 	bxdf_match(const t_bxdf_ctx *bxdf_ctx,
 			const GLOBAL t_bxdf *bxdf, t_vec wo)
 {

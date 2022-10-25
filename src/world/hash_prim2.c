@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash_prim2.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:31 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:31 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "hash.h"
 
-uint64_t
+t_uint64
 	hash_paraboloid(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_paraboloid	*shape;
-	uint64_t						hash;
+	t_uint64						hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_paraboloid *) prim;
@@ -15,12 +27,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_hyperboloid(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_hyperboloid	*shape;
-	uint64_t							hash;
+	t_uint64							hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_hyperboloid *) prim;
@@ -31,12 +43,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_point(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_point	*shape;
-	uint64_t					hash;
+	t_uint64					hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_point *) prim;

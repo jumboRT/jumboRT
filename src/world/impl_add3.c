@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   impl_add3.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:29 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:29 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world_impl.h"
 #include "tex.h"
 #include "util.h"
@@ -5,7 +17,7 @@
 
 #include <libft.h>
 
-uint32_t
+t_uint32
 	world_add_tex(t_world *world, const t_tex *tex)
 {
 	size_t	old_size;
@@ -19,7 +31,7 @@ uint32_t
 	return (old_size / sizeof(*tex));
 }
 
-uint32_t
+t_uint32
 	world_alloc_tex_data(t_world *world, size_t size)
 {
 	size_t	old_size;
@@ -35,7 +47,7 @@ void
 	world_insert_bxdf_volume(t_world *world,
 			t_material *material, void *bxdf, size_t size)
 {
-	uint32_t	i;
+	t_uint32	i;
 
 	world->bxdfs_size += sizeof(t_bxdf_any);
 	world->bxdfs = world_reallog(world->bxdfs,
@@ -56,7 +68,7 @@ void
 	world_insert_bxdf_surface(t_world *world,
 			t_material *material, void *bxdf, size_t size)
 {
-	uint32_t	i;
+	t_uint32	i;
 
 	world->bxdfs_size += sizeof(t_bxdf_any);
 	world->bxdfs = world_reallog(world->bxdfs,

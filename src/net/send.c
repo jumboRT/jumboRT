@@ -1,6 +1,18 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   send.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "net.h"
+
+#if RT_BONUS
 # ifdef RT_WINDOWS
 #  include <winsock2.h>
 #  include <winsock.h>
@@ -14,7 +26,7 @@
 # include <string.h>
 
 int
-	rt_send(int sockfd, const void *data, uint64_t size, char **error)
+	rt_send(int sockfd, const void *data, t_uint64 size, char **error)
 {
 	ssize_t	nwritten;
 
@@ -28,7 +40,7 @@ int
 				continue ;
 			if (error != NULL)
 				ft_asprintf(error, "failed to send %u bytes of data: %s",
-					(uint32_t) size, strerror(errno));
+					(t_uint32) size, strerror(errno));
 			return (-1);
 		}
 		size -= nwritten;

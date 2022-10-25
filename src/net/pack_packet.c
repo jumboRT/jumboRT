@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   pack_packet.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "net.h"
+#include "ser.h"
+#include <string.h>
+
 #if RT_BONUS
-# include "net.h"
-# include "ser.h"
-# include <string.h>
 
 void
 	*rt_packhs(void *dst, struct s_handshake packet, int type)

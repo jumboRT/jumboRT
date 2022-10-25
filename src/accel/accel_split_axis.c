@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_split_axis.c                             #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 
@@ -32,7 +44,7 @@ mijn implementatie werkt als volgt:
 - herhaal alles tot er geen edges meer over zijn
 */
 static void
-	world_best_split_axis_iter(uint32_t prim_edge_count[2][2],
+	world_best_split_axis_iter(t_uint32 prim_edge_count[2][2],
 			const t_edge *edge_end[2], t_split *current)
 {
 	current->offset = edge_end[0]->offset;
@@ -49,8 +61,8 @@ static void
 }
 
 static void
-	world_best_split_axis_init(t_node_info *node, uint8_t axis,
-			const t_edge *edge_end[2], uint32_t prim_edge_count[2][2])
+	world_best_split_axis_init(t_node_info *node, t_uint8 axis,
+			const t_edge *edge_end[2], t_uint32 prim_edge_count[2][2])
 {
 	edge_end[0] = node->edges->edges[axis];
 	edge_end[1] = edge_end[0] + node->edges->count;
@@ -60,7 +72,7 @@ static void
 
 static void
 	world_best_split_axis_update(t_node_info *node, t_split *current,
-		uint32_t prim_edge_count[2][2], t_split *best)
+		t_uint32 prim_edge_count[2][2], t_split *best)
 {
 	current->cost = get_split_cost(node->bounds, current,
 			prim_edge_count[0]);
@@ -69,11 +81,11 @@ static void
 }
 
 void
-	world_best_split_axis(t_node_info *node, t_split *best, uint8_t axis)
+	world_best_split_axis(t_node_info *node, t_split *best, t_uint8 axis)
 {
 	const t_edge	*edge_end[2];
 	t_split			current;
-	uint32_t		prim_edge_count[2][2];
+	t_uint32		prim_edge_count[2][2];
 	int				in_bounds;
 
 	current.axis = axis;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   material_table.c                               #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:07 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:07 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 #include "mat.h"
@@ -6,7 +18,7 @@
 #include <stdlib.h>
 
 void
-	mat_add(t_parse_ctx *ctx, const char *name, uint32_t index)
+	mat_add(t_parse_ctx *ctx, const char *name, t_uint32 index)
 {
 	t_entry	new_entry;
 
@@ -15,7 +27,7 @@ void
 	vector_push(&ctx->materials, &new_entry);
 }
 
-uint32_t
+t_uint32
 	mat_by_name(t_world *world, t_parse_ctx *ctx, const char *name)
 {
 	size_t		i;
@@ -34,7 +46,7 @@ uint32_t
 	exit(EXIT_FAILURE);
 }
 
-uint32_t
+t_uint32
 	mat_by_color(t_world *world, t_parse_ctx *ctx, t_vec color)
 {
 	size_t			i;

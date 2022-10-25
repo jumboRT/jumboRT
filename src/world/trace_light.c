@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   trace_light.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 #include "shape.h"
 #include "mat.h"
@@ -6,7 +18,7 @@ static t_ray
 	intersect_light_init(const t_trace_ctx *ctx, t_world_hit *hit,
 			const t_world_hit *whit)
 {
-	uint32_t	light;
+	t_uint32	light;
 	t_vec		delta;
 
 	light = rt_random(&ctx->ctx->seed) % ctx->world->lights_count;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   unpack_basic.c                                 #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ser.h"
 #include "net.h"
 
@@ -6,20 +18,20 @@
 #include <string.h>
 
 void
-	*rt_upacku64(void *src, uint64_t *i)
+	*rt_upacku64(void *src, t_uint64 *i)
 {
 	unsigned char	*buf;
 
 	*i = 0;
 	buf = src;
-	*i |= (uint64_t)(*buf++);
-	*i |= (uint64_t)(*buf++) << 8;
-	*i |= (uint64_t)(*buf++) << 16;
-	*i |= (uint64_t)(*buf++) << 24;
-	*i |= (uint64_t)(*buf++) << 32;
-	*i |= (uint64_t)(*buf++) << 40;
-	*i |= (uint64_t)(*buf++) << 48;
-	*i |= (uint64_t)(*buf++) << 56;
+	*i |= (t_uint64)(*buf++);
+	*i |= (t_uint64)(*buf++) << 8;
+	*i |= (t_uint64)(*buf++) << 16;
+	*i |= (t_uint64)(*buf++) << 24;
+	*i |= (t_uint64)(*buf++) << 32;
+	*i |= (t_uint64)(*buf++) << 40;
+	*i |= (t_uint64)(*buf++) << 48;
+	*i |= (t_uint64)(*buf++) << 56;
 	return (buf);
 }
 
@@ -39,7 +51,7 @@ void
 {
 	float		m;
 	int			e;
-	uint16_t	h;
+	t_uint16	h;
 
 	memcpy(&h, src, sizeof(h));
 	if (h == 0)

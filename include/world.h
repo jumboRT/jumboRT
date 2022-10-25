@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   world.h                                        #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:53 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:53 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef WORLD_H
 # define WORLD_H
 
@@ -63,27 +75,27 @@ typedef struct s_cam_params			t_cam_params;
 struct s_intersect_ctx {
 	const GLOBAL t_accel_node	*node;
 	float						min_t;
-	const GLOBAL uint32_t		*prims;
-	uint32_t					prim_index;
-	uint32_t					prim_count;
+	const GLOBAL t_uint32		*prims;
+	t_uint32					prim_index;
+	t_uint32					prim_count;
 };
 
 # else
 
 struct s_stack_node {
-	uint32_t	index;
+	t_uint32	index;
 	float		max;
 };
 
 struct s_intersect_ctx {
 	struct s_stack_node			stack[ACCEL_NODE_STACK_SIZE];
-	uint32_t					stack_index;
+	t_uint32					stack_index;
 	const GLOBAL t_accel_node	*node;
 	float						min_t;
 	float						max_t;
-	const GLOBAL uint32_t		*prims;
-	uint32_t					prim_index;
-	uint32_t					prim_count;
+	const GLOBAL t_uint32		*prims;
+	t_uint32					prim_index;
+	t_uint32					prim_count;
 };
 
 # endif
@@ -97,18 +109,18 @@ struct s_cam_params {
 };
 
 struct s_eta_link {
-	int64_t		mat;
-	uint32_t	bxdf;
+	t_int64		mat;
+	t_uint32	bxdf;
 	float		eta;
-	int32_t		next;
-	int32_t		prev;
+	t_int32		next;
+	t_int32		prev;
 };
 
 struct s_trace_all_ctx {
 	GLOBAL t_result		*results;
 	GLOBAL unsigned int	*index;
-	uint64_t			begin;
-	uint64_t			end;
+	t_uint64			begin;
+	t_uint64			end;
 };
 
 struct s_trace_ctx {
@@ -118,7 +130,7 @@ struct s_trace_ctx {
 	t_vec					head;
 	t_vec					tail;
 	const GLOBAL t_material	*volumes[RT_MAX_VOLUMES];
-	uint32_t				volume_size;
+	t_uint32				volume_size;
 	float					time;
 	int						specref;
 	int						alpha_skips;
@@ -133,8 +145,8 @@ struct s_context {
 };
 
 struct s_image_meta {
-	uint64_t	width;
-	uint64_t	height;
+	t_uint64	width;
+	t_uint64	height;
 };
 
 struct s_camera {
@@ -160,64 +172,64 @@ struct s_vertex {
 struct s_world {
 	t_image_meta			img_meta;
 	t_camera				camera;
-	uint32_t				flags;
-	uint32_t				ambient_mat;
+	t_uint32				flags;
+	t_uint32				ambient_mat;
 	float					ambient_dist;
-	uint32_t				render_mode;
-	uint64_t				batch_size;
-	uint64_t				trace_batch_size;
-	uint32_t				primitives_count;
-	uint32_t				materials_count;
-	uint32_t				vertices_count;
-	uint32_t				accel_nodes_count;
-	uint32_t				accel_indices_count;
-	uint32_t				accel_degenerates_count;
-	uint32_t				textures_count;
-	uint32_t				bxdfs_count;
-	uint32_t				lights_count;
-	uint32_t				leaf_data_count;
-	uint64_t				primitives_size;
-	uint64_t				materials_size;
-	uint64_t				vertices_size;
-	uint64_t				accel_nodes_size;
-	uint64_t				accel_indices_size;
-	uint64_t				accel_degenerates_size;
-	uint64_t				textures_size;
-	uint64_t				texture_data_size;
-	uint64_t				bxdfs_size;
-	uint64_t				lights_size;
-	uint64_t				leaf_data_size;
-	uint64_t				primitives_capacity;
-	uint64_t				materials_capacity;
-	uint64_t				vertices_capacity;
-	uint64_t				accel_nodes_capacity;
-	uint64_t				accel_indices_capacity;
-	uint64_t				accel_degenerates_capacity;
-	uint64_t				textures_capacity;
-	uint64_t				texture_data_capacity;
-	uint64_t				bxdfs_capacity;
-	uint64_t				lights_capacity;
-	uint64_t				leaf_data_capacity;
+	t_uint32				render_mode;
+	t_uint64				batch_size;
+	t_uint64				trace_batch_size;
+	t_uint32				primitives_count;
+	t_uint32				materials_count;
+	t_uint32				vertices_count;
+	t_uint32				accel_nodes_count;
+	t_uint32				accel_indices_count;
+	t_uint32				accel_degenerates_count;
+	t_uint32				textures_count;
+	t_uint32				bxdfs_count;
+	t_uint32				lights_count;
+	t_uint32				leaf_data_count;
+	t_uint64				primitives_size;
+	t_uint64				materials_size;
+	t_uint64				vertices_size;
+	t_uint64				accel_nodes_size;
+	t_uint64				accel_indices_size;
+	t_uint64				accel_degenerates_size;
+	t_uint64				textures_size;
+	t_uint64				texture_data_size;
+	t_uint64				bxdfs_size;
+	t_uint64				lights_size;
+	t_uint64				leaf_data_size;
+	t_uint64				primitives_capacity;
+	t_uint64				materials_capacity;
+	t_uint64				vertices_capacity;
+	t_uint64				accel_nodes_capacity;
+	t_uint64				accel_indices_capacity;
+	t_uint64				accel_degenerates_capacity;
+	t_uint64				textures_capacity;
+	t_uint64				texture_data_capacity;
+	t_uint64				bxdfs_capacity;
+	t_uint64				lights_capacity;
+	t_uint64				leaf_data_capacity;
 	GLOBAL void				*primitives;
 	GLOBAL t_material		*materials;
 	GLOBAL t_vertex			*vertices;
 	GLOBAL t_accel_node		*accel_nodes;
-	GLOBAL uint32_t			*accel_indices;
-	GLOBAL uint32_t			*accel_degenerates;
+	GLOBAL t_uint32			*accel_indices;
+	GLOBAL t_uint32			*accel_degenerates;
 	GLOBAL t_tex			*textures;
 	GLOBAL unsigned char	*texture_data;
 	GLOBAL t_bxdf_any		*bxdfs;
-	GLOBAL uint32_t			*lights;
+	GLOBAL t_uint32			*lights;
 	GLOBAL t_leaf_data		*leaf_data;
 };
 
-uint64_t					project_index(const GLOBAL t_world *world,
-								uint64_t index);
+t_uint64					project_index(const GLOBAL t_world *world,
+								t_uint64 index);
 t_ray						project(const GLOBAL t_world *world,
-								GLOBAL t_context *ctx, uint64_t index);
+								GLOBAL t_context *ctx, t_uint64 index);
 
-uint64_t					world_primitive_size(uint8_t shape_type);
-uint32_t					prim_mat(const GLOBAL t_primitive *prim);
+t_uint64					world_primitive_size(t_uint8 shape_type);
+t_uint32					prim_mat(const GLOBAL t_primitive *prim);
 
 t_sphere					make_sphere(const GLOBAL t_world *world,
 								const GLOBAL t_void *ptr);
@@ -225,25 +237,25 @@ t_triangle					make_triangle(const GLOBAL t_world *world,
 								const GLOBAL t_void *ptr);
 
 const GLOBAL t_primitive	*get_prim_const(const GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 GLOBAL t_primitive			*get_prim(GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 const GLOBAL t_material		*get_mat_const(const GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 GLOBAL t_material			*get_mat(GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 GLOBAL unsigned char		*get_tex_data(GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 const GLOBAL unsigned char	*get_tex_data_const(const GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 const GLOBAL t_tex			*get_tex_const(const GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 const GLOBAL t_bxdf			*get_bxdf_const(const GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 GLOBAL t_bxdf				*get_bxdf(GLOBAL t_world *world,
-								uint32_t index);
+								t_uint32 index);
 t_vec						get_vertex(const t_world *world,
-								uint32_t index);
+								t_uint32 index);
 t_vec						get_albedo(const GLOBAL t_world *world,
 								const GLOBAL t_material *mat, t_vec2 uv);
 
@@ -257,7 +269,7 @@ void						toggle_volume(t_trace_ctx *ctx,
 void						intersect_volume(const t_trace_ctx *ctx,
 								t_world_hit *hit);
 t_vec						bump(const GLOBAL t_world *world,
-								uint32_t bump_map, t_vec2 uv);
+								t_uint32 bump_map, t_vec2 uv);
 void						fix_normals(const GLOBAL t_world *world,
 								t_world_hit *hit, t_ray ray);
 void						init_normals(t_world_hit *hit, t_ray ray,
@@ -279,7 +291,7 @@ void						world_trace_light(t_trace_ctx *ctx,
 int							world_trace_step(t_trace_ctx *ctx);
 t_vec						world_trace(const GLOBAL t_world *world,
 								GLOBAL t_context *ctx,
-								uint64_t begin, int depth);
+								t_uint64 begin, int depth);
 void						world_trace_all(const GLOBAL t_world *world,
 								GLOBAL t_context *ctx,
 								const t_trace_all_ctx *ta_ctx);
@@ -294,6 +306,6 @@ void						world_intersect(const GLOBAL t_world *world,
 void						camera_set(const t_world *world, t_camera *camera,
 								t_cam_params params);
 
-const GLOBAL uint32_t		*node_prims(const GLOBAL t_world *world,
+const GLOBAL t_uint32		*node_prims(const GLOBAL t_world *world,
 								const GLOBAL t_accel_node *node);
 #endif

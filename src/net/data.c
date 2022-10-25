@@ -1,6 +1,18 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   data.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "net.h"
+
+#if RT_BONUS
 # include "util.h"
 # ifdef RT_WINDOWS
 #  include <winsock2.h>

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   client.c                                       #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "net.h"
 
 #include "mt.h"
@@ -18,7 +30,7 @@ static void
 	struct s_send_results_ctx	*info;
 	struct s_packet				packet;
 	struct s_send_results		data;
-	uint64_t					size;
+	t_uint64					size;
 	void						*buf;
 
 	(void) id;
@@ -42,8 +54,8 @@ static void
 }
 
 void
-	rt_send_results(union u_client *client, t_result *results, uint64_t begin,
-			uint64_t end)
+	rt_send_results(union u_client *client, t_result *results, t_uint64 begin,
+			t_uint64 end)
 {
 	struct s_send_results_ctx	*ctx;
 	t_task						*task;
@@ -91,8 +103,8 @@ void
 #else
 
 void
-	rt_send_results(union u_client *client, t_result *results, uint64_t begin,
-			uint64_t end)
+	rt_send_results(union u_client *client, t_result *results, t_uint64 begin,
+			t_uint64 end)
 {
 	(void) client;
 	(void) results;

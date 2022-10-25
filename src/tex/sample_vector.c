@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   sample_vector.c                                #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:15 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:15 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "tex.h"
 #include "world.h"
 
@@ -11,16 +23,16 @@ static t_vec
 	sample_texture(const GLOBAL t_world *world, t_tex tex, t_vec2 uv,
 					t_vec2 offset)
 {
-	uint64_t					xv;
-	uint64_t					yv;
+	t_uint64					xv;
+	t_uint64					yv;
 	const GLOBAL unsigned char	*pixels;
 	unsigned char				colors[4];
 
 	uv = vec2(rt_fmod(u(uv), 1.0f), rt_fmod(v(uv), 1.0f));
-	xv = ((uint64_t)(u(uv) * tex.a.tex.width)
-			+ (uint64_t) u(offset)) % tex.a.tex.width;
-	yv = ((uint64_t)(v(uv) * tex.a.tex.height)
-			+ (uint64_t) v(offset)) % tex.a.tex.height;
+	xv = ((t_uint64)(u(uv) * tex.a.tex.width)
+			+ (t_uint64) u(offset)) % tex.a.tex.width;
+	yv = ((t_uint64)(v(uv) * tex.a.tex.height)
+			+ (t_uint64) v(offset)) % tex.a.tex.height;
 	pixels = get_tex_data_const(world, tex.a.tex.offset);
 	colors[0] = pixels[(yv * tex.a.tex.width + xv) * 4 + 0];
 	colors[1] = pixels[(yv * tex.a.tex.width + xv) * 4 + 1];
@@ -72,7 +84,7 @@ static t_vec
 }
 
 t_vec
-	sample_vector_offset(const GLOBAL t_world *world, uint32_t id, t_vec2 uv,
+	sample_vector_offset(const GLOBAL t_world *world, t_uint32 id, t_vec2 uv,
 			t_vec2 offset)
 {
 	const GLOBAL t_tex	*tex;

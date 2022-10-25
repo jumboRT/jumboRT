@@ -193,6 +193,12 @@ ifndef san
 	san := address
 endif 
 
+ifndef error
+	CFLAGS	+= -Werror
+else ifeq ($(error),1)
+	CFLAGS	+= -Werror
+endif
+
 ifeq ($(config), debug)
 	CFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3 -O0 -DRT_BACKTRACE
 	LFLAGS		+= -DRT_DEBUG=1 -fno-inline -g3
@@ -232,7 +238,7 @@ CL_SOURCES				:= $(patsubst %.c,$(SRC_DIR)/%.c,$(CL_FILE_NAMES))
 CL_OBJECTS				:= $(patsubst %.c,$(OBJ_DIR)/%-cl,$(CL_FILE_NAMES))
 
 # all: $(NAME)
-all: bonus #TODO CHANGE THIS BEFORE TURNING IN!
+all: mandatory
 
 bonus: CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_MT -DRT_VECTORIZE
 bonus: $(NAME) $(CL_NAME)
@@ -293,7 +299,7 @@ $(FT_PRINTF_LIB):
 	$(SILENT)${MAKE} -C $(FT_PRINTF_DIR) all config=$(config) san=$(san) CC=$(CC)
 
 $(MLX_LIB):
-	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="$(CFLAGS) -I$(shell pwd)/$(MLX_DIR)" CC=$(CC)
+	$(SILENT)${MAKE} -C $(MLX_DIR) CFLAGS="-I$(shell pwd)/$(MLX_DIR)" CC=$(CC) 2>/dev/null
 
 ifeq ($(cl_compile_all_at_once), 1)
 
@@ -331,6 +337,9 @@ fclean: clean
 
 re: fclean
 	$(MAKE) all
+
+norm:
+	norminette include src
 
 -include $(DEPENDS)
 .PHONY: all clean fclean re

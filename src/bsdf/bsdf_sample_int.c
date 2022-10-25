@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   bsdf_sample_int.c                              #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:18 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:18 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "bsdf.h"
 #include "world.h"
 
-static uint32_t
+static t_uint32
 	bxdf_sample_int_start(const t_bxdf_ctx *bxdf_ctx,
 			const GLOBAL t_bxdf *bxdf)
 {
-	uint32_t			start;
+	t_uint32			start;
 	const GLOBAL t_bxdf	*bxdf2;
 
 	start = get_bsdf(bxdf_ctx->hit).begin;
@@ -21,9 +33,9 @@ static uint32_t
 
 static void
 	bxdf_sample_int_pdf(const t_bxdf_ctx *bxdf_ctx,
-			const GLOBAL t_bxdf *bxdf, uint32_t start, t_sample *result)
+			const GLOBAL t_bxdf *bxdf, t_uint32 start, t_sample *result)
 {
-	uint32_t			idx;
+	t_uint32			idx;
 	const GLOBAL t_bxdf	*bxdf2;
 
 	idx = start;
@@ -41,9 +53,9 @@ static void
 
 static void
 	bxdf_sample_int_bsdf(const t_bxdf_ctx *bxdf_ctx,
-			const GLOBAL t_bxdf *bxdf, uint32_t start, t_sample *result)
+			const GLOBAL t_bxdf *bxdf, t_uint32 start, t_sample *result)
 {
-	uint32_t			idx;
+	t_uint32			idx;
 	const GLOBAL t_bxdf	*bxdf2;
 
 	result->bsdf = vec_0();
@@ -64,7 +76,7 @@ t_sample
 	bxdf_sample_int(const t_bxdf_ctx *bxdf_ctx,
 			const GLOBAL t_bxdf *bxdf)
 {
-	uint32_t			start;
+	t_uint32			start;
 	t_sample			result;
 
 	result = bxdf_sample(bxdf_ctx, bxdf);

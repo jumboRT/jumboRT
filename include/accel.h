@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel.h                                        #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:42 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:42 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef ACCEL_H
 # define ACCEL_H
 
@@ -43,7 +55,7 @@ typedef struct s_edge				t_edge;
 
 struct s_rope_data {
 	float		bounds[6];
-	uint32_t	ropes[6];
+	t_uint32	ropes[6];
 };
 
 struct s_leaf_data {
@@ -55,15 +67,15 @@ struct s_leaf_data {
 struct s_accel_node {
 	union {
 		float		split;
-		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
-		uint32_t	primitive_offset;
+		t_uint32	inline_primitives[ACCEL_INLINE_PRIMS];
+		t_uint32	primitive_offset;
 	}	u_a;
 	union {
-		uint32_t	flags;
-		uint32_t	nprims;
-		uint32_t	above_child;
+		t_uint32	flags;
+		t_uint32	nprims;
+		t_uint32	above_child;
 	}	u_b;
-	uint32_t	leaf_data_index;
+	t_uint32	leaf_data_index;
 };
 
 # else
@@ -71,21 +83,21 @@ struct s_accel_node {
 struct s_accel_node {
 	union {
 		float		split;
-		uint32_t	inline_primitives[ACCEL_INLINE_PRIMS];
-		uint32_t	primitive_offset;
+		t_uint32	inline_primitives[ACCEL_INLINE_PRIMS];
+		t_uint32	primitive_offset;
 	}	u_a;
 	union {
-		uint32_t	flags;
-		uint32_t	nprims;
-		uint32_t	above_child;
+		t_uint32	flags;
+		t_uint32	nprims;
+		t_uint32	above_child;
 	}	u_b;
 };
 # endif
 
 struct s_node_info {
 	t_tree_info		*tree;
-	uint32_t		offset;
-	uint32_t		depth;
+	t_uint32		offset;
+	t_uint32		depth;
 	t_tree_edges	*edges;
 	t_bounds		bounds;
 };
@@ -93,13 +105,13 @@ struct s_node_info {
 struct s_split {
 	float		offset;
 	float		cost;
-	uint8_t		axis;
+	t_uint8		axis;
 };
 
 float				split_pos(t_accel_node node);
-uint32_t			nprims(t_accel_node node);
-uint32_t			split_axis(t_accel_node node);
-uint32_t			is_leaf(t_accel_node node);
-uint32_t			above_child(t_accel_node node);
+t_uint32			nprims(t_accel_node node);
+t_uint32			split_axis(t_accel_node node);
+t_uint32			is_leaf(t_accel_node node);
+t_uint32			above_child(t_accel_node node);
 
 #endif

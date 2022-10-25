@@ -1,9 +1,21 @@
-#if RT_BONUS
-# include "net.h"
-# include "ser.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   unpack_packet.c                                #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "util.h"
-# include <string.h>
+#include "net.h"
+#include "ser.h"
+#include "util.h"
+#include <string.h>
+
+#if RT_BONUS
 
 void
 	*rt_upacksjr(void *src, struct s_sjob_request *dst)

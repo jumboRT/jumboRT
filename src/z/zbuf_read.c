@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   zbuf_read.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:15 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:15 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 
 #include "util.h"
@@ -55,7 +67,7 @@ unsigned int
 	rt_assert(count <= 16, "zbuf_peek: can peek at most 16 bits");
 	if (zb->index + 3 < zb->size)
 	{
-		data = *(uint32_t *)(zb->data + zb->index) >> zb->bit;
+		data = *(t_uint32 *)(zb->data + zb->index) >> zb->bit;
 		*i = count;
 	}
 	else

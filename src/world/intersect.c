@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   intersect.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 
 #include "shape.h"
@@ -7,7 +19,7 @@ static void
 	world_intersect_primitives(const GLOBAL t_world *world,
 			t_ray ray, t_world_hit *hit)
 {
-	uint64_t					index;
+	t_uint64					index;
 	const GLOBAL char			*primitives;
 	const GLOBAL t_primitive	*primitive;
 	t_world_hit					current;
@@ -31,7 +43,7 @@ static void
 	world_intersect_degenerates(const GLOBAL t_world *world,
 			t_ray ray, t_world_hit *hit)
 {
-	uint32_t					index;
+	t_uint32					index;
 	const GLOBAL t_primitive	*primitive;
 	t_world_hit					current;
 	t_ray_min					ray_min;

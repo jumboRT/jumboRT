@@ -1,15 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   lz77_util1.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 
-uint32_t
-	lz_hash(uint64_t data)
+t_uint32
+	lz_hash(t_uint64 data)
 {
 	return (data & ZHASH_MASK);
 }
 
-uint64_t
+t_uint64
 	lz_peek_next(const unsigned char *src, size_t offset, size_t src_size)
 {
-	uint64_t	result;
+	t_uint64	result;
 	size_t		extra;
 
 	extra = 0;

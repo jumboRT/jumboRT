@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_info_init.c                              #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 
@@ -44,7 +56,7 @@ static void
 void
 	world_info_init_free(t_tree_info *tree, t_node_info *node)
 {
-	uint32_t	new_depth;
+	t_uint32	new_depth;
 	size_t		offset;
 
 	new_depth = world_max_depth(tree->prims_count);

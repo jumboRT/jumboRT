@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   pack_basic.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ser.h"
 #include "net.h"
 
@@ -6,7 +18,7 @@
 #include <string.h>
 
 void
-	*rt_packu64(void *dst, uint64_t i)
+	*rt_packu64(void *dst, t_uint64 i)
 {
 	unsigned char	*buf;
 
@@ -42,7 +54,7 @@ void
 {
 	float		m;
 	int			e;
-	uint16_t	h;
+	t_uint16	h;
 
 	m = frexpf(f, &e);
 	e += (1 << RT_FLOAT_EXPONENT_BITS) / 2 - 1;
@@ -55,7 +67,7 @@ void
 		rt_assert(e < (1 << RT_FLOAT_EXPONENT_BITS),
 			"rt_packhfl: exponent too large");
 		h = e << RT_FLOAT_MANTISSA_BITS;
-		h |= (uint16_t)((m - 1) * (1 << RT_FLOAT_MANTISSA_BITS));
+		h |= (t_uint16)((m - 1) * (1 << RT_FLOAT_MANTISSA_BITS));
 	}
 	memcpy(dst, &h, sizeof(h));
 	return ((char *) dst + sizeof(h));

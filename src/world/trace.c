@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   trace.c                                        #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:27 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:27 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "world.h"
 #include "hit.h"
 #include "shape.h"
@@ -6,7 +18,7 @@
 
 static void
 	world_trace_init(const GLOBAL t_world *world,
-			GLOBAL t_context *ctx, t_trace_ctx *tctx, uint64_t index)
+			GLOBAL t_context *ctx, t_trace_ctx *tctx, t_uint64 index)
 {
 	const GLOBAL t_material	*ambient;
 	int						max_volumes;
@@ -34,11 +46,11 @@ static void
 
 t_vec
 	world_trace(const GLOBAL t_world *world, GLOBAL t_context *ctx,
-			uint64_t begin, int depth)
+			t_uint64 begin, int depth)
 {
 	t_trace_ctx	tctx;
 	t_vec		result;
-	uint64_t	i;
+	t_uint64	i;
 	int			this_depth;
 
 	result = vec_0();
@@ -63,7 +75,7 @@ void
 {
 	int				depth;
 	t_trace_ctx		tctx;
-	uint64_t		i[2];
+	t_uint64		i[2];
 
 	depth = 0;
 	i[0] = world->trace_batch_size;

@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash_util.c                                    #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:32 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:32 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "hash.h"
 
-uint64_t
-	hash_salt(t_seed *seed, uint64_t salt)
+t_uint64
+	hash_salt(t_seed *seed, t_uint64 salt)
 {
 	if (*seed + salt == 0)
 		*seed = *seed - 1;
@@ -10,19 +22,19 @@ uint64_t
 	return (rt_random(seed));
 }
 
-uint64_t
+t_uint64
 	hash_data(t_seed *seed, const void *data_ptr, size_t size)
 {
 	const unsigned char	*data;
 	size_t				index;
-	uint64_t			hash;
+	t_uint64			hash;
 
 	data = data_ptr;
 	index = 0;
 	hash = 0;
 	while (index + 3 < size)
 	{
-		hash ^= hash_salt(seed, *(uint32_t *) &data[index]);
+		hash ^= hash_salt(seed, *(t_uint32 *) &data[index]);
 		index += 4;
 	}
 	while (index < size)
@@ -33,10 +45,10 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_tex(const GLOBAL t_tex *tex, const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	(void) world;
 	hash = hash_salt(seed, tex->type);
@@ -60,11 +72,11 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_prim(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	hash = hash_salt(seed, prim_type(prim));
 	if (prim_type(prim) == RT_SHAPE_SPHERE)
@@ -86,8 +98,8 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
-	hash_prim_size(uint32_t shape, t_seed *seed)
+t_uint64
+	hash_prim_size(t_uint32 shape, t_seed *seed)
 {
 	return (hash_data(seed, &shape, sizeof(shape)));
 }

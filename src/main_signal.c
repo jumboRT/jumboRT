@@ -1,5 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   main_signal.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:34 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:34 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "util.h"
 
+#include <ft_printf.h>
 #include <signal.h>
 
 sig_atomic_t
@@ -37,7 +50,7 @@ void
 void
 	setup_sighandlers(void)
 {
-	printf("warning: you're using the mandatory configuration or running on"
+	ft_printf("warning: you're using the mandatory configuration or running on"
 		"windows. NEVER forcefully kill this process!\n");
 }
 

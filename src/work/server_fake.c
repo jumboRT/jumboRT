@@ -1,8 +1,20 @@
-#if !RT_BONUS
-# include "work.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   server_fake.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:09 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:09 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include "util.h"
-# include "net.h"
+#include "work.h"
+#include "util.h"
+#include "net.h"
+
+#if !RT_BONUS
 
 void
 	work_int_create_server(t_work *work)

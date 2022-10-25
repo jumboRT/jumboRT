@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash.h                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:49 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:49 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HASH_H
 # define HASH_H
 
@@ -7,44 +19,44 @@
 
 # include <stdlib.h>
 
-uint64_t	hash_sphere(const GLOBAL t_primitive *prim,
+t_uint64	hash_sphere(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_triangle(const GLOBAL t_primitive *prim,
+t_uint64	hash_triangle(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_plane(const GLOBAL t_primitive *prim,
+t_uint64	hash_plane(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_cylinder(const GLOBAL t_primitive *prim,
+t_uint64	hash_cylinder(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_cone(const GLOBAL t_primitive *prim,
+t_uint64	hash_cone(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_paraboloid(const GLOBAL t_primitive *prim,
+t_uint64	hash_paraboloid(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_hyperboloid(const GLOBAL t_primitive *prim,
+t_uint64	hash_hyperboloid(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_point(const GLOBAL t_primitive *prim,
-				const GLOBAL t_world *world, t_seed *seed);
-
-uint64_t	hash_bsdf(const GLOBAL t_bsdf *bsdf,
-				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_filter(const GLOBAL t_filter *filter,
-				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_mat(const GLOBAL t_material *mat,
-				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_bxdf_int(const GLOBAL t_bxdf_any *bxdf,
-				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_bxdf(const GLOBAL t_bxdf_any *bxdf,
+t_uint64	hash_point(const GLOBAL t_primitive *prim,
 				const GLOBAL t_world *world, t_seed *seed);
 
-uint64_t	hash_salt(t_seed *seed, uint64_t salt);
-uint64_t	hash_data(t_seed *seed, const void *data_ptr, size_t size);
-uint64_t	hash_tex(const GLOBAL t_tex *tex,
+t_uint64	hash_bsdf(const GLOBAL t_bsdf *bsdf,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_prim(const GLOBAL t_primitive *prim,
+t_uint64	hash_filter(const GLOBAL t_filter *filter,
 				const GLOBAL t_world *world, t_seed *seed);
-uint64_t	hash_prim_size(uint32_t shape, t_seed *seed);
+t_uint64	hash_mat(const GLOBAL t_material *mat,
+				const GLOBAL t_world *world, t_seed *seed);
+t_uint64	hash_bxdf_int(const GLOBAL t_bxdf_any *bxdf,
+				const GLOBAL t_world *world, t_seed *seed);
+t_uint64	hash_bxdf(const GLOBAL t_bxdf_any *bxdf,
+				const GLOBAL t_world *world, t_seed *seed);
 
-uint64_t	hash_salt(t_seed *seed, uint64_t salt);
-uint64_t	hash_data(t_seed *seed, const void *data_ptr, size_t size);
-uint64_t	hash_world(const GLOBAL t_world *world, int flags);
+t_uint64	hash_salt(t_seed *seed, t_uint64 salt);
+t_uint64	hash_data(t_seed *seed, const void *data_ptr, size_t size);
+t_uint64	hash_tex(const GLOBAL t_tex *tex,
+				const GLOBAL t_world *world, t_seed *seed);
+t_uint64	hash_prim(const GLOBAL t_primitive *prim,
+				const GLOBAL t_world *world, t_seed *seed);
+t_uint64	hash_prim_size(t_uint32 shape, t_seed *seed);
+
+t_uint64	hash_salt(t_seed *seed, t_uint64 salt);
+t_uint64	hash_data(t_seed *seed, const void *data_ptr, size_t size);
+t_uint64	hash_world(const GLOBAL t_world *world, int flags);
 
 #endif

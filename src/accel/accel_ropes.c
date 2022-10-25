@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_ropes.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:25 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:25 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 #include "world.h"
@@ -11,7 +23,7 @@ static void
 	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data);
 
 static void
-	optimize(t_world *world, t_rope_data *rope_data, uint32_t index)
+	optimize(t_world *world, t_rope_data *rope_data, t_uint32 index)
 {
 	t_accel_node	*node;
 
@@ -53,7 +65,7 @@ static void
 	process_node(t_world *world, t_accel_node *node, t_rope_data rope_data)
 {
 	t_leaf_data	leaf_data;
-	uint32_t	i;
+	t_uint32	i;
 
 	i = 0;
 	while (i < 6)

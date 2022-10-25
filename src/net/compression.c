@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   compression.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:11 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:11 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "net.h"
+#include "z.h"
+#include "ser.h"
+#include "util.h"
+
 #if RT_BONUS
-
-# include "net.h"
-
-# include "z.h"
-# include "ser.h"
-# include "util.h"
 
 void
 	rt_results_deflate(struct s_send_results *packet, size_t sz,
@@ -13,7 +24,7 @@ void
 	unsigned char	*dp[2];
 	size_t			index;
 	t_vec			color;
-	uint64_t		samples;
+	t_uint64		samples;
 
 	dp[0] = rt_malloc(6 * ((packet->end - packet->begin + sz - 2) / sz + 1));
 	dp[1] = dp[0];

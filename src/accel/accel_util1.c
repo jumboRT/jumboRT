@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_util1.c                                  #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:26 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:26 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 #include "util.h"
@@ -12,7 +24,7 @@ const t_primitive
 
 int
 	world_axis_side(const t_tree_info *tree, const t_split *split,
-			uint32_t index) {
+			t_uint32 index) {
 	t_bounds	prim_bounds;
 	float		min_offset;
 	float		max_offset;

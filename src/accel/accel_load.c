@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   accel_load.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:25 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:25 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "accel.h"
 #include "accel_impl.h"
 
@@ -54,18 +66,18 @@ static void
 }
 
 int
-	world_accel_load(t_world *world, const char *file, uint64_t hash)
+	world_accel_load(t_world *world, const char *file, t_uint64 hash)
 {
 	unsigned char	*data_ptr[2];
 	char			*error;
 	size_t			size;
-	uint64_t		file_hash;
+	t_uint64		file_hash;
 
 	error = NULL;
 	data_ptr[0] = (unsigned char *) rt_readfile(file, &error, &size);
 	if (data_ptr[0] == NULL)
 		return (rt_free(error), 0);
-	if (size < sizeof(uint64_t) * 5)
+	if (size < sizeof(t_uint64) * 5)
 		return (rt_free(data_ptr[0]), 0);
 	data_ptr[1] = data_ptr[0];
 	data_ptr[1] = rt_upacku64(data_ptr[1], &file_hash);

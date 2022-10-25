@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash_prim1.c                                   #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:28 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:28 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "hash.h"
 
-uint64_t
+t_uint64
 	hash_sphere(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_sphere	*shape;
-	uint64_t					hash;
+	t_uint64					hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_sphere *) prim;
@@ -15,12 +27,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_triangle(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_triangle	*shape;
-	uint64_t						hash;
+	t_uint64						hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_triangle *) prim;
@@ -31,12 +43,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_plane(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_plane	*shape;
-	uint64_t					hash;
+	t_uint64					hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_plane *) prim;
@@ -46,12 +58,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_cylinder(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_cylinder	*shape;
-	uint64_t						hash;
+	t_uint64						hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_cylinder *) prim;
@@ -67,12 +79,12 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_cone(const GLOBAL t_primitive *prim,
 			const GLOBAL t_world *world, t_seed *seed)
 {
 	const GLOBAL t_shape_cone	*shape;
-	uint64_t					hash;
+	t_uint64					hash;
 
 	(void) world;
 	shape = (const GLOBAL t_shape_cone *) prim;

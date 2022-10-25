@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   hash_mat.c                                     #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:28 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:28 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "hash.h"
 #include "bsdf.h"
 #include "mat.h"
 
-uint64_t
+t_uint64
 	hash_bsdf(const GLOBAL t_bsdf *bsdf,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	(void) world;
 	hash = 0;
@@ -16,11 +28,11 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_filter(const GLOBAL t_filter *filter,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	(void) world;
 	hash = 0;
@@ -28,11 +40,11 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_mat(const GLOBAL t_material *mat,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	hash = 0;
 	hash_data(seed, &mat->flags, sizeof(mat->flags));
@@ -49,11 +61,11 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_bxdf_int(const GLOBAL t_bxdf_any *bxdf,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	hash = 0;
 	(void) world;
@@ -72,11 +84,11 @@ uint64_t
 	return (hash);
 }
 
-uint64_t
+t_uint64
 	hash_bxdf(const GLOBAL t_bxdf_any *bxdf,
 			const GLOBAL t_world *world, t_seed *seed)
 {
-	uint64_t	hash;
+	t_uint64	hash;
 
 	hash = hash_salt(seed, bxdf->base.type);
 	hash ^= hash_filter(&bxdf->base.tex, world, seed);

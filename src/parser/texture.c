@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   texture.c                                      #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:05 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:05 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 #include "util.h"
@@ -63,11 +75,11 @@ void
 	rt_free(keyword);
 }
 
-uint32_t
+t_uint32
 	rt_texture(t_world *world, t_parse_ctx *ctx)
 {
 	char		*keyword;
-	uint32_t	result;
+	t_uint32	result;
 
 	if (has_prefix(ctx, "tex_"))
 	{

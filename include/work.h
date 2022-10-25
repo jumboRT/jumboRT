@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   work.h                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:43:53 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:43:53 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef WORK_H
 # define WORK_H
 
@@ -27,9 +39,9 @@ struct s_work {
 	t_worker		**workers;
 	size_t			count;
 	t_state			*state;
-	uint64_t		work_index;
-	uint64_t		work_size;
-	uint64_t		work_progress;
+	t_uint64		work_index;
+	t_uint64		work_size;
+	t_uint64		work_progress;
 	t_mutex			mtx;
 	t_cond			cnd;
 	int				pause;
@@ -39,7 +51,7 @@ struct s_work {
 	t_result_block	*data;
 	size_t			capacity;
 	t_options		*opts;
-	uint64_t		*pending;
+	t_uint64		*pending;
 	size_t			pending_size;
 	size_t			pending_capacity;
 	union u_client	*client;
@@ -54,8 +66,8 @@ struct s_work {
 
 struct s_result_block {
 	t_result	*results;
-	uint64_t	begin;
-	uint64_t	end;
+	t_uint64	begin;
+	t_uint64	end;
 };
 
 void	work_create(t_work *work, t_state *state, t_options *opts,
@@ -66,16 +78,16 @@ void	work_pause(t_work *work);
 void	work_update(t_work *work);
 void	work_reset(t_work *work);
 
-void	work_send(t_work *work, uint64_t begin, uint64_t end);
+void	work_send(t_work *work, t_uint64 begin, t_uint64 end);
 void	work_add(t_work *work, t_start start, void *ctx, int backend);
-int		work_sync(t_work *work, uint64_t *begin, uint64_t *end, size_t size);
-void	work_done(t_work *work, t_result *results, uint64_t begin,
-			uint64_t end);
+int		work_sync(t_work *work, t_uint64 *begin, t_uint64 *end, size_t size);
+void	work_done(t_work *work, t_result *results, t_uint64 begin,
+			t_uint64 end);
 
 void	work_update_start(t_work *work);
 void	work_update_stop(t_work *work);
-void	work_send_results(t_worker *worker, t_result *results, uint64_t begin,
-			uint64_t end);
+void	work_send_results(t_worker *worker, t_result *results, t_uint64 begin,
+			t_uint64 end);
 
 void	work_int_create(t_work *work);
 void	work_int_destroy(t_work *work);

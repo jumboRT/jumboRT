@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   zring.c                                        #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 
 #include "util.h"
@@ -21,7 +33,7 @@ void
 }
 
 t_zchain
-	*zring_at(t_zring *ring, int16_t index)
+	*zring_at(t_zring *ring, t_int16 index)
 {
 	if (index == ZEMPTY)
 		return (NULL);

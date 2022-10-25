@@ -1,9 +1,22 @@
-#if RT_BONUS
-# include "net.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   handler.c                                      #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:12 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:12 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include <unistd.h>
-# include <limits.h>
-# include <ft_printf.h>
+#include "net.h"
+
+#include <unistd.h>
+#include <limits.h>
+#include <ft_printf.h>
+
+#if RT_BONUS
 
 static int
 	rt_handle_ping(union u_client *client, struct s_packet packet,

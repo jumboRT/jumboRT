@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   lz77.c                                         #  # #  #   #  ##   ###   */
+/*                                                  #  # #  ## ##  # #  # #   */
+/*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
+/*                                                # #  # #  #   #  # #  # #   */
+/*   Created: 2022/10/25 12:02:13 by csteenvo     ###  ###  #   #  ##   ###   */
+/*   Updated: 2022/10/25 12:02:13 by csteenvo                                 */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "z.h"
 
 static void
@@ -46,8 +58,8 @@ static void
 static t_vector
 	lz77_deflate_int(t_zstate *state)
 {
-	uint64_t	next;
-	uint32_t	hash;
+	t_uint64	next;
+	t_uint32	hash;
 	t_ztoken	encoded;
 	t_vector	result;
 
@@ -69,7 +81,7 @@ static t_vector
 }
 
 t_ztoken
-	lz_deflate(t_zstate *state, uint32_t hash)
+	lz_deflate(t_zstate *state, t_uint32 hash)
 {
 	t_zlzctx	ctx;
 
