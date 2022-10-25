@@ -13,10 +13,9 @@
 #ifndef VECTOR_H
 # define VECTOR_H
 
+# include "typedefs.h"
 # include <stddef.h>
 
-typedef struct s_view	t_view;
-typedef struct s_vector	t_vector;
 typedef void			(*t_function)(void *element);
 typedef int				(*t_compare)(const void *lhs, const void *rhs);
 

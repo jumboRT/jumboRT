@@ -14,6 +14,7 @@
 # define Z_H
 
 # include "types.h"
+# include "typedefs.h"
 # include "vector.h"
 # include <stdlib.h>
 
@@ -42,17 +43,6 @@
 # if ZHASH_SIZE > ZTOKEN_MIN_LENGTH
 #  error "ZHASH_SIZE cannot be bigger than ZTOKEN_MIN_LENGTH"
 # endif
-
-typedef struct s_zbuf			t_zbuf;
-typedef struct s_ztree			t_ztree;
-typedef struct s_zwtree			t_zwtree;
-typedef struct s_ztoken			t_ztoken;
-typedef struct s_ztable			t_ztable;
-typedef struct s_zchain			t_zchain;
-typedef struct s_zstate			t_zstate;
-typedef struct s_zring			t_zring;
-typedef struct s_zlzctx			t_zlzctx;
-typedef struct s_ztoken_data	t_ztoken_data;
 
 struct s_zbuf {
 	unsigned char	*data;

@@ -13,15 +13,12 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+# include "typedefs.h"
 # include "world.h"
 # include "vector.h"
 # include "tex.h"
 
 # include <stddef.h>
-
-typedef struct s_directive	t_directive;
-typedef struct s_entry		t_entry;
-typedef struct s_parse_ctx	t_parse_ctx;
 
 struct s_directive {
 	const char	*name;

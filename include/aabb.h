@@ -13,9 +13,8 @@
 #ifndef AABB_H
 # define AABB_H
 
+# include "typedefs.h"
 # include "rtmath.h"
-
-typedef struct s_bounds	t_bounds;
 
 struct s_bounds {
 	t_vec	min;

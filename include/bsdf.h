@@ -13,6 +13,7 @@
 #ifndef BSDF_H
 # define BSDF_H
 
+# include "typedefs.h"
 # include "types.h"
 # include "tex.h"
 # include "hit.h"
@@ -27,25 +28,6 @@
 # define RT_BXDF_SPECULAR			7
 # define RT_BXDF_OREN_NAYAR			8
 # define RT_BXDF_TYPE_COUNT			9
-
-typedef struct s_world				t_world;
-typedef struct s_context			t_context;
-typedef struct s_trace_ctx			t_trace_ctx;
-
-typedef struct s_bxdf_ctx			t_bxdf_ctx;
-typedef struct s_bsdf				t_bsdf;
-typedef struct s_bxdf				t_bxdf;
-typedef struct s_bxdf_diffuse		t_bxdf_diffuse;
-typedef struct s_bxdf_reflective	t_bxdf_reflective;
-typedef struct s_bxdf_transmissive	t_bxdf_transmissive;
-typedef struct s_bxdf_mf_reflection	t_bxdf_mf_reflection;
-typedef struct s_bxdf_cook_torrance	t_bxdf_cook_torrance;
-typedef struct s_bxdf_bphong		t_bxdf_bphong;
-typedef struct s_bxdf_phong			t_bxdf_phong;
-typedef struct s_bxdf_oren_nayar	t_bxdf_oren_nayar;
-typedef struct s_bxdf_specular		t_bxdf_specular;
-typedef union u_bxdf_any			t_bxdf_any;
-typedef struct s_sample				t_sample;
 
 struct s_bxdf_ctx {
 	t_trace_ctx			*ctx;

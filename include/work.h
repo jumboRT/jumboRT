@@ -17,15 +17,12 @@
 # include "mt.h"
 # include "queue.h"
 # include "work_compute.h"
+# include "typedefs.h"
 
 # define RT_BACKEND_SINGLE 1
 # define RT_BACKEND_THREAD 2
 # define RT_BACKEND_OPENCL 4
 # define RT_BACKEND_SERVER 8
-
-typedef struct s_worker			t_worker;
-typedef struct s_work			t_work;
-typedef struct s_result_block	t_result_block;
 
 struct s_worker {
 	t_work		*work;

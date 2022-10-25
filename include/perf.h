@@ -13,9 +13,8 @@
 #ifndef PERF_H
 # define PERF_H
 
+# include "typedefs.h"
 # include <sys/time.h>
-
-typedef struct s_perf	t_perf;
 
 struct s_perf {
 	struct timeval	tv;

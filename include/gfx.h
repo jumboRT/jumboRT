@@ -13,6 +13,7 @@
 #ifndef GFX_H
 # define GFX_H
 
+# include "typedefs.h"
 # include "rtmath.h"
 # include "image.h"
 
@@ -37,8 +38,6 @@
 #  define RT_WIN_EVENT_BUTTON_MASK 0
 #  define RT_WIN_EVENT_CLOSE 17
 # endif
-
-typedef struct s_win	t_win;
 
 struct s_win {
 	void	*handle;

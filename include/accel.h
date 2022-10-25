@@ -13,6 +13,7 @@
 #ifndef ACCEL_H
 # define ACCEL_H
 
+# include "typedefs.h"
 # include "types.h"
 # include "aabb.h"
 
@@ -39,19 +40,6 @@
 # ifndef ACCEL_INLINE_PRIMS
 #  define ACCEL_INLINE_PRIMS 1
 # endif
-
-typedef struct s_world				t_world;
-typedef struct s_primitive			t_primitive;
-
-typedef struct s_accel_node			t_accel_node;
-typedef struct s_rope_data			t_rope_data;
-typedef struct s_leaf_data			t_leaf_data;
-typedef struct s_prim_info			t_prim_info;
-typedef struct s_tree_edges			t_tree_edges;
-typedef struct s_tree_info			t_tree_info;
-typedef struct s_node_info			t_node_info;
-typedef struct s_split				t_split;
-typedef struct s_edge				t_edge;
 
 struct s_rope_data {
 	float		bounds[6];

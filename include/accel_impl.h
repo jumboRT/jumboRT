@@ -13,10 +13,9 @@
 #ifndef ACCEL_IMPL_H
 # define ACCEL_IMPL_H
 
+# include "typedefs.h"
 # include "accel.h"
 # include <stddef.h>
-
-typedef struct s_accel_init_ctx	t_accel_init_ctx;
 
 struct s_edge {
 	float		offset;

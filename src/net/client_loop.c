@@ -13,10 +13,10 @@
 #include "net.h"
 
 #if RT_BONUS
-#include "util.h"
-#include <ft_printf.h>
-#include <unistd.h>
-#include <stdlib.h>
+# include "util.h"
+# include <ft_printf.h>
+# include <unistd.h>
+# include <stdlib.h>
 
 static int
 	rt_recv_handle_packet(union u_client *client, char **error)

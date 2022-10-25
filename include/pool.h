@@ -15,14 +15,12 @@
 
 # define RT_POOL_MAX_TASKS 1024
 
+# include "typedefs.h"
 # include "mt.h"
 # include "queue.h"
 
 # include <stddef.h>
 
-typedef struct s_pool		t_pool;
-typedef struct s_task		t_task;
-typedef struct s_task_item	t_task_item;
 typedef void				(*t_pool_start)(void *ctx, size_t id);
 
 struct s_pool {

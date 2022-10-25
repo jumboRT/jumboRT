@@ -13,6 +13,7 @@
 #ifndef MAT_H
 # define MAT_H
 
+# include "typedefs.h"
 # include "types.h"
 # include "bsdf.h"
 # include "tex.h"
@@ -23,8 +24,6 @@
 # define RT_MAT_HAS_VOLUME			8
 # define RT_MAT_HAS_NORMAL			16
 # define RT_MAT_HAS_BUMP			32
-
-typedef struct s_material			t_material;
 
 struct s_material {
 	t_uint32	flags;

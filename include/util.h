@@ -13,6 +13,7 @@
 #ifndef UTIL_H
 # define UTIL_H
 
+# include "typedefs.h"
 # include <stddef.h>
 # include <unistd.h>
 # include <stdint.h>
@@ -32,8 +33,6 @@
 # elif RT_BUFFER_SIZE <= 0
 #  error RT_BUFFER_SIZE must be a positive integer
 # endif
-
-typedef struct s_image	t_image;
 
 size_t	rt_image_to_ppm(char **dest, const t_image *image);
 size_t	rt_image_to_pfm(char **dest, const t_image *image);

@@ -13,6 +13,8 @@
 #ifndef RTMATH_H
 # define RTMATH_H
 
+# include "typedefs.h"
+
 # ifndef RT_OPENCL
 #  include <math.h>
 # endif
@@ -42,22 +44,6 @@ typedef union u_vec2_conv {
 	float	elem[2];
 }	t_vec2_conv;
 # endif
-
-typedef struct s_ray			t_ray;
-typedef struct s_ray_min		t_ray_min;
-
-typedef struct s_plane			t_plane;
-typedef struct s_triangle		t_triangle;
-typedef struct s_sphere			t_sphere;
-typedef struct s_cylinder		t_cylinder;
-typedef struct s_cylinder_ctx	t_cylinder_ctx;
-typedef struct s_cone			t_cone;
-typedef struct s_paraboloid		t_paraboloid;
-typedef struct s_hyperboloid	t_hyperboloid;
-
-typedef struct s_hit			t_hit;
-
-typedef struct s_quadratic		t_quadratic;
 
 # if !defined RT_VECTORIZE
 

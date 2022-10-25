@@ -13,6 +13,7 @@
 #ifndef TEX_H
 # define TEX_H
 
+# include "typedefs.h"
 # include "types.h"
 # include "rtmath.h"
 
@@ -20,11 +21,6 @@
 # define RT_TEX_TEXTURE		1
 # define RT_TEX_CHECKER		2
 # define RT_TEX_FILTERED	3
-
-typedef struct s_world	t_world;
-
-typedef struct s_tex	t_tex;
-typedef struct s_filter	t_filter;
 
 struct s_filter {
 	t_uint32	tex[2];

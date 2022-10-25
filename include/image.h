@@ -13,12 +13,10 @@
 #ifndef IMAGE_H
 # define IMAGE_H
 
+# include "typedefs.h"
 # include "rtmath.h"
 
 # include <stddef.h>
-
-typedef struct s_pixel	t_pixel;
-typedef struct s_image	t_image;
 
 struct s_pixel {
 	t_vec	color;

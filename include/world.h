@@ -49,26 +49,7 @@
 # include "rand.h"
 # include "hit.h"
 # include "accel.h"
-
-typedef struct s_accel_node			t_accel_node;
-typedef struct s_bsdf				t_bsdf;
-typedef struct s_bxdf				t_bxdf;
-typedef struct s_material			t_material;
-typedef struct s_tex				t_tex;
-typedef struct s_primitive			t_primitive;
-typedef struct s_leaf_data			t_leaf_data;
-typedef union u_bxdf_any			t_bxdf_any;
-
-typedef struct s_context			t_context;
-typedef struct s_image_meta			t_image_meta;
-typedef struct s_camera				t_camera;
-typedef struct s_world				t_world;
-typedef struct s_vertex				t_vertex;
-typedef struct s_result				t_result;
-typedef struct s_trace_ctx			t_trace_ctx;
-typedef struct s_trace_all_ctx		t_trace_all_ctx;
-typedef struct s_eta_link			t_eta_link;
-typedef struct s_cam_params			t_cam_params;
+# include "typedefs.h"
 
 # if ACCEL_USE_ROPES
 

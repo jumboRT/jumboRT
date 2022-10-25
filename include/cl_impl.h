@@ -17,6 +17,8 @@
 #  define RT_USE_OPENCL 1
 # endif
 
+# include "typedefs.h"
+
 # if RT_USE_OPENCL
 
 #  include "work.h"
@@ -76,12 +78,6 @@
 -D GLOBAL=__global -cl-fast-relaxed-math"
 #   endif
 #  endif
-
-typedef struct s_opencl_ctx				t_opencl_ctx;
-typedef struct s_opencl_callback_ctx	t_opencl_callback_ctx;
-typedef struct s_opencl_start_ctx		t_opencl_start_ctx;
-typedef struct s_opencl_program_ctx		t_opencl_program_ctx;
-typedef struct s_opencl_compile_ctx		t_opencl_compile_ctx;
 
 typedef void							(*t_opencl_func)(void *,
 	cl_platform_id, cl_device_id);

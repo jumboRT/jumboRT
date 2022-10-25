@@ -13,14 +13,13 @@
 #ifndef QUEUE_H
 # define QUEUE_H
 
+# include "typedefs.h"
 # include "mt.h"
 # include "rtmath.h"
 
 # include <stddef.h>
 
 # define RT_QUEUE_MAX 1024
-
-typedef struct s_queue	t_queue;
 
 struct s_queue {
 	void	*data;

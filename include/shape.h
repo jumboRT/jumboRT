@@ -13,6 +13,7 @@
 #ifndef SHAPE_H
 # define SHAPE_H
 
+# include "typedefs.h"
 # include "rtmath.h"
 # include "types.h"
 # include "aabb.h"
@@ -25,20 +26,6 @@
 # define RT_SHAPE_PARABOLOID		5
 # define RT_SHAPE_HYPERBOLOID		6
 # define RT_SHAPE_POINT				7
-
-typedef struct s_world				t_world;
-typedef struct s_world_hit			t_world_hit;
-typedef struct s_context			t_context;
-
-typedef struct s_primitive			t_primitive;
-typedef struct s_shape_triangle		t_shape_triangle;
-typedef struct s_shape_sphere		t_shape_sphere;
-typedef struct s_shape_plane		t_shape_plane;
-typedef struct s_shape_cylinder		t_shape_cylinder;
-typedef struct s_shape_cone			t_shape_cone;
-typedef struct s_shape_paraboloid	t_shape_paraboloid;
-typedef struct s_shape_hyperboloid	t_shape_hyperboloid;
-typedef struct s_shape_point		t_shape_point;
 
 struct s_primitive {
 	t_uint32	data;

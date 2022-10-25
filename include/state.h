@@ -13,6 +13,7 @@
 #ifndef STATE_H
 # define STATE_H
 
+# include "typedefs.h"
 # include "rtmath.h"
 # include "world.h"
 # include "types.h"
@@ -30,9 +31,6 @@
 # else
 #  define RT_BONUS_OPTIONS 0
 # endif
-
-typedef struct s_state		t_state;
-typedef struct s_options	t_options;
 
 # ifdef RT_JOINC
 
