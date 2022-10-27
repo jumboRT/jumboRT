@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:25 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 16:03:38 by csteenvo            :      ..            */
+/*   Updated: 2022/10/27 12:53:07 by csteenvo                                 */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <fenv.h>
 
-#if RT_DEBUG
+#if RT_DEBUG && !RT_MACOS
 
 void
 	enable_fe(void)

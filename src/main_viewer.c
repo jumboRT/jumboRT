@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:02:20 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:02:20 by csteenvo                                 */
+/*   Updated: 2022/10/27 13:06:47 by csteenvo                                 */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,16 @@
 #include "util.h"
 #include "world_impl.h"
 
+#include <libft.h>
+
 void
 	world_load(t_world *world, const char *filename, const char *key)
 {
 	t_parse_ctx	ctx;
 
+	rt_assert(ft_strlen(filename) > 2, "filename does not end with .rt");
+	rt_assert(ft_strcmp(filename + ft_strlen(filename) - 3, ".rt") == 0,
+		"filename does not end with .rt");
 	parser_init(&ctx, filename, key);
 	rt_world(world, &ctx);
 	parser_destroy(&ctx);

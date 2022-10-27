@@ -6,7 +6,7 @@
 /*   By: csteenvo <csteenvo@student.codam.nl>     # #  # #  # # #  ##   # #   */
 /*                                                # #  # #  #   #  # #  # #   */
 /*   Created: 2022/10/25 12:43:42 by csteenvo     ###  ###  #   #  ##   ###   */
-/*   Updated: 2022/10/25 12:43:42 by csteenvo                                 */
+/*   Updated: 2022/10/27 13:10:10 by csteenvo                                 */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # define RT_MAX_PRIMITIVES 3
 
 # ifndef ACCEL_USE_TREE
-#  define ACCEL_USE_TREE 1
+#  define ACCEL_USE_TREE 0
 # endif
 # ifndef ACCEL_USE_ROPES
 #  define ACCEL_USE_ROPES 1
