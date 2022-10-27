@@ -27,5 +27,5 @@ void
 	vec_angles(t_vec basis, t_vec v, t_vec *out_vec, float *out_angle)
 {
 	*out_vec = vec_norm2(vec_cross(basis, v));
-	*out_angle = rt_acos(vec_dot(basis, v));
+	*out_angle = rt_acos(rt_min(1, rt_max(-1, vec_dot(basis, v))));
 }
