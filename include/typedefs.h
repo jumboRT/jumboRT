@@ -91,7 +91,6 @@ typedef struct s_triangle				t_triangle;
 typedef struct s_vector					t_vector;
 typedef struct s_vertex					t_vertex;
 typedef struct s_view					t_view;
-typedef struct s_win					t_win;
 typedef struct s_work					t_work;
 typedef struct s_worker					t_worker;
 typedef struct s_world					t_world;
