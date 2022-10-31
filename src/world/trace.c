@@ -58,7 +58,7 @@ t_vec
 	while (i < world->trace_batch_size)
 	{
 		this_depth = depth;
-		world_trace_init(world, ctx, &tctx, begin + i);
+		world_trace_init(world, ctx, &tctx, begin);
 		while (this_depth > 0 && world_trace_step(&tctx))
 			this_depth -= 1;
 		result = vec_add(result, tctx.tail);
@@ -92,8 +92,8 @@ void
 		}
 		depth = (depth - 1) * !!world_trace_step(&tctx);
 		if (depth == 0)
-			t->results[i[1]].color = vec_scale(vec_add(t->results[i[1]].color,
-						tctx.tail), 1.0f / world->trace_batch_size);
+			t->results[i[1]].color = vec_add(t->results[i[1]].color,
+					vec_scale(tctx.tail, 1.0f / world->trace_batch_size));
 		if (depth == 0 && ++i[0] == world->trace_batch_size)
 			i[1] = atomic_add(t->index, 1);
 	}
