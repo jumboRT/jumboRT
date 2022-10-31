@@ -32,7 +32,7 @@
 # define RT_MAX_PRIMITIVES 3
 
 # ifndef ACCEL_USE_TREE
-#  define ACCEL_USE_TREE 0
+#  define ACCEL_USE_TREE 1
 # endif
 # ifndef ACCEL_USE_ROPES
 #  define ACCEL_USE_ROPES 1
