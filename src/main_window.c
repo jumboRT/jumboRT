@@ -12,6 +12,11 @@
 
 #include "main.h"
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <ft_printf.h>
+
 #ifndef RT_JOINC
 
 static int

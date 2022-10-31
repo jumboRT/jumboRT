@@ -39,6 +39,8 @@
 #  define RT_WIN_EVENT_CLOSE 17
 # endif
 
+typedef struct s_win	t_win;
+
 struct s_win {
 	void	*handle;
 	void	*mlx;
