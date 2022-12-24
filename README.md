@@ -25,5 +25,4 @@ fully written in C, capable of running on CPU, GPU and on distributed systems
 - and more...
 
 ## Gallery
-![Minecraft title screen part0](./mc0.png)
-![Minecraft title screen part1](./mc1.png)
+![Minecraft title screen 16k](./mc.png)
