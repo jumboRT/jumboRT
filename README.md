@@ -2,8 +2,8 @@
 A lightweight, portable, fast and powerful pathtracer
 fully written in C, capable of running on CPU, GPU and on distributed systems
 
-![San Miquel](.images/san_miguel.png)
-![Ice Dragon](.images/ice_dragon.png)
+![San Miquel](./images/san_miguel.png)
+![Ice Dragon](./images/ice_dragon.png)
 
 ## Features
 - Unidirectional path tracer
