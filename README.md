@@ -14,7 +14,7 @@ fully written in C, capable of running on CPU, GPU and on distributed systems
 - Tile texturing
 - Multiple BSDFs
 - Volumetric lightning
-- OpenCL implementation (for GPU, FPGA's, etc...)
+- OpenCL implementation 
 - Multithreading support
 - Distributed rendering over network
 - Custom made deflate compression for network rendering
