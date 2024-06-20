@@ -1,4 +1,4 @@
-NAME					:= miniRT
+NAME					:= RT
 CL_NAME					:= kernel
 
 BASE_FILES := main.c main_image.c main_key.c main_signal.c main_update.c \
@@ -124,7 +124,8 @@ FILE_NAMES				:= \
 CC						:= clang
 LINK_CMD				:= $(CC)
 CFLAGS					:= -Wall -Wextra -Wuninitialized -pedantic -DRT_PATCH_VER=$(PATCH_VERSION) \
-					   -DRT_MINOR_VER=$(MINOR_VERSION) -DRT_MAJOR_VER=$(MAJOR_VERSION) $(ANALYZER)
+					   -DRT_MINOR_VER=$(MINOR_VERSION) -DRT_MAJOR_VER=$(MAJOR_VERSION) $(ANALYZER) \
+					   -Wno-strict-prototypes
 LFLAGS					:= -Wall -Wextra $(ANALYZER)
 
 SRC_DIR					:= src
@@ -238,7 +239,7 @@ CL_SOURCES				:= $(patsubst %.c,$(SRC_DIR)/%.c,$(CL_FILE_NAMES))
 CL_OBJECTS				:= $(patsubst %.c,$(OBJ_DIR)/%-cl,$(CL_FILE_NAMES))
 
 # all: $(NAME)
-all: mandatory
+all: cpu_only
 
 bonus: CFLAGS += -DRT_BONUS=1 -DRT_USE_LIBC -DRT_MT -DRT_VECTORIZE
 bonus: $(NAME) $(CL_NAME)
@@ -300,20 +301,20 @@ ifeq ($(cl_compile_all_at_once), 1)
 
 $(CL_NAME): $(CL_SOURCES) | $(NAME)
 	@printf $(LINK_COLOR)Compiling$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(LINK_COLOR)\ all\ at\ once$(RESET)\\n
-	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT --build $(CL_NAME) $(CL_SOURCES); do sleep 1; done"
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(NAME) --build $(CL_NAME) $(CL_SOURCES); do sleep 1; done"
 	$(SILENT)touch $@
 
 else
 
 $(CL_NAME): $(CL_OBJECTS) | $(NAME)
 	@printf $(LINK_COLOR)Linking$(RESET)\ $(OBJECT_COLOR)$(notdir $@)$(RESET)\\n
-	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(NAME) -C $(CL_NAME) $(CL_OBJECTS); do sleep 1; done"
 	$(SILENT)touch $@
 
 $(OBJ_DIR)/%-cl: $(SRC_DIR)/%.c $(OBJ_DIR)/%.o | $(NAME)
 	$(SILENT)mkdir -p $(@D)
 	@printf $(COMPILE_COLOR)Compiling$(RESET)\ $(notdir $<)\ \(cl\)\\n
-	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./miniRT -c $@ $<; do sleep 1; done"
+	$(SILENT)sh -c "until CUDA_CACHE_DISABLE=1 ./$(NAME) -c $@ $<; do sleep 1; done"
 	$(SILENT)touch $@
 
 endif
