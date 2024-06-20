@@ -263,9 +263,9 @@ ifeq ($(platform), macos)
 	cl_compile_all_at_once := 1
 else ifeq ($(platform), linux)
 	ifeq ($(target), joinc)
-		FRAMEWORKS	:= -lm -lpthread -lOpenCL
+		FRAMEWORKS	:= -lm -lpthread
 	else
-		FRAMEWORKS	:= -lX11 -lXext -lm -lOpenCL -lpthread
+		FRAMEWORKS	:= -lX11 -lXext -lm -lpthread
 	endif
 	CFLAGS		+= -DRT_LINUX
 else ifeq ($(platform), win)
