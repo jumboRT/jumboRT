@@ -79,6 +79,10 @@ static void
 	state->world->trace_batch_size = request.trace_batch_size;
 	state->world->img_meta.width = request.width;
 	state->world->img_meta.height = request.height;
+	state->world->img_meta.start_x = 0;
+	state->world->img_meta.start_y = 0;
+	state->world->img_meta.end_x = request.width;
+	state->world->img_meta.end_y = request.height;
 	world_load(state->world, request.scene_file.str, request.scene_key.str);
 	world_accel(state->world);
 	camera_set(state->world, &state->world->camera, p);
@@ -86,6 +90,10 @@ static void
 	work_update_start(worker->work);
 	worker->opts.width = request.width;
 	worker->opts.height = request.height;
+	worker->opts.start_x = 0;
+	worker->opts.start_y = 0;
+	worker->opts.end_x = request.width;
+	worker->opts.end_y = request.height;
 	worker->opts.scene_file = ft_strdup(request.scene_file.str);
 	worker->opts.key = ft_strdup(request.scene_key.str);
 	work_resume(worker->work);

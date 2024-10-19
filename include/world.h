@@ -128,6 +128,10 @@ struct s_context {
 struct s_image_meta {
 	t_uint64	width;
 	t_uint64	height;
+	t_uint64	start_x;
+	t_uint64	start_y;
+	t_uint64	end_x;
+	t_uint64	end_y;
 };
 
 struct s_camera {

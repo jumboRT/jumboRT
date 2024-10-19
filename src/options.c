@@ -27,6 +27,10 @@ static void
 	ft_printf("\t{-s --spp} SAMPLES      number of samples per pixel\n");
 	ft_printf("\t--width WIDTH           image width\n");
 	ft_printf("\t--height HEIGHT         image height\n");
+	ft_printf("\t--start-x START_X       image start x (local only)\n");
+	ft_printf("\t--start-y START_Y       image start y (local only)\n");
+	ft_printf("\t--end-x END_X           image end x (local only)\n");
+	ft_printf("\t--end-y END_Y           image end y (local only)\n");
 	ft_printf("\t{-r --render} RENDERER  render device\n");
 	ft_printf("\t{-i --ip} ADDRESS       remote address for -W and -r net\n");
 	ft_printf("\t{-p --port} PORT        remote port for -W and -r net\n");
@@ -77,6 +81,10 @@ static void
 	opts->samples_set = 0;
 	opts->width_set = 0;
 	opts->height_set = 0;
+	opts->start_x_set = 0;
+	opts->start_y_set = 0;
+	opts->end_x_set = 0;
+	opts->end_y_set = 0;
 	opts->backends_set = 0;
 	opts->net_ip_set = 0;
 	opts->net_port_set = 0;
@@ -102,6 +110,8 @@ static void
 	opts->samples = 1;
 	opts->width = 1920;
 	opts->height = 1080;
+	opts->start_x = 0;
+	opts->start_y = 0;
 	opts->backends = RT_BACKEND_SINGLE;
 	opts->worker = 0;
 	opts->net_ip = "localhost";

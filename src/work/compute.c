@@ -15,8 +15,10 @@
 t_uint64
 	project_index(const GLOBAL t_world *world, t_uint64 index)
 {
-	return (index / world->batch_size
-		% (world->img_meta.width * world->img_meta.height));
+	t_uint64 width = world->img_meta.end_x - world->img_meta.start_x;
+	t_uint64 height = world->img_meta.end_y - world->img_meta.start_y;
+	index = (index / world->batch_size % (width * height));
+	return index % width + world->img_meta.start_x + (index / width + world->img_meta.start_y) * world->img_meta.width;
 }
 
 t_ray

@@ -40,6 +40,42 @@ int
 		opts->height_set = 1;
 		*i += 2;
 	}
+	else if (ft_strcmp(argv[*i], "--start-x") == 0)
+	{
+		rt_assert(!opts->start_x_set, "more than one start x specified");
+		rt_assert(*i + 1 < argc, "--start-x requires an argument");
+		opts->start_x = ft_atoi(argv[*i + 1]);
+		rt_assert(opts->start_x >= 0, "invalid start x");
+		opts->start_x_set = 1;
+		*i += 2;
+	}
+	else if (ft_strcmp(argv[*i], "--start-y") == 0)
+	{
+		rt_assert(!opts->start_y_set, "more than one start x specified");
+		rt_assert(*i + 1 < argc, "--start-y requires an argument");
+		opts->start_y = ft_atoi(argv[*i + 1]);
+		rt_assert(opts->start_y >= 0, "invalid start x");
+		opts->start_y_set = 1;
+		*i += 2;
+	}
+	else if (ft_strcmp(argv[*i], "--end-x") == 0)
+	{
+		rt_assert(!opts->end_x_set, "more than one end x specified");
+		rt_assert(*i + 1 < argc, "--end-x requires an argument");
+		opts->end_x = ft_atoi(argv[*i + 1]);
+		rt_assert(opts->end_x >= 0, "invalid end x");
+		opts->end_x_set = 1;
+		*i += 2;
+	}
+	else if (ft_strcmp(argv[*i], "--end-y") == 0)
+	{
+		rt_assert(!opts->end_y_set, "more than one end x specified");
+		rt_assert(*i + 1 < argc, "--end-y requires an argument");
+		opts->end_y = ft_atoi(argv[*i + 1]);
+		rt_assert(opts->end_y >= 0, "invalid end x");
+		opts->end_y_set = 1;
+		*i += 2;
+	}
 	else
 		return (0);
 	return (1);

@@ -44,6 +44,10 @@ static void
 	world_create(world);
 	world->img_meta.width = image->width;
 	world->img_meta.height = image->height;
+	world->img_meta.start_x = options->start_x;
+	world->img_meta.start_y = options->start_y;
+	world->img_meta.end_x = options->end_x_set ? options->end_x : image->width;
+	world->img_meta.end_y = options->end_y_set ? options->end_y : image->height;
 	world->batch_size = options->batch_size;
 	world->trace_batch_size = options->trace_batch_size;
 	world->render_mode = options->default_rendering_mode;
@@ -66,8 +70,8 @@ void
 	perf_split(&perf, "build tree");
 	work_create(&work, &state, options, NULL);
 	perf_split(&perf, "init device");
-	work.work_size = world.img_meta.width
-		* world.img_meta.height * options->samples;
+	work.work_size = (world.img_meta.end_x - world.img_meta.start_x)
+		* (world.img_meta.end_y - world.img_meta.start_y) * options->samples;
 	work_reset(&work);
 	main_run(options, &work);
 	world_destroy(&world);

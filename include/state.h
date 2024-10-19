@@ -44,6 +44,10 @@ struct s_options {
 	long		samples;
 	long		width;
 	long		height;
+	long		start_x;
+	long		start_y;
+	long		end_x;
+	long		end_y;
 	int			backends;
 	int			worker;
 	const char	*net_ip;
@@ -60,6 +64,10 @@ struct s_options {
 	int			samples_set;
 	int			width_set;
 	int			height_set;
+	int			start_x_set;
+	int			start_y_set;
+	int			end_x_set;
+	int			end_y_set;
 	int			backends_set;
 	int			net_ip_set;
 	int			net_port_set;
